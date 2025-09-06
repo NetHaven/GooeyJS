@@ -55,8 +55,8 @@ export default class GooeyJS {
         }
 
         // Add loading flag to prevent concurrent loads
-        if (RetroUI._loadingTemplates?.has(templateId)) {
-            return RetroUI._loadingTemplates.get(templateId);
+        if (GooeyJS._loadingTemplates?.has(templateId)) {
+            return GooeyJS._loadingTemplates.get(templateId);
         }
 
         const maxRetries = 3;
@@ -64,7 +64,7 @@ export default class GooeyJS {
 
         // Create timeout-wrapped fetch with proper async error handling
         const timeoutMs = 10000; // 10 second timeout
-        const loadPromise = RetroUI._timeoutPromise(
+        const loadPromise = GooeyJS._timeoutPromise(
             fetch(templateName, {
                 method: 'GET',
                 cache: 'default',
@@ -127,11 +127,34 @@ export default class GooeyJS {
             });
 
         // Track loading state
-        if (!RetroUI._loadingTemplates) RetroUI._loadingTemplates = new Map();
-        RetroUI._loadingTemplates.set(templateId, loadPromise);
+        if (!GooeyJS._loadingTemplates) GooeyJS._loadingTemplates = new Map();
+        GooeyJS._loadingTemplates.set(templateId, loadPromise);
 
         return loadPromise;
     }
+
+     /**
+     * Creates a timeout-wrapped promise for async operations
+     * @param {Promise} promise - The promise to wrap with timeout
+     * @param {number} timeoutMs - Timeout in milliseconds
+     * @param {string} errorMessage - Error message for timeout
+     * @returns {Promise} - Promise that rejects if timeout is reached
+     */
+    static _timeoutPromise(promise, timeoutMs, errorMessage) {
+        return new Promise((resolve, reject) => {
+            // Create timeout promise that rejects after specified time
+            const timeoutPromise = new Promise((_, timeoutReject) => {
+                setTimeout(() => {
+                    timeoutReject(new Error(errorMessage || `Operation timed out after ${timeoutMs}ms`));
+                }, timeoutMs);
+            });
+
+            // Race between the original promise and timeout
+            Promise.race([promise, timeoutPromise])
+                .then(resolve)
+                .catch(reject);
+        });
+    }
 }
 
-window.addEventListener('load', function() { new Gooey();}());
+window.addEventListener('load', function() { new GooeyJS();}());
