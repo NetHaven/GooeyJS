@@ -1,8 +1,123 @@
 import Application from './gooey/ui/Application.js';
+import AppPanel from './gooey/ui/panel/AppPanel.js';
+import CheckboxMenuItem from './gooey/ui/menu/CheckboxMenuItem.js';
+import Menubar from './gooey/ui/menu/Menubar.js';
+import Menu from './gooey/ui/menu/Menu.js';
+import MenuItem from './gooey/ui/menu/MenuItem.js';
+import MenuItemSeparator from './gooey/ui/menu/MenuItemSeparator.js';
+import Panel from './gooey/ui/panel/Panel.js';
 
-export default class Gooey {
+export default class GooeyJS {
     constructor() {
+        this.loadTemplates();
+        this.defineElements();
+    }
+
+    defineElements() {
         customElements.define("ui-application", Application);
+        customElements.define("ui-apppanel", AppPanel);
+        customElements.define("ui-checkboxmenuitem", CheckboxMenuItem);
+        customElements.define("ui-menu", Menu);
+        customElements.define("ui-menubar", Menubar);
+        customElements.define("ui-menuitem", MenuItem);
+        customElements.define("ui-menuitemseparator", MenuItemSeparator);
+        customElements.define("ui-panel", Panel);
+    }
+
+    loadTemplates() {
+        let templatePath = `templates`;
+
+        return Promise.all([
+            GooeyJS.loadTemplate(`${templatePath}/Menu.html`, "ui-Menu"),
+            GooeyJS.loadTemplate(`${templatePath}/MenuHeader.html`, "menuHeader"),
+            GooeyJS.loadTemplate(`${templatePath}/MenuItem.html`, "ui-MenuItem"),
+            GooeyJS.loadTemplate(`${templatePath}/MenuItemSeparator.html`, "ui-MenuItemSeparator"),
+         ]);
+    }
+
+    static loadTemplate(templateName, templateId, retryCount = 0) {
+        // Check if already loaded (race condition protection)
+        if (document.getElementById(templateId)) {
+            return Promise.resolve();
+        }
+
+        // Add loading flag to prevent concurrent loads
+        if (RetroUI._loadingTemplates?.has(templateId)) {
+            return RetroUI._loadingTemplates.get(templateId);
+        }
+
+        const maxRetries = 3;
+        const retryDelay = 1000; // 1 second
+
+        // Create timeout-wrapped fetch with proper async error handling
+        const timeoutMs = 10000; // 10 second timeout
+        const loadPromise = RetroUI._timeoutPromise(
+            fetch(templateName, {
+                method: 'GET',
+                cache: 'default',
+                headers: {
+                    'Accept': 'text/html,text/plain,*/*',
+                    'Cache-Control': 'max-age=3600'
+                }
+            }),
+            timeoutMs,
+            `Template loading timeout for ${templateName}`
+        )
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Failed to load template ${templateName}: ${response.status} ${response.statusText}`);
+                }
+                return response.text();
+            })
+            .then(html => {
+                if (!html || html.trim().length === 0) {
+                    throw new Error(`Template ${templateName} is empty or invalid`);
+                }
+                
+                try {
+                    // Final check before DOM injection
+                    if (!document.getElementById(templateId)) {
+                        const fragment = document.createRange().createContextualFragment(html);
+                        document.body.appendChild(fragment);
+                        const logger = window.RetroUILoggers?.template || console;
+                        logger.info('TEMPLATE_LOADED', `Template loaded successfully: ${templateId}`);
+                    }
+                } catch (domError) {
+                    throw new Error(`Failed to inject template ${templateId} into DOM: ${domError.message}`);
+                }
+            })
+            .catch(error => {
+                const logger = window.RetroUILoggers?.template || console;
+                logger.error('TEMPLATE_LOAD_ERROR', `Template loading error for ${templateId}`, { error: error.message, templateId });
+                
+                // Retry logic for network errors
+                if (retryCount < maxRetries && (error.name === 'TypeError' || error.message.includes('Failed to fetch'))) {
+                    logger.warn('TEMPLATE_RETRY', `Retrying template load for ${templateId} (attempt ${retryCount + 1}/${maxRetries})`);
+                    return new Promise(resolve => {
+                        setTimeout(() => {
+                            resolve(RetroUI.loadTemplate(templateName, templateId, retryCount + 1));
+                        }, retryDelay * (retryCount + 1)); // Exponential backoff
+                    });
+                }
+                
+                // Create fallback template if possible
+                const fallbackTemplate = RetroUI._createFallbackTemplate(templateId);
+                if (fallbackTemplate) {
+                    logger.warn('TEMPLATE_FALLBACK', `Using fallback template for ${templateId}`);
+                    if (!document.getElementById(templateId)) {
+                        document.body.appendChild(fallbackTemplate);
+                    }
+                } else {
+                    // Re-throw error if no fallback available
+                    throw new Error(`Critical template loading failure for ${templateId}: ${error.message}`);
+                }
+            });
+
+        // Track loading state
+        if (!RetroUI._loadingTemplates) RetroUI._loadingTemplates = new Map();
+        RetroUI._loadingTemplates.set(templateId, loadPromise);
+
+        return loadPromise;
     }
 }
 
