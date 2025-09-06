@@ -9,8 +9,21 @@ import Panel from './gooey/ui/panel/Panel.js';
 
 export default class GooeyJS {
     constructor() {
+        let headEl, htmlEl, linkEl;
+
         this.loadTemplates();
         this.defineElements();
+        linkEl = document.createElement('link');
+        linkEl.setAttribute("rel", "stylesheet");
+        linkEl.setAttribute("href", "styles.css");
+        headEl = document.head;
+        if (!headEl) {
+            htmlEl = document.documentElement;
+            headEl = document.createElement('head');
+            htmlEl.appendChild(headEl);
+        }
+
+        headEl.appendChild(linkEl);
     }
 
     defineElements() {
