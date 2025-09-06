@@ -1,5 +1,5 @@
 import Event from "./Event.js";
-import Point from "../../graphics/Point.js";
+import Point from "../graphics/Point.js";
 
 export default class MouseEvent extends Event {
 	static CLICK = "click";
