@@ -1,4 +1,4 @@
-import Application from './ui/Application.js';
+import Application from './gooey/ui/Application.js';
 
 export default class Gooey {
     constructor() {
