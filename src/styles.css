@@ -1,0 +1,156 @@
+* {
+    box-sizing: border-box;
+}
+
+html, body, ui-AppPanel {
+    background-color: #c1c0c1;
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+    padding: 0;
+    width: 100%;
+}
+
+.ui-Component[visible='false'] {
+    display: none;
+}
+
+.ui-Component[visible='true'] {
+    background-color: #c1c0c1;
+    display: block;
+}
+
+.ui-Component[disabled] {
+    opacity: 0.5;
+}
+
+ui-Menubar {
+    display: block;
+}
+
+ui-Menubar {
+    display: flex !important;
+    height: 22px;
+    width: 100%;
+}
+
+.menuHeader {
+    cursor: default;
+    margin-left: 11px;
+    margin-right: 11px;
+    padding-left: 4px;
+    padding-right: 4px;
+    user-select: none;
+}
+
+.menuHeader[active], .menuHeader:hover {
+    background-color: #010082;
+    color: white;
+    user-select: none;
+}
+
+ui-Menu {
+    border-style:solid;
+    border-width: 1px;
+    cursor: default;
+    display: flex;
+    padding-bottom: 2px;
+    position: absolute;
+    z-index: 5;
+}
+
+ui-MenuItem, ui-CheckboxMenuItem {
+    color: black;
+    display: flex !important;
+    justify-content: space-around;
+    width: 100%;
+}
+
+ui-MenuItem .MenuItemIcon, ui-CheckboxMenuItem .MenuItemIcon {
+    height: 16px;
+    width: 16px;
+    margin-left: 7px;
+    margin-right: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+ui-MenuItem .MenuItemIconImage {
+    height: 16px;
+    width: 16px;
+    display: none;
+}
+
+ui-CheckboxMenuItem .MenuItemIcon {
+    height: 14px;
+    width: 14px;
+}
+
+ui-CheckboxMenuItem[checked] .MenuItemIcon {
+    background-image: url("resources/images/checked.png");
+}
+
+ui-MenuItem .MenuItemText, ui-CheckboxMenuItem .MenuItemText {
+    flex: 1;
+    margin-left: 0px;
+    margin-right: 60px;
+    text-align: left;
+    user-select: none;
+}
+
+ui-MenuItem .MenuItemShortcut, ui-CheckboxMenuItem .MenuItemShortcut {
+    text-align: right;
+    margin-right: 7px;
+    width: 55px;
+}
+
+ui-MenuItem[active], ui-CheckboxMenuItem[active] {
+    background-color: #010082 !important;
+    color: white;
+}
+
+.ui-Container[layout="BORDER"] {
+    display: grid !important;
+    grid-template-columns: fit-content(20%) 1fr fit-content(20%);
+    grid-template-rows: fit-content(20%) 1fr fit-content(20%);
+    grid-template-areas: 
+        "north north north"
+        "west center east"
+        "south south south";
+}
+
+.ui-Container[layout="BORDER"] .ui-Container[region="north"] {
+    grid-area: north;
+}
+
+.ui-Container[layout="BORDER"] .ui-Container[region="west"] {
+    grid-area: west;
+}
+
+.ui-Container[layout="BORDER"] .ui-Container[region="center"] {
+    grid-area: center;
+}
+
+.ui-Container[layout="BORDER"] .ui-Container[region="east"] {
+    grid-area: east;
+}
+
+.ui-Container[layout="BORDER"] .ui-Container[region="south"] { 
+    grid-area: south; 
+}
+
+.ui-Container[layout="GRID"] {
+    display: grid;
+}
+
+.ui-Container[layout="HBOX"] {
+    display: flex;
+    flex-direction: row;
+}
+
+.ui-Container[layout="VBOX"] {
+    display: flex;
+    flex-direction: column;
+}
