@@ -92,42 +92,30 @@ export default class GooeyJS {
                     if (!document.getElementById(templateId)) {
                         const fragment = document.createRange().createContextualFragment(html);
                         document.body.appendChild(fragment);
-                        const logger = window.RetroUILoggers?.template || console;
-                        logger.info('TEMPLATE_LOADED', `Template loaded successfully: ${templateId}`);
+                        console.info('TEMPLATE_LOADED', `Template loaded successfully: ${templateId}`);
                     }
                 } catch (domError) {
                     throw new Error(`Failed to inject template ${templateId} into DOM: ${domError.message}`);
                 }
             })
             .catch(error => {
-                const logger = window.RetroUILoggers?.template || console;
-                logger.error('TEMPLATE_LOAD_ERROR', `Template loading error for ${templateId}`, { error: error.message, templateId });
+                console.error('TEMPLATE_LOAD_ERROR', `Template loading error for ${templateId}`, { error: error.message, templateId });
                 
                 // Retry logic for network errors
                 if (retryCount < maxRetries && (error.name === 'TypeError' || error.message.includes('Failed to fetch'))) {
-                    logger.warn('TEMPLATE_RETRY', `Retrying template load for ${templateId} (attempt ${retryCount + 1}/${maxRetries})`);
+                    console.warn('TEMPLATE_RETRY', `Retrying template load for ${templateId} (attempt ${retryCount + 1}/${maxRetries})`);
                     return new Promise(resolve => {
                         setTimeout(() => {
-                            resolve(RetroUI.loadTemplate(templateName, templateId, retryCount + 1));
+                            resolve(GooeyJS.loadTemplate(templateName, templateId, retryCount + 1));
                         }, retryDelay * (retryCount + 1)); // Exponential backoff
                     });
-                }
-                
-                // Create fallback template if possible
-                const fallbackTemplate = RetroUI._createFallbackTemplate(templateId);
-                if (fallbackTemplate) {
-                    logger.warn('TEMPLATE_FALLBACK', `Using fallback template for ${templateId}`);
-                    if (!document.getElementById(templateId)) {
-                        document.body.appendChild(fallbackTemplate);
-                    }
-                } else {
-                    // Re-throw error if no fallback available
-                    throw new Error(`Critical template loading failure for ${templateId}: ${error.message}`);
-                }
+                }     
             });
 
         // Track loading state
-        if (!GooeyJS._loadingTemplates) GooeyJS._loadingTemplates = new Map();
+        if (!GooeyJS._loadingTemplates) {
+            GooeyJS._loadingTemplates = new Map();
+        }
         GooeyJS._loadingTemplates.set(templateId, loadPromise);
 
         return loadPromise;
