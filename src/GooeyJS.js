@@ -11,8 +11,10 @@ export default class GooeyJS {
     constructor() {
         let headEl, htmlEl, linkEl;
 
-        this.loadTemplates();
-        this.defineElements();
+        this.loadTemplates().then(() => {
+            this.defineElements();
+        });
+
         linkEl = document.createElement('link');
         linkEl.setAttribute("rel", "stylesheet");
         linkEl.setAttribute("href", "styles.css");
