@@ -6,6 +6,22 @@ GooeyJS is a web component framework that provides a set of UI elements. Built u
 - **Custom Web Components** - All elements are proper custom HTML elements
 - **Graphics System** - Point and Dimension classes for calculations
 
+## Components
+
+### Layout & Containers
+
+- Application
+- AppPanel
+- Panel
+
+### Menus and Navigation
+
+- Menubar
+- Menu
+- MenuItem
+- CheckboxMenuItem
+- MenuItemSeparator
+
 ## Getting Started
 
 Download and unzip the latest release to your codebase. To include GooeyJS, just use the following:
