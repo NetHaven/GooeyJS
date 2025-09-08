@@ -7,6 +7,9 @@ import MenuItem from './gooey/ui/menu/MenuItem.js';
 import MenuItemSeparator from './gooey/ui/menu/MenuItemSeparator.js';
 import Panel from './gooey/ui/panel/Panel.js';
 
+const SCRIPT_PATH = new URL(import.meta.url, document.baseURI);
+const PATH = SCRIPT_PATH.href.substring(0, SCRIPT_PATH.href.lastIndexOf('/'));
+
 export default class GooeyJS {
     constructor() {
         let headEl, htmlEl, linkEl;
@@ -17,7 +20,8 @@ export default class GooeyJS {
 
         linkEl = document.createElement('link');
         linkEl.setAttribute("rel", "stylesheet");
-        linkEl.setAttribute("href", "styles.css");
+        linkEl.setAttribute("href", `${PATH}/styles.css`);
+
         headEl = document.head;
         if (!headEl) {
             htmlEl = document.documentElement;
@@ -40,7 +44,7 @@ export default class GooeyJS {
     }
 
     loadTemplates() {
-        let templatePath = `templates`;
+        let templatePath = `${PATH}/templates`;
 
         return Promise.all([
             GooeyJS.loadTemplate(`${templatePath}/Menu.html`, "ui-Menu"),
