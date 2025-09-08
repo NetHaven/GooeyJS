@@ -9,7 +9,7 @@ import Panel from './gooey/ui/panel/Panel.js';
 
 const SCRIPT_PATH = new URL(import.meta.url, document.baseURI);
 const PATH = SCRIPT_PATH.href.substring(0, SCRIPT_PATH.href.lastIndexOf('/'));
-
+ 
 export default class GooeyJS {
     constructor() {
         let headEl, htmlEl, linkEl;
