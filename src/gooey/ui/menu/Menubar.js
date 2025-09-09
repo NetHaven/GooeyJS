@@ -64,36 +64,27 @@ export default class Menubar extends Component {
                 menuHeader.addEventListener(MouseEvent.CLICK, event =>  {
                     var activeMenu, activeMenuHeader, menu, menuText;
 
-                    console.log("MENU_DEBUG: Menu header clicked:", event.currentTarget);
                     event.stopPropagation(); // Prevent bubbling to document                    
                     menuText = event.currentTarget.innerHTML;
                     menuText = menuText.replace("<u>", "");
                     menuText = menuText.replace("</u>", "");
-                    console.log("MENU_DEBUG: Looking for menu with text:", menuText);
                     menu = document.querySelector("ui-Menu[text=" + menuText + "]");
-                    console.log("MENU_DEBUG: Found menu:", menu);
                     
                     activeMenu = menubar.getActiveMenu();
                     if (activeMenu) {
-                        console.log("MENU_DEBUG: Closing currently active menu:", activeMenu);
                         activeMenu.active = false;
                     }
 
                     if (menu) {
-                        console.log("MENU_DEBUG: Activating new menu:", menu);
                         // Reposition menu before making it active
                         menubar.positionMenu(menu, event.currentTarget);
                         menu.active = true;
-                    } else {
-                        console.log("MENU_DEBUG: No menu found to activate");
                     }
 
                     activeMenuHeader = menubar.getActiveMenuHeader();
                     if (activeMenuHeader) {
-                        console.log("MENU_DEBUG: Removing active from previous header:", activeMenuHeader);
                         activeMenuHeader.removeAttribute("active");
                     }
-                    console.log("MENU_DEBUG: Setting current header as active:", event.currentTarget);
                     event.currentTarget.setAttribute("active", "");
                 });
             }
@@ -105,25 +96,18 @@ export default class Menubar extends Component {
             // Check if click is inside any menu header or menu
             const isMenuClick = event.target.closest('.menuHeader') || 
                                 event.target.closest('ui-Menu');
-            
-            console.log("MENU_DEBUG: Document click - target:", event.target, "isMenuClick:", isMenuClick);
-            
+         
             if (!isMenuClick) {
-                console.log("MENU_DEBUG: Click outside menu, attempting to close menus");
                 activeMenu = this.getActiveMenu();
                 activeMenuHeader = this.getActiveMenuHeader();
 
                 if (activeMenu) {
-                    console.log("MENU_DEBUG: Closing active menu:", activeMenu);
                     activeMenu.active = false;
                 }
 
                 if (activeMenuHeader) {
-                    console.log("MENU_DEBUG: Removing active from menu header:", activeMenuHeader);
                     activeMenuHeader.removeAttribute("active");
                 }
-            } else {
-                console.log("MENU_DEBUG: Click inside menu area, not closing");
             }
         });
 
@@ -199,13 +183,11 @@ export default class Menubar extends Component {
 
     getActiveMenuHeader() {
         const activeHeader = document.querySelector(".menuHeader[active]");
-        console.log("MENU_DEBUG: getActiveMenuHeader found:", activeHeader);
         return activeHeader;
     }
 
     getActiveMenu() {
         const activeMenu = document.querySelector("ui-Menu[active]");
-        console.log("MENU_DEBUG: getActiveMenu found:", activeMenu);
         return activeMenu;
     }
 
