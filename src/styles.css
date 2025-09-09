@@ -24,7 +24,7 @@ html, body, ui-AppPanel {
     opacity: 0.5;
 }
 
-ui-Menubar {
+ui-Menubar, ui-Toolbar {
     display: block;
 }
 
@@ -109,6 +109,34 @@ ui-MenuItem .MenuItemShortcut, ui-CheckboxMenuItem .MenuItemShortcut {
 ui-MenuItem[active], ui-CheckboxMenuItem[active] {
     background-color: #010082 !important;
     color: white;
+}
+
+ui-Toolbar[visible='true'] {
+    display: flex !important;
+    margin-left: 11px;
+    width: 100%;
+}
+
+ui-Toolbar[visible='false'] {
+    display: none;
+}
+
+ui-Toolbar {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+}
+
+ui-Toolbar[wrap] {
+    flex-wrap: wrap;
+}
+
+ui-ToolbarSeparator {
+    border-color: white;
+    border-style: solid;
+    border-width: 1px;
+    margin: 2px;
+    width: 1px;
 }
 
 .ui-Container[layout="BORDER"] {
