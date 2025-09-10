@@ -10,9 +10,9 @@ GooeyJS is a web component framework that provides a set of UI elements. Built u
 
 ### Layout & Containers
 
-- **Application**
-- **AppPanel**
-- **Panel**
+- **Application** - the root-level component for GooeyJS applications.
+- **AppPanel** - the top-level container component for GooeyJS applications.
+- **Panel** - a fundamental container component that provides a basic rectangular area with consistent styling.
 
 ### Buttons & Input
 
