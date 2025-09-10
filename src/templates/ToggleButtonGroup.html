@@ -1,0 +1,101 @@
+<template id="ui-ToggleButtonGroup">
+    <style>
+/* Base ToggleButtonGroup styles - will be overridden by theme CSS */
+ui-ToggleButtonGroup {
+    display: inline-flex;
+    align-items: center;
+    gap: 0;
+    position: relative;
+}
+
+.toggle-button-group {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    background-color: transparent;
+}
+
+/* Horizontal layout (default) */
+ui-ToggleButtonGroup:not([orientation="vertical"]) {
+    flex-direction: row;
+}
+
+ui-ToggleButtonGroup:not([orientation="vertical"]) .toggle-button-group {
+    flex-direction: row;
+}
+
+/* Remove margins between adjacent toggle buttons for seamless appearance */
+ui-ToggleButtonGroup:not([orientation="vertical"]) ui-ToggleButton {
+    margin: 0;
+    border-radius: 0;
+}
+
+ui-ToggleButtonGroup:not([orientation="vertical"]) ui-ToggleButton:first-child {
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+}
+
+ui-ToggleButtonGroup:not([orientation="vertical"]) ui-ToggleButton:last-child {
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+}
+
+ui-ToggleButtonGroup:not([orientation="vertical"]) ui-ToggleButton:not(:first-child) {
+    border-left-width: 0;
+}
+
+/* Vertical layout */
+ui-ToggleButtonGroup[orientation="vertical"] {
+    flex-direction: column;
+}
+
+ui-ToggleButtonGroup[orientation="vertical"] .toggle-button-group {
+    flex-direction: column;
+}
+
+ui-ToggleButtonGroup[orientation="vertical"] ui-ToggleButton {
+    margin: 0;
+    border-radius: 0;
+    width: 100%;
+}
+
+ui-ToggleButtonGroup[orientation="vertical"] ui-ToggleButton:first-child {
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+}
+
+ui-ToggleButtonGroup[orientation="vertical"] ui-ToggleButton:last-child {
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
+}
+
+ui-ToggleButtonGroup[orientation="vertical"] ui-ToggleButton:not(:first-child) {
+    border-top-width: 0;
+}
+
+/* Spaced layout */
+ui-ToggleButtonGroup[spaced] {
+    gap: 4px;
+}
+
+ui-ToggleButtonGroup[spaced] .toggle-button-group {
+    gap: 4px;
+}
+
+ui-ToggleButtonGroup[spaced] ui-ToggleButton {
+    border-radius: 3px !important;
+    border-width: 1px !important;
+    margin: 0;
+}
+
+/* Disabled state */
+ui-ToggleButtonGroup[disabled] {
+    opacity: 0.5;
+    pointer-events: none;
+}
+    </style>
+    <div class="toggle-button-group">
+        <!-- Child ToggleButton elements will be placed here -->
+        <slot></slot>
+    </div>
+</template>
