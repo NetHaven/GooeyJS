@@ -10,20 +10,32 @@ GooeyJS is a web component framework that provides a set of UI elements. Built u
 
 ### Layout & Containers
 
-- Application
-- AppPanel
-- Panel
+- **Application**
+- **AppPanel**
+- **Panel**
+
+### Buttons & Input
+
+- **Button**
 
 ### Menus and Navigation
 
-- Menubar
-- Menu
-- MenuItem
-- CheckboxMenuItem
-- MenuItemSeparator
+- **Menubar**
+- **Menu**
+- **MenuItem**
+- **CheckboxMenuItem**
+- **MenuItemSeparator**
+
+### Toolbars & Tools
+
+- **Toolbar**
+- **ToolbarSeparator**
 
 ## Getting Started
 
 Download and unzip the latest release to your codebase. To include GooeyJS, just use the following:
 
     <script type="module" src="GooeyJS/GooeyJS.js"></script>
+
+
+**Copyright 2025 NetHaven Inc.**
