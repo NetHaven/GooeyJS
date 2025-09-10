@@ -16,7 +16,7 @@ GooeyJS is a web component framework that provides a set of UI elements. Built u
 
 ### Buttons & Input
 
-- **Button**
+- **Button** - represents a clickable button with support for text, icons, and custom actions.
 
 ### Menus and Navigation
 
@@ -33,7 +33,7 @@ GooeyJS is a web component framework that provides a set of UI elements. Built u
 
 ## Getting Started
 
-Download GooeyJS.v0.3.0 and unzip to your codebase. To include GooeyJS, just use the following:
+Download GooeyJS.v0.3.0.zip and unzip to your codebase. To include GooeyJS, just use the following:
 
     <script type="module" src="GooeyJS/GooeyJS.js"></script>
 
