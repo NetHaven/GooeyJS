@@ -28,8 +28,8 @@ GooeyJS is a web component framework that provides a set of UI elements. Built u
 
 ### Toolbars & Tools
 
-- **Toolbar**
-- **ToolbarSeparator**
+- **Toolbar** - provides a horizontal container for organizing buttons, controls, and other UI elements in a toolbar layout.
+- **ToolbarSeparator** - provides a visual separator for organizing and grouping buttons within toolbars.
 
 ## Getting Started
 
