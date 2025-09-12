@@ -2,11 +2,14 @@ import Application from './gooey/ui/Application.js';
 import AppPanel from './gooey/ui/panel/AppPanel.js';
 import Button from './gooey/ui/button/Button.js';
 import CheckboxMenuItem from './gooey/ui/menu/CheckboxMenuItem.js';
+import ColorPicker from './gooey/ui/ColorPicker.js';
 import Menubar from './gooey/ui/menu/Menubar.js';
 import Menu from './gooey/ui/menu/Menu.js';
 import MenuItem from './gooey/ui/menu/MenuItem.js';
 import MenuItemSeparator from './gooey/ui/menu/MenuItemSeparator.js';
 import Panel from './gooey/ui/panel/Panel.js';
+import ToggleButton from './ui/button/ToggleButton.js';
+import ToggleButtonGroup from './ui/button/ToggleButtonGroup';
 import Toolbar from './gooey/ui/toolbar/Toolbar.js';
 import ToolbarSeparator from './gooey/ui/toolbar/ToolbarSeparator.js';
 
@@ -40,11 +43,14 @@ export default class GooeyJS {
         customElements.define("ui-apppanel", AppPanel);
         customElements.define("ui-button", Button);
         customElements.define("ui-checkboxmenuitem", CheckboxMenuItem);
+        customElements.define("ui-colorpicker", ColorPicker);
         customElements.define("ui-menu", Menu);
         customElements.define("ui-menubar", Menubar);
         customElements.define("ui-menuitem", MenuItem);
         customElements.define("ui-menuitemseparator", MenuItemSeparator);
         customElements.define("ui-panel", Panel);
+        customElements.define("ui-togglebutton", ToggleButton);
+        customElements.define("ui-togglebuttongroup", ToggleButtonGroup);
         customElements.define("ui-toolbar", Toolbar);
         customElements.define("ui-toolbarseparator", ToolbarSeparator);
     }
@@ -53,10 +59,13 @@ export default class GooeyJS {
         let templatePath = `${PATH}/templates`;
 
         return Promise.all([
+            GooeyJS.loadTemplate(`${templatePath}/ColorPicker.html`, "ui-ColorPicker"),
             GooeyJS.loadTemplate(`${templatePath}/Menu.html`, "ui-Menu"),
             GooeyJS.loadTemplate(`${templatePath}/MenuHeader.html`, "menuHeader"),
             GooeyJS.loadTemplate(`${templatePath}/MenuItem.html`, "ui-MenuItem"),
             GooeyJS.loadTemplate(`${templatePath}/MenuItemSeparator.html`, "ui-MenuItemSeparator"),
+            GooeyJS.loadTemplate(`${templatePath}/ToggleButton.html`, "ui-ToggleButton"),
+            GooeyJS.loadTemplate(`${templatePath}/ToggleButtonGroup.html`, "ui-ToggleButtonGroup"),
             GooeyJS.loadTemplate(`${templatePath}/ToolbarSeparator.html`, "ui-ToolbarSeparator"),
          ]);
     }
