@@ -8,8 +8,8 @@ import Menu from './gooey/ui/menu/Menu.js';
 import MenuItem from './gooey/ui/menu/MenuItem.js';
 import MenuItemSeparator from './gooey/ui/menu/MenuItemSeparator.js';
 import Panel from './gooey/ui/panel/Panel.js';
-import ToggleButton from './ui/button/ToggleButton.js';
-import ToggleButtonGroup from './ui/button/ToggleButtonGroup';
+import ToggleButton from './gooey/ui/button/ToggleButton.js';
+import ToggleButtonGroup from './gooey/ui/button/ToggleButtonGroup';
 import Toolbar from './gooey/ui/toolbar/Toolbar.js';
 import ToolbarSeparator from './gooey/ui/toolbar/ToolbarSeparator.js';
 
