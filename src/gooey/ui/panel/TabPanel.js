@@ -492,7 +492,7 @@ export default class TabPanel extends Container {
     // Event handling
     addEventListener(type, listener, options) {
         // For tab-specific events, add them to the TabPanel itself
-        if (type === 'tabchange' || type === 'tabclose' || type === 'tabdragstart' || type === 'tabdragend' || type === 'tabreorder') {
+        if (type === TabPanelEvent.TAB_CHANGE || type === 'tabclose' || type === 'tabdragstart' || type === 'tabdragend' || type === TabPanelEvent.TAB_REORDER) {
             super.addEventListener(type, listener, options);
         } else {
             super.addEventListener(type, listener, options);
