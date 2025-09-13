@@ -1,5 +1,6 @@
 import Container from '../Container.js';
 import Layout from '../Layout.js';
+import TabEvent from '../../events/panel/TabEvent.js';
 import TabPanelEvent from '../../events/panel/TabPanelEvent.js';
 import DragEvent from '../../events/DragEvent.js';
 
@@ -492,7 +493,7 @@ export default class TabPanel extends Container {
     // Event handling
     addEventListener(type, listener, options) {
         // For tab-specific events, add them to the TabPanel itself
-        if (type === TabPanelEvent.TAB_CHANGE || type === 'tabclose' || type === 'tabdragstart' || type === 'tabdragend' || type === TabPanelEvent.TAB_REORDER) {
+        if (type === TabPanelEvent.TAB_CHANGE || type === TabEvent.TAB_CLOSE || type === TabPanelEvent.TAB_REORDER) {
             super.addEventListener(type, listener, options);
         } else {
             super.addEventListener(type, listener, options);

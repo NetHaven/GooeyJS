@@ -1,6 +1,7 @@
 import Container from '../Container.js';
 import Layout from '../Layout.js';
 import TabEvent from '../../events/panel/TabEvent.js';
+import TabPanelEvent from '../../events/panel/TabPanelEvent.js';
 import MouseEvent from '../../events/MouseEvent.js';
 
 export default class Tab extends Container {
@@ -177,7 +178,7 @@ export default class Tab extends Container {
         
         // Dispatch tab change event
         if (isActive && this._tabPanel) {
-            this._tabPanel.fireEvent(TabEvent.TAB_CHANGE, { tab: this, name: this.name });
+            this._tabPanel.fireEvent(TabPanelEvent.TAB_CHANGE, { tab: this, name: this.name });
         }
     }
 
