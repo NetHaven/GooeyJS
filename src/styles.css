@@ -299,6 +299,46 @@ ui-Toolbar[buttonsize='xlarge'] ui-ColorPicker button {
     width: 144px;
 }
 
+/* Tab and TabPanel Styles */
+ui-TabPanel {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+ui-TabPanel.vertical {
+    flex-direction: row;
+}
+
+.tab-strip {
+    display: flex;
+    flex-direction: row;
+    background-color: #c1c0c1;
+    overflow-x: auto;
+    flex-shrink: 0;
+}
+
+ui-TabPanel.vertical .tab-strip {
+    flex-direction: column;
+    border-bottom: none;
+    border-right: 1px solid #808080;
+    overflow-x: visible;
+    overflow-y: auto;
+    width: 150px;
+}
+
+.tab-content {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+    background-color: #c1c0c1;
+    border: 1px solid black;
+    display: flex; /* Make tab-content a flex container */
+    min-height: 0; /* Ensure proper flex shrinking */
+}
+
 .ui-Container[layout="BORDER"] {
     display: grid !important;
     grid-template-columns: fit-content(20%) 1fr fit-content(20%);
