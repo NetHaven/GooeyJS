@@ -68,6 +68,7 @@ export default class GooeyJS {
             GooeyJS.loadTemplate(`${templatePath}/MenuHeader.html`, "menuHeader"),
             GooeyJS.loadTemplate(`${templatePath}/MenuItem.html`, "ui-MenuItem"),
             GooeyJS.loadTemplate(`${templatePath}/MenuItemSeparator.html`, "ui-MenuItemSeparator"),
+            GooeyJS.loadTemplate(`${templatePath}/TabPanel.html`, "ui-TabPanel"),
             GooeyJS.loadTemplate(`${templatePath}/ToggleButton.html`, "ui-ToggleButton"),
             GooeyJS.loadTemplate(`${templatePath}/ToggleButtonGroup.html`, "ui-ToggleButtonGroup"),
             GooeyJS.loadTemplate(`${templatePath}/ToolbarSeparator.html`, "ui-ToolbarSeparator"),
