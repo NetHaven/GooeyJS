@@ -89,7 +89,7 @@ ui-CheckboxMenuItem .MenuItemIcon {
 }
 
 ui-CheckboxMenuItem[checked] .MenuItemIcon {
-    background-image: url("resources/images/checked.png");
+    background-image: url("resources/icons/checked.png");
 }
 
 ui-MenuItem .MenuItemText, ui-CheckboxMenuItem .MenuItemText {
@@ -423,7 +423,7 @@ ui-TabPanel.vertical .tab-header.active {
     border-radius: 2px;
     color: #666;
     flex-shrink: 0;
-    background-image: url('../icons/close24.png');
+    background-image: url('resources/icons/close24.png');
     background-repeat: no-repeat;
     background-position: center;
     background-size: 18px 18px;
