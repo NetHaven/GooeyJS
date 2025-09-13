@@ -317,10 +317,10 @@ export default class TabPanel extends Container {
         tabHeader._dropHandler = this._onTabDrop.bind(this, tab);
         
         // Add drag event listeners
-        tabHeader.addEventListener('dragstart', tabHeader._dragStartHandler);
-        tabHeader.addEventListener('dragend', tabHeader._dragEndHandler);
-        tabHeader.addEventListener('dragover', tabHeader._dragOverHandler);
-        tabHeader.addEventListener('drop', tabHeader._dropHandler);
+        tabHeader.addEventListener(DragEvent.START, tabHeader._dragStartHandler);
+        tabHeader.addEventListener(DragEvent.END, tabHeader._dragEndHandler);
+        tabHeader.addEventListener(DragEvent.OVER, tabHeader._dragOverHandler);
+        tabHeader.addEventListener(DragEvent.DROP, tabHeader._dropHandler);
     }
 
     _removeTabDragAndDrop(tabHeader) {
@@ -329,10 +329,10 @@ export default class TabPanel extends Container {
         
         // Remove event listeners if they exist
         if (tabHeader._dragStartHandler) {
-            tabHeader.removeEventListener('dragstart', tabHeader._dragStartHandler);
-            tabHeader.removeEventListener('dragend', tabHeader._dragEndHandler);
-            tabHeader.removeEventListener('dragover', tabHeader._dragOverHandler);
-            tabHeader.removeEventListener('drop', tabHeader._dropHandler);
+            tabHeader.removeEventListener(DragEvent.START, tabHeader._dragStartHandler);
+            tabHeader.removeEventListener(DragEvent.END, tabHeader._dragEndHandler);
+            tabHeader.removeEventListener(DragEvent.OVER, tabHeader._dragOverHandler);
+            tabHeader.removeEventListener(DragEvent.DROP, tabHeader._dropHandler);
             
             delete tabHeader._dragStartHandler;
             delete tabHeader._dragEndHandler;
