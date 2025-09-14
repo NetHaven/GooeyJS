@@ -10,9 +10,11 @@ GooeyJS is a web component framework that provides a set of UI elements. Built u
 
 ### Layout & Containers
 
-- **Application** - the root-level component for GooeyJS applications.
-- **AppPanel** - the top-level container component for GooeyJS applications.
-- **Panel** - a fundamental container component that provides a basic rectangular area with consistent styling.
+- **Application** - the root-level component for GooeyJS applications. It provides the foundational viewport setup and base styling for the entire application hierarchy.
+- **AppPanel** - the top-level container component for GooeyJS applications. It provides the main application layout structure and serves as the root container for all other UI components.
+- **Panel** - a fundamental container component that provides a basic rectangular area with consistent styling. It serves as the foundation for more complex layout components and provides essential container functionality.
+- **Tab** - represents an individual tab within a TabPanel. It contains the tab's content and manages its visibility based on the active state.
+- **TabPanel** - is a container that manages multiple tab components. It provides the tab strip interface and handles tab activation, keyboard navigation, and optional drag-and-drop reordering of tabs.
 
 ### Buttons & Input
 
@@ -20,7 +22,10 @@ GooeyJS is a web component framework that provides a set of UI elements. Built u
 - **ToggleButton** - represents a button that maintains a pressed/unpressed state.
 - **ToggleButtonGroup** - is a container component that manages a group of toggle buttons with exclusive selection behavior.
 
-### Menus and Navigation
+### Text & Editing
+- **Label** - displays static text content with optional icons and comprehensive alignment options.
+
+### Menus & Navigation
 
 - **Menubar** - provides a horizontal menu bar container that holds top-level menu items.
 - **Menu** - creates a dropdown menu container that holds menu items, separators, and submenus.
@@ -36,7 +41,7 @@ GooeyJS is a web component framework that provides a set of UI elements. Built u
 
 ## Getting Started
 
-Download GooeyJS.v0.4.0.zip and unzip to your codebase. To include GooeyJS, just use the following:
+Download GooeyJS.v0.5.0.zip and unzip to your codebase. To include GooeyJS, just use the following:
 
     <script type="module" src="GooeyJS/GooeyJS.js"></script>
 
