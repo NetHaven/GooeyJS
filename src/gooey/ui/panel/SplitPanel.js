@@ -1,5 +1,7 @@
 import Container from '../Container.js';
-import SplitPanelEvent from '../../mvc/events/panel/SplitPanelEvent.js';
+import DragEvent from '../../events/DragEvent.js';
+import MouseEvent from '../../events/MouseEvent.js';
+import SplitPanelEvent from '../../events/panel/SplitPanelEvent.js';
 
 export default class SplitPanel extends Container {
     constructor() {
@@ -82,13 +84,13 @@ export default class SplitPanel extends Container {
     
     _setupEventListeners() {
         // Mouse events for dragging
-        this._divider.addEventListener('mousedown', this._onMouseDown.bind(this));
-        document.addEventListener('mousemove', this._onMouseMove.bind(this));
-        document.addEventListener('mouseup', this._onMouseUp.bind(this));
+        this._divider.addEventListener(MouseEvent.MOUSE_DOWN, this._onMouseDown.bind(this));
+        document.addEventListener(MouseEvent.MOUSE_MOVE, this._onMouseMove.bind(this));
+        document.addEventListener(MouseEvent.MOUSE_UP, this._onMouseUp.bind(this));
         
         // Prevent text selection during drag
         this._divider.addEventListener('selectstart', (e) => e.preventDefault());
-        this._divider.addEventListener('dragstart', (e) => e.preventDefault());
+        this._divider.addEventListener(DragEvent.START, (e) => e.preventDefault());
     }
     
     _onMouseDown(e) {
