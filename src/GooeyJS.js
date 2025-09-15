@@ -9,6 +9,7 @@ import Menu from './gooey/ui/menu/Menu.js';
 import MenuItem from './gooey/ui/menu/MenuItem.js';
 import MenuItemSeparator from './gooey/ui/menu/MenuItemSeparator.js';
 import Panel from './gooey/ui/panel/Panel.js';
+import SplitPanel from './gooey/ui/panel/SplitPanel.js';
 import Tab from './gooey/ui/panel/Tab.js';
 import TabPanel from './gooey/ui/panel/TabPanel.js';
 import ToggleButton from './gooey/ui/button/ToggleButton.js';
@@ -53,6 +54,7 @@ export default class GooeyJS {
         customElements.define("ui-menuitemseparator", MenuItemSeparator);
         customElements.define("ui-label", Label);
         customElements.define("ui-panel", Panel);
+        customElements.define("ui-splitpanel", SplitPanel);
         customElements.define("ui-tab", Tab);
         customElements.define("ui-tabpanel", TabPanel);
         customElements.define("ui-togglebutton", ToggleButton);
