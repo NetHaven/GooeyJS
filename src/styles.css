@@ -480,6 +480,84 @@ ui-Tab[active] {
     border-bottom: 3px solid #010082;
 }
 
+/* SplitPanel Styles */
+ui-SplitPanel {
+    display: flex;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-color: #c1c0c1;
+}
+
+ui-SplitPanel .splitpanel-pane {
+    overflow: auto;
+    background-color: #c1c0c1;
+    border: 1px inset #c1c0c1;
+    display: flex;
+    flex-direction: column;
+}
+
+ui-SplitPanel .splitpanel-first-pane {
+    /* First pane specific styles if needed */
+}
+
+ui-SplitPanel .splitpanel-second-pane {
+    /* Second pane specific styles if needed */
+}
+
+ui-SplitPanel .splitpanel-divider {
+    background-color: #c1c0c1;
+    border: 1px outset #c1c0c1;
+    user-select: none;
+    flex-shrink: 0;
+    position: relative;
+}
+
+ui-SplitPanel .splitpanel-divider:hover {
+    background-color: #d4d0c8;
+}
+
+ui-SplitPanel .splitpanel-divider:active,
+ui-SplitPanel.splitpanel-dragging .splitpanel-divider {
+    background-color: #b4b0a8;
+    border: 1px inset #c1c0c1;
+}
+
+/* Horizontal orientation (left/right split) */
+ui-SplitPanel[orientation="horizontal"] {
+    flex-direction: row;
+}
+
+ui-SplitPanel[orientation="horizontal"] .splitpanel-divider {
+    cursor: col-resize;
+    min-width: 3px;
+    width: 5px;
+}
+
+/* Vertical orientation (top/bottom split) */
+ui-SplitPanel[orientation="vertical"] {
+    flex-direction: column;
+}
+
+ui-SplitPanel[orientation="vertical"] .splitpanel-divider {
+    cursor: row-resize;
+    min-height: 3px;
+    height: 5px;
+}
+
+/* Dragging state */
+ui-SplitPanel.splitpanel-dragging {
+    user-select: none;
+}
+
+ui-SplitPanel.splitpanel-dragging * {
+    pointer-events: none;
+}
+
+ui-SplitPanel.splitpanel-dragging .splitpanel-divider {
+    pointer-events: auto;
+}
+
 .ui-Container[layout="BORDER"] {
     display: grid !important;
     grid-template-columns: fit-content(20%) 1fr fit-content(20%);
