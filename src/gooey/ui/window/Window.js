@@ -1,9 +1,9 @@
 import Component from '../Component.js';
 import Point from '../../graphics/Point.js';
-import WindowEvent from '../../mvc/events/window/WindowEvent.js';
-import KeyboardEvent from '../../mvc/events/KeyboardEvent.js';
-import TextFieldEvent from '../../mvc/events/form/text/TextFieldEvent.js';
-import MouseEvent from '../../mvc/events/MouseEvent.js';
+import WindowEvent from '../../events/window/WindowEvent.js';
+import KeyboardEvent from '../../events/KeyboardEvent.js';
+import TextFieldEvent from '../../events/form/text/TextFieldEvent.js';
+import MouseEvent from '../../events/MouseEvent.js';
 
 export default class Window extends Component {
     constructor () {
