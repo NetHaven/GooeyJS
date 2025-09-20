@@ -299,6 +299,69 @@ ui-Toolbar[buttonsize='xlarge'] ui-ColorPicker button {
     width: 144px;
 }
 
+ui-Window {
+    background-color: #c1c0c1;
+    border-style: solid;
+    border-width: 1px;
+    display: none;
+    margin: 0;
+    position: fixed;
+    z-index: 1500;
+}
+
+ui-Window[visible=true] {
+    display: flex !important;
+    height: 75vh;
+    flex-direction: column;
+}
+
+ui-Window .WindowTitlebar {
+    background: #010082;
+    color: white;
+    cursor: default;
+    font-weight: bold;
+    height: 20px;
+    text-align: center;
+    user-select: none;
+    width: 100%;
+}
+
+ui-Window .WindowContent {
+    display: flex;
+    flex: 1;
+    margin: 8px;
+    min-height: 0px;
+}
+
+ui-Window .WindowButtonbar {
+    display: flex;
+    height: 30px;
+    margin: 10px;
+    justify-content: flex-end;
+}
+
+ui-Window .WindowButtonbar button {
+    margin-left: 4px;
+    margin-right: 8px;
+    margin-top: 8px;
+    width: 96px;
+}
+
+.uiWindowModal {
+    height: 100%;
+    left: 0;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1400;
+}
+
+/* Ensure modal windows appear above everything else */
+ui-Window[modal] {
+    z-index: 1600;
+}
+
 /* Tab and TabPanel Styles */
 ui-TabPanel {
     display: flex;
@@ -495,14 +558,6 @@ ui-SplitPanel .splitpanel-pane {
     border: 1px inset #c1c0c1;
     display: flex;
     flex-direction: column;
-}
-
-ui-SplitPanel .splitpanel-first-pane {
-    /* First pane specific styles if needed */
-}
-
-ui-SplitPanel .splitpanel-second-pane {
-    /* Second pane specific styles if needed */
 }
 
 ui-SplitPanel .splitpanel-divider {
