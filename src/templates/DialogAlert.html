@@ -1,0 +1,17 @@
+<template id="alertDialogTemplate">
+    <ui-Window width="320" height="120" id="alertDialog" wintitle="Alert" draggable constrainviewport modal>
+        <style>
+            #alertDialog .WindowButtonbar {
+                justify-content: center;
+            }
+            
+            #alertDialog .WindowCancelButton {
+                display: none;
+            }
+        </style>
+        <div class="DialogAlert-container">
+            <img class="DialogAlert-icon" src="GooeyJS/resources/icons/warning32.png" alt="Warning">
+            <div class="DialogAlert-message"></div>
+        </div>
+    </ui-Window>    
+</template>
