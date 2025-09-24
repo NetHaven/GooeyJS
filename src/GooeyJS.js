@@ -43,6 +43,16 @@ export default class GooeyJS {
         headEl.appendChild(linkEl);
     }
 
+    static activateTemplate(id) {
+        let clone, template;
+
+        template = document.getElementById(id);
+        if (template) {
+            clone = document.importNode(template.content, true);
+            document.body.appendChild(clone);
+        }
+    }
+
     defineElements() {
         customElements.define("ui-application", Application);
         customElements.define("ui-apppanel", AppPanel);
