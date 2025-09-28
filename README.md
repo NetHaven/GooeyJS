@@ -25,7 +25,7 @@ GooeyJS is a web component framework that provides a set of UI elements. Built u
 
 ### Text & Editing
 - **Label** - displays static text content with optional icons and comprehensive alignment options.
-- **Textfield** - provides a single-line text input control with built-in validation support, placeholder text, and various input types.
+- **TextField** - provides a single-line text input control with built-in validation support, placeholder text, and various input types.
 
 ### Menus & Navigation
 
