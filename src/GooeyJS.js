@@ -94,6 +94,8 @@ export default class GooeyJS {
             GooeyJS.loadTemplate(`${templatePath}/ToggleButton.html`, "ui-ToggleButton"),
             GooeyJS.loadTemplate(`${templatePath}/ToggleButtonGroup.html`, "ui-ToggleButtonGroup"),
             GooeyJS.loadTemplate(`${templatePath}/ToolbarSeparator.html`, "ui-ToolbarSeparator"),
+            GooeyJS.loadTemplate(`${templatePath}/Tree.html`, "ui-Tree"),
+            GooeyJS.loadTemplate(`${templatePath}/TreeItem.html`, "ui-TreeItem"),
             GooeyJS.loadTemplate(`${templatePath}/Window.html`, "ui-Window"),
          ]);
     }
