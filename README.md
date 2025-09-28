@@ -13,17 +13,19 @@ GooeyJS is a web component framework that provides a set of UI elements. Built u
 - **Application** - the root-level component for GooeyJS applications. It provides the foundational viewport setup and base styling for the entire application hierarchy.
 - **AppPanel** - the top-level container component for GooeyJS applications. It provides the main application layout structure and serves as the root container for all other UI components.
 - **Panel** - a fundamental container component that provides a basic rectangular area with consistent styling. It serves as the foundation for more complex layout components and provides essential container functionality.
+- **SplitPanel** - a resizable container component that displays two child elements side by side with an adjustable divider between them. Users can drag the divider to dynamically resize the panes, making it ideal for creating split layouts like file explorers, code editors, or any interface requiring adjustable content areas.
 - **Tab** - represents an individual tab within a TabPanel. It contains the tab's content and manages its visibility based on the active state.
 - **TabPanel** - is a container that manages multiple tab components. It provides the tab strip interface and handles tab activation, keyboard navigation, and optional drag-and-drop reordering of tabs.
 
 ### Buttons & Input
 
-- **Button** - represents a clickable button with support for text, icons, and custom actions.
-- **ToggleButton** - represents a button that maintains a pressed/unpressed state.
-- **ToggleButtonGroup** - is a container component that manages a group of toggle buttons with exclusive selection behavior.
+- **Button** - represents a clickable button with support for text, icons, and custom actions. It extends the base Component class and provides desktop-style button appearance with hover and pressed states.
+- **ToggleButton** - represents a button that maintains a pressed/unpressed state. When clicked, it toggles between pressed and unpressed states, making it ideal for on/off controls, tool selection, and other binary choices.
+- **ToggleButtonGroup** - is a container component that manages a group of toggle buttons with exclusive selection behavior. When one toggle button in the group is pressed, all other buttons in the group are automatically unpressed, similar to radio button behavior.
 
 ### Text & Editing
 - **Label** - displays static text content with optional icons and comprehensive alignment options.
+- **Textfield** - provides a single-line text input control with built-in validation support, placeholder text, and various input types.
 
 ### Menus & Navigation
 
@@ -39,9 +41,13 @@ GooeyJS is a web component framework that provides a set of UI elements. Built u
 - **ToolbarSeparator** - provides a visual separator for organizing and grouping buttons within toolbars.
 - **ColorPicker** - provides a comprehensive color selection interface with a color button.
 
+### Windows & Dialogs
+- **Window** - represents a desktop-style window with title bar, close button, and draggable functionality.
+- **Dialog** - provides static methods for displaying system dialog boxes including alerts, confirmations, prompts, and information messages.
+
 ## Getting Started
 
-Download GooeyJS.v0.5.0.zip and unzip to your codebase. To include GooeyJS, just use the following:
+Download GooeyJS.v0.6.0.zip and unzip to your codebase. To include GooeyJS, just use the following:
 
     <script type="module" src="GooeyJS/GooeyJS.js"></script>
 
