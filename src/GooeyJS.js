@@ -16,6 +16,8 @@ import ToggleButton from './gooey/ui/button/ToggleButton.js';
 import ToggleButtonGroup from './gooey/ui/button/ToggleButtonGroup';
 import Toolbar from './gooey/ui/toolbar/Toolbar.js';
 import ToolbarSeparator from './gooey/ui/toolbar/ToolbarSeparator.js';
+import Tree from './gooey/ui/Tree.js';
+import TreeItem from './gooey/ui/TreeItem.js';
 import Window from './gooey/ui/window/Window.js';
 
 const SCRIPT_PATH = new URL(import.meta.url, document.baseURI);
@@ -72,6 +74,8 @@ export default class GooeyJS {
         customElements.define("ui-togglebuttongroup", ToggleButtonGroup);
         customElements.define("ui-toolbar", Toolbar);
         customElements.define("ui-toolbarseparator", ToolbarSeparator);
+        customElements.define("ui-tree", Tree);
+        customElements.define("ui-treeitem", TreeItem);
         customElements.define("ui-window", Window);
     }
 
