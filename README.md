@@ -24,16 +24,19 @@ GooeyJS is a web component framework that provides a set of UI elements. Built u
 - **ToggleButtonGroup** - is a container component that manages a group of toggle buttons with exclusive selection behavior. When one toggle button in the group is pressed, all other buttons in the group are automatically unpressed, similar to radio button behavior.
 
 ### Text & Editing
-- **Label** - displays static text content with optional icons and comprehensive alignment options.
-- **TextField** - provides a single-line text input control with built-in validation support, placeholder text, and various input types.
+- **Label** - displays static text content with optional icons and comprehensive alignment options. It provides a consistent way to display labels, captions, and informational text throughout GooeyJS applications with support for both horizontal and vertical alignment, clickable actions, and icon integration.
+
+### Lists and Selection
+-- **Tree** - provides a hierarchical tree view for displaying structured data. It manages selection states, keyboard navigation, and expansion/collapse operations for tree items.
+-- **TreeItem** - represents an individual item within a tree structure. It can contain text, an icon, and child tree items to create hierarchical structures.
 
 ### Menus & Navigation
 
-- **Menubar** - provides a horizontal menu bar container that holds top-level menu items.
-- **Menu** - creates a dropdown menu container that holds menu items, separators, and submenus.
-- **MenuItem** - represents an individual action item within a menu.
-- **CheckboxMenuItem** - represents a menu item with a checkbox that can be toggled on or off.
-- **MenuItemSeparator** - provides a visual separator line between menu items.
+- **Menubar** - provides a horizontal menu bar container that holds top-level menu items. It's typically positioned at the top of an application window and provides access to application commands and functions.
+- **Menu** - creates a dropdown menu container that holds menu items, separators, and submenus. It provides keyboard navigation, cascading submenus, and integration with menu bars and context menus for comprehensive menu system functionality.
+- **MenuItem** - represents an individual action item within a menu. It provides clickable menu options with support for icons, keyboard shortcuts, and various states (enabled, disabled, checked).
+- **CheckboxMenuItem** - represents a menu item with a checkbox that can be toggled on or off. It extends the basic MenuItem component to provide toggleable state functionality, commonly used for settings, options, or feature toggles in menu systems.
+- **MenuItemSeparator** - provides a visual separator line between menu items. It helps organize menu items into logical groups and improves menu readability.
 
 ### Toolbars & Tools
 
@@ -47,7 +50,7 @@ GooeyJS is a web component framework that provides a set of UI elements. Built u
 
 ## Getting Started
 
-Download GooeyJS.v0.6.0.zip and unzip to your codebase. To include GooeyJS, just use the following:
+Download GooeyJS.v0.7.0.zip and unzip to your codebase. To include GooeyJS, just use the following:
 
     <script type="module" src="GooeyJS/GooeyJS.js"></script>
 
