@@ -711,6 +711,11 @@ ui-SplitPanel.splitpanel-dragging .splitpanel-divider {
     pointer-events: auto;
 }
 
+ui-TextArea textarea, ui-TextField input[type='text'], ui-PasswordField input[type='password'] {
+    height: 100%;
+    width: 100%;
+}
+
 /* Tree Component Styles */
 ui-Tree, ui-TreeItem {
     display: block;
