@@ -711,6 +711,134 @@ ui-SplitPanel.splitpanel-dragging .splitpanel-divider {
     pointer-events: auto;
 }
 
+/* Tree Component Styles */
+ui-Tree, ui-TreeItem {
+    display: block;
+}
+
+.ui-Tree {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+    font-size: 14px;
+    user-select: none;
+}
+
+.ui-TreeItem {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.ui-TreeItem-content {
+    display: flex;
+    align-items: center;
+    padding: 2px 4px;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: background-color 0.15s ease;
+    order: 1;
+}
+
+.ui-TreeItem-content:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.ui-TreeItem.selected .ui-TreeItem-content {
+    background-color: #010082;
+    color: white;
+}
+
+.ui-TreeItem-expander {
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    margin-right: 4px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    transform-origin: center;
+}
+
+.ui-TreeItem-expander.expanded {
+    transform: rotate(90deg);
+}
+
+.ui-TreeItem-icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 6px;
+    flex-shrink: 0;
+}
+
+.ui-TreeItem-text {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ui-TreeItem-children {
+    list-style: none;
+    margin: 0;
+    padding-left: 20px;
+    overflow: hidden;
+    transition: max-height 0.3s ease, opacity 0.2s ease;
+    order: 2;
+}
+
+.ui-TreeItem-children:not(.expanded) {
+    max-height: 0;
+    opacity: 0;
+}
+
+.ui-TreeItem-children.expanded {
+    max-height: 1000px;
+    opacity: 1;
+}
+
+.ui-TreeItem:focus {
+    outline: 2px solid #010082;
+    outline-offset: -2px;
+}
+
+/* TreeItem Drag and Drop Styles */
+.ui-TreeItem-content[draggable="true"] {
+    cursor: grab;
+}
+
+.ui-TreeItem-content[draggable="true"]:active {
+    cursor: grabbing;
+}
+
+.ui-TreeItem-content.drop-before {
+    border-top: 2px solid #010082;
+    border-radius: 0;
+}
+
+.ui-TreeItem-content.drop-after {
+    border-bottom: 2px solid #010082;
+    border-radius: 0;
+}
+
+.ui-TreeItem-content.drop-inside {
+    background-color: rgba(1, 0, 130, 0.2);
+    border: 2px dashed #010082;
+    border-radius: 4px;
+}
+
+.ui-TreeItem-content.drop-invalid {
+    background-color: rgba(255, 0, 0, 0.1);
+    border: 2px dashed #ff0000;
+    border-radius: 4px;
+    cursor: not-allowed;
+}
+
 .ui-Container[layout="BORDER"] {
     display: grid !important;
     grid-template-columns: fit-content(20%) 1fr fit-content(20%);
