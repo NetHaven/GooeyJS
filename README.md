@@ -27,8 +27,8 @@ GooeyJS is a web component framework that provides a set of UI elements. Built u
 - **Label** - displays static text content with optional icons and comprehensive alignment options. It provides a consistent way to display labels, captions, and informational text throughout GooeyJS applications with support for both horizontal and vertical alignment, clickable actions, and icon integration.
 
 ### Lists and Selection
--- **Tree** - provides a hierarchical tree view for displaying structured data. It manages selection states, keyboard navigation, and expansion/collapse operations for tree items.
--- **TreeItem** - represents an individual item within a tree structure. It can contain text, an icon, and child tree items to create hierarchical structures.
+- **Tree** - provides a hierarchical tree view for displaying structured data. It manages selection states, keyboard navigation, and expansion/collapse operations for tree items.
+- **TreeItem** - represents an individual item within a tree structure. It can contain text, an icon, and child tree items to create hierarchical structures.
 
 ### Menus & Navigation
 
