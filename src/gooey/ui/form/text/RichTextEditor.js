@@ -78,7 +78,7 @@ export default class RichTextEditor extends TextElement {
      * Ensures Quill CSS and JS are loaded in the page head
      */
     async ensureQuillLoaded() {
-        const basePath = 'resources/libraries/RetroUI/resources/libraries/Quill/';
+        const basePath = 'resources/libraries/GooeyJS/resources/libraries/Quill/';
         
         // Check and load CSS
         await this.loadQuillCSS(basePath);
@@ -195,7 +195,7 @@ export default class RichTextEditor extends TextElement {
         // Add custom CSS for font dropdown display
         this.addFontDropdownCSS();
 
-        // Set up event listeners for integration with RetroUI
+        // Set up event listeners for integration with GooeyJS
         this.setupQuillEventListeners();
 
         // Set up pass-through wrapper methods to Quill API
@@ -245,7 +245,7 @@ export default class RichTextEditor extends TextElement {
 
         // Listen for text changes
         this.quillInstance.on('text-change', () => {
-            // Dispatch RetroUI event for text input integration
+            // Dispatch GooeyJS event for text input integration
             this.fireEvent(TextElementEvent.INPUT, {
                 value: this.value,
                 editor: this.quillInstance
