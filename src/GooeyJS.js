@@ -12,6 +12,7 @@ import Panel from './gooey/ui/panel/Panel.js';
 import SplitPanel from './gooey/ui/panel/SplitPanel.js';
 import Tab from './gooey/ui/panel/Tab.js';
 import TabPanel from './gooey/ui/panel/TabPanel.js';
+import TextArea from './gooey/ui/form/text/TextArea.js';
 import TextField from './gooey/ui/form/text/TextField.js';
 import ToggleButton from './gooey/ui/button/ToggleButton.js';
 import ToggleButtonGroup from './gooey/ui/button/ToggleButtonGroup';
@@ -71,6 +72,7 @@ export default class GooeyJS {
         customElements.define("ui-splitpanel", SplitPanel);
         customElements.define("ui-tab", Tab);
         customElements.define("ui-tabpanel", TabPanel);
+        customElements.define("ui-textarea", TextArea);
         customElements.define("ui-textfield", TextField);
         customElements.define("ui-togglebutton", ToggleButton);
         customElements.define("ui-togglebuttongroup", ToggleButtonGroup);
