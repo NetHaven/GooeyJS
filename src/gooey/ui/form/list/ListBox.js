@@ -43,14 +43,14 @@ export default class ListBox extends FormElement {
             });
         });
         
-        this.listBox.addEventListener(FormElement.FOCUS, (e) => {
+        this.listBox.addEventListener(FormElementEvent.FOCUS, (e) => {
             this.fireEvent(FormElementEvent.FOCUS, { 
                 selectedOptions: this.selectedOptions,
                 originalEvent: e
             });
         });
         
-        this.listBox.addEventListener(FormElement.BLUR, (e) => {
+        this.listBox.addEventListener(FormElementEvent.BLUR, (e) => {
             this.fireEvent(FormElementEvent.BLUR, { 
                 selectedOptions: this.selectedOptions,
                 originalEvent: e
