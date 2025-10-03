@@ -299,6 +299,78 @@ ui-Toolbar[buttonsize='xlarge'] ui-ColorPicker button {
     width: 144px;
 }
 
+ui-Toolbar ui-DropDownList {
+    height: 48px;
+    line-height: 48px;
+}
+
+ui-Toolbar ui-DropDownList select {
+    height: 48px;
+    line-height: 48px;
+}
+
+ui-Toolbar[buttonsize='tiny'] ui-DropDownList {
+    height: 32px;
+    line-height: 32px;
+}
+
+ui-Toolbar[buttonsize='tiny'] ui-DropDownList select {
+    height: 32px;
+    line-height: 32px;
+}
+
+ui-Toolbar[buttonsize='small'] ui-DropDownList {
+    height: 40px;
+    line-height: 40px;
+}
+
+ui-Toolbar[buttonsize='small'] ui-DropDownList select {
+    height: 40px;
+    line-height: 40px;
+}
+
+ui-Toolbar[buttonsize='medium'] ui-DropDownList {
+    height: 48px;
+    line-height: 48px;
+}
+
+ui-Toolbar[buttonsize='medium'] ui-DropDownList select {
+    height: 48px;
+    line-height: 48px;
+}
+
+ui-Toolbar[buttonsize='large'] ui-DropDownList {
+    height: 64px;
+    line-height: 64px;
+}
+
+ui-Toolbar[buttonsize='large'] ui-DropDownList select {
+    height: 64px;
+    line-height: 64px;
+}
+
+ui-Toolbar[buttonsize='xlarge'] ui-DropDownList {
+    height: 144px;
+    line-height: 144px;
+}
+
+ui-Toolbar[buttonsize='xlarge'] ui-DropDownList select {
+    height: 144px;
+    line-height: 144px;
+}
+
+/* Disabled styles for ui-DropDownList */
+ui-DropDownList[disabled],
+ui-DropDownList[disabled] select {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+ui-DropDownList[disabled] select {
+    background-color: #c1c0c1;
+    color: #808080;
+}
+
 ui-Window {
     background-color: #c1c0c1;
     border-style: solid;
