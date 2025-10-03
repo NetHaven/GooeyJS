@@ -25,6 +25,10 @@ GooeyJS is a web component framework that provides a set of UI elements. Built u
 
 ### Text & Editing
 - **Label** - displays static text content with optional icons and comprehensive alignment options. It provides a consistent way to display labels, captions, and informational text throughout GooeyJS applications with support for both horizontal and vertical alignment, clickable actions, and icon integration.
+- **PasswordField** - provides a secure password input control that masks entered text. It extends the TextElement class and inherits all form validation capabilities while providing the security benefits of hidden password input.
+- **RichTextEditor** - provides a WYSIWYG rich text editing interface with formatting tools, supporting bold, italic, underline, font changes, colors, and other text formatting options.
+- **TextArea** - provides a multi-line plain text input control with support for scrolling, resize handles, and form validation. Perfect for comments, descriptions, and longer text input.
+- **TextField** - provides a single-line text input control with built-in validation support, placeholder text, and various input types. It extends the FormElement class and integrates with GooeyJS's form validation system.
 
 ### Lists and Selection
 - **Tree** - provides a hierarchical tree view for displaying structured data. It manages selection states, keyboard navigation, and expansion/collapse operations for tree items.
@@ -40,17 +44,17 @@ GooeyJS is a web component framework that provides a set of UI elements. Built u
 
 ### Toolbars & Tools
 
-- **Toolbar** - provides a horizontal container for organizing buttons, controls, and other UI elements in a toolbar layout.
-- **ToolbarSeparator** - provides a visual separator for organizing and grouping buttons within toolbars.
-- **ColorPicker** - provides a comprehensive color selection interface with a color button.
+- **Toolbar** - provides a horizontal container for organizing buttons, controls, and other UI elements in a toolbar layout. It extends the Container class and supports configurable button sizes, borders, and flexible content arrangement.
+- **ToolbarSeparator** - provides a visual separator for organizing and grouping buttons within toolbars. It creates a vertical line or space that helps distinguish between related groups of toolbar actions, improving the visual organization and usability of toolbar interfaces.
+- **ColorPicker** - provides a comprehensive color selection interface with a color button, hex input field, and dropdown color palette. It supports both manual hex entry and visual color selection.
 
 ### Windows & Dialogs
-- **Window** - represents a desktop-style window with title bar, close button, and draggable functionality.
-- **Dialog** - provides static methods for displaying system dialog boxes including alerts, confirmations, prompts, and information messages.
+- **Window** - represents a desktop-style window with title bar, close button, and draggable functionality. It provides a container for dialog content and supports modal behavior, viewport constraints, and window management features.
+- **Dialog** - provides static methods for displaying system dialog boxes including alerts, confirmations, prompts, and information messages. It replaces native browser dialogs with styled GooeyJS dialogs that match the application's visual theme and provide better customization options.
 
 ## Getting Started
 
-Download GooeyJS.v0.7.0.zip and unzip to your codebase. To include GooeyJS, just use the following:
+Download GooeyJS.v0.8.0.zip and unzip to your codebase. To include GooeyJS, just use the following:
 
     <script type="module" src="GooeyJS/GooeyJS.js"></script>
 
