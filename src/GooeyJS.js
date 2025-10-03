@@ -4,6 +4,7 @@ import Button from './gooey/ui/button/Button.js';
 import CheckboxMenuItem from './gooey/ui/menu/CheckboxMenuItem.js';
 import ColorPicker from './gooey/ui/ColorPicker.js';
 import Label from './gooey/ui/Label.js';
+import ListBox from './gooey/ui/form/list/ListBox.js';
 import Menubar from './gooey/ui/menu/Menubar.js';
 import Menu from './gooey/ui/menu/Menu.js';
 import MenuItem from './gooey/ui/menu/MenuItem.js';
@@ -69,6 +70,7 @@ export default class GooeyJS {
         customElements.define("ui-menuitem", MenuItem);
         customElements.define("ui-menuitemseparator", MenuItemSeparator);
         customElements.define("ui-label", Label);
+        customElements.define("ui-listbox", ListBox);
         customElements.define("ui-panel", Panel);
         customElements.define("ui-passwordfield", PasswordField);
         customElements.define("ui-splitpanel", SplitPanel);
