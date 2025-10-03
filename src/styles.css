@@ -1248,3 +1248,11 @@ ui-ToggleButtonGroup[disabled] {
     opacity: 0.5;
     pointer-events: none;
 }
+
+ui-ListBox {
+    width: 100%;
+}
+
+ui-ListBox select {
+    width: 100%;
+}
