@@ -3,6 +3,7 @@ import AppPanel from './gooey/ui/panel/AppPanel.js';
 import Button from './gooey/ui/button/Button.js';
 import CheckboxMenuItem from './gooey/ui/menu/CheckboxMenuItem.js';
 import ColorPicker from './gooey/ui/ColorPicker.js';
+import DropDownList from './gooey/ui/form/list/DropDownList.js';
 import Label from './gooey/ui/Label.js';
 import ListBox from './gooey/ui/form/list/ListBox.js';
 import Menubar from './gooey/ui/menu/Menubar.js';
@@ -65,6 +66,7 @@ export default class GooeyJS {
         customElements.define("ui-button", Button);
         customElements.define("ui-checkboxmenuitem", CheckboxMenuItem);
         customElements.define("ui-colorpicker", ColorPicker);
+        customElements.define("ui-dropdownlist", DropDownList);
         customElements.define("ui-menu", Menu);
         customElements.define("ui-menubar", Menubar);
         customElements.define("ui-menuitem", MenuItem);
