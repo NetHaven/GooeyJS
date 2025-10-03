@@ -96,6 +96,7 @@ export default class GooeyJS {
 
         return Promise.all([
             GooeyJS.loadTemplate(`${templatePath}/ColorPicker.html`, "ui-ColorPicker"),
+            GooeyJS.loadTemplate(`${templatePath}/ComboBox.html`, "ui-ComboBox"),
             GooeyJS.loadTemplate(`${templatePath}/Menu.html`, "ui-Menu"),
             GooeyJS.loadTemplate(`${templatePath}/MenuHeader.html`, "menuHeader"),
             GooeyJS.loadTemplate(`${templatePath}/MenuItem.html`, "ui-MenuItem"),
