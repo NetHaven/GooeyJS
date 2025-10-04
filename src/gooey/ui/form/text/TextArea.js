@@ -1,6 +1,6 @@
 import TextElement from './TextElement.js';
-import TextElementEvent from '../../mvc/events/form/text/TextElementEvent.js';
-import FormElementEvent from '../../mvc/events/form/FormElementEvent.js';
+import TextElementEvent from '../../events/form/text/TextElementEvent.js';
+import FormElementEvent from '../../events/form/FormElementEvent.js';
 
 export default class TextArea extends TextElement {
     constructor() {
