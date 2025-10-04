@@ -10,11 +10,11 @@ GooeyJS is a web component framework that provides a set of UI elements. Built u
 
 ### Layout & Containers
 
-- **Application** - the root-level component for GooeyJS applications. It provides the foundational viewport setup and base styling for the entire application hierarchy.
+- **Application** - the root-level component for GooeyJS applications. It provides the foundational viewport setup and base styling for the entire application hierarchy. This component has no template or wrapped HTML elements - it serves purely as the top-level container that establishes the application's viewport and basic layout properties.
 - **AppPanel** - the top-level container component for GooeyJS applications. It provides the main application layout structure and serves as the root container for all other UI components.
 - **Panel** - a fundamental container component that provides a basic rectangular area with consistent styling. It serves as the foundation for more complex layout components and provides essential container functionality.
 - **SplitPanel** - a resizable container component that displays two child elements side by side with an adjustable divider between them. Users can drag the divider to dynamically resize the panes, making it ideal for creating split layouts like file explorers, code editors, or any interface requiring adjustable content areas.
-- **Tab** - represents an individual tab within a TabPanel. It contains the tab's content and manages its visibility based on the active state.
+- **Tab** - represents an individual tab within a TabPanel. It contains the tab's content and manages its visibility based on the active state. Tabs are automatically registered with their parent TabPanel and provide keyboard navigation support.
 - **TabPanel** - is a container that manages multiple tab components. It provides the tab strip interface and handles tab activation, keyboard navigation, and optional drag-and-drop reordering of tabs.
 
 ### Buttons & Input
@@ -25,14 +25,17 @@ GooeyJS is a web component framework that provides a set of UI elements. Built u
 
 ### Text & Editing
 - **Label** - displays static text content with optional icons and comprehensive alignment options. It provides a consistent way to display labels, captions, and informational text throughout GooeyJS applications with support for both horizontal and vertical alignment, clickable actions, and icon integration.
-- **PasswordField** - provides a secure password input control that masks entered text. It extends the TextElement class and inherits all form validation capabilities while providing the security benefits of hidden password input.
+- **PasswordField** - provides a secure password input control that masks entered text. It extends the TextElement class and inherits all form validation capabilities while providing the security benefits of hidden password input. Text entered into this field is automatically masked with asterisks or dots for privacy.
 - **RichTextEditor** - provides a WYSIWYG rich text editing interface with formatting tools, supporting bold, italic, underline, font changes, colors, and other text formatting options.
 - **TextArea** - provides a multi-line plain text input control with support for scrolling, resize handles, and form validation. Perfect for comments, descriptions, and longer text input.
-- **TextField** - provides a single-line text input control with built-in validation support, placeholder text, and various input types. It extends the FormElement class and integrates with GooeyJS's form validation system.
+- **TextField** - provides a single-line text input control with built-in validation support, placeholder text, and various input types. It extends the FormElement class and integrates with GooeyJS's form validation system. All standard HTML input attributes are passed through to the internal HTML input element.
 
 ### Lists and Selection
-- **Tree** - provides a hierarchical tree view for displaying structured data. It manages selection states, keyboard navigation, and expansion/collapse operations for tree items.
-- **TreeItem** - represents an individual item within a tree structure. It can contain text, an icon, and child tree items to create hierarchical structures.
+- **ComboBox** - combines a text input field with a dropdown list of options. It extends the ListBox component to provide both selection from predefined options and the ability to enter custom text. The combo box supports both editable and non-editable modes, keyboard navigation, and option filtering.
+- **DropDownList** - provides a dropdown selection control that allows users to choose from a predefined list of options. It's ideal for single-selection scenarios where space is limited.
+- **ListBox** - provides a scrollable list control that displays multiple options simultaneously and supports both single and multiple selection modes.
+- **Tree** - provides a hierarchical tree view for displaying structured data. It manages selection states, keyboard navigation, and expansion/collapse operations for tree items. The tree component serves as a container for tree items and provides a consistent interface for tree manipulation.
+- **TreeItem** - represents an individual item within a tree structure. It can contain text, an icon, and child tree items to create hierarchical structures. Tree items support expansion/collapse, drag-and-drop operations, and comprehensive keyboard navigation.
 
 ### Menus & Navigation
 
@@ -49,12 +52,13 @@ GooeyJS is a web component framework that provides a set of UI elements. Built u
 - **ColorPicker** - provides a comprehensive color selection interface with a color button, hex input field, and dropdown color palette. It supports both manual hex entry and visual color selection.
 
 ### Windows & Dialogs
+
 - **Window** - represents a desktop-style window with title bar, close button, and draggable functionality. It provides a container for dialog content and supports modal behavior, viewport constraints, and window management features.
 - **Dialog** - provides static methods for displaying system dialog boxes including alerts, confirmations, prompts, and information messages. It replaces native browser dialogs with styled GooeyJS dialogs that match the application's visual theme and provide better customization options.
 
 ## Getting Started
 
-Download GooeyJS.v0.8.0.zip and unzip to your codebase. To include GooeyJS, just use the following:
+Download GooeyJS.v0.9.0.zip and unzip to your codebase. To include GooeyJS, just use the following:
 
     <script type="module" src="GooeyJS/GooeyJS.js"></script>
 
