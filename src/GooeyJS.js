@@ -19,7 +19,7 @@ import TabPanel from './gooey/ui/panel/TabPanel.js';
 import TextArea from './gooey/ui/form/text/TextArea.js';
 import TextField from './gooey/ui/form/text/TextField.js';
 import ToggleButton from './gooey/ui/button/ToggleButton.js';
-import ToggleButtonGroup from './gooey/ui/button/ToggleButtonGroup';
+import ToggleButtonGroup from './gooey/ui/button/ToggleButtonGroup.js';
 import Toolbar from './gooey/ui/toolbar/Toolbar.js';
 import ToolbarSeparator from './gooey/ui/toolbar/ToolbarSeparator.js';
 import Tree from './gooey/ui/Tree.js';
