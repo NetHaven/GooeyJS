@@ -1,5 +1,5 @@
 import FormElement from './FormElement.js';
-import CheckBoxEvent from '../../events/form/CheckBoxEvent.js';
+import CheckBoxEvent from '../../events/form/CheckboxEvent.js';
 import MouseEvent from '../../events/MouseEvent.js';
 
 export default class Checkbox extends FormElement {
