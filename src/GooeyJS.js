@@ -15,6 +15,7 @@ import MenuItem from './gooey/ui/menu/MenuItem.js';
 import MenuItemSeparator from './gooey/ui/menu/MenuItemSeparator.js';
 import Panel from './gooey/ui/panel/Panel.js';
 import PasswordField from './gooey/ui/form/text/PasswordField.js';
+import RadioButton from './gooey/ui/form/RadioButton.js';
 import SplitPanel from './gooey/ui/panel/SplitPanel.js';
 import Tab from './gooey/ui/panel/Tab.js';
 import TabPanel from './gooey/ui/panel/TabPanel.js';
@@ -81,6 +82,7 @@ export default class GooeyJS {
         customElements.define("ui-menuitemseparator", MenuItemSeparator);
         customElements.define("ui-panel", Panel);
         customElements.define("ui-passwordfield", PasswordField);
+        customElements.define("ui-radiobutton", RadioButton);
         customElements.define("ui-splitpanel", SplitPanel);
         customElements.define("ui-tab", Tab);
         customElements.define("ui-tabpanel", TabPanel);
