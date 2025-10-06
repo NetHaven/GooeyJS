@@ -1,5 +1,5 @@
 import FormElement from './FormElement.js';
-import CheckBoxEvent from '../../events/form/CheckboxEvent.js';
+import CheckboxEvent from '../../events/form/CheckboxEvent.js';
 import MouseEvent from '../../events/MouseEvent.js';
 
 export default class Checkbox extends FormElement {
@@ -15,7 +15,7 @@ export default class Checkbox extends FormElement {
         this.addValidEvent(MouseEvent.CLICK);
 
         // Add documented event listeners
-        this.checkbox.addEventListener(CheckBoxEvent.CHANGE, (e) => {
+        this.checkbox.addEventListener(CheckboxEvent.CHANGE, (e) => {
             this.fireEvent(CheckBoxEvent.CHANGE, { 
                 checked: this.checkbox.checked,
                 value: this.checkbox.value 
