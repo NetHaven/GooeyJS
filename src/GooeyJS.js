@@ -1,4 +1,4 @@
-import Application from './gooey/ui/Application.js';
+﻿import Application from './gooey/ui/Application.js';
 import AppPanel from './gooey/ui/panel/AppPanel.js';
 import Button from './gooey/ui/button/Button.js';
 import Checkbox from './gooey/ui/form/CheckBox.js';
@@ -21,6 +21,7 @@ import SplitPanel from './gooey/ui/panel/SplitPanel.js';
 import Tab from './gooey/ui/panel/Tab.js';
 import TabPanel from './gooey/ui/panel/TabPanel.js';
 import TextArea from './gooey/ui/form/text/TextArea.js';
+import RichTextEditor from './gooey/ui/form/text/RichTextEditor.js';
 import TextField from './gooey/ui/form/text/TextField.js';
 import ToggleButton from './gooey/ui/button/ToggleButton.js';
 import ToggleButtonGroup from './gooey/ui/button/ToggleButtonGroup.js';
@@ -89,6 +90,7 @@ export default class GooeyJS {
         customElements.define("ui-tab", Tab);
         customElements.define("ui-tabpanel", TabPanel);
         customElements.define("ui-textarea", TextArea);
+        customElements.define("ui-richtexteditor", RichTextEditor);
         customElements.define("ui-textfield", TextField);
         customElements.define("ui-togglebutton", ToggleButton);
         customElements.define("ui-togglebuttongroup", ToggleButtonGroup);
@@ -220,3 +222,4 @@ export default class GooeyJS {
 }
 
 window.addEventListener('load', function() { new GooeyJS();}());
+
