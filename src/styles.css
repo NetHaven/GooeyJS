@@ -532,6 +532,42 @@ ui-Window[modal] {
     width: 100%;
 }
 
+ui-FormPanel {
+    display: grid;
+    grid-template-columns: 30% 65% 5%;
+    align-content: space-between;
+    gap: 8px;
+    padding: 8px;
+    width: 100%;
+}
+
+ui-FormPanel > ui-Label {
+    justify-self: end;
+    align-self: start;
+    font-weight: bold;
+}
+
+ui-FormPanel > :not(ui-Label):not(.required-indicator) {
+    justify-self: stretch;
+    align-self: start;
+    width: 100%;
+}
+
+ui-FormPanel .required-indicator,
+ui-FormPanel .form-spacer {
+    justify-self: start;
+    align-self: start;
+    grid-column: 3;
+}
+
+/* Required indicator for form elements */
+.required-indicator {
+    color: red !important;
+    font-weight: bold !important;
+    margin-left: 4px !important;
+    font-size: 14px !important;
+}
+
 /* Context Menu Styles */
 ui-ContextMenu {
     display: none;
