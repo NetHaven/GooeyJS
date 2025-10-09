@@ -532,6 +532,61 @@ ui-Window[modal] {
     width: 100%;
 }
 
+/* Context Menu Styles */
+ui-ContextMenu {
+    display: none;
+    position: absolute;
+    z-index: 1000;
+}
+
+.ui-ContextMenu {
+    background-color: #c1c0c1;
+    border: 1px solid #808080;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+    min-width: 150px;
+    padding: 2px 0;
+}
+
+ui-ContextMenu[active] {
+    display: block;
+}
+
+ui-ContextMenu ui-MenuItem,
+ui-ContextMenu ui-CheckboxMenuItem {
+    display: block;
+    width: 100%;
+    cursor: pointer;
+    padding: 4px 16px;
+    border: none;
+    background: none;
+    text-align: left;
+}
+
+ui-ContextMenu ui-MenuItem:hover,
+ui-ContextMenu ui-CheckboxMenuItem:hover {
+    background-color: #010082;
+    color: white;
+}
+
+ui-ContextMenu ui-MenuItem[disabled],
+ui-ContextMenu ui-CheckboxMenuItem[disabled] {
+    color: #808080;
+    cursor: default;
+}
+
+ui-ContextMenu ui-MenuItem[disabled]:hover,
+ui-ContextMenu ui-CheckboxMenuItem[disabled]:hover {
+    background-color: transparent;
+    color: #808080;
+}
+
+ui-ContextMenu ui-MenuItemSeparator {
+    height: 1px;
+    background-color: #808080;
+    margin: 2px 0;
+    border: none;
+}
+
 /* Tab and TabPanel Styles */
 ui-TabPanel {
     display: flex;

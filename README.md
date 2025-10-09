@@ -56,7 +56,6 @@ GooeyJS is a web component framework that provides a set of UI elements. Built u
 - **Dialog** - provides static methods for displaying system dialog boxes including alerts, confirmations, prompts, and information messages. It replaces native browser dialogs with styled GooeyJS dialogs that match the application's visual theme and provide better customization options.
 
 ## Getting Started
-
 Download GooeyJS.v1.0.0.zip and unzip to your codebase. To include GooeyJS, just use the following:
 
     <script type="module" src="GooeyJS/GooeyJS.js"></script>
