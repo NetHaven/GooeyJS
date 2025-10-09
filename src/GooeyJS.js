@@ -8,6 +8,7 @@ import ComboBox from './gooey/ui/form/list/ComboBox.js';
 import ContextMenu from './gooey/ui/menu/ContextMenu.js';
 import DropDownList from './gooey/ui/form/list/DropDownList.js';
 import FormPanel from './gooey/ui/panel/FormPanel.js';
+import GroupBox from './gooey/ui/panel/GroupBox.js';
 import Label from './gooey/ui/Label.js';
 import ListBox from './gooey/ui/form/list/ListBox.js';
 import Menubar from './gooey/ui/menu/Menubar.js';
@@ -78,6 +79,7 @@ export default class GooeyJS {
         customElements.define("ui-contextmenu", ContextMenu);
         customElements.define("ui-dropdownlist", DropDownList);
         customElements.define("ui-formpanel", FormPanel);
+        customElements.define("ui-groupbox", GroupBox);
         customElements.define("ui-label", Label);
         customElements.define("ui-listbox", ListBox);
         customElements.define("ui-menu", Menu);
