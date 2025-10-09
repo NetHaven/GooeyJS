@@ -20,6 +20,9 @@ GooeyJS is a web component framework that provides a set of UI elements. Built u
 ### Buttons & Input
 
 - **Button** - represents a clickable button with support for text, icons, and custom actions. It extends the base Component class and provides desktop-style button appearance with hover and pressed states.
+- **Checkbox** - provides a checkbox input control with label text and form validation support. It allows users to select multiple options from a set of choices.
+- **RadioButton** - provides a radio button input control for exclusive selection. Radio buttons with the same name form a group where only one can be selected at a time.
+- **RadioButtonGroup** - is a container component that manages a group of radio buttons, ensuring exclusive selection and providing convenient group-level properties and methods.
 - **ToggleButton** - represents a button that maintains a pressed/unpressed state. When clicked, it toggles between pressed and unpressed states, making it ideal for on/off controls, tool selection, and other binary choices.
 - **ToggleButtonGroup** - is a container component that manages a group of toggle buttons with exclusive selection behavior. When one toggle button in the group is pressed, all other buttons in the group are automatically unpressed, similar to radio button behavior.
 
@@ -58,7 +61,7 @@ GooeyJS is a web component framework that provides a set of UI elements. Built u
 
 ## Getting Started
 
-Download GooeyJS.v0.9.0.zip and unzip to your codebase. To include GooeyJS, just use the following:
+Download GooeyJS.v1.0.0.zip and unzip to your codebase. To include GooeyJS, just use the following:
 
     <script type="module" src="GooeyJS/GooeyJS.js"></script>
 
