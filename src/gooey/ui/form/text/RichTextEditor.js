@@ -96,7 +96,8 @@ export default class RichTextEditor extends TextElement {
         const commands = [
             { command: 'bold', label: 'Bold', shortcut: 'Ctrl+B', text: 'B' },
             { command: 'italic', label: 'Italic', shortcut: 'Ctrl+I', text: 'I' },
-            { command: 'underline', label: 'Underline', shortcut: 'Ctrl+U', text: 'U' }
+            { command: 'underline', label: 'Underline', shortcut: 'Ctrl+U', text: 'U' },
+            { command: 'strikeThrough', label: 'Strikethrough', shortcut: '', text: 'S' }
         ];
 
         commands.forEach((def) => {
@@ -267,5 +268,3 @@ export default class RichTextEditor extends TextElement {
         });
     }
 }
-
-
