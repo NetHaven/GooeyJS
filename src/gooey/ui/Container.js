@@ -41,12 +41,7 @@ export default class Container extends Component {
 
         borderElement = document.querySelector(val);
         if (borderElement) {
-            if (borderElement.side) {
-                side = borderElement.side.charAt(0) + borderElement.side.slice(1).toLowerCase();
-            }
-            else {
-                side = '';
-            }
+            side = '';
             if (borderElement.color) {
                 this.style[`border${side}Color`] = borderElement.color;
             }
