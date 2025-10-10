@@ -51,7 +51,7 @@ export default class Container extends Component {
             }
 
             if (borderElement.width) {
-                this.style[`border${side}Width`] = borderElement.width;
+                this.style[`border${side}Width`] = borderElement.width + "px";
             }
         }
 
