@@ -1,4 +1,4 @@
-import GooeyJS from '../../../GooeyJS.js';
+import Template from '../../../Template.js';
 import MouseEvent from '../../events/MouseEvent.js';
 
 export default class Dialog {
@@ -156,7 +156,7 @@ export default class Dialog {
 
         newDialog = document.getElementById(dialogId);
         if (newDialog == null) {
-            GooeyJS.activateTemplate(templateId);
+            Template.activate(templateId);
             newDialog = document.getElementById(dialogId);
         }
 

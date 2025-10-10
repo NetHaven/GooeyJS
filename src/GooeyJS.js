@@ -25,6 +25,7 @@ import RichTextEditor from './gooey/ui/form/text/RichTextEditor.js';
 import SplitPanel from './gooey/ui/panel/SplitPanel.js';
 import Tab from './gooey/ui/panel/Tab.js';
 import TabPanel from './gooey/ui/panel/TabPanel.js';
+import Template from './gooey/util/Template.js';
 import TextArea from './gooey/ui/form/text/TextArea.js';
 import TextField from './gooey/ui/form/text/TextField.js';
 import ToggleButton from './gooey/ui/button/ToggleButton.js';
@@ -58,16 +59,6 @@ export default class GooeyJS {
         }
 
         headEl.appendChild(linkEl);
-    }
-
-    static activateTemplate(id) {
-        let clone, template;
-
-        template = document.getElementById(id);
-        if (template) {
-            clone = document.importNode(template.content, true);
-            document.body.appendChild(clone);
-        }
     }
 
     defineElements() {
@@ -113,97 +104,25 @@ export default class GooeyJS {
         let templatePath = `${PATH}/templates`;
 
         return Promise.all([
-            GooeyJS.loadTemplate(`${templatePath}/ColorPicker.html`, "ui-ColorPicker"),
-            GooeyJS.loadTemplate(`${templatePath}/ComboBox.html`, "ui-ComboBox"),
-            GooeyJS.loadTemplate(`${templatePath}/ContextMenu.html`, "ui-ContextMenu"),
-            GooeyJS.loadTemplate(`${templatePath}/Menu.html`, "ui-Menu"),
-            GooeyJS.loadTemplate(`${templatePath}/MenuHeader.html`, "menuHeader"),
-            GooeyJS.loadTemplate(`${templatePath}/MenuItem.html`, "ui-MenuItem"),
-            GooeyJS.loadTemplate(`${templatePath}/MenuItemSeparator.html`, "ui-MenuItemSeparator"),
-            GooeyJS.loadTemplate(`${templatePath}/SplitPanel`, "ui-SplitPanel"),
-            GooeyJS.loadTemplate(`${templatePath}/Tab.html`, "ui-Tab"),
-            GooeyJS.loadTemplate(`${templatePath}/TabPanel.html`, "ui-TabPanel"),
-            GooeyJS.loadTemplate(`${templatePath}/ToggleButton.html`, "ui-ToggleButton"),
-            GooeyJS.loadTemplate(`${templatePath}/ToggleButtonGroup.html`, "ui-ToggleButtonGroup"),
-            GooeyJS.loadTemplate(`${templatePath}/ToolbarSeparator.html`, "ui-ToolbarSeparator"),
-            GooeyJS.loadTemplate(`${templatePath}/Tree.html`, "ui-Tree"),
-            GooeyJS.loadTemplate(`${templatePath}/TreeItem.html`, "ui-TreeItem"),
-            GooeyJS.loadTemplate(`${templatePath}/Window.html`, "ui-Window"),
+            Template.load(`${templatePath}/ColorPicker.html`, "ui-ColorPicker"),
+            Template.load(`${templatePath}/ComboBox.html`, "ui-ComboBox"),
+            Template.load(`${templatePath}/ContextMenu.html`, "ui-ContextMenu"),
+            Template.load(`${templatePath}/Menu.html`, "ui-Menu"),
+            Template.load(`${templatePath}/MenuHeader.html`, "menuHeader"),
+            Template.load(`${templatePath}/MenuItem.html`, "ui-MenuItem"),
+            Template.load(`${templatePath}/MenuItemSeparator.html`, "ui-MenuItemSeparator"),
+            Template.load(`${templatePath}/SplitPanel`, "ui-SplitPanel"),
+            Template.load(`${templatePath}/Tab.html`, "ui-Tab"),
+            Template.load(`${templatePath}/TabPanel.html`, "ui-TabPanel"),
+            Template.load(`${templatePath}/ToggleButton.html`, "ui-ToggleButton"),
+            Template.load(`${templatePath}/ToggleButtonGroup.html`, "ui-ToggleButtonGroup"),
+            Template.load(`${templatePath}/ToolbarSeparator.html`, "ui-ToolbarSeparator"),
+            Template.load(`${templatePath}/Tree.html`, "ui-Tree"),
+            Template.load(`${templatePath}/TreeItem.html`, "ui-TreeItem"),
+            Template.load(`${templatePath}/Window.html`, "ui-Window"),
          ]);
     }
 
-    static loadTemplate(templateName, templateId, retryCount = 0) {
-        // Check if already loaded (race condition protection)
-        if (document.getElementById(templateId)) {
-            return Promise.resolve();
-        }
-
-        // Add loading flag to prevent concurrent loads
-        if (GooeyJS._loadingTemplates?.has(templateId)) {
-            return GooeyJS._loadingTemplates.get(templateId);
-        }
-
-        const maxRetries = 3;
-        const retryDelay = 1000; // 1 second
-
-        // Create timeout-wrapped fetch with proper async error handling
-        const timeoutMs = 10000; // 10 second timeout
-        const loadPromise = GooeyJS._timeoutPromise(
-            fetch(templateName, {
-                method: 'GET',
-                cache: 'default',
-                headers: {
-                    'Accept': 'text/html,text/plain,*/*',
-                    'Cache-Control': 'max-age=3600'
-                }
-            }),
-            timeoutMs,
-            `Template loading timeout for ${templateName}`
-        )
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`Failed to load template ${templateName}: ${response.status} ${response.statusText}`);
-                }
-                return response.text();
-            })
-            .then(html => {
-                if (!html || html.trim().length === 0) {
-                    throw new Error(`Template ${templateName} is empty or invalid`);
-                }
-                
-                try {
-                    // Final check before DOM injection
-                    if (!document.getElementById(templateId)) {
-                        const fragment = document.createRange().createContextualFragment(html);
-                        document.body.appendChild(fragment);
-                        console.info('TEMPLATE_LOADED', `Template loaded successfully: ${templateId}`);
-                    }
-                } catch (domError) {
-                    throw new Error(`Failed to inject template ${templateId} into DOM: ${domError.message}`);
-                }
-            })
-            .catch(error => {
-                console.error('TEMPLATE_LOAD_ERROR', `Template loading error for ${templateId}`, { error: error.message, templateId });
-                
-                // Retry logic for network errors
-                if (retryCount < maxRetries && (error.name === 'TypeError' || error.message.includes('Failed to fetch'))) {
-                    console.warn('TEMPLATE_RETRY', `Retrying template load for ${templateId} (attempt ${retryCount + 1}/${maxRetries})`);
-                    return new Promise(resolve => {
-                        setTimeout(() => {
-                            resolve(GooeyJS.loadTemplate(templateName, templateId, retryCount + 1));
-                        }, retryDelay * (retryCount + 1)); // Exponential backoff
-                    });
-                }     
-            });
-
-        // Track loading state
-        if (!GooeyJS._loadingTemplates) {
-            GooeyJS._loadingTemplates = new Map();
-        }
-        GooeyJS._loadingTemplates.set(templateId, loadPromise);
-
-        return loadPromise;
-    }
 
      /**
      * Creates a timeout-wrapped promise for async operations
@@ -230,4 +149,3 @@ export default class GooeyJS {
 }
 
 window.addEventListener('load', function() { new GooeyJS();}());
-
