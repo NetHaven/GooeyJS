@@ -11,6 +11,8 @@ GooeyJS is a web component framework that provides a set of UI elements. Built u
 ### Layout & Containers
 - **Application** - the root-level component for GooeyJS applications. It provides the foundational viewport setup and base styling for the entire application hierarchy. This component has no template or wrapped HTML elements - it serves purely as the top-level container that establishes the application's viewport and basic layout properties.
 - **AppPanel** - the top-level container component for GooeyJS applications. It provides the main application layout structure and serves as the root container for all other UI components.
+- **GroupBox** - creates a container with an optional title label that groups related form elements or content together. It extends the Panel component to provide visual organization with classic desktop-style grouping appearance.
+- **FormPanel** - is a specialized container that provides automatic grid-based layout for form elements. It organizes labels, input controls, and required field indicators in a consistent, accessible format.
 - **Panel** - a fundamental container component that provides a basic rectangular area with consistent styling. It serves as the foundation for more complex layout components and provides essential container functionality.
 - **SplitPanel** - a resizable container component that displays two child elements side by side with an adjustable divider between them. Users can drag the divider to dynamically resize the panes, making it ideal for creating split layouts like file explorers, code editors, or any interface requiring adjustable content areas.
 - **Tab** - represents an individual tab within a TabPanel. It contains the tab's content and manages its visibility based on the active state. Tabs are automatically registered with their parent TabPanel and provide keyboard navigation support.
@@ -55,8 +57,12 @@ GooeyJS is a web component framework that provides a set of UI elements. Built u
 - **Window** - represents a desktop-style window with title bar, close button, and draggable functionality. It provides a container for dialog content and supports modal behavior, viewport constraints, and window management features.
 - **Dialog** - provides static methods for displaying system dialog boxes including alerts, confirmations, prompts, and information messages. It replaces native browser dialogs with styled GooeyJS dialogs that match the application's visual theme and provide better customization options.
 
+### Styling & Utilities
+- **Border** - is a utility component that defines border properties for other UI elements. It provides a structured way to configure border color, style, and width for consistent border styling across GooeyJS components.
+- **Font** - is a utility component that defines font properties for text styling in RetroUI applications. It provides a structured way to configure font family, size, and weight for consistent typography across components.
+
 ## Getting Started
-Download GooeyJS.v1.0.0.zip and unzip to your codebase. To include GooeyJS, just use the following:
+Download GooeyJS.v1.1.0.zip and unzip to your codebase. To include GooeyJS, just use the following:
 
     <script type="module" src="GooeyJS/GooeyJS.js"></script>
 
