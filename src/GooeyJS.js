@@ -1,4 +1,5 @@
-﻿import Application from './gooey/ui/Application.js';
+﻿import AccordionPanel from './gooey/ui/panel/AccordionPanel.js';
+import Application from './gooey/ui/Application.js';
 import AppPanel from './gooey/ui/panel/AppPanel.js';
 import Border from './gooey/ui/Border.js';
 import Button from './gooey/ui/button/Button.js';
@@ -64,6 +65,7 @@ export default class GooeyJS {
     defineElements() {
         customElements.define("ui-application", Application);
         customElements.define("ui-apppanel", AppPanel);
+        customElements.define("ui-accordionpanel", AccordionPanel);
         customElements.define("ui-border", Border);
         customElements.define("ui-button", Button);
         customElements.define("ui-checkbox", Checkbox);
