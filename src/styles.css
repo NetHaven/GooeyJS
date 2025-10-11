@@ -830,6 +830,78 @@ ui-Tab[active] {
     border-bottom: 3px solid #010082;
 }
 
+/* AccordionPanel Styles */
+ui-AccordionPanel {
+    border: 2px inset #c1c0c1;
+    background-color: #c1c0c1;
+    display: block;
+    width: 100%;
+    overflow: hidden;
+}
+
+ui-AccordionPanel .accordion-item {
+    border-bottom: 1px solid #808080;
+}
+
+ui-AccordionPanel .accordion-item:last-child {
+    border-bottom: none;
+}
+
+ui-AccordionPanel .accordion-header {
+    padding: 6px 8px;
+    background-color: #c1c0c1;
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    border: 1px outset #c1c0c1;
+    border-bottom: 1px solid #808080;
+    font-family: sans-serif;
+    font-size: 11px;
+    font-weight: normal;
+}
+
+ui-AccordionPanel .accordion-header:hover {
+    background-color: #d4d0c8;
+}
+
+ui-AccordionPanel .accordion-header.active {
+    background-color: #c1c0c1;
+    border: 1px inset #c1c0c1;
+    font-weight: bold;
+}
+
+ui-AccordionPanel .accordion-arrow {
+    margin-right: 6px;
+    font-size: 10px;
+    color: #000;
+    font-family: monospace;
+    display: inline-block;
+    width: 10px;
+    text-align: center;
+}
+
+ui-AccordionPanel .accordion-title {
+    flex: 1;
+    font-size: 11px;
+    color: #000;
+}
+
+ui-AccordionPanel .accordion-content {
+    padding: 8px;
+    background-color: #c1c0c1;
+    border: 1px inset #c1c0c1;
+    border-top: none;
+    overflow: auto;
+    margin: 0 1px;
+}
+
+ui-AccordionPanel .accordion-content:empty {
+    padding: 0;
+    border: none;
+    margin: 0;
+}
+
 /* SplitPanel Styles */
 ui-SplitPanel {
     display: flex;
