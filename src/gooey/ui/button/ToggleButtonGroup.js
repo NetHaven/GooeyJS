@@ -1,4 +1,5 @@
 import Container from '../Container.js';
+import Template from '../../util/Template.js';
 import ToggleButtonEvent from '../../events/button/ToggleButtonEvent.js';
 import ToggleButtonGroupEvent from '../../events/button/ToggleButtonGroupEvent.js';
 
@@ -7,7 +8,8 @@ export default class ToggleButtonGroup extends Container {
         super();
         
         this.classList.add("ui-ToggleButtonGroup");
-        
+        Template.activate("ui-ToggleButtonGroup", this);
+
         // Initialize state
         this._selectedButton = null;
         this._updatingSelection = false;
