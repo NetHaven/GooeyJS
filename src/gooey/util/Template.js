@@ -2,10 +2,10 @@ export default class Template {
     static activate(id) {
         let clone, template;
 
-        template = document.getElementById(id);
+        template = document.getElementById(id, element = document.body);
         if (template) {
             clone = document.importNode(template.content, true);
-            document.body.appendChild(clone);
+            element.appendChild(clone);
         }
     }
 
