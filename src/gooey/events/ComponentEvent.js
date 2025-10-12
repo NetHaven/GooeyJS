@@ -8,6 +8,9 @@ export default class ComponentEvent extends Event {
     static SHOW = "show";
     static HIDE = "hide";
 
+    static MODEL_CHANGE = "modelChange";
+    static CONTROLLER_ATTACHED = "controllerAttached";
+
     constructor() {
         super();
     }
