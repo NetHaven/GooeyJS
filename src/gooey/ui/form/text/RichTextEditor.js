@@ -94,10 +94,10 @@ export default class RichTextEditor extends TextElement {
         this._toolbar.className = 'richtexteditor-toolbar';
 
         const commands = [
-            { command: 'bold', label: 'Bold', shortcut: 'Ctrl+B', text: 'B' },
-            { command: 'italic', label: 'Italic', shortcut: 'Ctrl+I', text: 'I' },
-            { command: 'underline', label: 'Underline', shortcut: 'Ctrl+U', text: 'U' },
-            { command: 'strikeThrough', label: 'Strikethrough', shortcut: '', text: 'S' }
+            { command: 'bold', img: 'text_bold32.png', label: 'Bold', shortcut: 'Ctrl+B', text: 'B' },
+            { command: 'italic', img: 'text_italics32.png', label: 'Italic', shortcut: 'Ctrl+I', text: 'I' },
+            { command: 'underline', img: 'text_underline32.png', label: 'Underline', shortcut: 'Ctrl+U', text: 'U' },
+            { command: 'strikeThrough', img: '', label: 'Strikethrough', shortcut: '', text: 'S' }
         ];
 
         commands.forEach((def) => {
@@ -105,7 +105,12 @@ export default class RichTextEditor extends TextElement {
             button.type = 'button';
             button.className = 'richtexteditor-button';
             button.dataset.command = def.command;
-            button.textContent = def.text;
+            if (def.img) {
+                button.innerHTML = `<img src='gooey/resources/icons/${def.img}'>`;
+            }
+            else {
+                button.textContent = def.text;
+            }
             button.setAttribute('aria-label', `${def.label} (${def.shortcut})`);
             button.addEventListener(MouseEvent.CLICK, (event) => {
                 event.preventDefault();
