@@ -20,6 +20,7 @@ import MenuItem from './gooey/ui/menu/MenuItem.js';
 import MenuItemSeparator from './gooey/ui/menu/MenuItemSeparator.js';
 import Panel from './gooey/ui/panel/Panel.js';
 import PasswordField from './gooey/ui/form/text/PasswordField.js';
+import ProgressBar from './gooey/ui/ProgressBar.js';
 import RadioButton from './gooey/ui/form/RadioButton.js';
 import RadioButtonGroup from './gooey/ui/form/RadioButtonGroup.js';
 import RichTextEditor from './gooey/ui/form/text/RichTextEditor.js';
@@ -85,6 +86,7 @@ export default class GooeyJS {
         customElements.define("ui-menuitemseparator", MenuItemSeparator);
         customElements.define("ui-panel", Panel);
         customElements.define("ui-passwordfield", PasswordField);
+        customElements.define("ui-progressbar", ProgressBar);
         customElements.define("ui-radiobutton", RadioButton);
         customElements.define("ui-radiobuttongroup", RadioButtonGroup);
         customElements.define("ui-richtexteditor", RichTextEditor);
