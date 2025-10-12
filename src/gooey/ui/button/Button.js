@@ -1,13 +1,14 @@
 import Component from '../Component.js';
 import MouseEvent from '../../events/MouseEvent.js';
+import Template from '../../util/Template.js';
 
 export default class Button extends Component {
 	constructor() {
 		super();
 	
-		this.button = document.createElement("button");
-		this.appendChild(this.button);
-		
+		Template.activate("ui-button", this);
+		this.button = this.querySelector("button");
+
 		if (this.hasAttribute("icon")) {
 			this.icon = this.getAttribute("icon");			
 		}
@@ -23,7 +24,7 @@ export default class Button extends Component {
 		this.addValidEvent(MouseEvent.CLICK);
 		this.addValidEvent(MouseEvent.MOUSE_DOWN);
 
-        this.button.addEventListener(MouseEvent.CLICK, () => {
+		this.button.addEventListener(MouseEvent.CLICK, () => {
 			if (!this.disabled) {
 				this.fireEvent(MouseEvent.CLICK);
 			}
