@@ -1,11 +1,22 @@
 import Observable from '../events/Observable.js';
 import Point from '../graphics/Point.js';
 import ComponentEvent from '../events/ComponentEvent.js';
+import Model from './mvc/Model.js';
+import ModelEvent from '../events/mvc/ModelEvent.js';
 
 export default class Component extends Observable {
     constructor () {
         super();
 
+        // MVC additions (optional - only if used)
+        this._model = null;
+        this._controller = null;
+        this._bindings = [];
+
+        // Add MVC events to valid events
+        this.addValidEvent(ComponentEvent.MODEL_CHANGE);
+        this.addValidEvent(ComponentEvent.CONTROLLER_ATTACHED);
+        
         // Add valid visibility events
         this.addValidEvent(ComponentEvent.SHOW);
         this.addValidEvent(ComponentEvent.HIDE);
@@ -37,6 +48,30 @@ export default class Component extends Observable {
         }        
     }
     
+    // Data binding application
+    applyBindings() {
+        this._bindings.forEach(binding => {
+        binding.apply(this._model, this);
+        });
+    }
+  
+    // Bind to a model (optional MVC feature)
+    bindModel(model) {
+        if (this._model) {
+            this._unbindModel();
+        }
+
+        this._model = model;
+
+        // Auto-bind model changes to component updates
+        if (model instanceof Model) {
+            model.on(ModelEvent.CHANGE, this.onModelChange.bind(this));
+        }
+
+        this.fireEvent(ComponentEvent.MODEL_CHANGE, { model });
+        return this;
+    }
+
     get disabled() {
         return this.hasAttribute("disabled");
     }
@@ -80,7 +115,15 @@ export default class Component extends Observable {
     get width() {
         return this.style.width;
     }
-
+  
+    // Attach controller (optional MVC feature)
+    setController(controller) {
+        this._controller = controller;
+        controller.setView(this);
+        this.fireEvent(ComponentEvent.CONTROLLER_ATTACHED, { controller });
+        return this;
+    }
+  
     set disabled(val) {
         if (val) {
             this.setAttribute("disabled", "");
