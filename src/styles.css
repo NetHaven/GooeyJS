@@ -902,6 +902,54 @@ ui-AccordionPanel .accordion-content:empty {
     margin: 0;
 }
 
+/* Progress Bar Styles */
+ui-progress-bar {
+    display: block;
+    width: 100%;
+    margin: 8px 0;
+}
+
+ui-progress-bar .progress-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+ui-progress-bar .progress-bar {
+    flex: 1;
+    height: 16px;
+    background-color: #f0f0f0;
+    border: 1px inset #c1c0c1;
+    border-radius: 2px;
+    position: relative;
+    overflow: hidden;
+}
+
+ui-progress-bar .progress-fill {
+    height: 100%;
+    background-color: #010082;
+    transition: width 0.3s ease;
+    width: 0%;
+}
+
+ui-progress-bar .progress-bar.indeterminate .progress-fill {
+    width: 30%;
+    animation: progress-indeterminate 1.5s infinite linear;
+}
+
+ui-progress-bar .progress-text {
+    font-size: 11px;
+    color: #000;
+    white-space: nowrap;
+    min-width: 30px;
+    text-align: right;
+}
+
+@keyframes progress-indeterminate {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(333%); }
+}
+
 /* SplitPanel Styles */
 ui-SplitPanel {
     display: flex;
