@@ -1,3 +1,4 @@
+import EntityState from "./EntityState";
 import ModelEvent from "../events/mvc/ModelEvent";
 import Observable from "../events/Observable";
 
@@ -5,7 +6,7 @@ export default class Model extends Observable {
   constructor(attributes = {}, options = {}) {
     super();
 
-    // Model metadata (inspired by Breeze.js)
+    // Model metadata
     this._metadata = this.constructor.metadata || {};
     this._attributes = {};
     this._originalValues = {};
