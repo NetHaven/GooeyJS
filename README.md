@@ -9,6 +9,7 @@ GooeyJS is a web component framework that provides a set of UI elements. Built u
 ## Components
 
 ### Layout & Containers
+- **AccordionPanel** - creates a collapsible accordion interface that contains multiple ui-panel elements. Only one accordion section can be open at a time by default, providing an efficient way to organize content in a compact vertical layout.
 - **Application** - the root-level component for GooeyJS applications. It provides the foundational viewport setup and base styling for the entire application hierarchy. This component has no template or wrapped HTML elements - it serves purely as the top-level container that establishes the application's viewport and basic layout properties.
 - **AppPanel** - the top-level container component for GooeyJS applications. It provides the main application layout structure and serves as the root container for all other UI components.
 - **GroupBox** - creates a container with an optional title label that groups related form elements or content together. It extends the Panel component to provide visual organization with classic desktop-style grouping appearance.
@@ -62,7 +63,7 @@ GooeyJS is a web component framework that provides a set of UI elements. Built u
 - **Font** - is a utility component that defines font properties for text styling in RetroUI applications. It provides a structured way to configure font family, size, and weight for consistent typography across components.
 
 ## Getting Started
-Download GooeyJS.v1.1.0.zip and unzip to your codebase. To include GooeyJS, just use the following:
+Download GooeyJS.v1.2.0.zip and unzip to your codebase. To include GooeyJS, just use the following:
 
     <script type="module" src="GooeyJS/GooeyJS.js"></script>
 
