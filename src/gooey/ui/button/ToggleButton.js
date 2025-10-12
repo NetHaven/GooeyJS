@@ -1,5 +1,6 @@
 import Component from '../Component.js';
 import MouseEvent from '../../events/MouseEvent.js';
+import Template from '../../util/Template.js';
 import ToggleButtonEvent from '../../events/button/ToggleButtonEvent.js';
 
 export default class ToggleButton extends Component {
@@ -8,8 +9,8 @@ export default class ToggleButton extends Component {
         
         this.classList.add("ui-ToggleButton");
         
-        this.button = document.createElement("button");
-        this.appendChild(this.button);
+        Template.activate("ui-ToggleButton", this);
+        this.button = this.querySelector("button");
         
         // Initialize toggle state
         this._pressed = false;
