@@ -106,6 +106,7 @@ export default class GooeyJS {
         let templatePath = `${PATH}/templates`;
 
         return Promise.all([
+            Template.load(`${templatePath}/Button.html`, "ui-Button"),
             Template.load(`${templatePath}/ColorPicker.html`, "ui-ColorPicker"),
             Template.load(`${templatePath}/ComboBox.html`, "ui-ComboBox"),
             Template.load(`${templatePath}/ContextMenu.html`, "ui-ContextMenu"),
