@@ -5,6 +5,10 @@ export default class Observable extends HTMLElement {
 
     constructor() {
         super();
+
+        this._watchers = new Map();
+        this._computed = new Map();
+
         this.eventSuspension = false;
         this.eventListenerList = [];
         this.validEventList = [];
@@ -54,6 +58,26 @@ export default class Observable extends HTMLElement {
 
     addValidEvent(eventName) {
         this.validEventList.push(eventName);
+    }
+
+    // Computed properties
+    computed(name, getter) {
+        this._computed.set(name, {
+        getter,
+        cache: null,
+        dirty: true
+        });
+
+        Object.defineProperty(this, name, {
+        get: () => {
+            const computed = this._computed.get(name);
+            if (computed.dirty) {
+            computed.cache = getter.call(this);
+            computed.dirty = false;
+            }
+            return computed.cache;
+        }
+        });
     }
 
     fireEvent(eventName, configObj, options = {}) {
@@ -156,5 +180,23 @@ export default class Observable extends HTMLElement {
 
     suspendEvents() {
         this.eventSuspension = true;
+    }
+
+    // Add reactive property watching
+    watch(property, callback, options = {}) {
+        if (!this._watchers.has(property)) {
+        this._watchers.set(property, []);
+        }
+
+        const watcher = { callback, ...options };
+        this._watchers.get(property).push(watcher);
+
+        // Register property change event if not already valid
+        const eventName = `change:${property}`;
+        if (!this._validEvents.has(eventName)) {
+        this.addValidEvent(eventName);
+        }
+
+        return () => this.unwatch(property, callback);
     }
 }
