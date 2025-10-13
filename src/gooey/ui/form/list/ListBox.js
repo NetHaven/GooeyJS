@@ -28,7 +28,7 @@ export default class ListBox extends FormElement {
         this.addValidEvent(FormElementEvent.BLUR);
         
         // Add documented event listeners
-        this.listBox.addEventListener('change', (e) => {
+        this.listBox.addEventListener(ListBoxEvent.CHANGE, (e) => {
             this.fireEvent(ListBoxEvent.CHANGE, { 
                 selectedOptions: this.selectedOptions,
                 selectedValues: this.selectedValues,
