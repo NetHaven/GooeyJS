@@ -99,6 +99,7 @@ export default class RichTextEditor extends TextElement {
             { command: 'underline', img: 'text_underline32.png', label: 'Underline', shortcut: 'Ctrl+U', text: 'U' },
             { command: 'strikeThrough', img: '', label: 'Strikethrough', shortcut: '', text: 'S' },
             { command: 'subscript', img: 'text_subscript32.png', label: 'Subscript', shortcut: '', text: ''},
+            { command: 'superscript', img: 'text_superscript32.png', label: 'Superscript', shortcut: '', text: ''}
         ];
 
         commands.forEach((def) => {
