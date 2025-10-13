@@ -3,19 +3,26 @@ import ComboBoxEvent from '../../../events/form/list/ComboBoxEvent.js';
 import KeyboardEvent from '../../../events/KeyboardEvent.js';
 import MouseEvent from '../../../events/MouseEvent.js';
 import FormElementEvent from '../../../events/form/FormElementEvent.js';
+import Template from '../../../util/Template.js';
 import TextElementEvent from '../../../events/form/text/TextElementEvent.js';
 
 export default class ComboBox extends ListBox {
     constructor() {
         super();
         
-        // Remove the multiple selection capability from the inherited listBox
-        this.listBox.multiple = false;
-        this.listBox.size = 1;
-        
+        Template.activate("ui-ComboBox", this);
+
         // Create the combo box structure
-        this._createComboBoxStructure();
+        this.listBox = this.querySelector("select.combobox-list");
+        this._container = this.querySelector('div.combobox-container');
+        this._textInput = this.querySelector('input.combobox-input');
+        this._dropdownButton = this.querySelector('button.combobox-button');
+        this._dropdownContainer = this.querySelector('div.combobox-dropdown');
+        this._dropdownContainer.style.display = 'none';
         
+        // Update formElement reference for FormElement functionality
+        this.formElement = this._textInput;
+
         // Set up event handlers
         this._setupEventHandlers();
         
@@ -41,49 +48,6 @@ export default class ComboBox extends ListBox {
         this.addValidEvent(FormElementEvent.BLUR);
         this.addValidEvent(ComboBoxEvent.DROPDOWN_OPEN);
         this.addValidEvent(ComboBoxEvent.DROPDOWN_CLOSE);
-    }
-    
-    /**
-     * Create the combo box HTML structure
-     */
-    _createComboBoxStructure() {
-        // Clear existing content
-        this.innerHTML = '';
-        
-        // Create main container
-        this._container = document.createElement('div');
-        this._container.className = 'combobox-container';
-        
-        // Create text input
-        this._textInput = document.createElement('input');
-        this._textInput.type = 'text';
-        this._textInput.className = 'combobox-input';
-        this._textInput.readOnly = !this._editable;
-        
-        // Create dropdown button
-        this._dropdownButton = document.createElement('button');
-        this._dropdownButton.type = 'button';
-        this._dropdownButton.className = 'combobox-button';
-        this._dropdownButton.innerHTML = '▼';
-        this._dropdownButton.setAttribute('aria-label', 'Open dropdown');
-        
-        // Create dropdown container
-        this._dropdownContainer = document.createElement('div');
-        this._dropdownContainer.className = 'combobox-dropdown';
-        this._dropdownContainer.style.display = 'none';
-        
-        // Move the inherited listBox into the dropdown container
-        this.listBox.className = 'combobox-list';
-        this._dropdownContainer.appendChild(this.listBox);
-        
-        // Assemble the structure
-        this._container.appendChild(this._textInput);
-        this._container.appendChild(this._dropdownButton);
-        this._container.appendChild(this._dropdownContainer);
-        this.appendChild(this._container);
-        
-        // Update formElement reference for FormElement functionality
-        this.formElement = this._textInput;
     }
     
     /**
