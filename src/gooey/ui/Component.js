@@ -51,14 +51,14 @@ export default class Component extends Observable {
     // Data binding application
     applyBindings() {
         this._bindings.forEach(binding => {
-        binding.apply(this._model, this);
+            binding.apply(this._model, this);
         });
     }
   
     // Bind to a model (optional MVC feature)
     bindModel(model) {
         if (this._model) {
-            this._unbindModel();
+            this.unbindModel();
         }
 
         this._model = model;
@@ -68,8 +68,29 @@ export default class Component extends Observable {
             model.on(ModelEvent.CHANGE, this.onModelChange.bind(this));
         }
 
+        // Apply bindings immediately to sync component with model
+        if (this._bindings.length > 0) {
+            this.applyBindings();
+        }
+
         this.fireEvent(ComponentEvent.MODEL_CHANGE, { model });
         return this;
+    }
+
+    // Web Component lifecycle - called when added to DOM
+    connectedCallback() {
+        // GooeyJS components can initialize MVC bindings here
+        // This is where templates might be activated and bindings applied
+        // if the component uses declarative bindings
+
+        if (super.connectedCallback) {
+            super.connectedCallback();
+        }
+
+        // Apply any pending bindings after DOM is connected
+        if (this._model && this._bindings.length > 0) {
+            this.applyBindings();
+        }
     }
 
     get disabled() {
@@ -116,6 +137,23 @@ export default class Component extends Observable {
         return this.style.width;
     }
   
+    // Handle model changes by updating DOM directly
+    onModelChange(event) {
+        // Apply data bindings when model changes
+        if (this._bindings.length > 0) {
+            this.applyBindings();
+        }
+
+        // Components can override this to handle specific model changes
+        // Example of GooeyJS pattern for updating DOM:
+        // if (event.key === 'title' && this.titleElement) {
+        //   this.titleElement.textContent = event.value;
+        // }
+        // if (event.key === 'visible') {
+        //   this.visible = event.value; // Uses GooeyJS property setter
+        // }
+    }
+
     // Attach controller (optional MVC feature)
     setController(controller) {
         this._controller = controller;
@@ -175,5 +213,16 @@ export default class Component extends Observable {
     set width(val) {
         this.setAttribute("width", val);
         this.style.width = `${val}px`;
+    }
+
+    // Unbind from current model
+    unbindModel() {
+        if (this._model) {
+            // Remove model change listener
+            if (this._model instanceof Model) {
+                this._model.off(ModelEvent.CHANGE, this.onModelChange);
+            }
+            this._model = null;
+        }
     }
 }
