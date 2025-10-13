@@ -1,6 +1,7 @@
 import FormElement from '../FormElement.js';
 import DropDownListEvent from '../../../events/form/list/DropDownListEvent.js';
 import FormElementEvent from '../../../events/form/FormElementEvent.js';
+import Template from '../../../util/Template.js';
 
 export default class DropDownList extends FormElement {
     constructor() {
@@ -9,7 +10,8 @@ export default class DropDownList extends FormElement {
         // Store any existing option elements before creating the select
         const existingOptions = Array.from(this.querySelectorAll('option'));
 
-        this.dropDownList = document.createElement("select");
+        Template.activate("ui-DropDownList", this);
+        this.dropDownList = this.querySelector("select");
         this.formElement = this.dropDownList;
         
         // Move existing options to the internal select element
