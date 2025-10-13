@@ -1,6 +1,7 @@
 import FormElement from '../FormElement.js';
 import ListBoxEvent from '../../../events/form/list/ListBoxEvent.js';
 import FormElementEvent from '../../../events/form/FormElementEvent.js';
+import Template from '../../../util/Template.js';
 
 export default class ListBox extends FormElement {
     constructor() {
@@ -9,8 +10,8 @@ export default class ListBox extends FormElement {
         // Store any existing option elements before creating the select
         const existingOptions = Array.from(this.querySelectorAll('option'));
 
-        this.listBox = document.createElement("select");
-        this.listBox.multiple = true;
+        Template.activate("ui-ListBox", this);
+        this.listBox = this.querySelector("select");
         this.formElement = this.listBox;
         
         // Move existing options to the internal select element
