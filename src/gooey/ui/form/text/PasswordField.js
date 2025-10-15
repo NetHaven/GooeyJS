@@ -2,13 +2,14 @@ import KeyboardEvent from '../../../events/KeyboardEvent.js';
 import TextElement from './TextElement.js';
 import PasswordFieldEvent from '../../../events/form/text/PasswordFieldEvent.js';
 import FormElementEvent from '../../../events/form/FormElementEvent.js';
+import Template from '../../../util/Template.js';
 
 export default class PasswordField extends TextElement {
     constructor() {
         super();
 
-        this.textElement = document.createElement("input");
-        this.textElement.type = "password";
+        Template.activate("ui-PasswordField", this);
+        this.textElement = this.querySelector("input");
         this.formElement = this.textElement;
         this.appendChild(this.textElement);
         
