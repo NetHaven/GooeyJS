@@ -122,6 +122,7 @@ export default class GooeyJS {
             Template.load(`${templatePath}/PasswordField.html`, "ui-PasswordField"),
             Template.load(`${templatePath}/SplitPanel`, "ui-SplitPanel"),
             Template.load(`${templatePath}/Tab.html`, "ui-Tab"),
+            Template.load(`${templatePath}/TextArea.html`, "ui-TextArea"),
             Template.load(`${templatePath}/TabPanel.html`, "ui-TabPanel"),
             Template.load(`${templatePath}/TextField.html`, "ui-TextField"),
             Template.load(`${templatePath}/ToggleButton.html`, "ui-ToggleButton"),
