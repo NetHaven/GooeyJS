@@ -2,13 +2,14 @@ import TextElement from './TextElement.js';
 import TextElementEvent from '../../../events/form/text/TextElementEvent.js';
 import TextFieldEvent from '../../../events/form/text/TextFieldEvent.js';
 import FormElementEvent from '../../../events/form/FormElementEvent.js';
+import Template from '../../../util/Template.js';
 
 export default class TextField extends TextElement {
     constructor() {
         super();
 
-        this.textElement = document.createElement("input");
-        this.textElement.type = "text";
+        Template.activate("ui-TextField", this);
+        this.textElement = this.querySelector("input");
         this.formElement = this.textElement;
         this.appendChild(this.textElement);
         
