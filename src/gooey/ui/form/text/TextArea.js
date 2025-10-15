@@ -1,12 +1,14 @@
 import TextElement from './TextElement.js';
 import TextElementEvent from '../../../events/form/text/TextElementEvent.js';
 import FormElementEvent from '../../../events/form/FormElementEvent.js';
+import Template from '../../../util/Template.js';
 
 export default class TextArea extends TextElement {
     constructor() {
         super();
 
-        this.textElement = document.createElement("textarea");
+        Template.activate("ui-TextArea", this);
+        this.textElement = this.querySelector("textarea");
         this.formElement = this.textElement;
 		this.appendChild(this.textElement);
         
