@@ -4,11 +4,13 @@ import TextElementEvent from '../../../events/form/text/TextElementEvent.js';
 import FormElementEvent from '../../../events/form/FormElementEvent.js';
 import MouseEvent from '../../../events/MouseEvent.js';
 import KeyboardEvent from '../../../events/KeyboardEvent.js';
+import Template from '../../../util/Template.js';
 
 export default class RichTextEditor extends TextElement {
     constructor() {
         super();
 
+        Template.activate("ui-RichTextEditor", this);
         this.classList.add('ui-RichTextEditor');
 
         this._buttons = {};
@@ -87,52 +89,21 @@ export default class RichTextEditor extends TextElement {
     }
 
     _createLayout() {
-        this._shell = document.createElement('div');
-        this._shell.className = 'richtexteditor-shell';
+        this._shell = this.querySelector('div.richtexteditor-shell');
 
-        this._toolbar = document.createElement('div');
-        this._toolbar.className = 'richtexteditor-toolbar';
+        this._toolbar = this.querySelector('div.richtexteditor-toolbar');
 
-        const commands = [
-            { command: 'bold', img: 'text_bold32.png', label: 'Bold', shortcut: 'Ctrl+B', text: 'B' },
-            { command: 'italic', img: 'text_italics32.png', label: 'Italic', shortcut: 'Ctrl+I', text: 'I' },
-            { command: 'underline', img: 'text_underline32.png', label: 'Underline', shortcut: 'Ctrl+U', text: 'U' },
-            { command: 'strikeThrough', img: '', label: 'Strikethrough', shortcut: '', text: 'S' },
-            { command: 'subscript', img: 'text_subscript32.png', label: 'Subscript', shortcut: '', text: ''},
-            { command: 'superscript', img: 'text_superscript32.png', label: 'Superscript', shortcut: '', text: ''}
-        ];
-
-        commands.forEach((def) => {
-            const button = document.createElement('button');
-            button.type = 'button';
-            button.className = 'richtexteditor-button';
-            button.dataset.command = def.command;
-            if (def.img) {
-                button.innerHTML = `<img src='gooey/resources/icons/${def.img}'>`;
-            }
-            else {
-                button.textContent = def.text;
-            }
-            button.setAttribute('aria-label', `${def.label} (${def.shortcut})`);
+        let buttons = Array.from(this._toolbar.querySelectorAll("button"));
+        buttons.forEach((button) => {
+            const command = button.dataset.command;
             button.addEventListener(MouseEvent.CLICK, (event) => {
                 event.preventDefault();
-                this._execCommand(def.command, event);
+                this._execCommand(command, event);
             });
-            this._toolbar.appendChild(button);
-            this._buttons[def.command] = button;
+            this._buttons[command] = button;
         });
 
-        this._content = document.createElement('div');
-        this._content.className = 'richtexteditor-content';
-        this._content.contentEditable = 'true';
-        this._content.setAttribute('role', 'textbox');
-        this._content.setAttribute('aria-multiline', 'true');
-        this._content.setAttribute('tabindex', '0');
-        this._content.spellcheck = true;
-
-        this._shell.appendChild(this._toolbar);
-        this._shell.appendChild(this._content);
-        this.appendChild(this._shell);
+        this._content = this.querySelector('div.richtexteditor-content');
 
         this.textElement = this._content;
         this.formElement = this._content;

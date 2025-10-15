@@ -1,12 +1,24 @@
 <template id="ui-RichTextEditor">
     <div class="richtexteditor-shell">
         <div class="richtexteditor-toolbar">
-            <button class="richtexteditor-button" type="button"><img src="gooey/resources/icons/text_bold32.png"></button>
-            <button class="richtexteditor-button" type="button"><img src="gooey/resources/icons/text_italics32.png"></button>
-            <button class="richtexteditor-button" type="button"><img src="gooey/resources/icons/text_underline32.png"></button>
-            <button class="richtexteditor-button" type="button"><s>S</s></button>
-            <button class="richtexteditor-button" type="button"><img src="gooey/resources/icons/text_subscript32.png"></button>
-            <button class="richtexteditor-button" type="button"><img src="gooey/resources/icons/text_superscript32.png"></button>
+            <button class="richtexteditor-button" type="button" aria-label="Bold (Ctrl+B)" data-command="bold">
+                <img src="gooey/resources/icons/text_bold32.png">
+            </button>
+            <button class="richtexteditor-button" type="button" aria-label="Italic (Ctrl+I)" data-command="italic">
+                <img src="gooey/resources/icons/text_italics32.png">
+            </button>
+            <button class="richtexteditor-button" type="button" aria-label="Underline (Ctrl+U)" data-command="underline">
+                <img src="gooey/resources/icons/text_underline32.png">
+            </button>
+            <button class="richtexteditor-button" type="button" aria-label="Strikethrough" data-command="strikeThrough">
+                <s>S</s>
+            </button>
+            <button class="richtexteditor-button" type="button" aria-label="Subscript" data-command="subscript">
+                <img src="gooey/resources/icons/text_subscript32.png">
+            </button>
+            <button class="richtexteditor-button" type="button" aria-label="Superscript" data-command="superscript">
+                <img src="gooey/resources/icons/text_superscript32.png">
+            </button>
         </div>
         <div class="richtexteditor-content" contenteditable="true" role="textbox" tabindex="0" aria-multiline="true" spellcheck="true">
         </div>
