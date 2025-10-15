@@ -58,12 +58,15 @@ GooeyJS is a web component framework that provides a set of UI elements. Built u
 - **Window** - represents a desktop-style window with title bar, close button, and draggable functionality. It provides a container for dialog content and supports modal behavior, viewport constraints, and window management features.
 - **Dialog** - provides static methods for displaying system dialog boxes including alerts, confirmations, prompts, and information messages. It replaces native browser dialogs with styled GooeyJS dialogs that match the application's visual theme and provide better customization options.
 
+### Feedback & Status
+- **ProgressBar** - represents a progress indicator that shows the completion progress of a task. It extends the base Component class and provides desktop-style progress bar appearance with support for both determinate and indeterminate states.
+
 ### Styling & Utilities
 - **Border** - is a utility component that defines border properties for other UI elements. It provides a structured way to configure border color, style, and width for consistent border styling across GooeyJS components.
 - **Font** - is a utility component that defines font properties for text styling in RetroUI applications. It provides a structured way to configure font family, size, and weight for consistent typography across components.
 
 ## Getting Started
-Download GooeyJS.v1.2.0.zip and unzip to your codebase. To include GooeyJS, just use the following:
+Download GooeyJS.v1.3.0.zip and unzip to your codebase. To include GooeyJS, just use the following:
 
     <script type="module" src="GooeyJS/GooeyJS.js"></script>
 
