@@ -110,6 +110,7 @@ export default class GooeyJS {
         return Promise.all([
             Template.load(`${templatePath}/AccordionPanel.html`, "ui-AccordionPanel"),
             Template.load(`${templatePath}/Button.html`, "ui-Button"),
+            Template.load(`${templatePath}/Checkbox.html`, "ui-Checkbox"),
             Template.load(`${templatePath}/ColorPicker.html`, "ui-ColorPicker"),
             Template.load(`${templatePath}/ComboBox.html`, "ui-ComboBox"),
             Template.load(`${templatePath}/ContextMenu.html`, "ui-ContextMenu"),
