@@ -1,6 +1,6 @@
-import EntityState from "./EntityState";
-import ModelEvent from "../events/mvc/ModelEvent";
-import Observable from "../events/Observable";
+import EntityState from "./EntityState.js";
+import ModelEvent from "../events/mvc/ModelEvent.js";
+import Observable from "../events/Observable.js";
 
 export default class Model extends Observable {
   constructor(attributes = {}, options = {}) {
