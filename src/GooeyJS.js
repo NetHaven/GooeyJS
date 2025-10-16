@@ -121,6 +121,7 @@ export default class GooeyJS {
             Template.load(`${templatePath}/MenuItem.html`, "ui-MenuItem"),
             Template.load(`${templatePath}/MenuItemSeparator.html`, "ui-MenuItemSeparator"),
             Template.load(`${templatePath}/PasswordField.html`, "ui-PasswordField"),
+            Template.load(`${templatePath}/RadioButton.html`, "ui-RadioButton"),
             Template.load(`${templatePath}/SplitPanel`, "ui-SplitPanel"),
             Template.load(`${templatePath}/Tab.html`, "ui-Tab"),
             Template.load(`${templatePath}/TextArea.html`, "ui-TextArea"),
