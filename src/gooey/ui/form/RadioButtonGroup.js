@@ -1,10 +1,13 @@
 import Component from '../Component.js';
 import RadioButtonGroupEvent from '../../events/form/RadioButtonGroupEvent.js';
+import Template from '../../util/Template.js';
 
 export default class RadioButtonGroup extends Component {
     constructor() {
         super();
         
+        Template.activate("ui-RadioButtonGroup", this);
+
         // Set up mutation observer to watch for radio button changes
         this._setupSelectionHandling();
     }
