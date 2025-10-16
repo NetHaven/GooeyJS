@@ -25,7 +25,7 @@ export default class Template {
 
         // Create timeout-wrapped fetch with proper async error handling
         const timeoutMs = 10000; // 10 second timeout
-        const loadPromise = GooeyJS._timeoutPromise(
+        const loadPromise = Template._timeoutPromise(
             fetch(templateName, {
                 method: 'GET',
                 cache: 'default',
@@ -80,5 +80,28 @@ export default class Template {
         Template._loading.set(templateId, loadPromise);
 
         return loadPromise;
+    }
+
+     /**
+     * Creates a timeout-wrapped promise for async operations
+     * @param {Promise} promise - The promise to wrap with timeout
+     * @param {number} timeoutMs - Timeout in milliseconds
+     * @param {string} errorMessage - Error message for timeout
+     * @returns {Promise} - Promise that rejects if timeout is reached
+     */
+    static _timeoutPromise(promise, timeoutMs, errorMessage) {
+        return new Promise((resolve, reject) => {
+            // Create timeout promise that rejects after specified time
+            const timeoutPromise = new Promise((_, timeoutReject) => {
+                setTimeout(() => {
+                    timeoutReject(new Error(errorMessage || `Operation timed out after ${timeoutMs}ms`));
+                }, timeoutMs);
+            });
+
+            // Race between the original promise and timeout
+            Promise.race([promise, timeoutPromise])
+                .then(resolve)
+                .catch(reject);
+        });
     }
 }
