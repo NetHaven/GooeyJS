@@ -16,8 +16,8 @@ export default class Template {
         }
 
         // Add loading flag to prevent concurrent loads
-        if (GooeyJS._loadingTemplates?.has(templateId)) {
-            return GooeyJS._loadingTemplates.get(templateId);
+        if (Template._loading?.has(templateId)) {
+            return Template._loading.get(templateId);
         }
 
         const maxRetries = 3;
