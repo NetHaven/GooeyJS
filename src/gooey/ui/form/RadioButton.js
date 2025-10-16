@@ -1,13 +1,15 @@
 import FormElement from './FormElement.js';
 import MouseEvent from '../../events/MouseEvent.js';
 import RadioButtonEvent from '../../events/form/RadioButtonEvent.js';
+import Template from '../../util/Template.js';
 
 export default class RadioButton extends FormElement {
     constructor() {
         super();
 
-        this.radioButton = document.createElement("input");
-        this.radioButton.type = "radio";
+        Template.activate("ui-RadioButton", this);
+        
+        this.radioButton = this.querySelector("input");
         this.formElement = this.radioButton;
 		this.appendChild(this.radioButton);
         
