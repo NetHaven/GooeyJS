@@ -75,6 +75,21 @@ GooeyJS 2.0 will include:
 - Light-weight MVC and data binding capabilities
 - Overall component reorganization
 
+### New Components
+GooeyJS 2.0 will at the very least include the following components:
+- AccordionPanel
+- DataGrid
+- DatePicker
+- FormPanel
+- GroupBox
+- ProgressBar
+- Spinner
+
+It will also include components specifically geared for configuring:
+- Background Images
+- Borders
+- Fonts
+- Gradients
 
 ## Getting Started
 Download GooeyJS.v1.3.0.zip and unzip to your codebase. To include GooeyJS, just use the following:
