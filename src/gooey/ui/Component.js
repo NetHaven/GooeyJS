@@ -1,7 +1,7 @@
 import Observable from '../events/Observable.js';
 import Point from '../graphics/Point.js';
 import ComponentEvent from '../events/ComponentEvent.js';
-import Model from './mvc/Model.js';
+import Model from '../mvc/Model.js';
 import ModelEvent from '../events/mvc/ModelEvent.js';
 
 export default class Component extends Observable {
