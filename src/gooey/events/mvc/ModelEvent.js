@@ -1,4 +1,4 @@
-import Event from "./Event.js";
+import Event from "../Event.js";
 
 export default class ModelEvent extends Event {
     static CHANGE = "change";
