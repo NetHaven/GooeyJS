@@ -3,7 +3,7 @@ import Application from './gooey/ui/Application.js';
 import AppPanel from './gooey/ui/panel/AppPanel.js';
 import Border from './gooey/ui/Border.js';
 import Button from './gooey/ui/button/Button.js';
-import Checkbox from './gooey/ui/form/CheckBox.js';
+import Checkbox from './gooey/ui/form/Checkbox.js';
 import CheckboxMenuItem from './gooey/ui/menu/CheckboxMenuItem.js';
 import ColorPicker from './gooey/ui/ColorPicker.js';
 import ComboBox from './gooey/ui/form/list/ComboBox.js';
@@ -122,6 +122,7 @@ export default class GooeyJS {
             Template.load(`${templatePath}/MenuItemSeparator.html`, "ui-MenuItemSeparator"),
             Template.load(`${templatePath}/PasswordField.html`, "ui-PasswordField"),
             Template.load(`${templatePath}/RadioButton.html`, "ui-RadioButton"),
+            Template.load(`${templatePath}/RadioButtonGroup.html`, "ui-RadioButtonGroup"),
             Template.load(`${templatePath}/SplitPanel`, "ui-SplitPanel"),
             Template.load(`${templatePath}/Tab.html`, "ui-Tab"),
             Template.load(`${templatePath}/TextArea.html`, "ui-TextArea"),
