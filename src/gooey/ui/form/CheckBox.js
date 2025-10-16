@@ -1,13 +1,15 @@
 import FormElement from './FormElement.js';
 import CheckboxEvent from '../../events/form/CheckboxEvent.js';
 import MouseEvent from '../../events/MouseEvent.js';
+import Template from '../../../util/Template.js';
 
 export default class Checkbox extends FormElement {
     constructor() {
         super();
 
-        this.checkbox = document.createElement("input");
-        this.checkbox.type = "checkbox";
+        Template.activate("ui-Checkbox", this);
+
+        this.checkbox = this.querySelector("input");
         this.formElement = this.checkbox;
 		this.appendChild(this.checkbox);
         
