@@ -24,6 +24,7 @@ import ProgressBar from './gooey/ui/ProgressBar.js';
 import RadioButton from './gooey/ui/form/RadioButton.js';
 import RadioButtonGroup from './gooey/ui/form/RadioButtonGroup.js';
 import RichTextEditor from './gooey/ui/form/text/RichTextEditor.js';
+import Spinner from './gooey/ui/form/Spinner.js';
 import SplitPanel from './gooey/ui/panel/SplitPanel.js';
 import Tab from './gooey/ui/panel/Tab.js';
 import TabPanel from './gooey/ui/panel/TabPanel.js';
@@ -90,6 +91,7 @@ export default class GooeyJS {
         customElements.define("ui-radiobutton", RadioButton);
         customElements.define("ui-radiobuttongroup", RadioButtonGroup);
         customElements.define("ui-richtexteditor", RichTextEditor);
+        customElements.define("ui-spinner", Spinner);
         customElements.define("ui-splitpanel", SplitPanel);
         customElements.define("ui-tab", Tab);
         customElements.define("ui-tabpanel", TabPanel);
