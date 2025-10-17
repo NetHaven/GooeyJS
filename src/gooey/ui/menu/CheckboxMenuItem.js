@@ -1,11 +1,13 @@
 import MenuItem from "./MenuItem.js";
 import CheckboxMenuItemEvent from '../../events/menu/CheckboxMenuItemEvent.js';
 import MouseEvent from '../../events/MouseEvent.js';
+import Template from '../../util/Template.js';
 
 export default class CheckboxMenuItem extends MenuItem {
     constructor () {
         super();
 
+        Template.activate("ui-CheckboxmenuItem", this);
         if (this.hasAttribute("checked")) {
             this.checked = true;
         }
