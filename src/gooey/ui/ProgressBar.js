@@ -1,4 +1,5 @@
 import Component from './Component.js';
+import Template from '../util/Template.js';
 
 export default class ProgressBar extends Component {
     static get observedAttributes() {
@@ -11,16 +12,7 @@ export default class ProgressBar extends Component {
         this._max = 100;
         this._indeterminate = false;
         
-        // Create the progress bar HTML structure directly
-        this.innerHTML = `
-            <div class="progress-container">
-                <div class="progress-bar">
-                    <div class="progress-fill"></div>
-                </div>
-                <div class="progress-text"></div>
-            </div>
-        `;
-        
+        Template.activate("ui-ProgressBar", this);
         this.render();
     }
 
