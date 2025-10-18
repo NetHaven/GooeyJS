@@ -116,6 +116,7 @@ export default class GooeyJS {
             Template.load(`${templatePath}/ColorPicker.html`, "ui-ColorPicker"),
             Template.load(`${templatePath}/ComboBox.html`, "ui-ComboBox"),
             Template.load(`${templatePath}/ContextMenu.html`, "ui-ContextMenu"),
+            Template.load(`${templatePath}/DatePicker.html`, "ui-DatePicker"),
             Template.load(`${templatePath}/DropDownList.html`, "ui-DropDownList"),
             Template.load(`${templatePath}/ListBox.html`, "ui-ListBox"),
             Template.load(`${templatePath}/Menu.html`, "ui-Menu"),
