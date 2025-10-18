@@ -30,6 +30,7 @@ GooeyJS is a web component framework that provides a set of UI elements. Built u
 ### Text & Editing
 - **Label** - displays static text content with optional icons and comprehensive alignment options. It provides a consistent way to display labels, captions, and informational text throughout GooeyJS applications with support for both horizontal and vertical alignment, clickable actions, and icon integration.
 - **PasswordField** - provides a secure password input control that masks entered text. It extends the TextElement class and inherits all form validation capabilities while providing the security benefits of hidden password input. Text entered into this field is automatically masked with asterisks or dots for privacy.
+- **Spinner** - provides a numeric input control with integrated increment/decrement buttons. It extends the FormElement class and includes keyboard support, value constraints (min/max), and step values for precise numeric input. This component is ideal for quantity selectors, counters, and any scenario requiring controlled numeric input.
 - **RichTextEditor** - provides a WYSIWYG rich text editing interface with formatting tools, supporting bold, italic, underline, font changes, colors, and other text formatting options.
 - **TextArea** - provides a multi-line plain text input control with support for scrolling, resize handles, and form validation. Perfect for comments, descriptions, and longer text input.
 - **TextField** - provides a single-line text input control with built-in validation support, placeholder text, and various input types. It extends the FormElement class and integrates with GooeyJS's form validation system. All standard HTML input attributes are passed through to the internal HTML input element.
@@ -92,7 +93,7 @@ It will also include components specifically geared for configuring:
 - Gradients
 
 ## Getting Started
-Download GooeyJS.v1.3.0.zip and unzip to your codebase. To include GooeyJS, just use the following:
+Download GooeyJS.v1.4.0.zip and unzip to your codebase. To include GooeyJS, just use the following:
 
     <script type="module" src="GooeyJS/GooeyJS.js"></script>
 
