@@ -1,0 +1,71 @@
+import Component from "./Component";
+import Template from "../util/Template";
+
+export default class DatePicker extends Component {
+    constructor() {
+        super();
+
+        Template.activate("ui-DatePicker", this);
+        this.dateElement = this.querySelector("input");
+
+        if (this.hasAttribute("max")) {
+            this.max = this.getAttribute("max");
+        }
+
+        if (this.hasAttribute("min")) {
+            this.max = this.getAttribute("min");
+        }
+
+        if (this.hasAttribute("step")) {
+            this.max = this.getAttribute("step");
+        }
+    }
+
+    get max() {
+        if (this.dateElement) {
+            return this.dateElement.getAttribute("max");
+        }
+        return null;
+    }
+
+    get min() {
+        if (this.dateElement) {
+            return this.dateElement.getAttribute("min");
+        }
+        return null;
+    }
+
+    get step() {
+        if (this.dateElement) {
+            return this.dateElement.getAttribute("step");
+        }
+        return null;
+    }
+
+    set max(value) {
+        if (value) {
+            this.setAttribute("max", value);
+            if (this.dateElement) {
+                this.dateElement.setAttribute("max", value);
+            }
+        }
+    } 
+
+    set min(value) {
+        if (value) {
+            this.setAttribute("min", value);
+            if (this.dateElement) {
+                this.dateElement.setAttribute("min", value);
+            }
+        }
+    } 
+
+    set step(value) {
+        if (value) {
+            this.setAttribute("step", value);
+            if (this.dateElement) {
+                this.dateElement.setAttribute("step", value);
+            }
+        }
+    } 
+}
