@@ -8,6 +8,7 @@ import CheckboxMenuItem from './gooey/ui/menu/CheckboxMenuItem.js';
 import ColorPicker from './gooey/ui/ColorPicker.js';
 import ComboBox from './gooey/ui/form/list/ComboBox.js';
 import ContextMenu from './gooey/ui/menu/ContextMenu.js';
+import DatePicker from './gooey/ui/DatePicker.js';
 import DropDownList from './gooey/ui/form/list/DropDownList.js';
 import Font from './gooey/ui/Font.js';
 import FormPanel from './gooey/ui/panel/FormPanel.js';
@@ -75,6 +76,7 @@ export default class GooeyJS {
         customElements.define("ui-colorpicker", ColorPicker);
         customElements.define("ui-combobox", ComboBox);
         customElements.define("ui-contextmenu", ContextMenu);
+        customElements.define("ui-datepicker", DatePicker);
         customElements.define("ui-dropdownlist", DropDownList);
         customElements.define("ui-font", Font);
         customElements.define("ui-formpanel", FormPanel);
