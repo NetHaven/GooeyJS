@@ -1,7 +1,9 @@
 import FontWeight from "./FontWeight.js";
+import Template from "../util/Template.js";
 
 export default class Font {
     constructor() {
+        Template.activate("ui-Font", this);
     }
     
     get family() {
