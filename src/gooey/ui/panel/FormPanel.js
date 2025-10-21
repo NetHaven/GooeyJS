@@ -1,10 +1,14 @@
 import Panel from './Panel.js';
 import Layout from '../Layout.js';
 import FormPanelEvent from '../../events/panel/FormPanelEvent.js';
+import Template from '../../util/Template.js';
 
 export default class FormPanel extends Panel {
     constructor () {
         super();
+
+        Template.activate("ui-FormPanel", this);
+
         this.classList.add("ui-FormPanel");
 
         // Override the default layout to ensure CSS grid works
