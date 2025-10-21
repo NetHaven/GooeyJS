@@ -1,11 +1,13 @@
 import Container from '../Container.js';
 import Layout from '../Layout.js';
 import FormFactor from '../FormFactor.js';
+import Template from '../../util/Template.js';
 
 export default class AppPanel extends Container {
     constructor () {
         super();
 
+        Template.activate("ui-AppPanel", this);
         this.layout = Layout.BORDER;
         
         // Handle formfactor attribute
