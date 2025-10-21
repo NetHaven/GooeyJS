@@ -10,7 +10,7 @@ export default class Menu extends Component {
         
         super();
 
-        Template.active("ui-Menu", this);
+        Template.activate("ui-Menu", this);
         this.visible = false;
         
         // Add valid events

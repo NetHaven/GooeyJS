@@ -1,15 +1,13 @@
 import Component from '../Component.js';
 import MenuItemEvent from '../../events/menu/MenuItemEvent.js';
 import MouseEvent from '../../events/MouseEvent.js';
+import Template from '../../util/Template.js';
 
 export default class MenuItem extends Component {
     constructor () {
-        var clone, template;
-
         super();
-        template = document.getElementById("ui-MenuItem");
-        clone = document.importNode(template.content, true);
-        this.appendChild(clone);
+
+        Template.activate("ui-MenuItem", this);
 
         this.textElement = this.querySelector(".MenuItemText");
         this.shortcutElement = this.querySelector(".MenuItemShortcut");
