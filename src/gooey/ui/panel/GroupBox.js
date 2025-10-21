@@ -1,19 +1,16 @@
 import Panel from './Panel.js';
+import Template from '../../util/Template.js';
 
 export default class GroupBox extends Panel {
     constructor() {
         super();
         
+        Template.activate("ui-GroupBox", this);
         this.classList.add("ui-GroupBox");
         
-        this.contentPanel = document.createElement('div');
-        this.contentPanel.classList.add('ui-GroupBox-content');
+        this.contentPanel = this.querySelector('div');
         
-        this.textLabel = document.createElement('span');
-        this.textLabel.classList.add('ui-GroupBox-text');
-        
-        this.appendChild(this.contentPanel);
-        this.appendChild(this.textLabel);
+        this.textLabel = this.querySelector('span');
         
         if (this.hasAttribute("text")) {
             this.text = this.getAttribute("text");
