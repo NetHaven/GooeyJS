@@ -1,17 +1,16 @@
 import Component from '../Component.js';
 import KeyboardEvent from '../../events/KeyboardEvent.js';
 import MenuEvent from '../../events/menu/MenuEvent.js';
+import Template from '../../util/Template.js';
 
 export default class Menu extends Component {
     constructor () {
-        var acceleratedItem, accelerator, activeMenuItem, activeMenuItemIndex, clone, menuItemList, 
-            menuText, shortcutItem, template;
+        var acceleratedItem, accelerator, activeMenuItem, activeMenuItemIndex, menuItemList, 
+            menuText, shortcutItem;
         
         super();
 
-        template = document.getElementById("ui-Menu");
-        clone = document.importNode(template.content, true);
-        this.appendChild(clone);
+        Template.active("ui-Menu", this);
         this.visible = false;
         
         // Add valid events
