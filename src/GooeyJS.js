@@ -121,6 +121,7 @@ export default class GooeyJS {
             Template.load(`${templatePath}/ContextMenu.html`, "ui-ContextMenu"),
             Template.load(`${templatePath}/DatePicker.html`, "ui-DatePicker"),
             Template.load(`${templatePath}/DropDownList.html`, "ui-DropDownList"),
+            Template.load(`${templatePath}/Font.html`, "ui-Font"),
             Template.load(`${templatePath}/ListBox.html`, "ui-ListBox"),
             Template.load(`${templatePath}/Menu.html`, "ui-Menu"),
             Template.load(`${templatePath}/MenuHeader.html`, "menuHeader"),
