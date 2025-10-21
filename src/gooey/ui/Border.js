@@ -1,6 +1,11 @@
 import BorderStyle from './BorderStyle.js';
+import Template from '../util/Template.js';
 
 export default class Border {
+    constructor() {
+        Template.activate("ui-Border", this);
+    }
+
     get color() {
         return this.getAttribute("color");
     }
