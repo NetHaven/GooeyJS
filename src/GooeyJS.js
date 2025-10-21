@@ -133,7 +133,7 @@ export default class GooeyJS {
             Template.load(`${templatePath}/ProgressBar.html`, "ui-ProgressBar"),
             Template.load(`${templatePath}/RadioButton.html`, "ui-RadioButton"),
             Template.load(`${templatePath}/RadioButtonGroup.html`, "ui-RadioButtonGroup"),
-            Template.load(`${templatePath}/SplitPanel`, "ui-SplitPanel"),
+            Template.load(`${templatePath}/SplitPanel.html`, "ui-SplitPanel"),
             Template.load(`${templatePath}/Tab.html`, "ui-Tab"),
             Template.load(`${templatePath}/TextArea.html`, "ui-TextArea"),
             Template.load(`${templatePath}/TabPanel.html`, "ui-TabPanel"),
