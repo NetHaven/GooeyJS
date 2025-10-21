@@ -54,6 +54,7 @@ GooeyJS is a web component framework that provides a set of UI elements. Built u
 - **Toolbar** - provides a horizontal container for organizing buttons, controls, and other UI elements in a toolbar layout. It extends the Container class and supports configurable button sizes, borders, and flexible content arrangement.
 - **ToolbarSeparator** - provides a visual separator for organizing and grouping buttons within toolbars. It creates a vertical line or space that helps distinguish between related groups of toolbar actions, improving the visual organization and usability of toolbar interfaces.
 - **ColorPicker** - provides a comprehensive color selection interface with a color button, hex input field, and dropdown color palette. It supports both manual hex entry and visual color selection.
+- **DatePicker** - provides a date selection control that wraps the native HTML5 date input with GooeyJS styling and functionality. It supports date constraints through min/max attributes, step values for date increments, and integrates seamlessly with the GooeyJS form validation system. 
 
 ### Windows & Dialogs
 - **Window** - represents a desktop-style window with title bar, close button, and draggable functionality. It provides a container for dialog content and supports modal behavior, viewport constraints, and window management features.
@@ -93,7 +94,7 @@ It will also include components specifically geared for configuring:
 - Gradients
 
 ## Getting Started
-Download GooeyJS.v1.4.0.zip and unzip to your codebase. To include GooeyJS, just use the following:
+Download GooeyJS.v1.5.0.zip and unzip to your codebase. To include GooeyJS, just use the following:
 
     <script type="module" src="GooeyJS/GooeyJS.js"></script>
 

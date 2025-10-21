@@ -9,7 +9,6 @@ export default class GroupBox extends Panel {
         this.classList.add("ui-GroupBox");
         
         this.contentPanel = this.querySelector('div');
-        
         this.textLabel = this.querySelector('span');
         
         if (this.hasAttribute("text")) {
