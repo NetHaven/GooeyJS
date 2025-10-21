@@ -1,9 +1,12 @@
 import Component from './Component.js';
+import Template from '../util/Template.js';
 
 export default class Application extends Component {
     constructor() {
         super();
 
+        Template.activate("ui-Application", this);
+        
         this.classList.add("ui-Application");
         
         // Application is the root container, set default full viewport dimensions
