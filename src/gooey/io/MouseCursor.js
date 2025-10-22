@@ -4,7 +4,7 @@ export default class MouseCursor {
     static CELL = "cell";
     static COL_RESIZE = "col-resize";
     static COPY = "copy";
-    static DEFAULT = "DEFAULT";
+    static DEFAULT = "default";
     static CONTEXT_MENU = "context-menu";
     static CROSSHAIR = "crosshair";
     static GRAB = "grab";

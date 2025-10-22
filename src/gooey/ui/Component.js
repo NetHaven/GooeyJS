@@ -3,6 +3,7 @@ import Point from '../graphics/Point.js';
 import ComponentEvent from '../events/ComponentEvent.js';
 import Model from '../mvc/Model.js';
 import ModelEvent from '../events/mvc/ModelEvent.js';
+import MouseCursor from '../io/MouseCursor.js';
 
 export default class Component extends Observable {
     constructor () {
@@ -93,6 +94,14 @@ export default class Component extends Observable {
         }
     }
 
+    get cursor() {
+        let compStyle, cursor;
+
+        compStyle = getComputedStyle(this.element);
+        cursor = compStyle.getPropertyValue("cursor")
+        return cursor;
+    }
+
     get disabled() {
         return this.hasAttribute("disabled");
     }
@@ -108,7 +117,7 @@ export default class Component extends Observable {
     get position() {
         let compStyle, pos;
 
-        compStyle = computeStyle(this.element);
+        compStyle = getComputedStyle(this.element);
         pos = new Point();
         pos.x = parseInt(compStyle.getPropertyValue("left"));
         pos.y = parseInt(compStyle.getPropertyValue("top"));
@@ -162,6 +171,44 @@ export default class Component extends Observable {
         return this;
     }
   
+    set cursor(val) {
+        switch (val) {
+            case MouseCursor.ALIAS:
+            case MouseCursor.ALL_SCROLL:
+            case MouseCursor.CELL:
+            case MouseCursor.COL_RESIZE:
+            case MouseCursor.COPY:
+            case MouseCursor.DEFAULT:
+            case MouseCursor.CONTEXT_MENU:
+            case MouseCursor.CROSSHAIR:
+            case MouseCursor.GRAB:
+            case MouseCursor.GRABBING:
+            case MouseCursor.HELP:
+            case MouseCursor.MOVE:
+            case MouseCursor.NOT_ALLOWED:
+            case MouseCursor.POINTER:
+            case MouseCursor.PROGRESS:
+            case MouseCursor.RESIZE_E:
+            case MouseCursor.RESIZE_EW:
+            case MouseCursor.RESIZE_N:
+            case MouseCursor.RESIZE_NE:
+            case MouseCursor.RESIZE_NESW:
+            case MouseCursor.RESIZE_NS:
+            case MouseCursor.RESIZE_NW:
+            case MouseCursor.RESIZE_NWSE:
+            case MouseCursor.RESIZE_S:
+            case MouseCursor.RESIZE_SE:
+            case MouseCursor.RESIZE_SW:
+            case MouseCursor.RESIZE_W:
+            case MouseCursor.ROW_RESIZE:
+            case MouseCursor.TEXT:
+            case MouseCursor.WAIT:
+            case MouseCursor.VERTICAL_TEXT:
+            case MouseCursor.ZOOM_IN:
+            case MouseCursor.ZOOM_OUT: this.element.style.cursor = val;
+        }
+    }
+
     set disabled(val) {
         if (val) {
             this.setAttribute("disabled", "");
