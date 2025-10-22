@@ -1,6 +1,6 @@
 import CollectionEvent from "../events/mvc/CollectionEvent.js";
 import Model from "./Model.js";
-import Observable from "../events/Observable";
+import Observable from "../events/Observable.js";
 
 export default class Collection extends Observable {
   constructor(models = [], options = {}) {

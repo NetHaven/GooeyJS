@@ -1,4 +1,4 @@
-import Event from "../Event";
+import Event from "../Event.js";
 
 export default class ControllerEvent extends Event {
     static INITIALIZED = "initialized";
