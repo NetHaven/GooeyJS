@@ -1,4 +1,4 @@
-import FormElement from "../ui/form/FormElement.js";
+import FormElement from "./FormElement.js";
 import Template from "../util/Template.js";
 
 export default class DatePicker extends FormElement {
