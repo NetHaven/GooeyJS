@@ -1,6 +1,7 @@
 import Component from '../Component.js';
 import KeyboardEvent from '../../events/KeyboardEvent.js';
 import MouseEvent from '../../events/MouseEvent.js';
+import Template from '../../util/Template.js';
 
 export default class Menubar extends Component {
     constructor () {
@@ -9,6 +10,7 @@ export default class Menubar extends Component {
         
         super();
 
+        Template.activate("ui-Menubar", this);
         menubar = this;
         menuList = Array.from(this.querySelectorAll(":scope > ui-Menu"));
         menuHeaderList = [];
