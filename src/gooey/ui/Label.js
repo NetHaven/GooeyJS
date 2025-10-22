@@ -2,6 +2,7 @@ import Component from './Component.js';
 import HorizontalAlign from './HorizontalAlign.js';
 import MouseEvent from '../events/MouseEvent.js';
 import VerticalAlign from './VerticalAlign.js';
+import Template from '../util/Template.js';
 
 export default class Label extends Component {
     static get observedAttributes() {
@@ -11,8 +12,8 @@ export default class Label extends Component {
     constructor () {		
 		super();
 		
-		this.container = document.createElement("div");
-		this.appendChild(this.container);
+		Template.activate("ui-Label", this);
+		this.container = this.querySelector("div");
 		
 		if (this.hasAttribute("icon")) {
 			this.icon = this.getAttribute("icon");			
