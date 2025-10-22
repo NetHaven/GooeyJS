@@ -147,6 +147,7 @@ export default class GooeyJS {
             Template.load(`${templatePath}/TextField.html`, "ui-TextField"),
             Template.load(`${templatePath}/ToggleButton.html`, "ui-ToggleButton"),
             Template.load(`${templatePath}/ToggleButtonGroup.html`, "ui-ToggleButtonGroup"),
+            Template.load(`${templatePath}/Toolbar.html`, "ui-Toolbar"),
             Template.load(`${templatePath}/ToolbarSeparator.html`, "ui-ToolbarSeparator"),
             Template.load(`${templatePath}/Tree.html`, "ui-Tree"),
             Template.load(`${templatePath}/TreeItem.html`, "ui-TreeItem"),
