@@ -130,6 +130,7 @@ export default class GooeyJS {
             Template.load(`${templatePath}/Label.html`, "ui-Label"),
             Template.load(`${templatePath}/ListBox.html`, "ui-ListBox"),
             Template.load(`${templatePath}/Menu.html`, "ui-Menu"),
+            Template.load(`${templatePath}/Menubar.html`, "ui-Menubar"),
             Template.load(`${templatePath}/MenuHeader.html`, "menuHeader"),
             Template.load(`${templatePath}/MenuItem.html`, "ui-MenuItem"),
             Template.load(`${templatePath}/MenuItemSeparator.html`, "ui-MenuItemSeparator"),
