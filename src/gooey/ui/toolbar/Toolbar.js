@@ -1,10 +1,13 @@
 import Container from '../Container.js';
 import ToolbarButtonSize from './ToolbarButtonSize.js';
+import Template from '../../util/Template.js';
 
 export default class Toolbar extends Container {
     constructor () {
         super();
         
+        Template.activate("ui-Toolbar", this);
+
         // Check for wrap attribute during initialization
         if (this.hasAttribute("wrap")) {
             this.wrap = true;
