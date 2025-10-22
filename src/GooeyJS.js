@@ -48,6 +48,19 @@ export default class GooeyJS {
     constructor() {
         let headEl, htmlEl, linkEl;
 
+        // Array of UI component classes
+        // To add a new component, just add the class reference to this array
+        this.components = [
+            AccordionPanel, Application, AppPanel, Border, Button,
+            Checkbox, CheckboxMenuItem, ColorPicker, ComboBox, ContextMenu,
+            DatePicker, DropDownList, Font, FormPanel, GroupBox,
+            Label, ListBox, Menu, Menubar, MenuItem, MenuItemSeparator,
+            Panel, PasswordField, ProgressBar, RadioButton, RadioButtonGroup,
+            RichTextEditor, Spinner, SplitPanel, Tab, TabPanel,
+            TextArea, TextField, TimePicker, ToggleButton, ToggleButtonGroup,
+            Toolbar, ToolbarSeparator, Tree, TreeItem, Window
+        ];
+
         this.loadTemplates().then(() => {
             this.defineElements();
         });
@@ -67,96 +80,35 @@ export default class GooeyJS {
     }
 
     defineElements() {
-        customElements.define("ui-application", Application);
-        customElements.define("ui-apppanel", AppPanel);
-        customElements.define("ui-accordionpanel", AccordionPanel);
-        customElements.define("ui-border", Border);
-        customElements.define("ui-button", Button);
-        customElements.define("ui-checkbox", Checkbox);
-        customElements.define("ui-checkboxmenuitem", CheckboxMenuItem);
-        customElements.define("ui-colorpicker", ColorPicker);
-        customElements.define("ui-combobox", ComboBox);
-        customElements.define("ui-contextmenu", ContextMenu);
-        customElements.define("ui-datepicker", DatePicker);
-        customElements.define("ui-dropdownlist", DropDownList);
-        customElements.define("ui-font", Font);
-        customElements.define("ui-formpanel", FormPanel);
-        customElements.define("ui-groupbox", GroupBox);
-        customElements.define("ui-label", Label);
-        customElements.define("ui-listbox", ListBox);
-        customElements.define("ui-menu", Menu);
-        customElements.define("ui-menubar", Menubar);
-        customElements.define("ui-menuitem", MenuItem);
-        customElements.define("ui-menuitemseparator", MenuItemSeparator);
-        customElements.define("ui-panel", Panel);
-        customElements.define("ui-passwordfield", PasswordField);
-        customElements.define("ui-progressbar", ProgressBar);
-        customElements.define("ui-radiobutton", RadioButton);
-        customElements.define("ui-radiobuttongroup", RadioButtonGroup);
-        customElements.define("ui-richtexteditor", RichTextEditor);
-        customElements.define("ui-spinner", Spinner);
-        customElements.define("ui-splitpanel", SplitPanel);
-        customElements.define("ui-tab", Tab);
-        customElements.define("ui-tabpanel", TabPanel);
-        customElements.define("ui-textarea", TextArea);
-        customElements.define("ui-textfield", TextField);
-        customElements.define("ui-timepicker", TimePicker);
-        customElements.define("ui-togglebutton", ToggleButton);
-        customElements.define("ui-togglebuttongroup", ToggleButtonGroup);
-        customElements.define("ui-toolbar", Toolbar);
-        customElements.define("ui-toolbarseparator", ToolbarSeparator);
-        customElements.define("ui-tree", Tree);
-        customElements.define("ui-treeitem", TreeItem);
-        customElements.define("ui-window", Window);
+        // Register custom elements using the components array
+        this.components.forEach(componentClass => {
+            // Convert class name to custom element tag (e.g., "AccordionPanel" -> "ui-accordionpanel")
+            const tagName = `ui-${componentClass.name.toLowerCase()}`;
+            customElements.define(tagName, componentClass);
+        });
     }
 
     loadTemplates() {
         let templatePath = `${PATH}/templates`;
 
-        return Promise.all([
-            Template.load(`${templatePath}/AccordionPanel.html`, "ui-AccordionPanel"),
-            Template.load(`${templatePath}/Application.html`, "ui-Application"),
-            Template.load(`${templatePath}/AppPanel.html`, "ui-AppPanel"),
-            Template.load(`${templatePath}/Border.html`, "ui-Border"),
-            Template.load(`${templatePath}/Button.html`, "ui-Button"),
-            Template.load(`${templatePath}/Checkbox.html`, "ui-Checkbox"),
-            Template.load(`${templatePath}/CheckboxMenuItem.html`, "ui-CheckboxMenuItem"),
-            Template.load(`${templatePath}/ColorPicker.html`, "ui-ColorPicker"),
-            Template.load(`${templatePath}/ComboBox.html`, "ui-ComboBox"),
-            Template.load(`${templatePath}/ContextMenu.html`, "ui-ContextMenu"),
-            Template.load(`${templatePath}/DatePicker.html`, "ui-DatePicker"),
-            Template.load(`${templatePath}/DropDownList.html`, "ui-DropDownList"),
-            Template.load(`${templatePath}/Font.html`, "ui-Font"),
-            Template.load(`${templatePath}/FormPanel.html`, "ui-FormPanel"),
-            Template.load(`${templatePath}/GroupBox.html`, "ui-GroupBox"),
-            Template.load(`${templatePath}/Label.html`, "ui-Label"),
-            Template.load(`${templatePath}/ListBox.html`, "ui-ListBox"),
-            Template.load(`${templatePath}/Menu.html`, "ui-Menu"),
-            Template.load(`${templatePath}/Menubar.html`, "ui-Menubar"),
-            Template.load(`${templatePath}/MenuHeader.html`, "menuHeader"),
-            Template.load(`${templatePath}/MenuItem.html`, "ui-MenuItem"),
-            Template.load(`${templatePath}/MenuItemSeparator.html`, "ui-MenuItemSeparator"),
-            Template.load(`${templatePath}/Panel.html`, "ui-Panel"),
-            Template.load(`${templatePath}/PasswordField.html`, "ui-PasswordField"),
-            Template.load(`${templatePath}/ProgressBar.html`, "ui-ProgressBar"),
-            Template.load(`${templatePath}/RadioButton.html`, "ui-RadioButton"),
-            Template.load(`${templatePath}/RadioButtonGroup.html`, "ui-RadioButtonGroup"),
-            Template.load(`${templatePath}/RichTextEditor.html`, "ui-RichTextEditor"),
-            Template.load(`${templatePath}/Spinner.html`, "ui-Spinner"),
-            Template.load(`${templatePath}/SplitPanel.html`, "ui-SplitPanel"),
-            Template.load(`${templatePath}/Tab.html`, "ui-Tab"),
-            Template.load(`${templatePath}/TextArea.html`, "ui-TextArea"),
-            Template.load(`${templatePath}/TabPanel.html`, "ui-TabPanel"),
-            Template.load(`${templatePath}/TextField.html`, "ui-TextField"),
-            Template.load(`${templatePath}/TimePicker.html`, "ui-TimePicker"),
-            Template.load(`${templatePath}/ToggleButton.html`, "ui-ToggleButton"),
-            Template.load(`${templatePath}/ToggleButtonGroup.html`, "ui-ToggleButtonGroup"),
-            Template.load(`${templatePath}/Toolbar.html`, "ui-Toolbar"),
-            Template.load(`${templatePath}/ToolbarSeparator.html`, "ui-ToolbarSeparator"),
-            Template.load(`${templatePath}/Tree.html`, "ui-Tree"),
-            Template.load(`${templatePath}/TreeItem.html`, "ui-TreeItem"),
-            Template.load(`${templatePath}/Window.html`, "ui-Window"),
-         ]);
+        // Special cases with custom template IDs (not following ui-ComponentName pattern)
+        const specialCases = {
+            "MenuHeader": "menuHeader"  // MenuHeader uses "menuHeader" instead of "ui-MenuHeader"
+        };
+
+        // Generate Template.load calls for standard components
+        const templateLoads = this.components.map(componentClass =>
+            Template.load(`${templatePath}/${componentClass.name}.html`, `ui-${componentClass.name}`)
+        );
+
+        // Add special cases
+        for (const [fileName, templateId] of Object.entries(specialCases)) {
+            templateLoads.push(
+                Template.load(`${templatePath}/${fileName}.html`, templateId)
+            );
+        }
+
+        return Promise.all(templateLoads);
     }
 }
 
