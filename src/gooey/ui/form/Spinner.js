@@ -2,6 +2,7 @@ import FormElement from './FormElement.js';
 import SpinnerEvent from '../../events/form/SpinnerEvent.js';
 import MouseEvent from '../../events/MouseEvent.js';
 import FormElementEvent from '../../events/form/FormElementEvent.js';
+import Template from '../../util/Template.js';
 
 /**
  * Spinner component for numeric input with increment/decrement buttons
@@ -10,6 +11,8 @@ import FormElementEvent from '../../events/form/FormElementEvent.js';
 export default class Spinner extends FormElement {
     constructor() {
         super();
+
+        Template.activate("ui-Spinner", this);
         this._value = 0;
         this._min = Number.MIN_SAFE_INTEGER;
         this._max = Number.MAX_SAFE_INTEGER;
