@@ -108,7 +108,7 @@ export default class ComboBox extends ListBox {
             });
         });
         
-        this._textInput.addEventListener(FormElementEveent.BLUR, (e) => {
+        this._textInput.addEventListener(FormElementEvent.BLUR, (e) => {
             this.classList.remove('focused');
             
             // Dispatch custom blur event
