@@ -1,7 +1,7 @@
-import Component from "./Component";
-import Template from "../util/Template";
+import FormElement from "../ui/form/FormElement.js";
+import Template from "../util/Template.js";
 
-export default class DatePicker extends Component {
+export default class DatePicker extends FormElement {
     constructor() {
         super();
 
