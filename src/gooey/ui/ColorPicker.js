@@ -2,13 +2,15 @@ import Component from './Component.js';
 import ColorPickerEvent from '../events/ColorPickerEvent.js';
 import KeyboardEvent from '../events/KeyboardEvent.js';
 import MouseEvent from '../events/MouseEvent.js';
+import Template from '../util/Template.js';
 
 export default class ColorPicker extends Component {
     constructor() {
         super();
         
         this.classList.add("ui-ColorPicker");
-        
+        Template.activate("ui-ColorPicker", this);
+
         // Create the color picker structure
         this._createColorPickerStructure();
         
@@ -39,115 +41,41 @@ export default class ColorPicker extends Component {
      * Create the color picker HTML structure
      */
     _createColorPickerStructure() {
-        // Create main container
-        this._container = document.createElement('div');
-        this._container.className = 'colorpicker-container';
-        
-        // Create color display button
-        this._colorButton = document.createElement('button');
-        this._colorButton.type = 'button';
-        this._colorButton.className = 'colorpicker-button';
-        this._colorButton.setAttribute('aria-label', 'Choose color');
-        
-        // Create color display area
-        this._colorDisplay = document.createElement('div');
-        this._colorDisplay.className = 'colorpicker-display';
-        this._colorDisplay.style.backgroundColor = this._currentColor;
-        
-        // Create dropdown arrow
-        this._arrow = document.createElement('span');
-        this._arrow.className = 'colorpicker-arrow';
-        this._arrow.textContent = '▼';
-        
-        // Assemble button
-        this._colorButton.appendChild(this._colorDisplay);
-        this._colorButton.appendChild(this._arrow);
-        
-        // Create dropdown panel
-        this._dropdownPanel = document.createElement('div');
-        this._dropdownPanel.className = 'colorpicker-dropdown';
-        this._dropdownPanel.style.display = 'none';
-        
+        this._container = this.querySelector('div.colorpicker-container');
+        this._colorButton = this.querySelector('button.colorpicker-button');
+        this._colorDisplay = this.querySelector('div.colorpicker-display');
+        this._arrow = this.querySelector('span.colorpicker-arrow');
+        this._dropdownPanel = this.querySelector('div.colorpicker-dropdown');
+
         // Create color palette
         this._createColorPalette();
         
         // Create custom color input section
-        this._createCustomColorSection();
-        
-        // Assemble the structure
-        this._container.appendChild(this._colorButton);
-        this._container.appendChild(this._dropdownPanel);
-        this.appendChild(this._container);
+        this._createCustomColorSection();        
     }
     
     /**
      * Create the color palette grid
      */
     _createColorPalette() {
-        const paletteContainer = document.createElement('div');
-        paletteContainer.className = 'colorpicker-palette';
-        
-        // Define standard color palette
-        const colors = [
-            '#000000', '#333333', '#666666', '#999999', '#cccccc', '#ffffff',
-            '#ff0000', '#ff6600', '#ffcc00', '#ffff00', '#ccff00', '#66ff00',
-            '#00ff00', '#00ff66', '#00ffcc', '#00ffff', '#00ccff', '#0066ff',
-            '#0000ff', '#6600ff', '#cc00ff', '#ff00ff', '#ff00cc', '#ff0066',
-            '#800000', '#804000', '#808000', '#408000', '#008000', '#008040',
-            '#008080', '#004080', '#000080', '#400080', '#800080', '#800040'
-        ];
-        
-        colors.forEach(color => {
-            const colorSwatch = document.createElement('button');
-            colorSwatch.type = 'button';
-            colorSwatch.className = 'colorpicker-swatch';
-            colorSwatch.style.backgroundColor = color;
-            colorSwatch.setAttribute('data-color', color);
-            colorSwatch.setAttribute('aria-label', `Select color ${color}`);
-            colorSwatch.title = color;
-            
+        let colorSwatches = Array.from(this.querySelectorAll('button.colorpicker-swatch'));
+        colorSwatches.forEach(colorSwatch => {
             colorSwatch.addEventListener(MouseEvent.CLICK, (e) => {
                 e.stopPropagation();
-                this._selectColor(color);
+                this._selectColor(colorSwatch.title);
             });
-            
-            paletteContainer.appendChild(colorSwatch);
-        });
-        
-        this._dropdownPanel.appendChild(paletteContainer);
+        });        
     }
     
     /**
      * Create custom color input section
      */
     _createCustomColorSection() {
-        const customSection = document.createElement('div');
-        customSection.className = 'colorpicker-custom';
-        
-        // Create label
-        const label = document.createElement('label');
-        label.textContent = 'Custom:';
-        label.className = 'colorpicker-custom-label';
-        
         // Create hex input
-        this._hexInput = document.createElement('input');
-        this._hexInput.type = 'text';
-        this._hexInput.className = 'colorpicker-hex-input';
-        this._hexInput.placeholder = '#000000';
-        this._hexInput.maxLength = 7;
-        this._hexInput.value = this._currentColor;
+        this._hexInput = this.querySelector('input.colorpicker-hex-input');
         
         // Create native color input (fallback)
-        this._nativeInput = document.createElement('input');
-        this._nativeInput.type = 'color';
-        this._nativeInput.className = 'colorpicker-native-input';
-        this._nativeInput.value = this._currentColor;
-        
-        label.appendChild(this._hexInput);
-        customSection.appendChild(label);
-        customSection.appendChild(this._nativeInput);
-        
-        this._dropdownPanel.appendChild(customSection);
+        this._nativeInput = this.querySelector('input.colorpicker-native-input');
     }
     
     /**
