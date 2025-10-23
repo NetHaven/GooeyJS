@@ -1,8 +1,10 @@
 import Component from './Component.js';
 import ColorPickerEvent from '../events/ColorPickerEvent.js';
+import Key from '../io/Key.js';
 import KeyboardEvent from '../events/KeyboardEvent.js';
 import MouseEvent from '../events/MouseEvent.js';
 import Template from '../util/Template.js';
+import TextElementEvent from '../events/form/text/TextElementEvent.js';
 
 export default class ColorPicker extends Component {
     constructor() {
@@ -90,7 +92,7 @@ export default class ColorPicker extends Component {
         });
         
         // Hex input change
-        this._hexInput.addEventListener('input', (e) => {
+        this._hexInput.addEventListener(TextElementEvent.INPUT, (e) => {
             const value = e.target.value;
             if (this._isValidHexColor(value)) {
                 this._selectColor(value);
@@ -98,21 +100,21 @@ export default class ColorPicker extends Component {
         });
         
         this._hexInput.addEventListener(KeyboardEvent.KEY_DOWN, (e) => {
-            if (e.key === 'Enter') {
+            if (e.key === Key.ENTER) {
                 e.preventDefault();
                 const value = e.target.value;
                 if (this._isValidHexColor(value)) {
                     this._selectColor(value);
                     this._closeDropdown();
                 }
-            } else if (e.key === 'Escape') {
+            } else if (e.key === Key.ESCAPE) {
                 e.preventDefault();
                 this._closeDropdown();
             }
         });
         
         // Native color input change
-        this._nativeInput.addEventListener('input', (e) => {
+        this._nativeInput.addEventListener(TextElementEvent.INPUT, (e) => {
             this._selectColor(e.target.value);
         });
         
@@ -125,10 +127,10 @@ export default class ColorPicker extends Component {
         
         // Keyboard navigation
         this.addEventListener(KeyboardEvent.KEY_DOWN, (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
+            if (e.key === Key.ENTER || e.key === ' ') {
                 e.preventDefault();
                 this._toggleDropdown();
-            } else if (e.key === 'Escape') {
+            } else if (e.key === Key.ESCAPE) {
                 e.preventDefault();
                 this._closeDropdown();
             }

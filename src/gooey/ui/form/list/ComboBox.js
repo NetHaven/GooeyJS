@@ -84,7 +84,7 @@ export default class ComboBox extends ListBox {
             this._handleSelectionChange();
         });
         
-        this.listBox.addEventListener(MouseEvent.CLICK, (e) => {
+        this.listBox.addEventListener(MouseEvent.CLICK, () => {
             // Close dropdown when option is clicked
             this._closeDropdown();
         });
