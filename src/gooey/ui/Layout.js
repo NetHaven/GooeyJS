@@ -5,4 +5,4 @@ export default class Layout {
     static HBOX = "HBOX";
     static FLOW = "FLOW";
     static VBOX = "VBOX";        
-};
+}
