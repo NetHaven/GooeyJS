@@ -1,8 +1,8 @@
 export default class Template {    
-    static activate(id) {
+    static activate(id, element = document.body) {
         let clone, template;
 
-        template = document.getElementById(id, element = document.body);
+        template = document.getElementById(id, element);
         if (template) {
             clone = document.importNode(template.content, true);
             element.appendChild(clone);
