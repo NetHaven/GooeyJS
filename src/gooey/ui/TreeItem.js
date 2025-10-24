@@ -70,7 +70,7 @@ export default class TreeItem extends Component {
         });
     }
 
-    attributeChangedCallback(name, oldValue, newValue) {
+    attributeChangedCallback(name) {
         if (name === 'text') {
             this._updateText();
         } else if (name === 'icon') {
@@ -300,7 +300,7 @@ export default class TreeItem extends Component {
     }
     
     _setupEventListeners() {
-        this._contentElement.addEventListener('click', (e) => {
+        this._contentElement.addEventListener('click', () => {
             if (this._hasChildren) {
                 this.toggle();
             }
@@ -308,7 +308,7 @@ export default class TreeItem extends Component {
         });
         
         // Add double-click event
-        this._contentElement.addEventListener('dblclick', (e) => {
+        this._contentElement.addEventListener('dblclick', () => {
             this.fireEvent(MouseEvent.DOUBLE_CLICK, { treeItem: this });
         });
         
@@ -573,7 +573,7 @@ export default class TreeItem extends Component {
         this._clearDropIndicators();
     }
     
-    _isDragValid(event) {
+    _isDragValid() {
         // Don't allow dropping on self or if no item is being dragged
         const draggedItem = TreeItem._draggedItem;
         if (!draggedItem || draggedItem === this || this._isDescendantOf(draggedItem)) {
