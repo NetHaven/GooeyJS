@@ -92,17 +92,7 @@ export default class Observable extends HTMLElement {
         if (this.eventSuspension) {
             return false;
         }
-        
-        // Create DOM CustomEvent with enhanced features
-        const customEvent = new CustomEvent(eventName, {
-            detail: configObj || {},
-            bubbles: options.bubbles !== false, // Default to true
-            cancelable: options.cancelable !== false // Default to true
-        });
-        
-        // Dispatch the DOM event on this component
-  //      const result = this.dispatchEvent(customEvent);
-        
+       
         // Also fire to internal listeners for backward compatibility
         if (this.eventListenerList[eventName]) {
             this.eventListenerList[eventName].forEach(function(listener) {
