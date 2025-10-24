@@ -83,7 +83,7 @@ export default class Container extends Component {
             case Layout.VBOX:   this.setAttribute("layout", val);
         }
         
-        if (this.layout == Layout.GRID) {
+        if (this.layout === Layout.GRID) {
             columns = this.getAttribute("columns");
             rows = this.getAttribute("rows");
             if (rows && columns) {
