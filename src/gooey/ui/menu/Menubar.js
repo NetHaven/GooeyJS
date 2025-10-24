@@ -1,4 +1,5 @@
 import Component from '../Component.js';
+import Key from '../../io/Key.js';
 import KeyboardEvent from '../../events/KeyboardEvent.js';
 import MouseEvent from '../../events/MouseEvent.js';
 import Template from '../../util/Template.js';
@@ -136,7 +137,7 @@ export default class Menubar extends Component {
             }
             else if (activeMenuIndex !== -1) {
                 activeMenu = menuList[activeMenuIndex];
-                if (event.key === 'ArrowLeft') {
+                if (event.key === Key.ARROW_LEFT) {
                     activeMenu.active = false;
                     menuHeaderList[activeMenuIndex].removeAttribute("active");
 
@@ -149,7 +150,7 @@ export default class Menubar extends Component {
                     activeMenu.active = true;
                     menuHeaderList[activeMenuIndex].setAttribute("active", "");
                 }
-                else if (event.key === 'ArrowRight') {
+                else if (event.key === Key.ARROW_RIGHT) {
                     activeMenu.active = false;
                     menuHeaderList[activeMenuIndex].removeAttribute("active");
 
@@ -162,7 +163,7 @@ export default class Menubar extends Component {
                     activeMenu.active = true;
                     menuHeaderList[activeMenuIndex].setAttribute("active", "");
                 }
-                else if (event.key === 'Escape') {
+                else if (event.key === Key.ESCAPE) {
                     activeMenu.active = false;
                     menuHeaderList[activeMenuIndex].removeAttribute("active");
                 }
