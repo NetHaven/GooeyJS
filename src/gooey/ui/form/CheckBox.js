@@ -17,14 +17,14 @@ export default class Checkbox extends FormElement {
         this.addValidEvent(MouseEvent.CLICK);
 
         // Add documented event listeners
-        this.checkbox.addEventListener(CheckboxEvent.CHANGE, (e) => {
+        this.checkbox.addEventListener(CheckboxEvent.CHANGE, () => {
             this.fireEvent(CheckboxEvent.CHANGE, { 
                 checked: this.checkbox.checked,
                 value: this.checkbox.value 
             });
         });
         
-        this.checkbox.addEventListener(MouseEvent.CLICK, (e) => {
+        this.checkbox.addEventListener(MouseEvent.CLICK, () => {
             this.fireEvent(MouseEvent.CLICK, { 
                 checked: this.checkbox.checked,
                 value: this.checkbox.value 
