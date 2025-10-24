@@ -67,7 +67,7 @@ export default class TextArea extends TextElement {
         });
 
         if (this.hasAttribute("resize")) {
-            if (this.getAttribute("resize") == "false") {
+            if (this.getAttribute("resize") === "false") {
                 this.resize = false;
             }
             else {
@@ -81,7 +81,7 @@ export default class TextArea extends TextElement {
 
     get resize() {
         if (this.hasAttribute("resize")) {
-            if (this.getAttribute("resize") == "false") {
+            if (this.getAttribute("resize") === "false") {
                 return false;
             }
             else {
