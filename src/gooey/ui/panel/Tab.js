@@ -46,7 +46,7 @@ export default class Tab extends Container {
         return ['name', 'text', 'active', 'closeable'];
     }
 
-    attributeChangedCallback(name, oldValue, newValue) {
+    attributeChangedCallback(name) {
         
         switch (name) {
             case 'name':
