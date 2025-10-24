@@ -5,8 +5,7 @@ import Template from '../../util/Template.js';
 
 export default class Menubar extends Component {
     constructor () {
-        var acceleratedItem, activeMenuIndex, box, left, menuHeaderList, 
-            menuList, menubar, menuHeader;
+        var acceleratedItem, activeMenuIndex, menuHeaderList, menuList, menubar, menuHeader;
         
         super();
 
@@ -26,7 +25,7 @@ export default class Menubar extends Component {
                 menuText = menu.getAttribute("text");
                 accelerator = menu.getAttribute("accelerator");
                 if (accelerator) {
-                    if (menuText.indexOf(accelerator) != -1) {
+                    if (menuText.indexOf(accelerator) !== -1) {
                         menuText = menuText.replace(accelerator, "<u>" + accelerator + "</u>");
                     }
                 }
@@ -38,7 +37,7 @@ export default class Menubar extends Component {
                     var activeMenu, activeMenuHeader, menu, menuText;
 
                     activeMenuHeader = menubar.getActiveMenuHeader();
-                    if (activeMenuHeader == event.currentTarget) {
+                    if (activeMenuHeader === event.currentTarget) {
                         return;
                     }
 
@@ -118,11 +117,11 @@ export default class Menubar extends Component {
 
             activeMenuIndex = menuList.findIndex((element) => element.active);
             if (event.altKey) {
-                acceleratedItemIndex = menuList.findIndex((element) => element.accelerator.toLowerCase() == event.key.toLowerCase());
-                acceleratedItem = menuList.find((element) => element.accelerator.toLowerCase() == event.key.toLowerCase());
+                acceleratedItemIndex = menuList.findIndex((element) => element.accelerator.toLowerCase() === event.key.toLowerCase());
+                acceleratedItem = menuList.find((element) => element.accelerator.toLowerCase() === event.key.toLowerCase());
 
                 if (acceleratedItem) {
-                    if (activeMenuIndex != -1) {
+                    if (activeMenuIndex !== -1) {
                         activeMenu = menuList[activeMenuIndex]
                         activeMenu.active = false;
                         menuHeaderList[activeMenuIndex].removeAttribute("active");
@@ -135,9 +134,9 @@ export default class Menubar extends Component {
                 event.stopPropagation();
                 return false;
             }
-            else if (activeMenuIndex != -1) {
+            else if (activeMenuIndex !== -1) {
                 activeMenu = menuList[activeMenuIndex];
-                if (event.key == 'ArrowLeft') {
+                if (event.key === 'ArrowLeft') {
                     activeMenu.active = false;
                     menuHeaderList[activeMenuIndex].removeAttribute("active");
 
@@ -150,7 +149,7 @@ export default class Menubar extends Component {
                     activeMenu.active = true;
                     menuHeaderList[activeMenuIndex].setAttribute("active", "");
                 }
-                else if (event.key == 'ArrowRight') {
+                else if (event.key === 'ArrowRight') {
                     activeMenu.active = false;
                     menuHeaderList[activeMenuIndex].removeAttribute("active");
 
@@ -163,7 +162,7 @@ export default class Menubar extends Component {
                     activeMenu.active = true;
                     menuHeaderList[activeMenuIndex].setAttribute("active", "");
                 }
-                else if (event.key == 'Escape') {
+                else if (event.key === 'Escape') {
                     activeMenu.active = false;
                     menuHeaderList[activeMenuIndex].removeAttribute("active");
                 }
