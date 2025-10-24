@@ -38,7 +38,7 @@ export default class Menu extends Component {
             if (event.ctrlKey) {
                 shortcutItem = menuItemList.find((element) => {
                     if (element.shortcut) {
-                        return element.shortcut.toLowerCase() == event.key.toLowerCase();
+                        return element.shortcut.toLowerCase() === event.key.toLowerCase();
                     }
                     else {
                         return false;
@@ -54,8 +54,8 @@ export default class Menu extends Component {
 
             if (this.active) {
                 activeMenuItemIndex = menuItemList.findIndex((element) => element.active);
-                if (event.key == 'ArrowDown') {
-                    if (activeMenuItemIndex == -1) {
+                if (event.key === 'ArrowDown') {
+                    if (activeMenuItemIndex === -1) {
                         activeMenuItemIndex = 0;
                     }
                     else {
@@ -68,8 +68,8 @@ export default class Menu extends Component {
                     }
                     menuItemList[activeMenuItemIndex].active = true;
                 }
-                else if (event.key == 'ArrowUp') {
-                    if (activeMenuItemIndex == -1) {
+                else if (event.key === 'ArrowUp') {
+                    if (activeMenuItemIndex === -1) {
                         activeMenuItemIndex = menuItemList.length - 1;
                     }
                     else {
@@ -87,7 +87,7 @@ export default class Menu extends Component {
                     if (!event.altKey) {
                         acceleratedItem = menuItemList.find((element) => {
                             if (element.accelerator) {
-                                return element.accelerator.toLowerCase() == event.key.toLowerCase();
+                                return element.accelerator.toLowerCase() === event.key.toLowerCase();
                             }
                             return false;
                         });
