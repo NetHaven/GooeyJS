@@ -130,7 +130,7 @@ export default class SplitPanel extends Container {
         this.dividerLocation = newLocation;
     }
     
-    _onMouseUp(e) {
+    _onMouseUp() {
         if (!this._isDragging) return;
         
         this._isDragging = false;
