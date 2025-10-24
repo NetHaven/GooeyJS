@@ -37,7 +37,7 @@ export default class Component extends Observable {
         }
 
         if (this.hasAttribute("visible")) {
-            if (this.getAttribute("visible").toLowerCase() == "false") {
+            if (this.getAttribute("visible").toLowerCase() === "false") {
                 this.visible = false;
             }
             else {
@@ -130,7 +130,7 @@ export default class Component extends Observable {
 
     get visible() {
         if (this.hasAttribute("visible")) {
-            if (this.getAttribute("visible").toLowerCase() == "false") {
+            if (this.getAttribute("visible").toLowerCase() === "false") {
                 return false;
             }
             else {
@@ -147,7 +147,7 @@ export default class Component extends Observable {
     }
   
     // Handle model changes by updating DOM directly
-    onModelChange(event) {
+    onModelChange() {
         // Apply data bindings when model changes
         if (this._bindings.length > 0) {
             this.applyBindings();
