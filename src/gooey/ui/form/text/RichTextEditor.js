@@ -224,7 +224,7 @@ export default class RichTextEditor extends TextElement {
             let isActive = false;
             try {
                 isActive = document.queryCommandState(command);
-            } catch () {
+            } catch {
                 isActive = false;
             }
             button.classList.toggle('is-active', !!isActive);
