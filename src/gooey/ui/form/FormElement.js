@@ -11,7 +11,7 @@ export default class FormElement extends Component {
         return ['required'];
     }
 
-    attributeChangedCallback(name, oldValue, newValue) {
+    attributeChangedCallback(name) {
         if (name === 'required') {
             this._updateRequiredIndicator();
         }
