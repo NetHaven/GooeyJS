@@ -155,7 +155,7 @@ export default class Dialog {
         let newDialog;
 
         newDialog = document.getElementById(dialogId);
-        if (newDialog == null) {
+        if (newDialog === null) {
             Template.activate(templateId);
             newDialog = document.getElementById(dialogId);
         }
