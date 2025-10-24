@@ -1,4 +1,5 @@
 import Component from '../Component.js';
+import Key from '../../io/Key.js';
 import KeyboardEvent from '../../events/KeyboardEvent.js';
 import MenuEvent from '../../events/menu/MenuEvent.js';
 import Template from '../../util/Template.js';
@@ -25,7 +26,7 @@ export default class Menu extends Component {
             menuText = menuItem.getAttribute("text");
             accelerator = menuItem.getAttribute("accelerator");
             if (accelerator) {
-                if (menuText.indexOf(accelerator) != -1) {
+                if (menuText.indexOf(accelerator) !== -1) {
                     menuText = menuText.replace(accelerator, "<u>" + accelerator + "</u>");
                 }
             }
@@ -54,7 +55,7 @@ export default class Menu extends Component {
 
             if (this.active) {
                 activeMenuItemIndex = menuItemList.findIndex((element) => element.active);
-                if (event.key === 'ArrowDown') {
+                if (event.key === Key.ARROW_DOWN) {
                     if (activeMenuItemIndex === -1) {
                         activeMenuItemIndex = 0;
                     }
@@ -68,7 +69,7 @@ export default class Menu extends Component {
                     }
                     menuItemList[activeMenuItemIndex].active = true;
                 }
-                else if (event.key === 'ArrowUp') {
+                else if (event.key === Key.ARROW_UP) {
                     if (activeMenuItemIndex === -1) {
                         activeMenuItemIndex = menuItemList.length - 1;
                     }
