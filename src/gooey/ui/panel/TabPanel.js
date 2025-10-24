@@ -355,7 +355,7 @@ export default class TabPanel extends Container {
         this.fireEvent(DragEvent.START, { tab: tab });
     }
 
-    _onTabDragEnd(tab, event) {
+    _onTabDragEnd(tab) {
         // Reset visual feedback
         tab._tabHeader.style.opacity = '';
         tab._tabHeader.style.cursor = 'grab';
