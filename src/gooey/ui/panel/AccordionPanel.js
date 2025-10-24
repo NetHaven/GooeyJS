@@ -157,7 +157,6 @@ export default class AccordionPanel extends Container {
             return;
         }
         
-        const accordion = this._accordions[index];
         const isCurrentlyOpen = this._activeAccordion === index;
         
         if (isCurrentlyOpen) {
