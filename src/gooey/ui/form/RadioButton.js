@@ -17,14 +17,14 @@ export default class RadioButton extends FormElement {
         this.addValidEvent(RadioButtonEvent.CHANGE);
 
         // Add documented event listeners
-        this.radioButton.addEventListener(RadioButtonEvent.CHANGE, (e) => {
+        this.radioButton.addEventListener(RadioButtonEvent.CHANGE, () => {
             this.fireEvent(RadioButtonEvent.CHANGE, { 
                 checked: this.radioButton.checked,
                 value: this.radioButton.value 
             });
         });
         
-        this.radioButton.addEventListener(MouseEvent.CLICK, (e) => {
+        this.radioButton.addEventListener(MouseEvent.CLICK, () => {
             this.fireEvent(MouseEvent.CLICK, { 
                 checked: this.radioButton.checked,
                 value: this.radioButton.value 
