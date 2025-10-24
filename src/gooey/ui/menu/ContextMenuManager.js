@@ -2,7 +2,7 @@ import KeyboardEvent from '../../events/KeyboardEvent.js';
 import MouseEvent from '../../events/MouseEvent.js';
 
 // Global context menu manager to handle all context menus
-export default ContextMenuManager = {
+const ContextMenuManager = {
     instances: new Set(),
     globalHandlersAdded: false,
     activeMenu: null,
@@ -78,3 +78,5 @@ export default ContextMenuManager = {
         }
     }
 };
+
+export default ContextMenuManager;
