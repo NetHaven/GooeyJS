@@ -145,7 +145,9 @@ export default class FormPanel extends Panel {
                 }
             } else if (element.tagName.toLowerCase() === 'ui-radiobuttongroup') {
                 const radioButtons = element.querySelectorAll('ui-radiobutton input');
-                radioButtons.forEach(radio => radio.checked = false);
+                radioButtons.forEach(radio => { 
+                    radio.checked = false
+                });
             } else {
                 // Reset value for text fields, text areas, dropdowns, and list boxes
                 if (element.value !== undefined) {
