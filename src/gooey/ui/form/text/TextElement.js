@@ -78,7 +78,7 @@ export default class TextElement extends FormElement {
 
     get readOnly() {
         if (this.hasAttribute("readOnly")) {
-            if (this.getAttribute("readOnly") == "false") {
+            if (this.getAttribute("readOnly") === "false") {
                 return false;
             }
             else {
