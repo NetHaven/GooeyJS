@@ -206,7 +206,7 @@ export default class Model extends Observable {
   _coerceType(value, type) {
     switch (type) {
       case 'string':
-        return value != null ? String(value) : '';
+        return value !== null ? String(value) : '';
       case 'number':
         return Number(value) || 0;
       case 'boolean':
