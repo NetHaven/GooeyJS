@@ -43,8 +43,11 @@ import Window from './gooey/ui/window/Window.js';
 
 const SCRIPT_PATH = new URL(import.meta.url, document.baseURI);
 const PATH = SCRIPT_PATH.href.substring(0, SCRIPT_PATH.href.lastIndexOf('/'));
- 
+
 export default class GooeyJS {
+    static get basePath() {
+        return PATH;
+    }
     constructor() {
         let headEl, htmlEl, linkEl;
 

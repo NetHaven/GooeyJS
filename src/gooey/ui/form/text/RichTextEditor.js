@@ -5,6 +5,7 @@ import FormElementEvent from '../../../events/form/FormElementEvent.js';
 import MouseEvent from '../../../events/MouseEvent.js';
 import KeyboardEvent from '../../../events/KeyboardEvent.js';
 import Template from '../../../util/Template.js';
+import GooeyJS from '../../../../GooeyJS.js';
 
 export default class RichTextEditor extends TextElement {
     constructor() {
@@ -22,6 +23,7 @@ export default class RichTextEditor extends TextElement {
         this._handleKeyDownBound = this._handleKeyDown.bind(this);
         this._selectionChangeBound = this._handleSelectionChange.bind(this);
 
+        this._fixImagePaths();
         this._createLayout();
         this._registerEvents();
 
@@ -243,6 +245,22 @@ export default class RichTextEditor extends TextElement {
 
         Object.values(this._buttons).forEach((button) => {
             button.disabled = disabled;
+        });
+    }
+
+    _fixImagePaths() {
+        // Fix all image paths to be absolute based on GooeyJS location
+        const images = this.querySelectorAll('img[src]');
+        const basePath = GooeyJS.basePath;
+
+        images.forEach(img => {
+            const src = img.getAttribute('src');
+            // Check if the path is relative and starts with 'gooey/'
+            if (src && src.startsWith('gooey/')) {
+                // Convert to absolute path based on GooeyJS location
+                const absoluteSrc = `${basePath}/${src}`;
+                img.setAttribute('src', absoluteSrc);
+            }
         });
     }
 }
