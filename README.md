@@ -95,7 +95,7 @@ It will also include components specifically geared for configuring:
 - Gradients
 
 ## Getting Started
-Download GooeyJS.v1.5.0.zip and unzip to your codebase. To include GooeyJS, just use the following:
+Download GooeyJS.v1.6.0.zip and unzip to your codebase. To include GooeyJS, just use the following:
 
     <script type="module" src="GooeyJS/GooeyJS.js"></script>
 
