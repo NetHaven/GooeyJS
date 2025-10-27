@@ -80,7 +80,7 @@ export default class Observable extends HTMLElement {
         });
     }
 
-    fireEvent(eventName, configObj, options = {}) {
+    fireEvent(eventName, configObj) {
         var err;
 
         if (!(this.hasEvent(eventName))) {
