@@ -34,7 +34,7 @@ export default class Model extends Observable {
 
   // Define properties based on metadata
   _defineProperties() {
-    Object.entries(this._metadata).forEach(([key, config]) => {
+    Object.entries(this._metadata).forEach(([key]) => {
       // Create getter/setter for each property
       Object.defineProperty(this, key, {
         get() {
