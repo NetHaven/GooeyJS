@@ -1,5 +1,5 @@
 import Container from '../Container.js';
-import Layout from '../Layout.js';
+import LayoutType from '../Layout/LayoutType.js';
 import Template from '../../util/Template.js';
 
 export default class Panel extends Container {
@@ -7,7 +7,7 @@ export default class Panel extends Container {
         super();
 
         Template.activate("ui-Panel", this);
-        this.layout = Layout.FLOW;
+        this.layout = LayoutType.FLOW;
         
         // Add support for title attribute
         if (this.hasAttribute("title")) {

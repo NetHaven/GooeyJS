@@ -1,5 +1,5 @@
 import Container from '../Container.js';
-import Layout from '../Layout.js';
+import LayoutType from '../Layout/LayoutType.js';
 import AccordionPanelEvent from '../../events/panel/AccordionPanelEvent.js';
 import MouseEvent from '../../events/MouseEvent.js';
 
@@ -8,7 +8,7 @@ export default class AccordionPanel extends Container {
         super();
         
         this.classList.add("ui-AccordionPanel");
-        this.layout = Layout.VBOX;
+        this.layout = LayoutType.VBOX;
         
         // Track accordion state
         this._accordions = [];

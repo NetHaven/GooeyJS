@@ -1,5 +1,5 @@
 import Component from "./Component.js";
-import Layout from "./Layout.js";
+import LayoutType from "./Layout/LayoutType.js";
 
 export default class Container extends Component {
     constructor () {
@@ -75,15 +75,15 @@ export default class Container extends Component {
         let columns, rows;
 
         switch (val) {
-            case Layout.BORDER:
-            case Layout.CARD:
-            case Layout.GRID:
-            case Layout.HBOX:
-            case Layout.FLOW:
-            case Layout.VBOX:   this.setAttribute("layout", val);
+            case LayoutType.BORDER:
+            case LayoutType.CARD:
+            case LayoutType.GRID:
+            case LayoutType.HBOX:
+            case LayoutType.FLOW:
+            case LayoutType.VBOX:   this.setAttribute("layout", val);
         }
         
-        if (this.layout === Layout.GRID) {
+        if (this.layout === LayoutType.GRID) {
             columns = this.getAttribute("columns");
             rows = this.getAttribute("rows");
             if (rows && columns) {

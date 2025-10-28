@@ -1,5 +1,5 @@
 import Container from '../Container.js';
-import Layout from '../Layout.js';
+import LayoutType from '../Layout/LayoutType.js';
 import TabEvent from '../../events/panel/TabEvent.js';
 import TabPanelEvent from '../../events/panel/TabPanelEvent.js';
 import MouseEvent from '../../events/MouseEvent.js';
@@ -8,7 +8,7 @@ export default class Tab extends Container {
     constructor() {
         super();
         
-        this.layout = Layout.FLOW;
+        this.layout = LayoutType.FLOW;
         this._active = false;
         this._tabHeader = null;
         this._tabPanel = null;
