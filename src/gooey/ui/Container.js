@@ -1,4 +1,5 @@
 import Component from "./Component.js";
+import LayoutJustify from "./layout/LayoutJustify.js";
 import LayoutType from "./Layout/LayoutType.js";
 
 export default class Container extends Component {
@@ -95,7 +96,17 @@ export default class Container extends Component {
             }
 
             if (layoutElement.justify) {
-                this.style.justifyContent = layoutElement.justify;
+                if (layoutElement.justify === LayoutJustify.END || layoutElement.justify === LayoutJustify.START) {
+                    if (layoutElement.type === LayoutType.FLEX) {
+                       this.style.justifyContent = `flex-${layoutElement.justify}`;
+                    }
+                    else {
+                        this.style.justifyContent = layoutElement.justify;
+                    }
+                }
+                else {
+                    this.style.justifyContent = layoutElement.justify;
+                }
             }
 
             if (layoutElement.wrap) {
