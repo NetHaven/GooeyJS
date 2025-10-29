@@ -63,15 +63,46 @@ export default class Container extends Component {
 
         fontElement = document.querySelector(val);
         if (fontElement) {
-            this.style.fontFamily = fontElement.family;
-            this.style.fontSize = fontElement.size;
-            this.style.fontWeight = fontElement.weight;
-        }
+            if (fontElement.family) {
+                this.style.fontFamily = fontElement.family;
+            }
 
-        this.setAttribute("font", val);
+            if (fontElement.size) {
+                this.style.fontSize = fontElement.size;
+            }
+
+            if (fontElement.weight) {
+                this.style.fontWeight = fontElement.weight;
+            }
+            this.setAttribute("font", val);
+        }
+        else {
+            console.log(`Font ${val} not found.`);
+        }
     }
 
     set layout(val) {
+        let layoutElement;
+
+        layoutElement = document.querySelector(val);
+        if (layoutElement) {
+            if (layoutElement.align) {
+                this.style.alignItems = layoutElement.align;
+            }
+
+            if (layoutElement.direction) {
+                this.style.flexDirection = layoutElement.direction;
+            }
+
+            if (layoutElement.justify) {
+                this.style.justifyContent = layoutElement.justify;
+            }
+
+            if (layoutElement.wrap) {
+                this.style.flexWrap = layoutElement.wrap;
+            }
+        }
+
         let columns, rows;
 
         switch (val) {
