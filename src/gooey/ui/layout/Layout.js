@@ -37,7 +37,7 @@ export default class Layout {
             case LayoutAlign.CENTER:
             case LayoutAlign.FLEX_END:
             case LayoutAlign.FLEX_START: 
-            case LayoutAlign.STRETCH:       this.setAttribute("align", val);
+            case LayoutAlign.STRETCH: this.setAttribute("align", val);
         }
     }
 
@@ -68,7 +68,7 @@ export default class Layout {
             case LayoutType.FLOW:
             case LayoutType.GRID:
             case LayoutType.HBOX:
-            case LayoutType.VBOX:   this.setAttribute("type", val);    
+            case LayoutType.VBOX: this.setAttribute("type", val);    
         }
     }
 
