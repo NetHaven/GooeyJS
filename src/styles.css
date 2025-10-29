@@ -1187,14 +1187,8 @@ ui-Tree, ui-TreeItem {
     display: grid;
 }
 
-.ui-Container[layout="HBOX"] {
+.ui-Container[layout="BOX"] {
     display: flex;
-    flex-direction: row;
-}
-
-.ui-Container[layout="VBOX"] {
-    display: flex;
-    flex-direction: column;
 }
 
 /* ColorPicker Styles */

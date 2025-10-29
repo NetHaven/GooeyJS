@@ -90,7 +90,7 @@ export default class Container extends Component {
         if (layoutElement) {
             if (layoutElement.align) {
                 if (layoutElement.align === LayoutAlign.END || layoutElement.align === LayoutAlign.START) {
-                    if (layoutElement.type === LayoutType.HBOX || layoutElement.type === LayoutType.VBOX) {
+                    if (layoutElement.type === LayoutType.BOX) {
                        this.style.alignItems = `flex-${layoutElement.align}`;
                     }
                     else {
@@ -108,7 +108,7 @@ export default class Container extends Component {
 
             if (layoutElement.justify) {
                 if (layoutElement.justify === LayoutJustify.END || layoutElement.justify === LayoutJustify.START) {
-                    if (layoutElement.type === LayoutType.HBOX || layoutElement.type === LayoutType.VBOX) {
+                    if (layoutElement.type === LayoutType.BOX) {
                        this.style.justifyContent = `flex-${layoutElement.justify}`;
                     }
                     else {

@@ -35,8 +35,8 @@ export default class Layout {
         switch (val)  {
             case LayoutAlign.BASELINE: 
             case LayoutAlign.CENTER:
-            case LayoutAlign.FLEX_END:
-            case LayoutAlign.FLEX_START: 
+            case LayoutAlign.END:
+            case LayoutAlign.START: 
             case LayoutAlign.STRETCH: this.setAttribute("align", val);
         }
     }
@@ -53,8 +53,8 @@ export default class Layout {
     set justify(val) {
         switch (val)  {
             case LayoutJustify.CENTER: 
-            case LayoutJustify.FLEX_END:
-            case LayoutJustify.FLEX_START:
+            case LayoutJustify.END:
+            case LayoutJustify.START:
             case LayoutJustify.SPACE_AROUND:
             case LayoutJustify.SPACE_BETWEEN:
             case LayoutJustify.SPACE_EVENLY: this.setAttribute("justify", val);
@@ -67,8 +67,7 @@ export default class Layout {
             case LayoutType.CARD:
             case LayoutType.FLOW:
             case LayoutType.GRID:
-            case LayoutType.HBOX:
-            case LayoutType.VBOX: this.setAttribute("type", val);    
+            case LayoutType.BOX: this.setAttribute("type", val);    
         }
     }
 
