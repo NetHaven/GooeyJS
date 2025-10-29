@@ -1,6 +1,7 @@
 import Component from "./Component.js";
+import LayoutAlign from "./layout/LayoutAlign.js";
 import LayoutJustify from "./layout/LayoutJustify.js";
-import LayoutType from "./Layout/LayoutType.js";
+import LayoutType from "./layout/LayoutType.js";
 
 export default class Container extends Component {
     constructor () {
@@ -88,7 +89,17 @@ export default class Container extends Component {
         layoutElement = document.querySelector(val);
         if (layoutElement) {
             if (layoutElement.align) {
-                this.style.alignItems = layoutElement.align;
+                if (layoutElement.align === LayoutAlign.END || layoutElement.align === LayoutAlign.START) {
+                    if (layoutElement.type === LayoutType.HBOX || layoutElement.type === LayoutType.VBOX) {
+                       this.style.alignItems = `flex-${layoutElement.align}`;
+                    }
+                    else {
+                        this.style.alignItems = layoutElement.align;
+                    }
+                }
+                else {
+                    this.style.alignItems = layoutElement.align;
+                }
             }
 
             if (layoutElement.direction) {
@@ -97,7 +108,7 @@ export default class Container extends Component {
 
             if (layoutElement.justify) {
                 if (layoutElement.justify === LayoutJustify.END || layoutElement.justify === LayoutJustify.START) {
-                    if (layoutElement.type === LayoutType.FLEX) {
+                    if (layoutElement.type === LayoutType.HBOX || layoutElement.type === LayoutType.VBOX) {
                        this.style.justifyContent = `flex-${layoutElement.justify}`;
                     }
                     else {
@@ -114,7 +125,7 @@ export default class Container extends Component {
             }
         }
 
-        let columns, rows;
+/*        let columns, rows;
 
         switch (val) {
             case LayoutType.BORDER:
@@ -132,6 +143,6 @@ export default class Container extends Component {
                 this.style.gridTemplateColumns = columns;
                 this.style.gridTemplateRows = rows;
             }
-        }
+        } */
     }
 }
