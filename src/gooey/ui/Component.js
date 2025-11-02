@@ -6,6 +6,10 @@ import ModelEvent from '../events/mvc/ModelEvent.js';
 import MouseCursor from '../io/MouseCursor.js';
 
 export default class Component extends Observable {
+    static get observedAttributes() {
+        return ['height', 'width', 'tooltip', 'visible', 'disabled', 'id'];
+    }
+
     constructor () {
         super();
 
