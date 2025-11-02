@@ -2,6 +2,10 @@ import Component from './Component.js';
 import Template from '../util/Template.js';
 
 export default class Application extends Component {
+    static get observedAttributes() {
+        return ['height', 'width', 'tooltip', 'visible', 'disabled', 'id'];
+    }
+
     constructor() {
         super();
 
