@@ -5,10 +5,6 @@ import MouseEvent from '../../events/MouseEvent.js';
 import Template from '../../util/Template.js';
 
 export default class Menubar extends Component {
-    static get observedAttributes() {
-        return [...super.observedAttributes, 'active'];
-    }
-
     constructor () {
         var acceleratedItem, activeMenuIndex, menuHeaderList, menuList, menubar, menuHeader;
 
@@ -175,6 +171,10 @@ export default class Menubar extends Component {
         });
     }
     
+    static get observedAttributes() {
+        return [...super.observedAttributes, 'active'];
+    }
+
     positionMenu(menu, menuHeader) {
         // Use setTimeout to ensure DOM is fully rendered and positioned
         setTimeout(() => {
