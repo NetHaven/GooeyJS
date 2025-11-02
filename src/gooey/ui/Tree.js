@@ -5,6 +5,10 @@ import TreeEvent from '../events/TreeEvent.js';
 import TreeItemEvent from '../events/TreeItemEvent.js';
 
 export default class Tree extends Component {
+    static get observedAttributes() {
+        return [...super.observedAttributes];
+    }
+
     constructor() {
         super();
         
