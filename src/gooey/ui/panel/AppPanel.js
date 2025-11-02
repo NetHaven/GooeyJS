@@ -1,5 +1,5 @@
 import Container from '../Container.js';
-import LayoutType from '../Layout/LayoutType.js';
+import LayoutType from '../layout/LayoutType.js';
 import FormFactor from '../FormFactor.js';
 import Template from '../../util/Template.js';
 
