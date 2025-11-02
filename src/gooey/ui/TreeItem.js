@@ -59,7 +59,7 @@ export default class TreeItem extends Component {
     }
     
     static get observedAttributes() {
-        return ['text', 'icon', 'expanded', 'draggable', 'droptree', 'editable'];
+        return [...super.observedAttributes, 'text', 'icon', 'expanded', 'draggable', 'droptree', 'editable'];
     }
     
     connectedCallback() {
