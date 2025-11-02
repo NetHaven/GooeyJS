@@ -5,10 +5,14 @@ import MenuEvent from '../../events/menu/MenuEvent.js';
 import Template from '../../util/Template.js';
 
 export default class Menu extends Component {
+    static get observedAttributes() {
+        return [...super.observedAttributes, 'accelerator', 'active', 'text'];
+    }
+
     constructor () {
-        var acceleratedItem, accelerator, activeMenuItem, activeMenuItemIndex, menuItemList, 
+        var acceleratedItem, accelerator, activeMenuItem, activeMenuItemIndex, menuItemList,
             menuText, shortcutItem;
-        
+
         super();
 
         Template.activate("ui-Menu", this);
