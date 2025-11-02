@@ -3,6 +3,10 @@ import MouseEvent from '../../events/MouseEvent.js';
 import Template from '../../util/Template.js';
 
 export default class Button extends Component {
+	static get observedAttributes() {
+		return [...super.observedAttributes, 'action', 'icon', 'text'];
+	}
+
 	constructor() {
 		super();
 	
