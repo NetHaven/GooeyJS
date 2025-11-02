@@ -9,6 +9,10 @@ import Template from '../../util/Template.js';
  * Extends FormElement to provide standard form functionality
  */
 export default class Spinner extends FormElement {
+    static get observedAttributes() {
+        return [...super.observedAttributes];
+    }
+
     constructor() {
         super();
 
