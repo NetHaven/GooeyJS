@@ -4,6 +4,10 @@ import MouseEvent from '../../events/MouseEvent.js';
 import ContextMenuManager from './ContextMenuManager.js';
 
 export default class ContextMenu extends Component {
+    static get observedAttributes() {
+        return [...super.observedAttributes, 'active'];
+    }
+
     constructor() {
         super();
         
