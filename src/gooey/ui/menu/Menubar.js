@@ -5,9 +5,13 @@ import MouseEvent from '../../events/MouseEvent.js';
 import Template from '../../util/Template.js';
 
 export default class Menubar extends Component {
+    static get observedAttributes() {
+        return [...super.observedAttributes, 'active'];
+    }
+
     constructor () {
         var acceleratedItem, activeMenuIndex, menuHeaderList, menuList, menubar, menuHeader;
-        
+
         super();
 
         Template.activate("ui-Menubar", this);
