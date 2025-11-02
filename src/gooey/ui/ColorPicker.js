@@ -355,7 +355,7 @@ export default class ColorPicker extends Component {
     }
     
     static get observedAttributes() {
-        return ['value', 'disabled'];
+        return [...super.observedAttributes, 'value'];
     }
     
     attributeChangedCallback(name, oldValue, newValue) {
