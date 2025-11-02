@@ -144,7 +144,7 @@ export default class ToggleButton extends Component {
     }
     
     static get observedAttributes() {
-        return ['disabled', 'pressed'];
+        return [...super.observedAttributes, 'action', 'icon', 'text', 'pressed'];
     }
     
     attributeChangedCallback(name, oldValue, newValue) {
