@@ -3,6 +3,10 @@ import ToolbarButtonSize from './ToolbarButtonSize.js';
 import Template from '../../util/Template.js';
 
 export default class Toolbar extends Container {
+    static get observedAttributes() {
+        return [...super.observedAttributes, 'buttonsize', 'wrap'];
+    }
+
     constructor () {
         super();
         
