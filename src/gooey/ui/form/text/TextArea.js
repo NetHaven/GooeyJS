@@ -4,6 +4,10 @@ import FormElementEvent from '../../../events/form/FormElementEvent.js';
 import Template from '../../../util/Template.js';
 
 export default class TextArea extends TextElement {
+    static get observedAttributes() {
+        return [...super.observedAttributes, 'resize'];
+    }
+
     constructor() {
         super();
 
