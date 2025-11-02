@@ -4,6 +4,10 @@ import RadioButtonEvent from '../../events/form/RadioButtonEvent.js';
 import Template from '../../util/Template.js';
 
 export default class RadioButton extends FormElement {
+    static get observedAttributes() {
+        return [...super.observedAttributes];
+    }
+
     constructor() {
         super();
 
