@@ -5,4 +5,5 @@ export default class Key {
     static ARROW_UP = "ArrowUp";
     static ENTER = "Enter";
     static ESCAPE = "Escape";
+    static SPACE = " ";
 }
