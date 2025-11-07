@@ -1,4 +1,5 @@
 import Component from "./Component.js";
+import Key from "../io/Key.js";
 import KeyboardEvent from "../events/KeyboardEvent.js";
 import MouseEvent from "../events/MouseEvent.js";
 import TreeEvent from '../events/TreeEvent.js';
@@ -108,28 +109,28 @@ export default class Tree extends Component {
         if (!this._selectedItem) return;
         
         switch (e.key) {
-            case 'ArrowUp':
+            case Key.ARROW_UP:
                 e.preventDefault();
                 this._selectPreviousItem();
                 break;
-            case 'ArrowDown':
+            case Key.ARROW_DOWN:
                 e.preventDefault();
                 this._selectNextItem();
                 break;
-            case 'ArrowRight':
+            case Key.ARROW_RIGHT:
                 e.preventDefault();
                 if (this._selectedItem.hasChildren && !this._selectedItem.expanded) {
                     this._selectedItem.expanded = true;
                 }
                 break;
-            case 'ArrowLeft':
+            case Key.ARROW_LEFT:
                 e.preventDefault();
                 if (this._selectedItem.hasChildren && this._selectedItem.expanded) {
                     this._selectedItem.expanded = false;
                 }
                 break;
-            case 'Enter':
-            case ' ':
+            case Key.ENTER:
+            case Key.SPACE:
                 e.preventDefault();
                 if (this._selectedItem.hasChildren) {
                     this._selectedItem.toggle();
