@@ -1,9 +1,9 @@
-import Component from "./Component.js";
+import UIComponent from "./UIComponent.js";
 import LayoutAlign from "./layout/LayoutAlign.js";
 import LayoutJustify from "./layout/LayoutJustify.js";
 import LayoutType from "./layout/LayoutType.js";
 
-export default class Container extends Component {
+export default class Container extends UIComponent {
     static get observedAttributes() {
         return [...super.observedAttributes, 'active', 'border', 'font', 'layout'];
     }

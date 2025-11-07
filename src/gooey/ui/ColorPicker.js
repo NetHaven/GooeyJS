@@ -1,4 +1,4 @@
-import Component from './Component.js';
+import UIComponent from './UIComponent.js';
 import ColorPickerEvent from '../events/ColorPickerEvent.js';
 import Key from '../io/Key.js';
 import KeyboardEvent from '../events/KeyboardEvent.js';
@@ -6,7 +6,7 @@ import MouseEvent from '../events/MouseEvent.js';
 import Template from '../util/Template.js';
 import TextElementEvent from '../events/form/text/TextElementEvent.js';
 
-export default class ColorPicker extends Component {
+export default class ColorPicker extends UIComponent {
     constructor() {
         super();
         

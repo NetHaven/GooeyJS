@@ -1,8 +1,8 @@
-import Component from '../Component.js';
+import UIComponent from '../UIComponent.js';
 import MouseEvent from '../../events/MouseEvent.js';
 import Template from '../../util/Template.js';
 
-export default class Button extends Component {
+export default class Button extends UIComponent {
 	static get observedAttributes() {
 		return [...super.observedAttributes, 'action', 'icon', 'text'];
 	}

@@ -1,10 +1,10 @@
-import Component from './Component.js';
+import UIComponent from './UIComponent.js';
 import HorizontalAlign from './HorizontalAlign.js';
 import MouseEvent from '../events/MouseEvent.js';
 import VerticalAlign from './VerticalAlign.js';
 import Template from '../util/Template.js';
 
-export default class Label extends Component {
+export default class Label extends UIComponent {
     static get observedAttributes() {
         return ['text', 'icon', 'action', 'halign', 'valign', 'disabled'];
     }

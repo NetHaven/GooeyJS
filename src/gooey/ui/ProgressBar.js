@@ -1,7 +1,7 @@
-import Component from './Component.js';
+import UIComponent from './UIComponent.js';
 import Template from '../util/Template.js';
 
-export default class ProgressBar extends Component {
+export default class ProgressBar extends UIComponent {
     static get observedAttributes() {
         return ['value', 'max', 'indeterminate', 'visible'];
     }

@@ -1,10 +1,10 @@
-import Component from '../Component.js';
+import UIComponent from '../UIComponent.js';
 import Key from '../../io/Key.js';
 import KeyboardEvent from '../../events/KeyboardEvent.js';
 import MenuEvent from '../../events/menu/MenuEvent.js';
 import Template from '../../util/Template.js';
 
-export default class Menu extends Component {
+export default class Menu extends UIComponent {
     static get observedAttributes() {
         return [...super.observedAttributes, 'accelerator', 'active', 'text'];
     }

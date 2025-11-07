@@ -1,6 +1,6 @@
-import Component from '../Component.js';
+import UIComponent from '../UIComponent.js';
 
-export default class FormElement extends Component {
+export default class FormElement extends UIComponent {
     constructor() {
         super();
         this._requiredIndicator = null;

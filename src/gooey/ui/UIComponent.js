@@ -5,7 +5,7 @@ import Model from '../mvc/Model.js';
 import ModelEvent from '../events/mvc/ModelEvent.js';
 import MouseCursor from '../io/MouseCursor.js';
 
-export default class Component extends Observable {
+export default class UIComponent extends Observable {
     static get observedAttributes() {
         return ['height', 'width', 'tooltip', 'visible', 'disabled', 'id'];
     }
@@ -21,7 +21,7 @@ export default class Component extends Observable {
         // Add MVC events to valid events
         this.addValidEvent(ComponentEvent.MODEL_CHANGE);
         this.addValidEvent(ComponentEvent.CONTROLLER_ATTACHED);
-        
+
         // Add valid visibility events
         this.addValidEvent(ComponentEvent.SHOW);
         this.addValidEvent(ComponentEvent.HIDE);
@@ -50,16 +50,16 @@ export default class Component extends Observable {
         }
         else {
             this.visible = true;
-        }        
+        }
     }
-    
+
     // Data binding application
     applyBindings() {
         this._bindings.forEach(binding => {
             binding.apply(this._model, this);
         });
     }
-  
+
     // Bind to a model (optional MVC feature)
     bindModel(model) {
         if (this._model) {
@@ -149,7 +149,7 @@ export default class Component extends Observable {
     get width() {
         return this.style.width;
     }
-  
+
     // Handle model changes by updating DOM directly
     onModelChange() {
         // Apply data bindings when model changes
@@ -174,7 +174,7 @@ export default class Component extends Observable {
         this.fireEvent(ComponentEvent.CONTROLLER_ATTACHED, { controller });
         return this;
     }
-  
+
     set cursor(val) {
         switch (val) {
             case MouseCursor.ALIAS:
@@ -221,7 +221,7 @@ export default class Component extends Observable {
             this.removeAttribute("disabled");
         }
     }
-    
+
     set height(val) {
         this.setAttribute("height", val);
         this.style.height = `${val}px`;
@@ -243,18 +243,18 @@ export default class Component extends Observable {
 
     set visible(val) {
         const wasVisible = this.visible;
-        
+
         if (val) {
             this.setAttribute("visible", "true");
         }
         else {
             this.setAttribute("visible", "false");
         }
-        
+
         // Fire visibility change events
         if (wasVisible !== val) {
             const eventType = val ? ComponentEvent.SHOW : ComponentEvent.HIDE;
-            this.fireEvent(eventType, { 
+            this.fireEvent(eventType, {
                 component: this,
                 visible: val
             });

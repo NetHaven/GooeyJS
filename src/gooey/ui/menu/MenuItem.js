@@ -1,9 +1,9 @@
-import Component from '../Component.js';
+import UIComponent from '../UIComponent.js';
 import MenuItemEvent from '../../events/menu/MenuItemEvent.js';
 import MouseEvent from '../../events/MouseEvent.js';
 import Template from '../../util/Template.js';
 
-export default class MenuItem extends Component {
+export default class MenuItem extends UIComponent {
     static get observedAttributes() {
         return [...super.observedAttributes, 'accelerator', 'action', 'active', 'shortcut', 'text', 'icon'];
     }
