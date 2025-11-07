@@ -8,9 +8,13 @@ export default class GooeyJS {
         let headEl, htmlEl, linkEl;
 
         this.components = [{
+            pkg: "gooey",
+            elements: [
+                { name: "Application", prefix: "Gooey" }
+            ]
+        },{
             pkg: "gooey.ui",
             elements: [
-                { name: "Application", prefix: "GooeyUI" },
                 { name: "Border", prefix: "GooeyUI" },
                 { name: "ColorPicker", prefix: "GooeyUI" },
                 { name: "Font", prefix: "GooeyUI" },
