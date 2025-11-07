@@ -2,6 +2,7 @@ import Component from './Component.js';
 import TreeItemEvent from '../events/TreeItemEvent.js';
 import MouseEvent from '../events/MouseEvent.js';
 import DragEvent from '../events/DragEvent.js';
+import Key from '../io/Key.js';
 
 export default class TreeItem extends Component {
     constructor() {
@@ -222,10 +223,10 @@ export default class TreeItem extends Component {
         
         // Handle Enter key to commit changes
         const handleKeyDown = (e) => {
-            if (e.key === 'Enter') {
+            if (e.key === Key.ENTER) {
                 e.preventDefault();
                 this._commitEdit(textField);
-            } else if (e.key === 'Escape') {
+            } else if (e.key === Key.ESCAPE) {
                 e.preventDefault();
                 this._cancelEdit(textField);
             }
