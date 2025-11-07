@@ -4,88 +4,85 @@ const SCRIPT_PATH = new URL(import.meta.url, document.baseURI);
 const PATH = SCRIPT_PATH.href.substring(0, SCRIPT_PATH.href.lastIndexOf('/'));
 
 export default class GooeyJS {
-    static get basePath() {
-        return PATH;
-    }
     constructor() {
         let headEl, htmlEl, linkEl;
 
         this.components = [{
             pkg: "gooey.ui",
             elements: [
-                { name: "Application", prefix: "ui" },
-                { name: "Border", prefix: "ui" },
-                { name: "ColorPicker", prefix: "ui" },
-                { name: "Font", prefix: "ui" },
-                { name: "Label", prefix: "ui" },
-                { name: "ProgressBar", prefix: "ui" },
-                { name: "Tree", prefix: "ui" },
-                { name: "TreeItem", prefix: "ui" }
+                { name: "Application", prefix: "GooeyUI" },
+                { name: "Border", prefix: "GooeyUI" },
+                { name: "ColorPicker", prefix: "GooeyUI" },
+                { name: "Font", prefix: "GooeyUI" },
+                { name: "Label", prefix: "GooeyUI" },
+                { name: "ProgressBar", prefix: "GooeyUI" },
+                { name: "Tree", prefix: "GooeyUI" },
+                { name: "TreeItem", prefix: "GooeyUI" }
             ]
         },{
             pkg: "gooey.ui.button",
             elements: [
-                { name: "Button", prefix: "ui" },
-                { name: "ToggleButton", prefix: "ui" },
-                { name: "ToggleButtonGroup", prefix: "ui" }
+                { name: "Button", prefix: "GooeyUI" },
+                { name: "ToggleButton", prefix: "GooeyUI" },
+                { name: "ToggleButtonGroup", prefix: "GooeyUI" }
             ]
         },{
             pkg: "gooey.ui.form",
             elements: [
-                { name: "Checkbox", prefix: "ui" },
-                { name: "DatePicker", prefix: "ui" },
-                { name: "RadioButton", prefix: "ui" },
-                { name: "RadioButtonGroup", prefix: "ui" },
-                { name: "Spinner", prefix: "ui" },
-                { name: "TimePicker", prefix: "ui" }
+                { name: "Checkbox", prefix: "GooeyUI" },
+                { name: "DatePicker", prefix: "GooeyUI" },
+                { name: "RadioButton", prefix: "GooeyUI" },
+                { name: "RadioButtonGroup", prefix: "GooeyUI" },
+                { name: "Spinner", prefix: "GooeyUI" },
+                { name: "TimePicker", prefix: "GooeyUI" }
             ]
         },{
             pkg: "gooey.ui.form.list",
             elements: [
-                { name: "ComboBox", prefix: "ui" },
-                { name: "DropDownList", prefix: "ui" },
-                { name: "ListBox", prefix: "ui" }
+                { name: "ComboBox", prefix: "GooeyUI" },
+                { name: "DropDownList", prefix: "GooeyUI" },
+                { name: "ListBox", prefix: "GooeyUI" }
             ]
         },{
             pkg: "gooey.ui.form.text",
             elements: [
-                { name: "PasswordField", prefix: "ui" },
-                { name: "RichTextEditor", prefix: "ui" },
-                { name: "TextArea", prefix: "ui" },
-                { name: "TextField", prefix: "ui" }
+                { name: "PasswordField", prefix: "GooeyUI" },
+                { name: "RichTextEditor", prefix: "GooeyUI" },
+                { name: "TextArea", prefix: "GooeyUI" },
+                { name: "TextField", prefix: "GooeyUI" }
             ]
         },{
             pkg: "gooey.ui.menu",
             elements: [
-                { name: "CheckboxMenuItem", prefix: "ui" },
-                { name: "ContextMenu", prefix: "ui" },
-                { name: "Menu", prefix: "ui" },
-                { name: "Menubar", prefix: "ui" },
-                { name: "MenuItem", prefix: "ui" },
-                { name: "MenuItemSeparator", prefix: "ui" }
+                { name: "CheckboxMenuItem", prefix: "GooeyUI" },
+                { name: "ContextMenu", prefix: "GooeyUI" },
+                { name: "Menu", prefix: "GooeyUI" },
+                { name: "Menubar", prefix: "GooeyUI" },
+                { name: "MenuItem", prefix: "GooeyUI" },
+                { name: "MenuItemSeparator", prefix: "GooeyUI" }
             ]
         },{
             pkg: "gooey.ui.panel",
             elements: [
-                { name: "AccordionPanel", prefix: "ui" },
-                { name: "AppPanel", prefix: "ui" },
-                { name: "FormPanel", prefix: "ui" },
-                { name: "GroupBox", prefix: "ui" },
-                { name: "Panel", prefix: "ui" },
-                { name: "SplitPanel", prefix: "ui" },
-                { name: "Tab", prefix: "ui" },
-                { name: "TabPanel", prefix: "ui" }
+                { name: "AccordionPanel", prefix: "GooeyUI" },
+                { name: "AppPanel", prefix: "GooeyUI" },
+                { name: "FormPanel", prefix: "GooeyUI" },
+                { name: "GroupBox", prefix: "GooeyUI" },
+                { name: "Panel", prefix: "GooeyUI" },
+                { name: "SplitPanel", prefix: "GooeyUI" },
+                { name: "Tab", prefix: "GooeyUI" },
+                { name: "TabPanel", prefix: "GooeyUI" }
             ]
         },{
             pkg: "gooey.ui.toolbar",
             elements: [
-                { name: "Toolbar", prefix: "ui" },
-                { name: "ToolbarSeparator", prefix: "ui" }
+                { name: "Toolbar", prefix: "GooeyUI" },
+                { name: "ToolbarSeparator", prefix: "GooeyUI" }
             ]
         },{
             pkg: "gooey.ui.window",
             elements: [
-                { name: "Window", prefix: "ui" }
+                { name: "Window", prefix: "GooeyUI" }
             ]
         }]
 
@@ -103,6 +100,10 @@ export default class GooeyJS {
         }
 
         headEl.appendChild(linkEl);
+    }
+
+    static get basePath() {
+        return PATH;
     }
 
     async createElements() {
@@ -125,7 +126,7 @@ export default class GooeyJS {
                     const module = await import(modulePath);
                     const ComponentClass = module.default;
 
-                    // Convert class name to custom element tag using configurable prefix (e.g., "Button" + "ui" -> "ui-button")
+                    // Convert class name to custom element tag using configurable prefix (e.g., "Button" + "GooeyUI" -> "ui-button")
                     const tagName = `${element.prefix}-${element.name.toLowerCase()}`;
 
                     // Register the custom element
