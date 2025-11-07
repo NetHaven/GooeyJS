@@ -10,7 +10,8 @@ export default class GooeyJS {
         this.components = [{
             pkg: "gooey",
             elements: [
-                { name: "Application", prefix: "Gooey" }
+                { name: "Application", prefix: "Gooey" },
+                { name: "Component", prefix: "Gooey" }
             ]
         },{
             pkg: "gooey.ui",
