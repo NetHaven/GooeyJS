@@ -301,7 +301,7 @@ export default class TreeItem extends Component {
     }
     
     _setupEventListeners() {
-        this._contentElement.addEventListener('click', () => {
+        this._contentElement.addEventListener(MouseEvent.CLICK, () => {
             if (this._hasChildren) {
                 this.toggle();
             }
@@ -309,11 +309,11 @@ export default class TreeItem extends Component {
         });
         
         // Add double-click event
-        this._contentElement.addEventListener('dblclick', () => {
+        this._contentElement.addEventListener(MouseEvent.DOUBLE_CLICK, () => {
             this.fireEvent(MouseEvent.DOUBLE_CLICK, { treeItem: this });
         });
         
-        this._expanderElement.addEventListener('click', (e) => {
+        this._expanderElement.addEventListener(MouseEvent.CLICK, (e) => {
             e.stopPropagation();
             if (this._hasChildren) {
                 this.toggle();
