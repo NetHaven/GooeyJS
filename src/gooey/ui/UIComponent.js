@@ -1,6 +1,6 @@
 import Observable from '../events/Observable.js';
 import Point from '../graphics/Point.js';
-import ComponentEvent from '../events/ComponentEvent.js';
+import UIComponentEvent from '../events/UIComponentEvent.js';
 import Model from '../mvc/Model.js';
 import ModelEvent from '../events/mvc/ModelEvent.js';
 import MouseCursor from '../io/MouseCursor.js';
@@ -19,12 +19,12 @@ export default class UIComponent extends Observable {
         this._bindings = [];
 
         // Add MVC events to valid events
-        this.addValidEvent(ComponentEvent.MODEL_CHANGE);
-        this.addValidEvent(ComponentEvent.CONTROLLER_ATTACHED);
+        this.addValidEvent(UIComponentEvent.MODEL_CHANGE);
+        this.addValidEvent(UIComponentEvent.CONTROLLER_ATTACHED);
 
         // Add valid visibility events
-        this.addValidEvent(ComponentEvent.SHOW);
-        this.addValidEvent(ComponentEvent.HIDE);
+        this.addValidEvent(UIComponentEvent.SHOW);
+        this.addValidEvent(UIComponentEvent.HIDE);
 
         this.classList.add("ui-Component");
 
@@ -78,7 +78,7 @@ export default class UIComponent extends Observable {
             this.applyBindings();
         }
 
-        this.fireEvent(ComponentEvent.MODEL_CHANGE, { model });
+        this.fireEvent(UIComponentEvent.MODEL_CHANGE, { model });
         return this;
     }
 
@@ -171,7 +171,7 @@ export default class UIComponent extends Observable {
     setController(controller) {
         this._controller = controller;
         controller.setView(this);
-        this.fireEvent(ComponentEvent.CONTROLLER_ATTACHED, { controller });
+        this.fireEvent(UIComponentEvent.CONTROLLER_ATTACHED, { controller });
         return this;
     }
 
@@ -253,7 +253,7 @@ export default class UIComponent extends Observable {
 
         // Fire visibility change events
         if (wasVisible !== val) {
-            const eventType = val ? ComponentEvent.SHOW : ComponentEvent.HIDE;
+            const eventType = val ? UIComponentEvent.SHOW : UIComponentEvent.HIDE;
             this.fireEvent(eventType, {
                 component: this,
                 visible: val

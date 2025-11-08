@@ -1,15 +1,13 @@
 import Event from "./Event.js";
 
 /**
- * Event constants for Component visibility and lifecycle events
- * Used by all components that can change visibility
+ * Event constants for Component loader lifecycle events
+ * Used by the <gooey-component> element for lazy-loading components
  */
 export default class ComponentEvent extends Event {
-    static SHOW = "show";
-    static HIDE = "hide";
-
-    static MODEL_CHANGE = "modelChange";
-    static CONTROLLER_ATTACHED = "controllerAttached";
+    static LOADING = "loading";
+    static LOADED = "loaded";
+    static ERROR = "error";
 
     constructor() {
         super();
