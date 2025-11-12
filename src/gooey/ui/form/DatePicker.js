@@ -17,11 +17,11 @@ export default class DatePicker extends FormElement {
         }
 
         if (this.hasAttribute("min")) {
-            this.max = this.getAttribute("min");
+            this.min = this.getAttribute("min");
         }
 
         if (this.hasAttribute("step")) {
-            this.max = this.getAttribute("step");
+            this.step = this.getAttribute("step");
         }
     }
 
