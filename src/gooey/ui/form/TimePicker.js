@@ -17,7 +17,7 @@ export default class TimePicker extends FormElement {
         }
 
         if (this.hasAttribute("min")) {
-            this.max = this.getAttribute("min");
+            this.min = this.getAttribute("min");
         }
     }
 
