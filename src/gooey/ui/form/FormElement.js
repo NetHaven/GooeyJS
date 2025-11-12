@@ -8,7 +8,7 @@ export default class FormElement extends UIComponent {
     }
 
     static get observedAttributes() {
-        return ['required'];
+        return [...super.observedAttributes, 'required'];
     }
 
     attributeChangedCallback(name) {
