@@ -40,7 +40,7 @@ export default class TabPanel extends Container {
     }
 
     static get observedAttributes() {
-        return ['orientation', 'draggable'];
+        return [...super.observedAttributes, 'orientation', 'draggable'];
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
