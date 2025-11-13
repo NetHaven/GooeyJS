@@ -6,7 +6,7 @@ import Template from '../../../util/Template.js';
 
 export default class TextField extends TextElement {
     static get observedAttributes() {
-        return [...super.observedAttributes];
+        return [...super.observedAttributes, 'size'];
     }
 
     constructor() {
@@ -103,6 +103,10 @@ export default class TextField extends TextElement {
         
         if (this.hasAttribute('type')) {
             this.textElement.setAttribute('type', this.getAttribute('type'));
+        }
+
+        if (this.hasAttribute('size')) {
+            this.textElement.setAttribute('size', this.getAttribute('size'));
         }
     }
 }
