@@ -5,7 +5,7 @@ import Template from '../../../util/Template.js';
 
 export default class TextArea extends TextElement {
     static get observedAttributes() {
-        return [...super.observedAttributes, 'resize'];
+        return [...super.observedAttributes, 'cols', 'resize'];
     }
 
     constructor() {
@@ -97,6 +97,12 @@ export default class TextArea extends TextElement {
         }
     }
 
+    get cols() {
+        if (this.hasAttribute("cols")) {
+            return this.getAttribute("cols");
+        }
+    }
+
     set resize(val) {
         if (val) {
             this.setAttribute("resize", "true");
@@ -105,6 +111,13 @@ export default class TextArea extends TextElement {
         else {
             this.setAttribute("resize", "false");
             this.textElement.style.resize = 'none';
+        }
+     }
+
+     set cols(val) {
+        if (val) {
+            this.setAttribute("cols", val);
+            this.textElement.setAttribute("cols", val);
         }
      }
 }
