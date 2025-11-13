@@ -1,4 +1,5 @@
 import FormElementEvent from '../../../events/form/FormElementEvent.js';
+import InputMode from './InputMode.js';
 import Key from '../../../io/Key.js';
 import KeyboardEvent from '../../../events/KeyboardEvent.js';
 import TextElement from './TextElement.js';
@@ -8,7 +9,7 @@ import Template from '../../../util/Template.js';
 
 export default class TextField extends TextElement {
     static get observedAttributes() {
-        return [...super.observedAttributes, 'size'];
+        return [...super.observedAttributes, 'inputmode', 'size'];
     }
 
     constructor() {
@@ -102,13 +103,35 @@ export default class TextField extends TextElement {
         if (this.hasAttribute('readOnly')) {
             this.textElement.setAttribute('readOnly', this.getAttribute('readOnly'));
         }
-        
+
         if (this.hasAttribute('type')) {
             this.textElement.setAttribute('type', this.getAttribute('type'));
         }
 
+        if (this.hasAttribute('inputmode')) {
+            this.inputmode = this.getAttribute('inputmode');
+        }
+
         if (this.hasAttribute('size')) {
             this.textElement.setAttribute('size', this.getAttribute('size'));
+        }
+    }
+
+    get inputmode() {
+        return this.getAttribute('inputmode');
+    }
+
+    set inputmode(val) {
+        switch (val) {
+            case InputMode.DECIMAL:
+            case InputMode.EMAIL:
+            case InputMode.NONE:
+            case InputMode.NUMERIC:
+            case InputMode.SEARCH:
+            case InputMode.TEL:
+            case InputMode.TEXT:
+            case InputMode.URL: this.setAttribute('inputmode', val);
+                                this.textElement.setAttribute('inputmode', val);
         }
     }
 }
