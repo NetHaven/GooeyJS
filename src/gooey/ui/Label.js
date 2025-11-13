@@ -6,7 +6,7 @@ import Template from '../util/Template.js';
 
 export default class Label extends UIComponent {
     static get observedAttributes() {
-        return ['text', 'icon', 'action', 'halign', 'valign', 'disabled'];
+        return [...super.observedAttributes, 'text', 'icon', 'action', 'halign', 'valign'];
     }
 
     constructor () {		
