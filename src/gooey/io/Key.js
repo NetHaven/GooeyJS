@@ -6,4 +6,5 @@ export default class Key {
     static ENTER = "Enter";
     static ESCAPE = "Escape";
     static SPACE = " ";
+    static TAB = "Tab";
 }
