@@ -8,7 +8,7 @@ import Template from '../../../util/Template.js';
 
 export default class PasswordField extends TextElement {
     static get observedAttributes() {
-        return [...super.observedAttributes, 'inputmode', 'size'];
+        return [...super.observedAttributes, 'inputmode', 'pattern', 'size'];
     }
 
     constructor() {
@@ -82,6 +82,10 @@ export default class PasswordField extends TextElement {
             this.inputmode = this.getAttribute("inputmode");
         }
 
+        if (this.hasAttribute("pattern")) {
+            this.textElement.setAttribute("pattern", this.getAttribute("pattern"));
+        }
+
         if (this.hasAttribute("size")) {
             this.size = this.getAttribute("size");
         }
@@ -102,6 +106,17 @@ export default class PasswordField extends TextElement {
             case InputMode.TEXT:
             case InputMode.URL: this.setAttribute('inputmode', val);
                                 this.textElement.setAttribute('inputmode', val);
+        }
+    }
+
+    get pattern() {
+        return this.getAttribute('pattern');
+    }
+
+    set pattern(val) {
+        if (val) {
+            this.setAttribute('pattern', val);
+            this.textElement.setAttribute('pattern', val);
         }
     }
 
