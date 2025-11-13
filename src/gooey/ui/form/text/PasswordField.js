@@ -1,3 +1,4 @@
+import Key from '../../../io/Key.js';
 import KeyboardEvent from '../../../events/KeyboardEvent.js';
 import TextElement from './TextElement.js';
 import PasswordFieldEvent from '../../../events/form/text/PasswordFieldEvent.js';
@@ -27,7 +28,7 @@ export default class PasswordField extends TextElement {
         
         // Add keypress event listener for Enter key
         this.textElement.addEventListener(KeyboardEvent.KEY_PRESS, (event) => {
-            if (event.key === 'Enter') {
+            if (event.key === Key.ENTER) {
                 // Prevent the Enter key from doing its default action (like submitting forms)
                 event.preventDefault();
                 
