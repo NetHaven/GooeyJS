@@ -43,7 +43,7 @@ export default class GroupBox extends Panel {
     }
     
     static get observedAttributes() {
-        return ['text'];
+        return [...super.observedAttributes, 'text'];
     }
     
     attributeChangedCallback(name, oldValue, newValue) {
