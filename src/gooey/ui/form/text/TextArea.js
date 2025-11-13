@@ -1,11 +1,12 @@
+import FormElementEvent from '../../../events/form/FormElementEvent.js';
+import LineWrap from './LineWrap.js';
+import Template from '../../../util/Template.js';
 import TextElement from './TextElement.js';
 import TextElementEvent from '../../../events/form/text/TextElementEvent.js';
-import FormElementEvent from '../../../events/form/FormElementEvent.js';
-import Template from '../../../util/Template.js';
 
 export default class TextArea extends TextElement {
     static get observedAttributes() {
-        return [...super.observedAttributes, 'cols', 'resize', 'rows'];
+        return [...super.observedAttributes, 'cols', 'resize', 'rows', 'wrap'];
     }
 
     constructor() {
@@ -92,9 +93,7 @@ export default class TextArea extends TextElement {
     }
 
     get cols() {
-        if (this.hasAttribute("cols")) {
-            return this.getAttribute("cols");
-        }
+        return this.getAttribute("cols");
     }
 
     get resize() {
@@ -112,19 +111,21 @@ export default class TextArea extends TextElement {
     }
 
     get rows() {
-        if (this.hasAttribute("rows")) {
-            return this.getAttribute("rows");
-        }
+        return this.getAttribute("rows");
     }
 
-     set cols(val) {
+    get wrap() {
+        return this.getAttribute("wrap");
+    }
+
+    set cols(val) {
         if (val) {
             this.setAttribute("cols", val);
             this.textElement.setAttribute("cols", val);
         }
-     }
+    }
 
-     set resize(val) {
+    set resize(val) {
         if (val) {
             this.setAttribute("resize", "true");
             this.textElement.style.resize = 'both';
@@ -133,12 +134,21 @@ export default class TextArea extends TextElement {
             this.setAttribute("resize", "false");
             this.textElement.style.resize = 'none';
         }
-     }
+    }
 
-     set rows(val) {
+    set rows(val) {
         if (val) {
             this.setAttribute("rows", val);
             this.textElement.setAttribute("rows", val);
         }
-     }
+    }
+
+    set wrap(val) {
+        switch (val) {
+            case LineWrap.HARD:
+            case LineWrap.OFF:
+            case LineWrap.SOFT: this.setAttribute("wrap", val);
+                                this.textElement.setAttribute("wrap", val);
+        }
+    }
 }
