@@ -1,3 +1,4 @@
+import Key from '../../../io/Key.js';
 import ListBox from './ListBox.js';
 import ComboBoxEvent from '../../../events/form/list/ComboBoxEvent.js';
 import KeyboardEvent from '../../../events/KeyboardEvent.js';
@@ -132,7 +133,7 @@ export default class ComboBox extends ListBox {
      */
     _handleKeydown(e) {
         switch (e.key) {
-            case 'ArrowDown':
+            case Key.ARROW_DOWN:
                 e.preventDefault();
                 if (!this._isDropdownOpen) {
                     this._openDropdown();
@@ -141,14 +142,14 @@ export default class ComboBox extends ListBox {
                 }
                 break;
                 
-            case 'ArrowUp':
+            case Key.ARROW_UP:
                 e.preventDefault();
                 if (this._isDropdownOpen) {
                     this._selectPreviousOption();
                 }
                 break;
                 
-            case 'Enter':
+            case Key.ENTER:
                 e.preventDefault();
                 if (this._isDropdownOpen) {
                     this._selectCurrentOption();
@@ -158,12 +159,12 @@ export default class ComboBox extends ListBox {
                 }
                 break;
                 
-            case 'Escape':
+            case Key.ESCAPE:
                 e.preventDefault();
                 this._closeDropdown();
                 break;
                 
-            case 'Tab':
+            case Key.TAB:
                 this._closeDropdown();
                 break;
         }
