@@ -224,7 +224,7 @@ export default class ToggleButtonGroup extends Container {
     }
     
     static get observedAttributes() {
-        return ['allowdeselect', 'autoselect'];
+        return [...super.observedAttributes, 'allowdeselect', 'autoselect'];
     }
     
     attributeChangedCallback(name, oldValue, newValue) {
