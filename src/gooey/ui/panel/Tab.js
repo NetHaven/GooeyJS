@@ -43,7 +43,7 @@ export default class Tab extends Container {
     }
 
     static get observedAttributes() {
-        return ['name', 'text', 'active', 'closeable'];
+        return [...super.observedAttributes, 'name', 'text', 'active', 'closeable'];
     }
 
     attributeChangedCallback(name) {
