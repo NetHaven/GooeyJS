@@ -5,7 +5,7 @@ import Template from '../../../util/Template.js';
 
 export default class TextArea extends TextElement {
     static get observedAttributes() {
-        return [...super.observedAttributes, 'cols', 'resize'];
+        return [...super.observedAttributes, 'cols', 'resize', 'rows'];
     }
 
     constructor() {
@@ -70,6 +70,10 @@ export default class TextArea extends TextElement {
             });
         });
 
+        if (this.hasAttribute("cols")) {
+            this.cols = this.getAttribute("cols");
+        }
+
         if (this.hasAttribute("resize")) {
             if (this.getAttribute("resize") === "false") {
                 this.resize = false;
@@ -80,6 +84,16 @@ export default class TextArea extends TextElement {
         }
         else {
             this.resize = true;
+        }
+
+        if (this.hasAttribute("rows")) {
+            this.rows = this.getAttribute("rows");
+        }
+    }
+
+    get cols() {
+        if (this.hasAttribute("cols")) {
+            return this.getAttribute("cols");
         }
     }
 
@@ -97,13 +111,20 @@ export default class TextArea extends TextElement {
         }
     }
 
-    get cols() {
-        if (this.hasAttribute("cols")) {
-            return this.getAttribute("cols");
+    get rows() {
+        if (this.hasAttribute("rows")) {
+            return this.getAttribute("rows");
         }
     }
 
-    set resize(val) {
+     set cols(val) {
+        if (val) {
+            this.setAttribute("cols", val);
+            this.textElement.setAttribute("cols", val);
+        }
+     }
+
+     set resize(val) {
         if (val) {
             this.setAttribute("resize", "true");
             this.textElement.style.resize = 'both';
@@ -114,10 +135,10 @@ export default class TextArea extends TextElement {
         }
      }
 
-     set cols(val) {
+     set rows(val) {
         if (val) {
-            this.setAttribute("cols", val);
-            this.textElement.setAttribute("cols", val);
+            this.setAttribute("rows", val);
+            this.textElement.setAttribute("rows", val);
         }
      }
 }
