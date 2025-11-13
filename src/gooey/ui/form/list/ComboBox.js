@@ -43,7 +43,12 @@ export default class ComboBox extends ListBox {
         if (this.hasAttribute('text')) {
             this.text = this.getAttribute('text');
         }
-        
+
+        // Set pattern if specified
+        if (this.hasAttribute('pattern')) {
+            this._textInput.setAttribute('pattern', this.getAttribute('pattern'));
+        }
+
         // Add valid events
         this.addValidEvent(FormElementEvent.FOCUS);
         this.addValidEvent(FormElementEvent.BLUR);
@@ -327,12 +332,23 @@ export default class ComboBox extends ListBox {
     get text() {
         return this._textInput.value;
     }
-    
+
     set text(val) {
         this._textInput.value = val || '';
         this.setAttribute('text', val || '');
     }
-    
+
+    get pattern() {
+        return this.getAttribute('pattern');
+    }
+
+    set pattern(val) {
+        if (val) {
+            this.setAttribute('pattern', val);
+            this._textInput.setAttribute('pattern', val);
+        }
+    }
+
     // Override value to work with the text input
     get value() {
         // If we have a selected option, return its value, otherwise return the text
@@ -393,15 +409,18 @@ export default class ComboBox extends ListBox {
     }
     
     static get observedAttributes() {
-        return [...super.observedAttributes, 'editable', 'text', 'value'];
+        return [...super.observedAttributes, 'editable', 'pattern', 'text', 'value'];
     }
     
     attributeChangedCallback(name, oldValue, newValue) {
         super.attributeChangedCallback(name, oldValue, newValue);
-        
+
         switch (name) {
             case 'editable':
                 this.editable = newValue !== null;
+                break;
+            case 'pattern':
+                this.pattern = newValue;
                 break;
             case 'text':
                 this.text = newValue;
