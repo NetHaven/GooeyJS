@@ -1,7 +1,9 @@
+import FormElementEvent from '../../../events/form/FormElementEvent.js';
+import Key from '../../../io/Key.js';
+import KeyboardEvent from '../../../events/KeyboardEvent.js';
 import TextElement from './TextElement.js';
 import TextElementEvent from '../../../events/form/text/TextElementEvent.js';
 import TextFieldEvent from '../../../events/form/text/TextFieldEvent.js';
-import FormElementEvent from '../../../events/form/FormElementEvent.js';
 import Template from '../../../util/Template.js';
 
 export default class TextField extends TextElement {
@@ -32,8 +34,8 @@ export default class TextField extends TextElement {
         this.addValidEvent(TextElementEvent.INVALID);
         
         // Add keypress event listener for Enter key
-        this.textElement.addEventListener('keypress', (event) => {
-            if (event.key === 'Enter') {
+        this.textElement.addEventListener(KeyboardEvent.KEY_PRESS, (event) => {
+            if (event.key === Key.ENTER) {
                 // Prevent the Enter key from doing its default action (like submitting forms)
                 event.preventDefault();
                 
@@ -46,35 +48,35 @@ export default class TextField extends TextElement {
         });
         
         // Add documented event listeners
-        this.textElement.addEventListener('input', (e) => {
+        this.textElement.addEventListener(TextElementEvent.INPUT, (e) => {
             this.fireEvent(TextElementEvent.INPUT, { 
                 value: this.textElement.value,
                 originalEvent: e
             });
         });
         
-        this.textElement.addEventListener('change', (e) => {
+        this.textElement.addEventListener(TextElementEvent.CHANGE, (e) => {
             this.fireEvent(TextElementEvent.CHANGE, { 
                 value: this.textElement.value,
                 originalEvent: e
             });
         });
         
-        this.textElement.addEventListener('focus', (e) => {
+        this.textElement.addEventListener(FormElementEvent.FOCUS, (e) => {
             this.fireEvent(FormElementEvent.FOCUS, { 
                 value: this.textElement.value,
                 originalEvent: e
             });
         });
         
-        this.textElement.addEventListener('blur', (e) => {
+        this.textElement.addEventListener(FormElementEvent.BLUR, (e) => {
             this.fireEvent(FormElementEvent.BLUR, { 
                 value: this.textElement.value,
                 originalEvent: e
             });
         });
         
-        this.textElement.addEventListener('invalid', (e) => {
+        this.textElement.addEventListener(TextElementEvent.INVALID, (e) => {
             this.fireEvent(TextElementEvent.INVALID, { 
                 value: this.textElement.value,
                 validationMessage: this.textElement.validationMessage,
