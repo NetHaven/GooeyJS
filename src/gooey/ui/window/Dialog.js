@@ -1,5 +1,6 @@
-import Template from '../../../Template.js';
+import KeyboardEvent from '../../events/KeyboardEvent.js';
 import MouseEvent from '../../events/MouseEvent.js';
+import Template from '../../../Template.js';
 
 export default class Dialog {
     static alert(message, callback, options = {}) {
@@ -82,12 +83,12 @@ export default class Dialog {
                             event.stopPropagation();
                             clickHandler();
                             // Clean up the event listener
-                            alertDialog.removeEventListener('keydown', keyHandler, true);
+                            alertDialog.removeEventListener(KeyboardEvent.KEY_DOWN, keyHandler, true);
                         }
                     };
                     
                     // Use capture phase to handle Enter before it can bubble
-                    alertDialog.addEventListener('keydown', keyHandler, true);
+                    alertDialog.addEventListener(KeyboardEvent.KEY_DOWN, keyHandler, true);
                 } else {
                     console.error('DIALOG_OK_BUTTON_NOT_FOUND', 'OK button not found');
                     cleanupAndReject(new Error('Dialog template missing OK button'));
@@ -232,7 +233,7 @@ export default class Dialog {
 
             // Handle Enter key to submit
             if (inputElement) {
-                inputElement.addEventListener('keydown', (e) => {
+                inputElement.addEventListener(KeyboardEvent.KEY_DOWN, (e) => {
                     if (e.key === 'Enter') {
                         e.preventDefault();
                         okButton.click();
