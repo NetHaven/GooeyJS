@@ -1,3 +1,4 @@
+import Key from '../../io/Key.js';
 import KeyboardEvent from '../../events/KeyboardEvent.js';
 import MouseEvent from '../../events/MouseEvent.js';
 import Template from '../../../Template.js';
@@ -78,7 +79,7 @@ export default class Dialog {
                     
                     // Add scoped Enter key handler for this specific dialog
                     const keyHandler = (event) => {
-                        if (event.key === 'Enter' && alertDialog.visible) {
+                        if (event.key === Key.ENTER && alertDialog.visible) {
                             event.preventDefault();
                             event.stopPropagation();
                             clickHandler();
@@ -234,10 +235,10 @@ export default class Dialog {
             // Handle Enter key to submit
             if (inputElement) {
                 inputElement.addEventListener(KeyboardEvent.KEY_DOWN, (e) => {
-                    if (e.key === 'Enter') {
+                    if (e.key === Key.ENTER) {
                         e.preventDefault();
                         okButton.click();
-                    } else if (e.key === 'Escape') {
+                    } else if (e.key === Key.ESCAPE) {
                         e.preventDefault();
                         cancelButton.click();
                     }
