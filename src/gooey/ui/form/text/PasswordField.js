@@ -6,7 +6,7 @@ import Template from '../../../util/Template.js';
 
 export default class PasswordField extends TextElement {
     static get observedAttributes() {
-        return [...super.observedAttributes];
+        return [...super.observedAttributes, 'size'];
     }
 
     constructor() {
@@ -75,5 +75,18 @@ export default class PasswordField extends TextElement {
                 originalEvent: e
             });
         });
+
+        if (this.hasAttribute("size")) {
+            this.size = this.getAttribute("size");
+        }
+    }
+
+    get size() {
+        return this.getAttribute("size");
+    }
+
+    set size(val) {
+        this.setAttribute("size", val);
+        this.textElement.setAttribute("size", val);
     }
 }
