@@ -1,0 +1,40 @@
+import Observable from '../events/Observable.js';
+import TimerEvent from '../events/TimerEvent.js';
+
+export default class Timer extends Observable {
+    constructor (timerDelay, timerRepeatCount) {
+        super();
+
+        this.currentCount = 0;
+        this.delay = timerDelay;
+        this.repeatCount = timerRepeatCount;
+        this.running = false;
+        this.interval = 0;
+    }
+    
+    callback() {
+        this.fireEvent(TimerEvent.TIMER);
+        this.currentCount++;
+        if (this.currentCount === this.repeatCount) {
+            this.fireEvent(TimerEvent.COMPLETE);
+            this.stop();
+        }
+    }
+
+    reset() {
+        this.stop();
+        this.currentCount = 0;
+    }
+
+    start() {
+        if (!this.running) {
+            this.interval = window.setInterval(this.callback, this.delay);
+            this.running = true;
+        }
+    }
+
+    stop() {
+        window.clearInterval(this.interval);
+        this.running = false;
+    }
+}
