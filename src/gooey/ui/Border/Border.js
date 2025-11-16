@@ -1,7 +1,8 @@
 import BorderStyle from './BorderStyle.js';
+import GooeyElement from '../../GooeyElement.js';
 import Template from '../../util/Template.js';
 
-export default class Border {
+export default class Border extends GooeyElement {
     constructor() {
         Template.activate("ui-Border", this);
     }

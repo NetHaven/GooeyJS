@@ -1,7 +1,8 @@
 import FontWeight from "./FontWeight.js";
 import Template from "../../util/Template.js";
+import GooeyElement from "../../GooeyElement.js";
 
-export default class Font {
+export default class Font extends GooeyElement {
     constructor() {
         Template.activate("ui-Font", this);
     }
