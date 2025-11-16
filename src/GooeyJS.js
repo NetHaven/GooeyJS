@@ -123,9 +123,10 @@ export default class GooeyJS {
 
             for (const element of component.elements) {
                 try {
-                    // Build relative import path
-                    const modulePath = `./${pkgPath}/${element.name}.js`;
-                    const templatePath = `./${pkgPath}/${element.name}.html`;
+                    // Build relative import path (each component has its own folder)
+                    const componentPath = `${pkgPath}/${element.name}`;
+                    const modulePath = `./${componentPath}/${element.name}.js`;
+                    const templatePath = `./${componentPath}/${element.name}.html`;
 
                     // Dynamically import the component class
                     const module = await import(modulePath);
@@ -141,7 +142,7 @@ export default class GooeyJS {
                     // Use special template ID if defined, otherwise use standard prefix-ComponentName pattern
                     const templateId = specialTemplateIds[element.name] || `${element.prefix}-${element.name}`;
                     try {
-                        await Template.load(`${PATH}/${pkgPath}/${element.name}.html`, templateId);
+                        await Template.load(`${PATH}/${componentPath}/${element.name}.html`, templateId);
                         console.log(`Loaded template ${templateId} from ${templatePath}`);
                     } catch (templateError) {
                         // Template might not exist for all components, so this is not necessarily an error
