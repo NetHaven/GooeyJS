@@ -1,13 +1,13 @@
-import Observable from '../events/Observable.js';
+import GooeyElement from '../GooeyElement.js';
 import Point from '../graphics/Point.js';
 import UIComponentEvent from '../events/UIComponentEvent.js';
 import Model from '../mvc/Model.js';
 import ModelEvent from '../events/mvc/ModelEvent.js';
 import MouseCursor from '../io/MouseCursor.js';
 
-export default class UIComponent extends Observable {
+export default class UIComponent extends GooeyElement {
     static get observedAttributes() {
-        return ['height', 'width', 'tooltip', 'visible', 'disabled', 'id'];
+        return [...super.observedAttributes, 'height', 'width', 'tooltip', 'visible', 'disabled'];
     }
 
     constructor () {
@@ -112,10 +112,6 @@ export default class UIComponent extends Observable {
 
     get height() {
         return this.style.height;
-    }
-
-    get id() {
-        return this.getAttribute("id");
     }
 
     get position() {
@@ -225,10 +221,6 @@ export default class UIComponent extends Observable {
     set height(val) {
         this.setAttribute("height", val);
         this.style.height = `${val}px`;
-    }
-
-    set id(val) {
-        this.setAttribute("id", val);
     }
 
     set position(val) {
