@@ -139,6 +139,10 @@ export default class UIComponent extends GooeyElement {
         }
     }
 
+    get dropZone() {
+        return this.getAttribute("dropzone");
+    }
+
     get height() {
         return this.style.height;
     }
@@ -253,6 +257,10 @@ export default class UIComponent extends GooeyElement {
 
     set droppable(val) {
         this.setAttribute("droppable", val);
+    }
+
+    set dropZone(val) {
+        this.setAttribute("dropzone", val);
     }
 
     set height(val) {
