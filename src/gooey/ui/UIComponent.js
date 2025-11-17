@@ -4,6 +4,7 @@ import UIComponentEvent from '../events/UIComponentEvent.js';
 import Model from '../mvc/Model.js';
 import ModelEvent from '../events/mvc/ModelEvent.js';
 import MouseCursor from '../io/MouseCursor.js';
+import MouseEvent from '../events/MouseEvent.js';
 
 export default class UIComponent extends GooeyElement {
     static get observedAttributes() {
@@ -26,6 +27,34 @@ export default class UIComponent extends GooeyElement {
         // Add valid visibility events
         this.addValidEvent(UIComponentEvent.SHOW);
         this.addValidEvent(UIComponentEvent.HIDE);
+
+        // Add valid mouse events
+        this.addValidEvent(MouseEvent.CLICK);
+        this.addValidEvent(MouseEvent.MOUSE_DOWN);
+        this.addValidEvent(MouseEvent.MOUSE_OUT);
+        this.addValidEvent(MouseEvent.MOUSE_OVER);
+        this.addValidEvent(MouseEvent.MOUSE_UP);
+
+        /* Translate Native Mouse Events */
+        this.nativeElement.addEventListener(MouseEvent.CLICK, ()=> {
+            this.fireEvent(MouseEvent.CLICK);
+        });
+
+        this.nativeElement.addEventListener(MouseEvent.MOUSE_DOWN, ()=> {
+            this.fireEvent(MouseEvent.MOUSE_DOWN);
+        });
+
+        this.nativeElement.addEventListener(MouseEvent.MOUSE_UP, ()=> {
+            this.fireEvent(MouseEvent.MOUSE_UP);
+        });
+
+        this.nativeElement.addEventListener(MouseEvent.MOUSE_OUT, ()=> {
+            this.fireEvent(MouseEvent.MOUSE_OUT);
+        });
+
+        this.nativeElement.addEventListener(MouseEvent.MOUSE_OVER, ()=> {
+            this.fireEvent(MouseEvent.MOUSE_OVER);
+        });
 
         this.classList.add("ui-Component");
 

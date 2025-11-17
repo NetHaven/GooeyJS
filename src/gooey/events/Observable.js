@@ -1,10 +1,10 @@
-import MouseEvent from "./MouseEvent.js";
-
 export default class Observable extends HTMLElement {
     static INVALID_EVENT_EXCEPTION = "InvalidEventError";
 
     constructor() {
         super();
+
+        this.nativeElement = Object.getPrototypeOf(HTMLElement.prototype);
 
         this._watchers = new Map();
         this._computed = new Map();
@@ -12,33 +12,6 @@ export default class Observable extends HTMLElement {
         this.eventSuspension = false;
         this.eventListenerList = [];
         this.validEventList = [];
-
-        this.addValidEvent(MouseEvent.CLICK);
-        this.addValidEvent(MouseEvent.MOUSE_DOWN);
-        this.addValidEvent(MouseEvent.MOUSE_OUT);
-        this.addValidEvent(MouseEvent.MOUSE_OVER);
-        this.addValidEvent(MouseEvent.MOUSE_UP);
-
-        /* Translate Native Mouse Events */
-        super.addEventListener(MouseEvent.CLICK, ()=> {
-            this.fireEvent(MouseEvent.CLICK);
-        });
-
-        super.addEventListener(MouseEvent.MOUSE_DOWN, ()=> {
-            this.fireEvent(MouseEvent.MOUSE_DOWN);
-        });
-
-        super.addEventListener(MouseEvent.MOUSE_UP, ()=> {
-            this.fireEvent(MouseEvent.MOUSE_UP);
-        });
-
-        super.addEventListener(MouseEvent.MOUSE_OUT, ()=> {
-            this.fireEvent(MouseEvent.MOUSE_OUT);
-        });
-
-        super.addEventListener(MouseEvent.MOUSE_OVER, ()=> {
-            this.fireEvent(MouseEvent.MOUSE_OVER);
-        });
     }
 
     addEventListener(eventName, listener) {
