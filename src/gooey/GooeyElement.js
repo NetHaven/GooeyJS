@@ -8,20 +8,4 @@ export default class GooeyElement extends Observable {
     constructor () {
         super();
     }
-
-    get class() {
-        return this.getAttribute("class");
-    }
-
-    get id() {
-        return this.getAttribute("id");
-    }
-
-    set class(val) {
-        this.setAttribute("class", val);
-    }
-
-    set id(val) {
-        this.setAttribute("id", val);
-    }
 }
