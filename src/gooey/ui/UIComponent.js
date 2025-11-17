@@ -7,7 +7,8 @@ import MouseCursor from '../io/MouseCursor.js';
 
 export default class UIComponent extends GooeyElement {
     static get observedAttributes() {
-        return [...super.observedAttributes, 'height', 'width', 'tooltip', 'visible', 'disabled'];
+        return [...super.observedAttributes, 'draggable', 'droppable', 'dropzone', 'height', 
+                                            'width', 'tooltip', 'visible', 'disabled'];
     }
 
     constructor () {
@@ -108,6 +109,34 @@ export default class UIComponent extends GooeyElement {
 
     get disabled() {
         return this.hasAttribute("disabled");
+    }
+
+    get draggable() {
+        if (this.hasAttribute("draggable")) {
+            if (this.getAttribute("draggable") === true) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        else {
+            return false;
+        }
+    }
+
+    get droppable() {
+        if (this.hasAttribute("draggable")) {
+            if (this.getAttribute("draggable") === true) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        else {
+            return false;
+        }
     }
 
     get height() {
@@ -216,6 +245,14 @@ export default class UIComponent extends GooeyElement {
         else {
             this.removeAttribute("disabled");
         }
+    }
+
+    set draggable(val) {
+        this.setAttribute("draggable", val);
+    }
+
+    set droppable(val) {
+        this.setAttribute("droppable", val);
     }
 
     set height(val) {
