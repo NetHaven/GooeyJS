@@ -5,6 +5,7 @@ import Model from '../mvc/Model.js';
 import ModelEvent from '../events/mvc/ModelEvent.js';
 import MouseCursor from '../io/MouseCursor.js';
 import MouseEvent from '../events/MouseEvent.js';
+import DragEvent from '../events/DragEvent.js';
 
 export default class UIComponent extends GooeyElement {
     static get observedAttributes() {
@@ -54,6 +55,56 @@ export default class UIComponent extends GooeyElement {
 
         this.nativeElement.addEventListener(MouseEvent.MOUSE_OVER, ()=> {
             this.fireEvent(MouseEvent.MOUSE_OVER);
+        });
+
+        // Add valid drag and drop events
+        this.addValidEvent(DragEvent.START);
+        this.addValidEvent(DragEvent.OVER);
+        this.addValidEvent(DragEvent.END);
+        this.addValidEvent(DragEvent.DROP);
+
+        /* Translate Native Drag and Drop Events */
+        this.nativeElement.addEventListener(DragEvent.START, (ev)=> {
+            ev.dataTransfer.setData("text", ev.target.id);
+            this.fireEvent(DragEvent.START);
+        });
+
+        this.nativeElement.addEventListener(DragEvent.OVER, (ev)=> {
+            let id, srcElement;
+
+            id = ev.dataTransfer.getData("text");
+            if (this.droppable === true) {
+                if (id) {
+                    srcElement = document.getElementById(id);
+                    if (srcElement) {
+                        if (this.hasClass(srcElement.getAttribute("dropzone"))) {
+                            ev.preventDefault();
+                            this.fireEvent(DragEvent.OVER);
+                        }
+                    }
+                }
+            }
+        });
+
+        this.nativeElement.addEventListener(DragEvent.END, ()=> {
+            this.fireEvent(DragEvent.END);
+        });
+
+        this.nativeElement.addEventListener(DragEvent.DROP, (ev)=> {
+            let id, srcElement;
+
+            id = ev.dataTransfer.getData("text");
+            if (this.droppable === true) {
+                if (id) {
+                    srcElement = document.getElementById(id);
+                    if (srcElement) {
+                        if (this.hasClass(srcElement.getAttribute("dropzone"))) {
+                            ev.preventDefault();
+                            this.fireEvent(DragEvent.DROP);
+                        }
+                    }
+                }
+            }
         });
 
         this.classList.add("ui-Component");
