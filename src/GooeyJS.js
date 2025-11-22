@@ -88,6 +88,7 @@ export default class GooeyJS {
             pkg: "gooey.ui.window",
             elements: [
                 { name: "Window", prefix: "GooeyUI" }
+                { name: "FloatingPane", prefix: "GooeyUI" }
             ]
         }]
 
