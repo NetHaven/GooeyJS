@@ -1,7 +1,7 @@
-import Container from '../../Container.js';
-import Template from '../../../util/Template.js';
-import ToggleButtonEvent from '../../../events/button/ToggleButtonEvent.js';
-import ToggleButtonGroupEvent from '../../../events/button/ToggleButtonGroupEvent.js';
+import Container from '../../../Container.js';
+import Template from '../../../../util/Template.js';
+import ToggleButtonEvent from '../../../../events/button/ToggleButtonEvent.js';
+import ToggleButtonGroupEvent from '../../../../events/button/ToggleButtonGroupEvent.js';
 
 export default class ToggleButtonGroup extends Container {
     constructor() {

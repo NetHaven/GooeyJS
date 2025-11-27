@@ -87,7 +87,7 @@ export default class GooeyJS {
         },{
             pkg: "gooey.ui.window",
             elements: [
-                { name: "Window", prefix: "GooeyUI" }
+                { name: "Window", prefix: "GooeyUI" },
                 { name: "FloatingPane", prefix: "GooeyUI" }
             ]
         }]
@@ -124,10 +124,10 @@ export default class GooeyJS {
 
             for (const element of component.elements) {
                 try {
-                    // Build relative import path (each component has its own folder)
+                    // Build relative import path (each component has its own folder with scripts/templates/themes subfolders)
                     const componentPath = `${pkgPath}/${element.name}`;
-                    const modulePath = `./${componentPath}/${element.name}.js`;
-                    const templatePath = `./${componentPath}/${element.name}.html`;
+                    const modulePath = `./${componentPath}/scripts/${element.name}.js`;
+                    const templatePath = `./${componentPath}/templates/${element.name}.html`;
 
                     // Dynamically import the component class
                     const module = await import(modulePath);
@@ -139,11 +139,11 @@ export default class GooeyJS {
                     // Register the custom element
                     customElements.define(tagName, ComponentClass);
 
-                    // Load template if it exists (in same folder as component)
+                    // Load template if it exists (in templates subfolder)
                     // Use special template ID if defined, otherwise use standard prefix-ComponentName pattern
                     const templateId = specialTemplateIds[element.name] || `${element.prefix}-${element.name}`;
                     try {
-                        await Template.load(`${PATH}/${componentPath}/${element.name}.html`, templateId);
+                        await Template.load(`${PATH}/${componentPath}/templates/${element.name}.html`, templateId);
                         console.log(`Loaded template ${templateId} from ${templatePath}`);
                     } catch (templateError) {
                         // Template might not exist for all components, so this is not necessarily an error

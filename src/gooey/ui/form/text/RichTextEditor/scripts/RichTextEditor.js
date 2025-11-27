@@ -1,11 +1,11 @@
-﻿import TextElement from '../TextElement.js';
-import RichTextEditorEvent from '../../../../events/form/text/RichTextEditorEvent.js';
-import TextElementEvent from '../../../../events/form/text/TextElementEvent.js';
-import FormElementEvent from '../../../../events/form/FormElementEvent.js';
-import MouseEvent from '../../../../events/MouseEvent.js';
-import KeyboardEvent from '../../../../events/KeyboardEvent.js';
-import Template from '../../../../util/Template.js';
-import GooeyJS from '../../../../../GooeyJS.js';
+﻿import TextElement from '../../TextElement.js';
+import RichTextEditorEvent from '../../../../../events/form/text/RichTextEditorEvent.js';
+import TextElementEvent from '../../../../../events/form/text/TextElementEvent.js';
+import FormElementEvent from '../../../../../events/form/FormElementEvent.js';
+import MouseEvent from '../../../../../events/MouseEvent.js';
+import KeyboardEvent from '../../../../../events/KeyboardEvent.js';
+import Template from '../../../../../util/Template.js';
+import GooeyJS from '../../../../../../GooeyJS.js';
 
 export default class RichTextEditor extends TextElement {
     constructor() {

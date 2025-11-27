@@ -1,8 +1,8 @@
-import FormElement from '../FormElement.js';
-import SpinnerEvent from '../../../events/form/SpinnerEvent.js';
-import MouseEvent from '../../../events/MouseEvent.js';
-import FormElementEvent from '../../../events/form/FormElementEvent.js';
-import Template from '../../../util/Template.js';
+import FormElement from '../../FormElement.js';
+import SpinnerEvent from '../../../../events/form/SpinnerEvent.js';
+import MouseEvent from '../../../../events/MouseEvent.js';
+import FormElementEvent from '../../../../events/form/FormElementEvent.js';
+import Template from '../../../../util/Template.js';
 
 /**
  * Spinner component for numeric input with increment/decrement buttons

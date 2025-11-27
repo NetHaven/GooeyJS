@@ -1,7 +1,7 @@
-import MenuItem from "../MenuItem/MenuItem.js";
-import CheckboxMenuItemEvent from '../../../events/menu/CheckboxMenuItemEvent.js';
-import MouseEvent from '../../../events/MouseEvent.js';
-import Template from '../../../util/Template.js';
+import MenuItem from "../../MenuItem/scripts/MenuItem.js";
+import CheckboxMenuItemEvent from '../../../../events/menu/CheckboxMenuItemEvent.js';
+import MouseEvent from '../../../../events/MouseEvent.js';
+import Template from '../../../../util/Template.js';
 
 export default class CheckboxMenuItem extends MenuItem {
     static get observedAttributes() {

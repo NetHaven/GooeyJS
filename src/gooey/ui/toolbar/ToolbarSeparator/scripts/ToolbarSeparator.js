@@ -1,4 +1,4 @@
-import UIComponent from '../../UIComponent.js';
+import UIComponent from '../../../UIComponent.js';
 
 export default class ToolbarSeparator extends UIComponent {
     static get observedAttributes() {

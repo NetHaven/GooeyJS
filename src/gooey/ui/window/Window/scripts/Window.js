@@ -1,9 +1,9 @@
-import UIComponent from '../../UIComponent.js';
-import Point from '../../../graphics/Point.js';
-import WindowEvent from '../../../events/window/WindowEvent.js';
-import KeyboardEvent from '../../../events/KeyboardEvent.js';
-import TextFieldEvent from '../../../events/form/text/TextFieldEvent.js';
-import MouseEvent from '../../../events/MouseEvent.js';
+import UIComponent from '../../../UIComponent.js';
+import Point from '../../../../graphics/Point.js';
+import WindowEvent from '../../../../events/window/WindowEvent.js';
+import KeyboardEvent from '../../../../events/KeyboardEvent.js';
+import TextFieldEvent from '../../../../events/form/text/TextFieldEvent.js';
+import MouseEvent from '../../../../events/MouseEvent.js';
 
 export default class Window extends UIComponent {
     static get observedAttributes() {

@@ -1,11 +1,11 @@
-import Key from '../../../../io/Key.js';
-import ListBox from '../ListBox/ListBox.js';
-import ComboBoxEvent from '../../../../events/form/list/ComboBoxEvent.js';
-import KeyboardEvent from '../../../../events/KeyboardEvent.js';
-import MouseEvent from '../../../../events/MouseEvent.js';
-import FormElementEvent from '../../../../events/form/FormElementEvent.js';
-import Template from '../../../../util/Template.js';
-import TextElementEvent from '../../../../events/form/text/TextElementEvent.js';
+import Key from '../../../../../io/Key.js';
+import ListBox from '../../ListBox/scripts/ListBox.js';
+import ComboBoxEvent from '../../../../../events/form/list/ComboBoxEvent.js';
+import KeyboardEvent from '../../../../../events/KeyboardEvent.js';
+import MouseEvent from '../../../../../events/MouseEvent.js';
+import FormElementEvent from '../../../../../events/form/FormElementEvent.js';
+import Template from '../../../../../util/Template.js';
+import TextElementEvent from '../../../../../events/form/text/TextElementEvent.js';
 
 export default class ComboBox extends ListBox {
     constructor() {

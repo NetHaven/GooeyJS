@@ -1,6 +1,6 @@
-import Observable from '../events/Observable.js';
-import ComponentEvent from '../events/ComponentEvent.js';
-import Template from '../util/Template.js';
+import Observable from '../../events/Observable.js';
+import ComponentEvent from '../../events/ComponentEvent.js';
+import Template from '../../util/Template.js';
 
 export default class Component extends Observable {
     static get observedAttributes() {

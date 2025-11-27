@@ -1,10 +1,10 @@
-import InputMode from '../InputMode.js';
-import Key from '../../../../io/Key.js';
-import KeyboardEvent from '../../../../events/KeyboardEvent.js';
-import TextElement from '../TextElement.js';
-import PasswordFieldEvent from '../../../../events/form/text/PasswordFieldEvent.js';
-import FormElementEvent from '../../../../events/form/FormElementEvent.js';
-import Template from '../../../../util/Template.js';
+import InputMode from '../../InputMode.js';
+import Key from '../../../../../io/Key.js';
+import KeyboardEvent from '../../../../../events/KeyboardEvent.js';
+import TextElement from '../../TextElement.js';
+import PasswordFieldEvent from '../../../../../events/form/text/PasswordFieldEvent.js';
+import FormElementEvent from '../../../../../events/form/FormElementEvent.js';
+import Template from '../../../../../util/Template.js';
 
 export default class PasswordField extends TextElement {
     static get observedAttributes() {

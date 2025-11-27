@@ -1,5 +1,5 @@
-import UIComponent from '../ui/UIComponent.js';
-import Template from '../util/Template.js';
+import UIComponent from '../../ui/UIComponent.js';
+import Template from '../../util/Template.js';
 
 export default class Application extends UIComponent {
     static get observedAttributes() {

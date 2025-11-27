@@ -1,7 +1,7 @@
-import Container from '../../Container.js';
-import LayoutType from '../../layout/Layout/LayoutType.js';
-import FormFactor from '../../FormFactor.js';
-import Template from '../../../util/Template.js';
+import Container from '../../../Container.js';
+import LayoutType from '../../../layout/Layout/scripts/LayoutType.js';
+import FormFactor from '../../../FormFactor.js';
+import Template from '../../../../util/Template.js';
 
 export default class AppPanel extends Container {
     static get observedAttributes() {

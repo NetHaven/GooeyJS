@@ -1,11 +1,11 @@
-import FormElementEvent from '../../../../events/form/FormElementEvent.js';
-import InputMode from '../InputMode.js';
-import Key from '../../../../io/Key.js';
-import KeyboardEvent from '../../../../events/KeyboardEvent.js';
-import TextElement from '../TextElement.js';
-import TextElementEvent from '../../../../events/form/text/TextElementEvent.js';
-import TextFieldEvent from '../../../../events/form/text/TextFieldEvent.js';
-import Template from '../../../../util/Template.js';
+import FormElementEvent from '../../../../../events/form/FormElementEvent.js';
+import InputMode from '../../InputMode.js';
+import Key from '../../../../../io/Key.js';
+import KeyboardEvent from '../../../../../events/KeyboardEvent.js';
+import TextElement from '../../TextElement.js';
+import TextElementEvent from '../../../../../events/form/text/TextElementEvent.js';
+import TextFieldEvent from '../../../../../events/form/text/TextFieldEvent.js';
+import Template from '../../../../../util/Template.js';
 
 export default class TextField extends TextElement {
     static get observedAttributes() {

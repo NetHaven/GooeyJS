@@ -1,7 +1,7 @@
-import FormElement from '../../FormElement.js';
-import DropDownListEvent from '../../../../events/form/list/DropDownListEvent.js';
-import FormElementEvent from '../../../../events/form/FormElementEvent.js';
-import Template from '../../../../util/Template.js';
+import FormElement from '../../../FormElement.js';
+import DropDownListEvent from '../../../../../events/form/list/DropDownListEvent.js';
+import FormElementEvent from '../../../../../events/form/FormElementEvent.js';
+import Template from '../../../../../util/Template.js';
 
 export default class DropDownList extends FormElement {
     constructor() {

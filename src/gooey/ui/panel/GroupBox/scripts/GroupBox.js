@@ -1,5 +1,5 @@
-import Panel from '../Panel/Panel.js';
-import Template from '../../../util/Template.js';
+import Panel from '../../Panel/scripts/Panel.js';
+import Template from '../../../../util/Template.js';
 
 export default class GroupBox extends Panel {
     constructor() {

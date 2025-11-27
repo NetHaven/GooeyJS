@@ -1,7 +1,7 @@
-import Key from '../../../io/Key.js';
-import KeyboardEvent from '../../../events/KeyboardEvent.js';
-import MouseEvent from '../../../events/MouseEvent.js';
-import Template from '../../../util/Template.js';
+import Key from '../../../../io/Key.js';
+import KeyboardEvent from '../../../../events/KeyboardEvent.js';
+import MouseEvent from '../../../../events/MouseEvent.js';
+import Template from '../../../../util/Template.js';
 
 export default class Dialog {
     static alert(message, callback, options = {}) {

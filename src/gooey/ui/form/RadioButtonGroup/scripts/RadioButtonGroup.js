@@ -1,6 +1,6 @@
-import UIComponent from '../../UIComponent.js';
-import RadioButtonGroupEvent from '../../../events/form/RadioButtonGroupEvent.js';
-import Template from '../../../util/Template.js';
+import UIComponent from '../../../UIComponent.js';
+import RadioButtonGroupEvent from '../../../../events/form/RadioButtonGroupEvent.js';
+import Template from '../../../../util/Template.js';
 
 export default class RadioButtonGroup extends UIComponent {
     static get observedAttributes() {

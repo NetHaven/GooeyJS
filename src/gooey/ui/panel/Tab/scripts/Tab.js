@@ -1,8 +1,8 @@
-import Container from '../../Container.js';
-import LayoutType from '../../layout/Layout/LayoutType.js';
-import TabEvent from '../../../events/panel/TabEvent.js';
-import TabPanelEvent from '../../../events/panel/TabPanelEvent.js';
-import MouseEvent from '../../../events/MouseEvent.js';
+import Container from '../../../Container.js';
+import LayoutType from '../../../layout/Layout/scripts/LayoutType.js';
+import TabEvent from '../../../../events/panel/TabEvent.js';
+import TabPanelEvent from '../../../../events/panel/TabPanelEvent.js';
+import MouseEvent from '../../../../events/MouseEvent.js';
 
 export default class Tab extends Container {
     constructor() {

@@ -1,7 +1,7 @@
-import Container from '../../Container.js';
-import DragEvent from '../../../events/DragEvent.js';
-import MouseEvent from '../../../events/MouseEvent.js';
-import SplitPanelEvent from '../../../events/panel/SplitPanelEvent.js';
+import Container from '../../../Container.js';
+import DragEvent from '../../../../events/DragEvent.js';
+import MouseEvent from '../../../../events/MouseEvent.js';
+import SplitPanelEvent from '../../../../events/panel/SplitPanelEvent.js';
 
 export default class SplitPanel extends Container {
     static get observedAttributes() {

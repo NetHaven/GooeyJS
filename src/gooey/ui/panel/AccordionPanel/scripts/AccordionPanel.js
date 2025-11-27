@@ -1,7 +1,7 @@
-import Container from '../../Container.js';
-import LayoutType from '../../layout/Layout/LayoutType.js';
-import AccordionPanelEvent from '../../../events/panel/AccordionPanelEvent.js';
-import MouseEvent from '../../../events/MouseEvent.js';
+import Container from '../../../Container.js';
+import LayoutType from '../../../layout/Layout/scripts/LayoutType.js';
+import AccordionPanelEvent from '../../../../events/panel/AccordionPanelEvent.js';
+import MouseEvent from '../../../../events/MouseEvent.js';
 
 export default class AccordionPanel extends Container {
     static get observedAttributes() {

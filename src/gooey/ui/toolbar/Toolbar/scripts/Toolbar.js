@@ -1,6 +1,6 @@
-import Container from '../../Container.js';
+import Container from '../../../Container.js';
 import ToolbarButtonSize from './ToolbarButtonSize.js';
-import Template from '../../../util/Template.js';
+import Template from '../../../../util/Template.js';
 
 export default class Toolbar extends Container {
     static get observedAttributes() {

@@ -1,5 +1,5 @@
-import FormElement from "../FormElement.js";
-import Template from "../../../util/Template.js";
+import FormElement from "../../FormElement.js";
+import Template from "../../../../util/Template.js";
 
 export default class DatePicker extends FormElement {
     static get observedAttributes() {

@@ -1,6 +1,6 @@
-import Container from '../../Container.js';
-import LayoutType from '../../layout/Layout/LayoutType.js';
-import Template from '../../../util/Template.js';
+import Container from '../../../Container.js';
+import LayoutType from '../../../layout/Layout/scripts/LayoutType.js';
+import Template from '../../../../util/Template.js';
 
 export default class Panel extends Container {
     static get observedAttributes() {

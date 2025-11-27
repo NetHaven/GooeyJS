@@ -1,8 +1,8 @@
-import UIComponent from '../UIComponent.js';
+import UIComponent from '../../UIComponent.js';
 import HorizontalAlign from './HorizontalAlign.js';
-import MouseEvent from '../../events/MouseEvent.js';
+import MouseEvent from '../../../events/MouseEvent.js';
 import VerticalAlign from './VerticalAlign.js';
-import Template from '../../util/Template.js';
+import Template from '../../../util/Template.js';
 
 export default class Label extends UIComponent {
     static get observedAttributes() {

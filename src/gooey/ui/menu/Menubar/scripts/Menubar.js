@@ -1,8 +1,8 @@
-import UIComponent from '../../UIComponent.js';
-import Key from '../../../io/Key.js';
-import KeyboardEvent from '../../../events/KeyboardEvent.js';
-import MouseEvent from '../../../events/MouseEvent.js';
-import Template from '../../../util/Template.js';
+import UIComponent from '../../../UIComponent.js';
+import Key from '../../../../io/Key.js';
+import KeyboardEvent from '../../../../events/KeyboardEvent.js';
+import MouseEvent from '../../../../events/MouseEvent.js';
+import Template from '../../../../util/Template.js';
 
 export default class Menubar extends UIComponent {
     constructor () {

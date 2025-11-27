@@ -1,5 +1,5 @@
-import KeyboardEvent from '../../../events/KeyboardEvent.js';
-import MouseEvent from '../../../events/MouseEvent.js';
+import KeyboardEvent from '../../../../events/KeyboardEvent.js';
+import MouseEvent from '../../../../events/MouseEvent.js';
 
 // Global context menu manager to handle all context menus
 const ContextMenuManager = {

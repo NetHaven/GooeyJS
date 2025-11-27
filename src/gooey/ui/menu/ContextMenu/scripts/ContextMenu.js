@@ -1,6 +1,6 @@
-import UIComponent from '../../UIComponent.js';
-import ContextMenuEvent from '../../../events/menu/ContextMenuEvent.js';
-import MouseEvent from '../../../events/MouseEvent.js';
+import UIComponent from '../../../UIComponent.js';
+import ContextMenuEvent from '../../../../events/menu/ContextMenuEvent.js';
+import MouseEvent from '../../../../events/MouseEvent.js';
 import ContextMenuManager from './ContextMenuManager.js';
 
 export default class ContextMenu extends UIComponent {

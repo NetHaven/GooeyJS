@@ -1,7 +1,7 @@
-import FormElement from '../FormElement.js';
-import CheckboxEvent from '../../../events/form/CheckboxEvent.js';
-import MouseEvent from '../../../events/MouseEvent.js';
-import Template from '../../../util/Template.js';
+import FormElement from '../../FormElement.js';
+import CheckboxEvent from '../../../../events/form/CheckboxEvent.js';
+import MouseEvent from '../../../../events/MouseEvent.js';
+import Template from '../../../../util/Template.js';
 
 export default class Checkbox extends FormElement {
     static get observedAttributes() {

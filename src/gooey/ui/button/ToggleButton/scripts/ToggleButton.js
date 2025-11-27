@@ -1,7 +1,7 @@
-import UIComponent from '../../UIComponent.js';
-import MouseEvent from '../../../events/MouseEvent.js';
-import Template from '../../../util/Template.js';
-import ToggleButtonEvent from '../../../events/button/ToggleButtonEvent.js';
+import UIComponent from '../../../UIComponent.js';
+import MouseEvent from '../../../../events/MouseEvent.js';
+import Template from '../../../../util/Template.js';
+import ToggleButtonEvent from '../../../../events/button/ToggleButtonEvent.js';
 
 export default class ToggleButton extends UIComponent {
     constructor() {

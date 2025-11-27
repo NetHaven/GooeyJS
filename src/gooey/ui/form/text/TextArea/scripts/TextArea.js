@@ -1,8 +1,8 @@
-import FormElementEvent from '../../../../events/form/FormElementEvent.js';
-import LineWrap from '../LineWrap.js';
-import Template from '../../../../util/Template.js';
-import TextElement from '../TextElement.js';
-import TextElementEvent from '../../../../events/form/text/TextElementEvent.js';
+import FormElementEvent from '../../../../../events/form/FormElementEvent.js';
+import LineWrap from '../../LineWrap.js';
+import Template from '../../../../../util/Template.js';
+import TextElement from '../../TextElement.js';
+import TextElementEvent from '../../../../../events/form/text/TextElementEvent.js';
 
 export default class TextArea extends TextElement {
     static get observedAttributes() {

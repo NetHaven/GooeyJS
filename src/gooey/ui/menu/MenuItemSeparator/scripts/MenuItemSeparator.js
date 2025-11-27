@@ -1,5 +1,5 @@
-import UIComponent from '../../UIComponent.js';
-import Template from '../../../util/Template.js';
+import UIComponent from '../../../UIComponent.js';
+import Template from '../../../../util/Template.js';
 
 export default class MenuItemSeparator extends UIComponent {
     static get observedAttributes() {

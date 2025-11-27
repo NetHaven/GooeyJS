@@ -1,7 +1,7 @@
-import FormElement from '../../FormElement.js';
-import ListBoxEvent from '../../../../events/form/list/ListBoxEvent.js';
-import FormElementEvent from '../../../../events/form/FormElementEvent.js';
-import Template from '../../../../util/Template.js';
+import FormElement from '../../../FormElement.js';
+import ListBoxEvent from '../../../../../events/form/list/ListBoxEvent.js';
+import FormElementEvent from '../../../../../events/form/FormElementEvent.js';
+import Template from '../../../../../util/Template.js';
 
 export default class ListBox extends FormElement {
     constructor() {
