@@ -1,0 +1,27 @@
+{
+  "name": "TreeItem",
+  "tagName": "ui-treeitem",
+  "script": "scripts/TreeItem.js",
+  "templates": [
+    { "id": "ui-TreeItem", "file": "templates/TreeItem.html" }
+  ],
+  "themes": {
+    "default": null,
+    "available": []
+  },
+  "attributes": {
+    "draggable": { "type": "BOOLEAN", "default": false },
+    "droppable": { "type": "BOOLEAN", "default": false },
+    "dropzone": { "type": "STRING", "default": null },
+    "height": { "type": "STRING", "default": null },
+    "width": { "type": "STRING", "default": null },
+    "tooltip": { "type": "STRING", "default": null },
+    "visible": { "type": "BOOLEAN", "default": true },
+    "disabled": { "type": "BOOLEAN", "default": false },
+    "text": { "type": "STRING", "default": "" },
+    "icon": { "type": "STRING", "default": "" },
+    "expanded": { "type": "BOOLEAN", "default": false },
+    "droptree": { "type": "STRING", "default": null },
+    "editable": { "type": "BOOLEAN", "default": false }
+  }
+}

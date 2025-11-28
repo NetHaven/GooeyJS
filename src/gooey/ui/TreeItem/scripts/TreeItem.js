@@ -50,7 +50,7 @@ export default class TreeItem extends UIComponent {
         
         this._setupEventListeners();
         this._updateAttributes();
-        
+
         // Initialize drag state
         this._dragState = {
             isDragging: false,
@@ -58,11 +58,7 @@ export default class TreeItem extends UIComponent {
             dropPosition: null // 'before', 'after', 'inside'
         };
     }
-    
-    static get observedAttributes() {
-        return [...super.observedAttributes, 'text', 'icon', 'expanded', 'draggable', 'droptree', 'editable'];
-    }
-    
+
     connectedCallback() {
         // Handle any child tree items that were added after construction
         const orphanedChildren = Array.from(this.querySelectorAll(':scope > ui-treeitem:not(.ui-TreeItem-children ui-treeitem)'));

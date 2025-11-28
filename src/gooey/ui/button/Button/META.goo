@@ -1,0 +1,25 @@
+{
+  "name": "Button",
+  "tagName": "gooeyui-button",
+  "script": "Button.js",
+  "templates": [
+    { "id": "ui-button", "file": "Button.html" }
+  ],
+  "themes": {
+    "default": null,
+    "available": []
+  },
+  "attributes": {
+    "action": { "type": "STRING", "default": null },
+    "icon": { "type": "STRING", "default": null },
+    "text": { "type": "STRING", "default": null },
+    "draggable": { "type": "BOOLEAN", "default": false },
+    "droppable": { "type": "BOOLEAN", "default": false },
+    "dropzone": { "type": "STRING", "default": null },
+    "height": { "type": "STRING", "default": null },
+    "width": { "type": "STRING", "default": null },
+    "tooltip": { "type": "STRING", "default": null },
+    "visible": { "type": "BOOLEAN", "default": true },
+    "disabled": { "type": "BOOLEAN", "default": false }
+  }
+}

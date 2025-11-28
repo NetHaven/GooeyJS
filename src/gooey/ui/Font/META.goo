@@ -1,0 +1,21 @@
+{
+  "name": "Font",
+  "tagName": "ui-font",
+  "script": "scripts/Font.js",
+  "templates": [
+    { "id": "ui-Font", "file": "templates/Font.html" }
+  ],
+  "themes": {
+    "default": null,
+    "available": []
+  },
+  "attributes": {
+    "family": { "type": "STRING", "default": null },
+    "size": { "type": "STRING", "default": null },
+    "weight": {
+      "type": "ENUM",
+      "default": null,
+      "values": [400, 700]
+    }
+  }
+}

@@ -2,10 +2,6 @@ import FormElement from "../../FormElement.js";
 import Template from "../../../../util/Template.js";
 
 export default class TimePicker extends FormElement {
-    static get observedAttributes() {
-        return [...super.observedAttributes, 'max', 'min'];
-    }
-
     constructor() {
         super();
 

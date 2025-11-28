@@ -1,0 +1,27 @@
+{
+  "name": "Spinner",
+  "tagName": "gooeyui-spinner",
+  "script": "scripts/Spinner.js",
+  "templates": [
+    { "id": "ui-Spinner", "file": "templates/Spinner.html" }
+  ],
+  "themes": {
+    "default": null,
+    "available": []
+  },
+  "attributes": {
+    "draggable": { "type": "BOOLEAN", "default": false },
+    "droppable": { "type": "BOOLEAN", "default": false },
+    "dropzone": { "type": "STRING", "default": null },
+    "height": { "type": "STRING", "default": null },
+    "width": { "type": "STRING", "default": null },
+    "tooltip": { "type": "STRING", "default": null },
+    "visible": { "type": "BOOLEAN", "default": true },
+    "disabled": { "type": "BOOLEAN", "default": false },
+    "required": { "type": "BOOLEAN", "default": false },
+    "value": { "type": "NUMBER", "default": 0 },
+    "min": { "type": "NUMBER", "default": -9007199254740991 },
+    "max": { "type": "NUMBER", "default": 9007199254740991 },
+    "step": { "type": "NUMBER", "default": 1 }
+  }
+}

@@ -129,10 +129,10 @@ export default class ToggleButton extends UIComponent {
     
     set pressed(val) {
         if (this._updatingAttribute) return;
-        
+
         this._updatingAttribute = true;
         this._pressed = !!val;
-        
+
         if (this._pressed) {
             this.setAttribute("pressed", "true");
             this.classList.add("pressed");
@@ -142,11 +142,7 @@ export default class ToggleButton extends UIComponent {
         }
         this._updatingAttribute = false;
     }
-    
-    static get observedAttributes() {
-        return [...super.observedAttributes, 'action', 'icon', 'text', 'pressed'];
-    }
-    
+
     attributeChangedCallback(name, oldValue, newValue) {
         if (this._updatingAttribute) return;
         

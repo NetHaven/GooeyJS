@@ -23,10 +23,6 @@ export default class TextElement extends FormElement {
         });
     }
 
-    static get observedAttributes() {
-        return [...(super.observedAttributes || []), 'placeholder', 'maxLength', 'minLength', 'readOnly'];
-    }
-
     attributeChangedCallback(name, oldValue, newValue) {
         super.attributeChangedCallback?.(name, oldValue, newValue);
         

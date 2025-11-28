@@ -5,10 +5,6 @@ import VerticalAlign from './VerticalAlign.js';
 import Template from '../../../util/Template.js';
 
 export default class Label extends UIComponent {
-    static get observedAttributes() {
-        return [...super.observedAttributes, 'text', 'icon', 'action', 'halign', 'valign'];
-    }
-
     constructor () {		
 		super();
 		

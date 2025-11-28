@@ -1,0 +1,25 @@
+{
+  "name": "Menu",
+  "tagName": "ui-Menu",
+  "script": "scripts/Menu.js",
+  "templates": [
+    { "id": "ui-Menu", "file": "templates/Menu.html" }
+  ],
+  "themes": {
+    "default": null,
+    "available": []
+  },
+  "attributes": {
+    "accelerator": { "type": "STRING", "default": null },
+    "active": { "type": "BOOLEAN", "default": false },
+    "text": { "type": "STRING", "default": null },
+    "draggable": { "type": "BOOLEAN", "default": false },
+    "droppable": { "type": "BOOLEAN", "default": false },
+    "dropzone": { "type": "STRING", "default": null },
+    "height": { "type": "STRING", "default": null },
+    "width": { "type": "STRING", "default": null },
+    "tooltip": { "type": "STRING", "default": null },
+    "visible": { "type": "BOOLEAN", "default": true },
+    "disabled": { "type": "BOOLEAN", "default": false }
+  }
+}

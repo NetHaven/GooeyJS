@@ -41,11 +41,7 @@ export default class GroupBox extends Panel {
             this.removeAttribute("text");
         }
     }
-    
-    static get observedAttributes() {
-        return [...super.observedAttributes, 'text'];
-    }
-    
+
     attributeChangedCallback(name, oldValue, newValue) {
         if (name === 'text') {
             this.text = newValue;

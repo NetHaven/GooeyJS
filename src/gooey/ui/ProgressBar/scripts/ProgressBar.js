@@ -2,10 +2,6 @@ import UIComponent from '../../UIComponent.js';
 import Template from '../../../util/Template.js';
 
 export default class ProgressBar extends UIComponent {
-    static get observedAttributes() {
-        return [...super.observedAttributes, 'value', 'max', 'indeterminate'];
-    }
-
     constructor() {
         super();
         this._value = 0;

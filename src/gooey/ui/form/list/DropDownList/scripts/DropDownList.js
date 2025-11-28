@@ -105,10 +105,6 @@ export default class DropDownList extends FormElement {
         this.dropDownList.innerHTML = "";
     }
 
-    static get observedAttributes() {
-        return ['disabled'];
-    }
-
     attributeChangedCallback(name, oldValue, newValue) {
         if (name === 'disabled') {
             this.disabled = newValue === "true";

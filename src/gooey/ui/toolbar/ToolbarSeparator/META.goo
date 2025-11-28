@@ -1,0 +1,22 @@
+{
+  "name": "ToolbarSeparator",
+  "tagName": "ui-ToolbarSeparator",
+  "script": "scripts/ToolbarSeparator.js",
+  "templates": [
+    { "id": "ui-ToolbarSeparator", "file": "templates/ToolbarSeparator.html" }
+  ],
+  "themes": {
+    "default": null,
+    "available": []
+  },
+  "attributes": {
+    "draggable": { "type": "BOOLEAN", "default": false },
+    "droppable": { "type": "BOOLEAN", "default": false },
+    "dropzone": { "type": "STRING", "default": null },
+    "height": { "type": "STRING", "default": null },
+    "width": { "type": "STRING", "default": null },
+    "tooltip": { "type": "STRING", "default": null },
+    "visible": { "type": "BOOLEAN", "default": true },
+    "disabled": { "type": "BOOLEAN", "default": false }
+  }
+}

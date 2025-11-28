@@ -1,0 +1,24 @@
+{
+  "name": "ListBox",
+  "tagName": "gooeyui-listbox",
+  "script": "scripts/ListBox.js",
+  "templates": [
+    { "id": "ui-ListBox", "file": "templates/ListBox.html" }
+  ],
+  "themes": {
+    "default": null,
+    "available": []
+  },
+  "attributes": {
+    "draggable": { "type": "BOOLEAN", "default": false },
+    "droppable": { "type": "BOOLEAN", "default": false },
+    "dropzone": { "type": "STRING", "default": null },
+    "height": { "type": "STRING", "default": null },
+    "width": { "type": "STRING", "default": null },
+    "tooltip": { "type": "STRING", "default": null },
+    "visible": { "type": "BOOLEAN", "default": true },
+    "disabled": { "type": "BOOLEAN", "default": false },
+    "required": { "type": "BOOLEAN", "default": false },
+    "size": { "type": "NUMBER", "default": 4 }
+  }
+}

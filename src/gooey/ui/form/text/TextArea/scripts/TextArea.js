@@ -5,10 +5,6 @@ import TextElement from '../../TextElement.js';
 import TextElementEvent from '../../../../../events/form/text/TextElementEvent.js';
 
 export default class TextArea extends TextElement {
-    static get observedAttributes() {
-        return [...super.observedAttributes, 'cols', 'resize', 'rows', 'wrap'];
-    }
-
     constructor() {
         super();
 

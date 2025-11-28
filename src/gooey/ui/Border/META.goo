@@ -1,0 +1,21 @@
+{
+  "name": "Border",
+  "tagName": "ui-border",
+  "script": "scripts/Border.js",
+  "templates": [
+    { "id": "ui-Border", "file": "templates/Border.html" }
+  ],
+  "themes": {
+    "default": null,
+    "available": []
+  },
+  "attributes": {
+    "color": { "type": "STRING", "default": null },
+    "style": {
+      "type": "ENUM",
+      "default": null,
+      "values": ["DASHED", "DOTTED", "DOUBLE", "GROOVE", "HIDDEN", "INSET", "NONE", "OUTSET", "RIDGE", "SOLID"]
+    },
+    "width": { "type": "STRING", "default": null }
+  }
+}

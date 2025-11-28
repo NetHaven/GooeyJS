@@ -4,10 +4,6 @@ import FormPanelEvent from '../../../../events/panel/FormPanelEvent.js';
 import Template from '../../../../util/Template.js';
 
 export default class FormPanel extends Panel {
-    static get observedAttributes() {
-        return [...super.observedAttributes];
-    }
-
     constructor () {
         super();
 

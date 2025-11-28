@@ -7,10 +7,6 @@ export default class FormElement extends UIComponent {
         this._updateRequiredIndicator();
     }
 
-    static get observedAttributes() {
-        return [...super.observedAttributes, 'required'];
-    }
-
     attributeChangedCallback(name) {
         if (name === 'required') {
             this._updateRequiredIndicator();

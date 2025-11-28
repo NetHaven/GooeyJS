@@ -4,10 +4,6 @@ import MouseEvent from '../../../../events/MouseEvent.js';
 import Template from '../../../../util/Template.js';
 
 export default class Checkbox extends FormElement {
-    static get observedAttributes() {
-        return [...super.observedAttributes];
-    }
-
     constructor() {
         super();
 

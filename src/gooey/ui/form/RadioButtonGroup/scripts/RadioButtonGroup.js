@@ -3,10 +3,6 @@ import RadioButtonGroupEvent from '../../../../events/form/RadioButtonGroupEvent
 import Template from '../../../../util/Template.js';
 
 export default class RadioButtonGroup extends UIComponent {
-    static get observedAttributes() {
-        return [...super.observedAttributes];
-    }
-
     constructor() {
         super();
 

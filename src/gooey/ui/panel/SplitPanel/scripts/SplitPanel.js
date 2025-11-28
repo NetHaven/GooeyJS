@@ -4,10 +4,6 @@ import MouseEvent from '../../../../events/MouseEvent.js';
 import SplitPanelEvent from '../../../../events/panel/SplitPanelEvent.js';
 
 export default class SplitPanel extends Container {
-    static get observedAttributes() {
-        return [...super.observedAttributes, 'dividersize', 'orientation', 'dividerlocation', 'minimumlocation', 'maximumlocation'];
-    }
-
     constructor() {
         super();
         

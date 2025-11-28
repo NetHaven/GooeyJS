@@ -4,10 +4,6 @@ import MouseEvent from '../../../../events/MouseEvent.js';
 import Template from '../../../../util/Template.js';
 
 export default class MenuItem extends UIComponent {
-    static get observedAttributes() {
-        return [...super.observedAttributes, 'accelerator', 'action', 'active', 'shortcut', 'text', 'icon'];
-    }
-
     constructor () {
         super();
 

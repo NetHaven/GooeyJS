@@ -7,10 +7,6 @@ import FormElementEvent from '../../../../../events/form/FormElementEvent.js';
 import Template from '../../../../../util/Template.js';
 
 export default class PasswordField extends TextElement {
-    static get observedAttributes() {
-        return [...super.observedAttributes, 'inputmode', 'pattern', 'size'];
-    }
-
     constructor() {
         super();
 

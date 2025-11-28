@@ -8,11 +8,6 @@ import MouseEvent from '../events/MouseEvent.js';
 import DragEvent from '../events/DragEvent.js';
 
 export default class UIComponent extends GooeyElement {
-    static get observedAttributes() {
-        return [...super.observedAttributes, 'draggable', 'droppable', 'dropzone', 'height', 
-                                            'width', 'tooltip', 'visible', 'disabled'];
-    }
-
     constructor () {
         super();
 

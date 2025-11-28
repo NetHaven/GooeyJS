@@ -1,0 +1,28 @@
+{
+  "name": "RichTextEditor",
+  "tagName": "gooeyui-richtexteditor",
+  "script": "scripts/RichTextEditor.js",
+  "templates": [
+    { "id": "ui-RichTextEditor", "file": "templates/RichTextEditor.html" }
+  ],
+  "themes": {
+    "default": null,
+    "available": []
+  },
+  "attributes": {
+    "draggable": { "type": "BOOLEAN", "default": false },
+    "droppable": { "type": "BOOLEAN", "default": false },
+    "dropzone": { "type": "STRING", "default": null },
+    "height": { "type": "STRING", "default": null },
+    "width": { "type": "STRING", "default": null },
+    "tooltip": { "type": "STRING", "default": null },
+    "visible": { "type": "BOOLEAN", "default": true },
+    "disabled": { "type": "BOOLEAN", "default": false },
+    "required": { "type": "BOOLEAN", "default": false },
+    "placeholder": { "type": "STRING", "default": null },
+    "maxLength": { "type": "NUMBER", "default": null },
+    "minLength": { "type": "NUMBER", "default": null },
+    "readOnly": { "type": "BOOLEAN", "default": false },
+    "value": { "type": "STRING", "default": null }
+  }
+}

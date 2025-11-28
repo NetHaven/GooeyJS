@@ -353,11 +353,7 @@ export default class ColorPicker extends UIComponent {
         const b = parseInt(hex.substring(4, 6), 16);
         return { r, g, b };
     }
-    
-    static get observedAttributes() {
-        return [...super.observedAttributes, 'value'];
-    }
-    
+
     attributeChangedCallback(name, oldValue, newValue) {
         if (this._updatingAttribute) return;
         

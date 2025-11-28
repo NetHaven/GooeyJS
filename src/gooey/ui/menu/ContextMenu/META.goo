@@ -1,0 +1,23 @@
+{
+  "name": "ContextMenu",
+  "tagName": "ui-ContextMenu",
+  "script": "scripts/ContextMenu.js",
+  "templates": [
+    { "id": "ui-ContextMenu", "file": "templates/ContextMenu.html" }
+  ],
+  "themes": {
+    "default": null,
+    "available": []
+  },
+  "attributes": {
+    "active": { "type": "BOOLEAN", "default": false },
+    "draggable": { "type": "BOOLEAN", "default": false },
+    "droppable": { "type": "BOOLEAN", "default": false },
+    "dropzone": { "type": "STRING", "default": null },
+    "height": { "type": "STRING", "default": null },
+    "width": { "type": "STRING", "default": null },
+    "tooltip": { "type": "STRING", "default": null },
+    "visible": { "type": "BOOLEAN", "default": true },
+    "disabled": { "type": "BOOLEAN", "default": false }
+  }
+}

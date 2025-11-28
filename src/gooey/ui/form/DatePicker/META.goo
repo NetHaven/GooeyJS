@@ -1,0 +1,26 @@
+{
+  "name": "DatePicker",
+  "tagName": "gooeyui-datepicker",
+  "script": "scripts/DatePicker.js",
+  "templates": [
+    { "id": "ui-DatePicker", "file": "templates/DatePicker.html" }
+  ],
+  "themes": {
+    "default": null,
+    "available": []
+  },
+  "attributes": {
+    "draggable": { "type": "BOOLEAN", "default": false },
+    "droppable": { "type": "BOOLEAN", "default": false },
+    "dropzone": { "type": "STRING", "default": null },
+    "height": { "type": "STRING", "default": null },
+    "width": { "type": "STRING", "default": null },
+    "tooltip": { "type": "STRING", "default": null },
+    "visible": { "type": "BOOLEAN", "default": true },
+    "disabled": { "type": "BOOLEAN", "default": false },
+    "required": { "type": "BOOLEAN", "default": false },
+    "max": { "type": "STRING", "default": null },
+    "min": { "type": "STRING", "default": null },
+    "step": { "type": "STRING", "default": null }
+  }
+}

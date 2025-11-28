@@ -1,4 +1,6 @@
-﻿import Template from './gooey/util/Template.js';
+import Template from './gooey/util/Template.js';
+import MetaLoader from './gooey/util/MetaLoader.js';
+import AttributeRegistry from './gooey/util/AttributeRegistry.js';
 
 const SCRIPT_PATH = new URL(import.meta.url, document.baseURI);
 const PATH = SCRIPT_PATH.href.substring(0, SCRIPT_PATH.href.lastIndexOf('/'));
@@ -7,88 +9,89 @@ export default class GooeyJS {
     constructor() {
         let headEl, htmlEl, linkEl;
 
+        // Component packages to load - META.goo in each component provides the details
         this.components = [{
             pkg: "gooey",
             elements: [
-                { name: "Application", prefix: "Gooey" },
-                { name: "Component", prefix: "Gooey" }
+                { name: "Application" },
+                { name: "Component" }
             ]
         },{
             pkg: "gooey.ui",
             elements: [
-                { name: "Border", prefix: "GooeyUI" },
-                { name: "ColorPicker", prefix: "GooeyUI" },
-                { name: "Font", prefix: "GooeyUI" },
-                { name: "Label", prefix: "GooeyUI" },
-                { name: "ProgressBar", prefix: "GooeyUI" },
-                { name: "Tree", prefix: "GooeyUI" },
-                { name: "TreeItem", prefix: "GooeyUI" }
+                { name: "Border" },
+                { name: "ColorPicker" },
+                { name: "Font" },
+                { name: "Label" },
+                { name: "ProgressBar" },
+                { name: "Tree" },
+                { name: "TreeItem" }
             ]
         },{
             pkg: "gooey.ui.button",
             elements: [
-                { name: "Button", prefix: "GooeyUI" },
-                { name: "ToggleButton", prefix: "GooeyUI" },
-                { name: "ToggleButtonGroup", prefix: "GooeyUI" }
+                { name: "Button" },
+                { name: "ToggleButton" },
+                { name: "ToggleButtonGroup" }
             ]
         },{
             pkg: "gooey.ui.form",
             elements: [
-                { name: "Checkbox", prefix: "GooeyUI" },
-                { name: "DatePicker", prefix: "GooeyUI" },
-                { name: "RadioButton", prefix: "GooeyUI" },
-                { name: "RadioButtonGroup", prefix: "GooeyUI" },
-                { name: "Spinner", prefix: "GooeyUI" },
-                { name: "TimePicker", prefix: "GooeyUI" }
+                { name: "Checkbox" },
+                { name: "DatePicker" },
+                { name: "RadioButton" },
+                { name: "RadioButtonGroup" },
+                { name: "Spinner" },
+                { name: "TimePicker" }
             ]
         },{
             pkg: "gooey.ui.form.list",
             elements: [
-                { name: "ComboBox", prefix: "GooeyUI" },
-                { name: "DropDownList", prefix: "GooeyUI" },
-                { name: "ListBox", prefix: "GooeyUI" }
+                { name: "ComboBox" },
+                { name: "DropDownList" },
+                { name: "ListBox" }
             ]
         },{
             pkg: "gooey.ui.form.text",
             elements: [
-                { name: "PasswordField", prefix: "GooeyUI" },
-                { name: "RichTextEditor", prefix: "GooeyUI" },
-                { name: "TextArea", prefix: "GooeyUI" },
-                { name: "TextField", prefix: "GooeyUI" }
+                { name: "PasswordField" },
+                { name: "RichTextEditor" },
+                { name: "TextArea" },
+                { name: "TextField" }
             ]
         },{
             pkg: "gooey.ui.menu",
             elements: [
-                { name: "CheckboxMenuItem", prefix: "GooeyUI" },
-                { name: "ContextMenu", prefix: "GooeyUI" },
-                { name: "Menu", prefix: "GooeyUI" },
-                { name: "Menubar", prefix: "GooeyUI" },
-                { name: "MenuItem", prefix: "GooeyUI" },
-                { name: "MenuItemSeparator", prefix: "GooeyUI" }
+                { name: "CheckboxMenuItem" },
+                { name: "ContextMenu" },
+                { name: "Menu" },
+                { name: "Menubar" },
+                { name: "MenuItem" },
+                { name: "MenuItemSeparator" }
             ]
         },{
             pkg: "gooey.ui.panel",
             elements: [
-                { name: "AccordionPanel", prefix: "GooeyUI" },
-                { name: "AppPanel", prefix: "GooeyUI" },
-                { name: "FormPanel", prefix: "GooeyUI" },
-                { name: "GroupBox", prefix: "GooeyUI" },
-                { name: "Panel", prefix: "GooeyUI" },
-                { name: "SplitPanel", prefix: "GooeyUI" },
-                { name: "Tab", prefix: "GooeyUI" },
-                { name: "TabPanel", prefix: "GooeyUI" }
+                { name: "AccordionPanel" },
+                { name: "AppPanel" },
+                { name: "FormPanel" },
+                { name: "GroupBox" },
+                { name: "Panel" },
+                { name: "SplitPanel" },
+                { name: "Tab" },
+                { name: "TabPanel" }
             ]
         },{
             pkg: "gooey.ui.toolbar",
             elements: [
-                { name: "Toolbar", prefix: "GooeyUI" },
-                { name: "ToolbarSeparator", prefix: "GooeyUI" }
+                { name: "Toolbar" },
+                { name: "ToolbarSeparator" }
             ]
         },{
             pkg: "gooey.ui.window",
             elements: [
-                { name: "Window", prefix: "GooeyUI" },
-                { name: "FloatingPane", prefix: "GooeyUI" }
+                { name: "Window" },
+                { name: "FloatingPane" }
             ]
         }]
 
@@ -113,44 +116,56 @@ export default class GooeyJS {
     }
 
     async createElements() {
-        // Special cases with custom template IDs (not following prefix-ComponentName pattern)
-        const specialTemplateIds = {
-            "MenuHeader": "menuHeader"  // MenuHeader uses "menuHeader" instead of "ui-MenuHeader"
-        };
-
         for (const component of this.components) {
             // Convert dot-separated package name to folder path (e.g., "gooey.ui.button" -> "gooey/ui/button")
             const pkgPath = component.pkg.replace(/\./g, '/');
 
             for (const element of component.elements) {
                 try {
-                    // Build relative import path (each component has its own folder with scripts/templates/themes subfolders)
+                    // Build component path
                     const componentPath = `${pkgPath}/${element.name}`;
-                    const modulePath = `./${componentPath}/scripts/${element.name}.js`;
-                    const templatePath = `./${componentPath}/templates/${element.name}.html`;
+                    const fullComponentPath = `${PATH}/${componentPath}`;
+
+                    // Load and validate META.goo (required - strict mode)
+                    const meta = await MetaLoader.loadAndValidate(fullComponentPath);
+
+                    // Register in AttributeRegistry
+                    AttributeRegistry.register(meta.tagName, meta);
+
+                    // Build script path from META.goo
+                    const modulePath = `./${componentPath}/scripts/${meta.script}`;
 
                     // Dynamically import the component class
                     const module = await import(modulePath);
                     const ComponentClass = module.default;
 
-                    // Convert class name to custom element tag using configurable prefix (e.g., "Button" + "GooeyUI" -> "ui-button")
-                    const tagName = `${element.prefix}-${element.name.toLowerCase()}`;
+                    // Inject observedAttributes from registry
+                    this._injectObservedAttributes(ComponentClass, meta.tagName);
 
-                    // Register the custom element
-                    customElements.define(tagName, ComponentClass);
+                    // Register the custom element with tag name from META.goo
+                    customElements.define(meta.tagName, ComponentClass);
 
-                    // Load template if it exists (in templates subfolder)
-                    // Use special template ID if defined, otherwise use standard prefix-ComponentName pattern
-                    const templateId = specialTemplateIds[element.name] || `${element.prefix}-${element.name}`;
-                    try {
-                        await Template.load(`${PATH}/${componentPath}/templates/${element.name}.html`, templateId);
-                        console.log(`Loaded template ${templateId} from ${templatePath}`);
-                    } catch (templateError) {
-                        // Template might not exist for all components, so this is not necessarily an error
-                        console.debug(`No template found for ${element.name} at ${templatePath}`);
+                    // Load templates from META.goo
+                    if (meta.templates && meta.templates.length > 0) {
+                        for (const template of meta.templates) {
+                            try {
+                                await Template.load(
+                                    `${fullComponentPath}/templates/${template.file}`,
+                                    template.id
+                                );
+                                console.log(`Loaded template ${template.id} from ${template.file}`);
+                            } catch (templateError) {
+                                console.warn(`Failed to load template ${template.id}:`, templateError);
+                            }
+                        }
                     }
 
-                    console.log(`Registered ${tagName} from ${modulePath}`);
+                    // Load default theme if specified
+                    if (meta.themes && meta.themes.default) {
+                        await this._loadTheme(`${fullComponentPath}/themes/${meta.themes.default}`);
+                    }
+
+                    console.log(`Registered ${meta.tagName} from ${modulePath}`);
                 } catch (error) {
                     console.error(`Failed to load component ${component.pkg}.${element.name}:`, error);
                 }
@@ -158,6 +173,37 @@ export default class GooeyJS {
         }
     }
 
+    /**
+     * Inject observedAttributes getter into component class from registry
+     * @param {Function} ComponentClass - The component class
+     * @param {string} tagName - The custom element tag name
+     */
+    _injectObservedAttributes(ComponentClass, tagName) {
+        Object.defineProperty(ComponentClass, 'observedAttributes', {
+            configurable: true,
+            get: () => AttributeRegistry.getObservedAttributes(tagName)
+        });
+    }
+
+    /**
+     * Load a CSS theme file
+     * @param {string} themePath - Full path to the CSS file
+     */
+    async _loadTheme(themePath) {
+        try {
+            const linkEl = document.createElement('link');
+            linkEl.setAttribute("rel", "stylesheet");
+            linkEl.setAttribute("href", themePath);
+
+            const headEl = document.head;
+            if (headEl) {
+                headEl.appendChild(linkEl);
+                console.log(`Loaded theme from ${themePath}`);
+            }
+        } catch (error) {
+            console.warn(`Failed to load theme ${themePath}:`, error);
+        }
+    }
 }
 
 window.addEventListener('load', function() { new GooeyJS();}());

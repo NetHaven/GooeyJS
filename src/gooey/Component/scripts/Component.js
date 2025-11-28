@@ -3,10 +3,6 @@ import ComponentEvent from '../../events/ComponentEvent.js';
 import Template from '../../util/Template.js';
 
 export default class Component extends Observable {
-    static get observedAttributes() {
-        return ['src', 'name', 'prefix'];
-    }
-
     constructor() {
         super();
 

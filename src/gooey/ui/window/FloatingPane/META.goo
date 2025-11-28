@@ -1,0 +1,23 @@
+{
+  "name": "FloatingPane",
+  "tagName": "ui-FloatingPane",
+  "script": "scripts/FloatingPane.js",
+  "templates": [],
+  "themes": {
+    "default": null,
+    "available": []
+  },
+  "attributes": {
+    "wintitle": { "type": "STRING", "default": null },
+    "constrainviewport": { "type": "BOOLEAN", "default": false },
+    "modal": { "type": "BOOLEAN", "default": false },
+    "draggable": { "type": "BOOLEAN", "default": false },
+    "droppable": { "type": "BOOLEAN", "default": false },
+    "dropzone": { "type": "STRING", "default": null },
+    "height": { "type": "STRING", "default": null },
+    "width": { "type": "STRING", "default": null },
+    "tooltip": { "type": "STRING", "default": null },
+    "visible": { "type": "BOOLEAN", "default": true },
+    "disabled": { "type": "BOOLEAN", "default": false }
+  }
+}

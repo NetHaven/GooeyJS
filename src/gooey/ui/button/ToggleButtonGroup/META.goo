@@ -1,0 +1,28 @@
+{
+  "name": "ToggleButtonGroup",
+  "tagName": "gooeyui-togglebuttongroup",
+  "script": "ToggleButtonGroup.js",
+  "templates": [
+    { "id": "ui-ToggleButtonGroup", "file": "ToggleButtonGroup.html" }
+  ],
+  "themes": {
+    "default": null,
+    "available": []
+  },
+  "attributes": {
+    "allowdeselect": { "type": "BOOLEAN", "default": false },
+    "autoselect": { "type": "BOOLEAN", "default": false },
+    "active": { "type": "STRING", "default": null },
+    "border": { "type": "STRING", "default": null },
+    "font": { "type": "STRING", "default": null },
+    "layout": { "type": "STRING", "default": null },
+    "draggable": { "type": "BOOLEAN", "default": false },
+    "droppable": { "type": "BOOLEAN", "default": false },
+    "dropzone": { "type": "STRING", "default": null },
+    "height": { "type": "STRING", "default": null },
+    "width": { "type": "STRING", "default": null },
+    "tooltip": { "type": "STRING", "default": null },
+    "visible": { "type": "BOOLEAN", "default": true },
+    "disabled": { "type": "BOOLEAN", "default": false }
+  }
+}

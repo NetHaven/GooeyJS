@@ -1,0 +1,28 @@
+{
+  "name": "ComboBox",
+  "tagName": "gooeyui-combobox",
+  "script": "scripts/ComboBox.js",
+  "templates": [
+    { "id": "ui-ComboBox", "file": "templates/ComboBox.html" }
+  ],
+  "themes": {
+    "default": null,
+    "available": []
+  },
+  "attributes": {
+    "draggable": { "type": "BOOLEAN", "default": false },
+    "droppable": { "type": "BOOLEAN", "default": false },
+    "dropzone": { "type": "STRING", "default": null },
+    "height": { "type": "STRING", "default": null },
+    "width": { "type": "STRING", "default": null },
+    "tooltip": { "type": "STRING", "default": null },
+    "visible": { "type": "BOOLEAN", "default": true },
+    "disabled": { "type": "BOOLEAN", "default": false },
+    "required": { "type": "BOOLEAN", "default": false },
+    "size": { "type": "NUMBER", "default": 4 },
+    "editable": { "type": "BOOLEAN", "default": false },
+    "pattern": { "type": "STRING", "default": null },
+    "text": { "type": "STRING", "default": null },
+    "value": { "type": "STRING", "default": null }
+  }
+}

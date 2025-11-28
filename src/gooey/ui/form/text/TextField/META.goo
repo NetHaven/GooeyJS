@@ -1,0 +1,35 @@
+{
+  "name": "TextField",
+  "tagName": "gooeyui-textfield",
+  "script": "scripts/TextField.js",
+  "templates": [
+    { "id": "ui-TextField", "file": "templates/TextField.html" }
+  ],
+  "themes": {
+    "default": null,
+    "available": []
+  },
+  "attributes": {
+    "draggable": { "type": "BOOLEAN", "default": false },
+    "droppable": { "type": "BOOLEAN", "default": false },
+    "dropzone": { "type": "STRING", "default": null },
+    "height": { "type": "STRING", "default": null },
+    "width": { "type": "STRING", "default": null },
+    "tooltip": { "type": "STRING", "default": null },
+    "visible": { "type": "BOOLEAN", "default": true },
+    "disabled": { "type": "BOOLEAN", "default": false },
+    "required": { "type": "BOOLEAN", "default": false },
+    "placeholder": { "type": "STRING", "default": null },
+    "maxLength": { "type": "NUMBER", "default": null },
+    "minLength": { "type": "NUMBER", "default": null },
+    "readOnly": { "type": "BOOLEAN", "default": false },
+    "inputmode": {
+      "type": "ENUM",
+      "default": null,
+      "values": ["decimal", "email", "none", "numeric", "search", "tel", "text", "url"]
+    },
+    "pattern": { "type": "STRING", "default": null },
+    "size": { "type": "NUMBER", "default": null },
+    "type": { "type": "STRING", "default": "text" }
+  }
+}

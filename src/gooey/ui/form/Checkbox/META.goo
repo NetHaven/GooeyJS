@@ -1,0 +1,23 @@
+{
+  "name": "Checkbox",
+  "tagName": "gooeyui-checkbox",
+  "script": "scripts/Checkbox.js",
+  "templates": [
+    { "id": "ui-Checkbox", "file": "templates/Checkbox.html" }
+  ],
+  "themes": {
+    "default": null,
+    "available": []
+  },
+  "attributes": {
+    "draggable": { "type": "BOOLEAN", "default": false },
+    "droppable": { "type": "BOOLEAN", "default": false },
+    "dropzone": { "type": "STRING", "default": null },
+    "height": { "type": "STRING", "default": null },
+    "width": { "type": "STRING", "default": null },
+    "tooltip": { "type": "STRING", "default": null },
+    "visible": { "type": "BOOLEAN", "default": true },
+    "disabled": { "type": "BOOLEAN", "default": false },
+    "required": { "type": "BOOLEAN", "default": false }
+  }
+}

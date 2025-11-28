@@ -1,0 +1,25 @@
+{
+  "name": "ProgressBar",
+  "tagName": "ui-progressbar",
+  "script": "scripts/ProgressBar.js",
+  "templates": [
+    { "id": "ui-ProgressBar", "file": "templates/ProgressBar.html" }
+  ],
+  "themes": {
+    "default": null,
+    "available": []
+  },
+  "attributes": {
+    "draggable": { "type": "BOOLEAN", "default": false },
+    "droppable": { "type": "BOOLEAN", "default": false },
+    "dropzone": { "type": "STRING", "default": null },
+    "height": { "type": "STRING", "default": null },
+    "width": { "type": "STRING", "default": null },
+    "tooltip": { "type": "STRING", "default": null },
+    "visible": { "type": "BOOLEAN", "default": true },
+    "disabled": { "type": "BOOLEAN", "default": false },
+    "value": { "type": "NUMBER", "default": 0 },
+    "max": { "type": "NUMBER", "default": 100 },
+    "indeterminate": { "type": "BOOLEAN", "default": false }
+  }
+}

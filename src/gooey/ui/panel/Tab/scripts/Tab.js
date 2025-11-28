@@ -25,7 +25,7 @@ export default class Tab extends Container {
         
         // Set initial visibility based on active state
         this.style.display = this._active ? 'block' : 'none';
-        
+
         // Ensure tab header is updated if it exists (to handle closeable attribute)
         if (this._tabHeader) {
             this._updateTabHeader();
@@ -36,14 +36,10 @@ export default class Tab extends Container {
         if (this._tabPanel) {
             this._tabPanel._removeTab(this);
         }
-        
+
         if (this._tabHeader) {
             this._tabHeader.remove();
         }
-    }
-
-    static get observedAttributes() {
-        return [...super.observedAttributes, 'name', 'text', 'active', 'closeable'];
     }
 
     attributeChangedCallback(name) {

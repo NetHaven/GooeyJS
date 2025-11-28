@@ -1,0 +1,35 @@
+{
+  "name": "TextArea",
+  "tagName": "gooeyui-textarea",
+  "script": "scripts/TextArea.js",
+  "templates": [
+    { "id": "ui-TextArea", "file": "templates/TextArea.html" }
+  ],
+  "themes": {
+    "default": null,
+    "available": []
+  },
+  "attributes": {
+    "draggable": { "type": "BOOLEAN", "default": false },
+    "droppable": { "type": "BOOLEAN", "default": false },
+    "dropzone": { "type": "STRING", "default": null },
+    "height": { "type": "STRING", "default": null },
+    "width": { "type": "STRING", "default": null },
+    "tooltip": { "type": "STRING", "default": null },
+    "visible": { "type": "BOOLEAN", "default": true },
+    "disabled": { "type": "BOOLEAN", "default": false },
+    "required": { "type": "BOOLEAN", "default": false },
+    "placeholder": { "type": "STRING", "default": null },
+    "maxLength": { "type": "NUMBER", "default": null },
+    "minLength": { "type": "NUMBER", "default": null },
+    "readOnly": { "type": "BOOLEAN", "default": false },
+    "cols": { "type": "NUMBER", "default": null },
+    "rows": { "type": "NUMBER", "default": null },
+    "wrap": {
+      "type": "ENUM",
+      "default": null,
+      "values": ["hard", "off", "soft"]
+    },
+    "resize": { "type": "BOOLEAN", "default": true }
+  }
+}

@@ -3,10 +3,6 @@ import LayoutType from '../../../layout/Layout/scripts/LayoutType.js';
 import Template from '../../../../util/Template.js';
 
 export default class Panel extends Container {
-    static get observedAttributes() {
-        return [...super.observedAttributes, 'title'];
-    }
-
     constructor () {
         super();
 

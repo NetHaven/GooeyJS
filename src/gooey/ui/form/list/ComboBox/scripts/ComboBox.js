@@ -407,11 +407,7 @@ export default class ComboBox extends ListBox {
             this._textInput.value = text;
         }
     }
-    
-    static get observedAttributes() {
-        return [...super.observedAttributes, 'editable', 'pattern', 'text', 'value'];
-    }
-    
+
     attributeChangedCallback(name, oldValue, newValue) {
         super.attributeChangedCallback(name, oldValue, newValue);
 

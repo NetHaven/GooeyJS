@@ -39,10 +39,6 @@ export default class TabPanel extends Container {
         this.setAttribute('role', 'tabpanel');
     }
 
-    static get observedAttributes() {
-        return [...super.observedAttributes, 'orientation', 'draggable'];
-    }
-
     attributeChangedCallback(name, oldValue, newValue) {
         // Call parent's attributeChangedCallback if it exists
         if (super.attributeChangedCallback) {

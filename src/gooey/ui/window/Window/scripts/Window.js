@@ -6,10 +6,6 @@ import TextFieldEvent from '../../../../events/form/text/TextFieldEvent.js';
 import MouseEvent from '../../../../events/MouseEvent.js';
 
 export default class Window extends UIComponent {
-    static get observedAttributes() {
-        return [...super.observedAttributes, 'wintitle', 'draggable', 'constrainviewport', 'modal'];
-    }
-
     constructor () {
         var cancelButton, clone, content, template, xLocation, yLocation;
 

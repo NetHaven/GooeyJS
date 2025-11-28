@@ -4,10 +4,6 @@ import FormFactor from '../../../FormFactor.js';
 import Template from '../../../../util/Template.js';
 
 export default class AppPanel extends Container {
-    static get observedAttributes() {
-        return [...super.observedAttributes, 'formfactor'];
-    }
-
     constructor () {
         super();
 

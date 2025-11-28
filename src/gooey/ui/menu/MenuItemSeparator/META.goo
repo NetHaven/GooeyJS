@@ -1,0 +1,22 @@
+{
+  "name": "MenuItemSeparator",
+  "tagName": "ui-MenuItemSeparator",
+  "script": "scripts/MenuItemSeparator.js",
+  "templates": [
+    { "id": "ui-MenuItemSeparator", "file": "templates/MenuItemSeparator.html" }
+  ],
+  "themes": {
+    "default": null,
+    "available": []
+  },
+  "attributes": {
+    "draggable": { "type": "BOOLEAN", "default": false },
+    "droppable": { "type": "BOOLEAN", "default": false },
+    "dropzone": { "type": "STRING", "default": null },
+    "height": { "type": "STRING", "default": null },
+    "width": { "type": "STRING", "default": null },
+    "tooltip": { "type": "STRING", "default": null },
+    "visible": { "type": "BOOLEAN", "default": true },
+    "disabled": { "type": "BOOLEAN", "default": false }
+  }
+}

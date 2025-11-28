@@ -170,10 +170,6 @@ export default class Menubar extends UIComponent {
             }
         });
     }
-    
-    static get observedAttributes() {
-        return [...super.observedAttributes, 'active'];
-    }
 
     positionMenu(menu, menuHeader) {
         // Use setTimeout to ensure DOM is fully rendered and positioned

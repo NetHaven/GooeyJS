@@ -36,11 +36,6 @@ export default class RichTextEditor extends TextElement {
         this._updateRequiredIndicator();
     }
 
-    static get observedAttributes() {
-        const superAttrs = super.observedAttributes || [];
-        return Array.from(new Set([...superAttrs, 'disabled', 'value']));
-    }
-
     connectedCallback() {
         if (super.connectedCallback) {
             super.connectedCallback();

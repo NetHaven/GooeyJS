@@ -1,0 +1,24 @@
+{
+  "name": "Menubar",
+  "tagName": "ui-Menubar",
+  "script": "scripts/Menubar.js",
+  "templates": [
+    { "id": "ui-Menubar", "file": "templates/Menubar.html" },
+    { "id": "menuHeader", "file": "templates/MenuHeader.html" }
+  ],
+  "themes": {
+    "default": null,
+    "available": []
+  },
+  "attributes": {
+    "active": { "type": "BOOLEAN", "default": false },
+    "draggable": { "type": "BOOLEAN", "default": false },
+    "droppable": { "type": "BOOLEAN", "default": false },
+    "dropzone": { "type": "STRING", "default": null },
+    "height": { "type": "STRING", "default": null },
+    "width": { "type": "STRING", "default": null },
+    "tooltip": { "type": "STRING", "default": null },
+    "visible": { "type": "BOOLEAN", "default": true },
+    "disabled": { "type": "BOOLEAN", "default": false }
+  }
+}

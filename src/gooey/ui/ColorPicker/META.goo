@@ -1,0 +1,23 @@
+{
+  "name": "ColorPicker",
+  "tagName": "ui-colorpicker",
+  "script": "scripts/ColorPicker.js",
+  "templates": [
+    { "id": "ui-ColorPicker", "file": "templates/ColorPicker.html" }
+  ],
+  "themes": {
+    "default": null,
+    "available": []
+  },
+  "attributes": {
+    "draggable": { "type": "BOOLEAN", "default": false },
+    "droppable": { "type": "BOOLEAN", "default": false },
+    "dropzone": { "type": "STRING", "default": null },
+    "height": { "type": "STRING", "default": null },
+    "width": { "type": "STRING", "default": null },
+    "tooltip": { "type": "STRING", "default": null },
+    "visible": { "type": "BOOLEAN", "default": true },
+    "disabled": { "type": "BOOLEAN", "default": false },
+    "value": { "type": "STRING", "default": "#000000" }
+  }
+}

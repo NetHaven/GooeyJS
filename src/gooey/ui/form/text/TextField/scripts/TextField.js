@@ -8,10 +8,6 @@ import TextFieldEvent from '../../../../../events/form/text/TextFieldEvent.js';
 import Template from '../../../../../util/Template.js';
 
 export default class TextField extends TextElement {
-    static get observedAttributes() {
-        return [...super.observedAttributes, 'inputmode', 'pattern', 'size'];
-    }
-
     constructor() {
         super();
 

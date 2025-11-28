@@ -4,10 +4,6 @@ import AccordionPanelEvent from '../../../../events/panel/AccordionPanelEvent.js
 import MouseEvent from '../../../../events/MouseEvent.js';
 
 export default class AccordionPanel extends Container {
-    static get observedAttributes() {
-        return [...super.observedAttributes, 'multiopen'];
-    }
-
     constructor() {
         super();
         

@@ -1,0 +1,22 @@
+{
+  "name": "Application",
+  "tagName": "gooey-application",
+  "script": "scripts/Application.js",
+  "templates": [
+    { "id": "ui-Application", "file": "templates/Application.html" }
+  ],
+  "themes": {
+    "default": null,
+    "available": []
+  },
+  "attributes": {
+    "draggable": { "type": "BOOLEAN", "default": false },
+    "droppable": { "type": "BOOLEAN", "default": false },
+    "dropzone": { "type": "STRING", "default": null },
+    "height": { "type": "STRING", "default": "100vh" },
+    "width": { "type": "STRING", "default": "100vw" },
+    "tooltip": { "type": "STRING", "default": null },
+    "visible": { "type": "BOOLEAN", "default": true },
+    "disabled": { "type": "BOOLEAN", "default": false }
+  }
+}

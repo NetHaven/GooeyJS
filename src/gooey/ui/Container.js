@@ -4,10 +4,6 @@ import LayoutJustify from "./layout/LayoutJustify.js";
 import LayoutType from "./layout/LayoutType.js";
 
 export default class Container extends UIComponent {
-    static get observedAttributes() {
-        return [...super.observedAttributes, 'active', 'border', 'font', 'layout'];
-    }
-
     constructor () {
         super();
 

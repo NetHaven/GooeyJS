@@ -1,0 +1,15 @@
+{
+  "name": "Component",
+  "tagName": "gooey-component",
+  "script": "scripts/Component.js",
+  "templates": [],
+  "themes": {
+    "default": null,
+    "available": []
+  },
+  "attributes": {
+    "src": { "type": "STRING", "default": null, "required": true },
+    "name": { "type": "STRING", "default": null, "required": true },
+    "prefix": { "type": "STRING", "default": null, "required": true }
+  }
+}

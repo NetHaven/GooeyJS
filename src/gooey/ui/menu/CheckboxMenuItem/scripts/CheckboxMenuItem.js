@@ -4,10 +4,6 @@ import MouseEvent from '../../../../events/MouseEvent.js';
 import Template from '../../../../util/Template.js';
 
 export default class CheckboxMenuItem extends MenuItem {
-    static get observedAttributes() {
-        return [...super.observedAttributes, 'checked'];
-    }
-
     constructor () {
         super();
 
