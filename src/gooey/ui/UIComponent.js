@@ -84,7 +84,7 @@ export default class UIComponent extends GooeyElement {
                 if (id) {
                     srcElement = document.getElementById(id);
                     if (srcElement) {
-                        if (this.hasClass(srcElement.getAttribute("dropzone"))) {
+                        if (this.classList.contains(srcElement.getAttribute("dropzone"))) {
                             ev.preventDefault();
                             this.fireEvent(DragEvent.OVER);
                         }
@@ -105,7 +105,7 @@ export default class UIComponent extends GooeyElement {
                 if (id) {
                     srcElement = document.getElementById(id);
                     if (srcElement) {
-                        if (this.hasClass(srcElement.getAttribute("dropzone"))) {
+                        if (this.classList.contains(srcElement.getAttribute("dropzone"))) {
                             ev.preventDefault();
                             this.fireEvent(DragEvent.DROP);
                         }
