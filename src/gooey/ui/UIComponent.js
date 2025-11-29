@@ -222,8 +222,8 @@ export default class UIComponent extends GooeyElement {
     }
 
     get droppable() {
-        if (this.hasAttribute("draggable")) {
-            if (this.getAttribute("draggable") === true) {
+        if (this.hasAttribute("droppable")) {
+            if (this.getAttribute("droppable") === true) {
                 return true;
             }
             else {
