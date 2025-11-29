@@ -4,7 +4,7 @@
     background-color: #c1c0c1;
     height: 100%;
     width: 100%;
-    display: grid;
+    display: grid !important;
     grid-template-areas:
         "north north north"
         "west center east"
