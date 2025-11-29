@@ -74,17 +74,8 @@ export default class GooeyJS {
                     // Build script path from META.goo
                     const modulePath = `./${componentPath}/scripts/${meta.script}`;
 
-                    // Dynamically import the component class
-                    const module = await import(modulePath);
-                    const ComponentClass = module.default;
-
-                    // Inject observedAttributes from registry
-                    this._injectObservedAttributes(ComponentClass, meta.tagName);
-
-                    // Register the custom element with tag name from META.goo
-                    customElements.define(meta.tagName, ComponentClass);
-
-                    // Load templates from META.goo
+                    // Load templates BEFORE defining custom element
+                    // (constructors need templates available when triggered by define())
                     if (meta.templates && meta.templates.length > 0) {
                         for (const template of meta.templates) {
                             try {
@@ -98,6 +89,17 @@ export default class GooeyJS {
                             }
                         }
                     }
+
+                    // Dynamically import the component class
+                    const module = await import(modulePath);
+                    const ComponentClass = module.default;
+
+                    // Inject observedAttributes from registry
+                    this._injectObservedAttributes(ComponentClass, meta.tagName);
+
+                    // Register the custom element with tag name from META.goo
+                    // (triggers constructor for any existing DOM elements)
+                    customElements.define(meta.tagName, ComponentClass);
 
                     // Load and cache default theme CSS for Shadow DOM injection
                     if (meta.themes && meta.themes.default) {

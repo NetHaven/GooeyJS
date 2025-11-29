@@ -3,7 +3,7 @@
   "tagName": "gooey-application",
   "script": "Application.js",
   "templates": [
-    { "id": "ui-Application", "file": "Application.html" }
+    { "id": "gooey-Application", "file": "Application.html" }
   ],
   "themes": {
     "default": "base",
