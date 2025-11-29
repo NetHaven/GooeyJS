@@ -60,6 +60,9 @@ export default class Template {
                         html = Template._rewriteMediaUrls(html, templateDir);
                     }
 
+                    // Add default slot to templates that don't have one (required for shadow DOM child projection)
+                    html = Template._ensureSlot(html);
+
                     // Parse HTML in an inert context (CSP-safe, no script execution)
                     const parser = new DOMParser();
                     const doc = parser.parseFromString(html, 'text/html');
@@ -101,6 +104,27 @@ export default class Template {
         Template._loading.set(templateId, loadPromise);
 
         return loadPromise;
+    }
+
+    /**
+     * Ensures templates have a <slot> element for shadow DOM child projection
+     * @param {string} html - The HTML content to process
+     * @returns {string} - HTML with slot elements added where needed
+     */
+    static _ensureSlot(html) {
+        // Check if any template already has a slot element
+        // If not, add <slot></slot> before the closing </template> tag
+        return html.replace(
+            /(<template[^>]*>)([\s\S]*?)(<\/template>)/gi,
+            (match, openTag, content, closeTag) => {
+                // Check if content already has a slot element
+                if (/<slot[\s>]/i.test(content)) {
+                    return match;
+                }
+                // Add slot at the end of template content
+                return `${openTag}${content}<slot></slot>${closeTag}`;
+            }
+        );
     }
 
     /**
