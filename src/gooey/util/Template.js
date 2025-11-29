@@ -9,14 +9,16 @@ export default class Template {
         }
     }
 
+    static _loading = new Map();
+
     static load(templateName, templateId, retryCount = 0) {
         // Check if already loaded (race condition protection)
         if (document.getElementById(templateId)) {
             return Promise.resolve();
         }
 
-        // Add loading flag to prevent concurrent loads
-        if (Template._loading?.has(templateId)) {
+        // Return existing promise if load in progress (deduplication)
+        if (Template._loading.has(templateId)) {
             return Template._loading.get(templateId);
         }
 
@@ -47,36 +49,47 @@ export default class Template {
                 if (!html || html.trim().length === 0) {
                     throw new Error(`Template ${templateName} is empty or invalid`);
                 }
-                
-                try {
-                    // Final check before DOM injection
-                    if (!document.getElementById(templateId)) {
-                        const fragment = document.createRange().createContextualFragment(html);
-                        document.body.appendChild(fragment);
-                        console.info('TEMPLATE_LOADED', `Template loaded successfully: ${templateId}`);
+
+                // Final check before DOM injection
+                if (!document.getElementById(templateId)) {
+                    // Parse HTML in an inert context (CSP-safe, no script execution)
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+
+                    // Extract only <template> elements
+                    const templates = doc.querySelectorAll('template');
+                    if (templates.length === 0) {
+                        throw new Error(`Template ${templateName} contains no <template> elements`);
                     }
-                } catch (domError) {
-                    throw new Error(`Failed to inject template ${templateId} into DOM: ${domError.message}`);
+
+                    for (const template of templates) {
+                        // Avoid duplicates
+                        if (!document.getElementById(template.id)) {
+                            document.body.appendChild(document.adoptNode(template));
+                        }
+                    }
+                    console.info('TEMPLATE_LOADED', `Template loaded successfully: ${templateId}`);
                 }
             })
             .catch(error => {
                 console.error('TEMPLATE_LOAD_ERROR', `Template loading error for ${templateId}`, { error: error.message, templateId });
-                
+
                 // Retry logic for network errors
                 if (retryCount < maxRetries && (error.name === 'TypeError' || error.message.includes('Failed to fetch'))) {
                     console.warn('TEMPLATE_RETRY', `Retrying template load for ${templateId} (attempt ${retryCount + 1}/${maxRetries})`);
                     return new Promise(resolve => {
                         setTimeout(() => {
-                            resolve(Template.loadT(templateName, templateId, retryCount + 1));
+                            resolve(Template.load(templateName, templateId, retryCount + 1));
                         }, retryDelay * (retryCount + 1)); // Exponential backoff
                     });
-                }     
+                }
+                throw error;
+            })
+            .finally(() => {
+                // Clean up loading state to allow future re-fetches
+                Template._loading.delete(templateId);
             });
 
-        // Track loading state
-        if (!Template._loading) {
-            Template._loading = new Map();
-        }
         Template._loading.set(templateId, loadPromise);
 
         return loadPromise;
