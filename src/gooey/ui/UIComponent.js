@@ -44,23 +44,23 @@ export default class UIComponent extends GooeyElement {
         this.addValidEvent(MouseEvent.MOUSE_UP);
 
         /* Translate Native Mouse Events */
-        this.nativeElement.addEventListener(MouseEvent.CLICK, ()=> {
+        HTMLElement.prototype.addEventListener.call(this, MouseEvent.CLICK, ()=> {
             this.fireEvent(MouseEvent.CLICK);
         });
 
-        this.nativeElement.addEventListener(MouseEvent.MOUSE_DOWN, ()=> {
+        HTMLElement.prototype.addEventListener.call(this, MouseEvent.MOUSE_DOWN, ()=> {
             this.fireEvent(MouseEvent.MOUSE_DOWN);
         });
 
-        this.nativeElement.addEventListener(MouseEvent.MOUSE_UP, ()=> {
+        HTMLElement.prototype.addEventListener.call(this, MouseEvent.MOUSE_UP, ()=> {
             this.fireEvent(MouseEvent.MOUSE_UP);
         });
 
-        this.nativeElement.addEventListener(MouseEvent.MOUSE_OUT, ()=> {
+        HTMLElement.prototype.addEventListener.call(this, MouseEvent.MOUSE_OUT, ()=> {
             this.fireEvent(MouseEvent.MOUSE_OUT);
         });
 
-        this.nativeElement.addEventListener(MouseEvent.MOUSE_OVER, ()=> {
+        HTMLElement.prototype.addEventListener.call(this, MouseEvent.MOUSE_OVER, ()=> {
             this.fireEvent(MouseEvent.MOUSE_OVER);
         });
 
@@ -71,12 +71,12 @@ export default class UIComponent extends GooeyElement {
         this.addValidEvent(DragEvent.DROP);
 
         /* Translate Native Drag and Drop Events */
-        this.nativeElement.addEventListener(DragEvent.START, (ev)=> {
+        HTMLElement.prototype.addEventListener.call(this, DragEvent.START, (ev)=> {
             ev.dataTransfer.setData("text", ev.target.id);
             this.fireEvent(DragEvent.START);
         });
 
-        this.nativeElement.addEventListener(DragEvent.OVER, (ev)=> {
+        HTMLElement.prototype.addEventListener.call(this, DragEvent.OVER, (ev)=> {
             let id, srcElement;
 
             id = ev.dataTransfer.getData("text");
@@ -93,11 +93,11 @@ export default class UIComponent extends GooeyElement {
             }
         });
 
-        this.nativeElement.addEventListener(DragEvent.END, ()=> {
+        HTMLElement.prototype.addEventListener.call(this, DragEvent.END, ()=> {
             this.fireEvent(DragEvent.END);
         });
 
-        this.nativeElement.addEventListener(DragEvent.DROP, (ev)=> {
+        HTMLElement.prototype.addEventListener.call(this, DragEvent.DROP, (ev)=> {
             let id, srcElement;
 
             id = ev.dataTransfer.getData("text");

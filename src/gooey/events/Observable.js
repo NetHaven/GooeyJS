@@ -4,8 +4,6 @@ export default class Observable extends HTMLElement {
     constructor() {
         super();
 
-        this.nativeElement = Object.getPrototypeOf(HTMLElement.prototype);
-
         this._watchers = new Map();
         this._computed = new Map();
 

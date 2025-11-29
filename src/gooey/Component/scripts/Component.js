@@ -40,7 +40,8 @@ export default class Component extends Observable {
             return;
         }
 
-        this._href = this.getAttribute('href');
+        // Normalize href by removing trailing slash to avoid double slashes in paths
+        this._href = this.getAttribute('href').replace(/\/+$/, '');
 
         // Load and validate META.goo to get component configuration
         let meta;
