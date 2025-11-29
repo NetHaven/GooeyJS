@@ -1,9 +1,9 @@
 {
   "name": "Window",
   "tagName": "ui-Window",
-  "script": "scripts/Window.js",
+  "script": "Window.js",
   "templates": [
-    { "id": "ui-Window", "file": "templates/Window.html" }
+    { "id": "ui-Window", "file": "Window.html" }
   ],
   "themes": {
     "default": "base",

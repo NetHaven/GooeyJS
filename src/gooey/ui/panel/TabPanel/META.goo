@@ -1,9 +1,9 @@
 {
   "name": "TabPanel",
   "tagName": "gooeyui-tabpanel",
-  "script": "scripts/TabPanel.js",
+  "script": "TabPanel.js",
   "templates": [
-    { "id": "ui-TabPanel", "file": "templates/TabPanel.html" }
+    { "id": "ui-TabPanel", "file": "TabPanel.html" }
   ],
   "themes": {
     "default": "base",

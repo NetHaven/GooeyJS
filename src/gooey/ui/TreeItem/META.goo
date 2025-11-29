@@ -1,9 +1,9 @@
 {
   "name": "TreeItem",
   "tagName": "ui-treeitem",
-  "script": "scripts/TreeItem.js",
+  "script": "TreeItem.js",
   "templates": [
-    { "id": "ui-TreeItem", "file": "templates/TreeItem.html" }
+    { "id": "ui-TreeItem", "file": "TreeItem.html" }
   ],
   "themes": {
     "default": "base",

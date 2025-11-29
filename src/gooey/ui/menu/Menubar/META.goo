@@ -1,10 +1,10 @@
 {
   "name": "Menubar",
   "tagName": "ui-Menubar",
-  "script": "scripts/Menubar.js",
+  "script": "Menubar.js",
   "templates": [
-    { "id": "ui-Menubar", "file": "templates/Menubar.html" },
-    { "id": "menuHeader", "file": "templates/MenuHeader.html" }
+    { "id": "ui-Menubar", "file": "Menubar.html" },
+    { "id": "menuHeader", "file": "MenuHeader.html" }
   ],
   "themes": {
     "default": "base",

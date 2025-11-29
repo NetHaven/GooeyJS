@@ -1,9 +1,9 @@
 {
   "name": "DatePicker",
   "tagName": "gooeyui-datepicker",
-  "script": "scripts/DatePicker.js",
+  "script": "DatePicker.js",
   "templates": [
-    { "id": "ui-DatePicker", "file": "templates/DatePicker.html" }
+    { "id": "ui-DatePicker", "file": "DatePicker.html" }
   ],
   "themes": {
     "default": "base",

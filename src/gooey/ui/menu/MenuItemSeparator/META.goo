@@ -1,9 +1,9 @@
 {
   "name": "MenuItemSeparator",
   "tagName": "ui-MenuItemSeparator",
-  "script": "scripts/MenuItemSeparator.js",
+  "script": "MenuItemSeparator.js",
   "templates": [
-    { "id": "ui-MenuItemSeparator", "file": "templates/MenuItemSeparator.html" }
+    { "id": "ui-MenuItemSeparator", "file": "MenuItemSeparator.html" }
   ],
   "themes": {
     "default": "base",

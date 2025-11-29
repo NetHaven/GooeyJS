@@ -1,9 +1,9 @@
 {
   "name": "RadioButton",
   "tagName": "gooeyui-radiobutton",
-  "script": "scripts/RadioButton.js",
+  "script": "RadioButton.js",
   "templates": [
-    { "id": "ui-RadioButton", "file": "templates/RadioButton.html" }
+    { "id": "ui-RadioButton", "file": "RadioButton.html" }
   ],
   "themes": {
     "default": "base",

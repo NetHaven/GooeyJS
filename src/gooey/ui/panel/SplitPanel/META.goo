@@ -1,9 +1,9 @@
 {
   "name": "SplitPanel",
   "tagName": "gooeyui-splitpanel",
-  "script": "scripts/SplitPanel.js",
+  "script": "SplitPanel.js",
   "templates": [
-    { "id": "ui-SplitPanel", "file": "templates/SplitPanel.html" }
+    { "id": "ui-SplitPanel", "file": "SplitPanel.html" }
   ],
   "themes": {
     "default": "base",

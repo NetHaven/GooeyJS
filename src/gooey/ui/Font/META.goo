@@ -1,9 +1,9 @@
 {
   "name": "Font",
   "tagName": "ui-font",
-  "script": "scripts/Font.js",
+  "script": "Font.js",
   "templates": [
-    { "id": "ui-Font", "file": "templates/Font.html" }
+    { "id": "ui-Font", "file": "Font.html" }
   ],
   "themes": {
     "default": "base",

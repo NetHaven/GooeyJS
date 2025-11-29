@@ -1,9 +1,9 @@
 {
   "name": "ColorPicker",
   "tagName": "ui-colorpicker",
-  "script": "scripts/ColorPicker.js",
+  "script": "ColorPicker.js",
   "templates": [
-    { "id": "ui-ColorPicker", "file": "templates/ColorPicker.html" }
+    { "id": "ui-ColorPicker", "file": "ColorPicker.html" }
   ],
   "themes": {
     "default": "base",

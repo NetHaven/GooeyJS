@@ -1,9 +1,9 @@
 {
   "name": "ProgressBar",
   "tagName": "ui-progressbar",
-  "script": "scripts/ProgressBar.js",
+  "script": "ProgressBar.js",
   "templates": [
-    { "id": "ui-ProgressBar", "file": "templates/ProgressBar.html" }
+    { "id": "ui-ProgressBar", "file": "ProgressBar.html" }
   ],
   "themes": {
     "default": "base",

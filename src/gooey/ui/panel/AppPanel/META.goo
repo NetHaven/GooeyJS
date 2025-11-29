@@ -1,9 +1,9 @@
 {
   "name": "AppPanel",
   "tagName": "gooeyui-apppanel",
-  "script": "scripts/AppPanel.js",
+  "script": "AppPanel.js",
   "templates": [
-    { "id": "ui-AppPanel", "file": "templates/AppPanel.html" }
+    { "id": "ui-AppPanel", "file": "AppPanel.html" }
   ],
   "themes": {
     "default": "base",

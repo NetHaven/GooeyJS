@@ -1,9 +1,9 @@
 {
   "name": "FormPanel",
   "tagName": "gooeyui-formpanel",
-  "script": "scripts/FormPanel.js",
+  "script": "FormPanel.js",
   "templates": [
-    { "id": "ui-FormPanel", "file": "templates/FormPanel.html" }
+    { "id": "ui-FormPanel", "file": "FormPanel.html" }
   ],
   "themes": {
     "default": "base",

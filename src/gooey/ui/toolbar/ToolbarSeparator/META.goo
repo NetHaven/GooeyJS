@@ -1,9 +1,9 @@
 {
   "name": "ToolbarSeparator",
   "tagName": "ui-ToolbarSeparator",
-  "script": "scripts/ToolbarSeparator.js",
+  "script": "ToolbarSeparator.js",
   "templates": [
-    { "id": "ui-ToolbarSeparator", "file": "templates/ToolbarSeparator.html" }
+    { "id": "ui-ToolbarSeparator", "file": "ToolbarSeparator.html" }
   ],
   "themes": {
     "default": "base",

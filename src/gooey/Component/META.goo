@@ -1,7 +1,7 @@
 {
   "name": "Component",
   "tagName": "gooey-component",
-  "script": "scripts/Component.js",
+  "script": "Component.js",
   "templates": [],
   "themes": {
     "default": "base",

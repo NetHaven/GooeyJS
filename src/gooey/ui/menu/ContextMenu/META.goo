@@ -1,9 +1,9 @@
 {
   "name": "ContextMenu",
   "tagName": "ui-ContextMenu",
-  "script": "scripts/ContextMenu.js",
+  "script": "ContextMenu.js",
   "templates": [
-    { "id": "ui-ContextMenu", "file": "templates/ContextMenu.html" }
+    { "id": "ui-ContextMenu", "file": "ContextMenu.html" }
   ],
   "themes": {
     "default": "base",

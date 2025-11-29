@@ -1,9 +1,9 @@
 {
   "name": "DropDownList",
   "tagName": "gooeyui-dropdownlist",
-  "script": "scripts/DropDownList.js",
+  "script": "DropDownList.js",
   "templates": [
-    { "id": "ui-DropDownList", "file": "templates/DropDownList.html" }
+    { "id": "ui-DropDownList", "file": "DropDownList.html" }
   ],
   "themes": {
     "default": "base",

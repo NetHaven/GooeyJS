@@ -1,9 +1,9 @@
 {
   "name": "TimePicker",
   "tagName": "gooeyui-timepicker",
-  "script": "scripts/TimePicker.js",
+  "script": "TimePicker.js",
   "templates": [
-    { "id": "ui-TimePicker", "file": "templates/TimePicker.html" }
+    { "id": "ui-TimePicker", "file": "TimePicker.html" }
   ],
   "themes": {
     "default": "base",

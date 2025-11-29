@@ -1,9 +1,9 @@
 {
   "name": "ComboBox",
   "tagName": "gooeyui-combobox",
-  "script": "scripts/ComboBox.js",
+  "script": "ComboBox.js",
   "templates": [
-    { "id": "ui-ComboBox", "file": "templates/ComboBox.html" }
+    { "id": "ui-ComboBox", "file": "ComboBox.html" }
   ],
   "themes": {
     "default": "base",

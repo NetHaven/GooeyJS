@@ -1,9 +1,9 @@
 {
   "name": "RichTextEditor",
   "tagName": "gooeyui-richtexteditor",
-  "script": "scripts/RichTextEditor.js",
+  "script": "RichTextEditor.js",
   "templates": [
-    { "id": "ui-RichTextEditor", "file": "templates/RichTextEditor.html" }
+    { "id": "ui-RichTextEditor", "file": "RichTextEditor.html" }
   ],
   "themes": {
     "default": "base",

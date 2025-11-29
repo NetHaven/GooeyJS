@@ -1,9 +1,9 @@
 {
   "name": "Border",
   "tagName": "ui-border",
-  "script": "scripts/Border.js",
+  "script": "Border.js",
   "templates": [
-    { "id": "ui-Border", "file": "templates/Border.html" }
+    { "id": "ui-Border", "file": "Border.html" }
   ],
   "themes": {
     "default": "base",

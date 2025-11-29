@@ -1,9 +1,9 @@
 {
   "name": "TextField",
   "tagName": "gooeyui-textfield",
-  "script": "scripts/TextField.js",
+  "script": "TextField.js",
   "templates": [
-    { "id": "ui-TextField", "file": "templates/TextField.html" }
+    { "id": "ui-TextField", "file": "TextField.html" }
   ],
   "themes": {
     "default": "base",

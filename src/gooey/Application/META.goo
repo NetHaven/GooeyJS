@@ -1,9 +1,9 @@
 {
   "name": "Application",
   "tagName": "gooey-application",
-  "script": "scripts/Application.js",
+  "script": "Application.js",
   "templates": [
-    { "id": "ui-Application", "file": "templates/Application.html" }
+    { "id": "ui-Application", "file": "Application.html" }
   ],
   "themes": {
     "default": "base",

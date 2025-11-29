@@ -1,9 +1,9 @@
 {
   "name": "Panel",
   "tagName": "gooeyui-panel",
-  "script": "scripts/Panel.js",
+  "script": "Panel.js",
   "templates": [
-    { "id": "ui-Panel", "file": "templates/Panel.html" }
+    { "id": "ui-Panel", "file": "Panel.html" }
   ],
   "themes": {
     "default": "base",

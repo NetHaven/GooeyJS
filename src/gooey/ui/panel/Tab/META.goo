@@ -1,9 +1,9 @@
 {
   "name": "Tab",
   "tagName": "gooeyui-tab",
-  "script": "scripts/Tab.js",
+  "script": "Tab.js",
   "templates": [
-    { "id": "ui-Tab", "file": "templates/Tab.html" }
+    { "id": "ui-Tab", "file": "Tab.html" }
   ],
   "themes": {
     "default": "base",

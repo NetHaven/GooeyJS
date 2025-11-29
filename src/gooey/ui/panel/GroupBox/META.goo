@@ -1,9 +1,9 @@
 {
   "name": "GroupBox",
   "tagName": "gooeyui-groupbox",
-  "script": "scripts/GroupBox.js",
+  "script": "GroupBox.js",
   "templates": [
-    { "id": "ui-GroupBox", "file": "templates/GroupBox.html" }
+    { "id": "ui-GroupBox", "file": "GroupBox.html" }
   ],
   "themes": {
     "default": "base",

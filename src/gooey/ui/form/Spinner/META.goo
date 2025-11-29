@@ -1,9 +1,9 @@
 {
   "name": "Spinner",
   "tagName": "gooeyui-spinner",
-  "script": "scripts/Spinner.js",
+  "script": "Spinner.js",
   "templates": [
-    { "id": "ui-Spinner", "file": "templates/Spinner.html" }
+    { "id": "ui-Spinner", "file": "Spinner.html" }
   ],
   "themes": {
     "default": "base",

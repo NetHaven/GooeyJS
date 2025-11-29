@@ -1,9 +1,9 @@
 {
   "name": "RadioButtonGroup",
   "tagName": "gooeyui-radiobuttongroup",
-  "script": "scripts/RadioButtonGroup.js",
+  "script": "RadioButtonGroup.js",
   "templates": [
-    { "id": "ui-RadioButtonGroup", "file": "templates/RadioButtonGroup.html" }
+    { "id": "ui-RadioButtonGroup", "file": "RadioButtonGroup.html" }
   ],
   "themes": {
     "default": "base",

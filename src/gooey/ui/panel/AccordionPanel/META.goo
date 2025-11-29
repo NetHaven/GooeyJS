@@ -1,9 +1,9 @@
 {
   "name": "AccordionPanel",
   "tagName": "gooeyui-accordionpanel",
-  "script": "scripts/AccordionPanel.js",
+  "script": "AccordionPanel.js",
   "templates": [
-    { "id": "ui-AccordionPanel", "file": "templates/AccordionPanel.html" }
+    { "id": "ui-AccordionPanel", "file": "AccordionPanel.html" }
   ],
   "themes": {
     "default": "base",

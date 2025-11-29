@@ -1,9 +1,9 @@
 {
   "name": "ListBox",
   "tagName": "gooeyui-listbox",
-  "script": "scripts/ListBox.js",
+  "script": "ListBox.js",
   "templates": [
-    { "id": "ui-ListBox", "file": "templates/ListBox.html" }
+    { "id": "ui-ListBox", "file": "ListBox.html" }
   ],
   "themes": {
     "default": "base",

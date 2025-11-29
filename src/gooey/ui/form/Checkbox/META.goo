@@ -1,9 +1,9 @@
 {
   "name": "Checkbox",
   "tagName": "gooeyui-checkbox",
-  "script": "scripts/Checkbox.js",
+  "script": "Checkbox.js",
   "templates": [
-    { "id": "ui-Checkbox", "file": "templates/Checkbox.html" }
+    { "id": "ui-Checkbox", "file": "Checkbox.html" }
   ],
   "themes": {
     "default": "base",

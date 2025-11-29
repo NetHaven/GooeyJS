@@ -1,7 +1,7 @@
 {
   "name": "FloatingPane",
   "tagName": "ui-FloatingPane",
-  "script": "scripts/FloatingPane.js",
+  "script": "FloatingPane.js",
   "templates": [],
   "themes": {
     "default": "base",

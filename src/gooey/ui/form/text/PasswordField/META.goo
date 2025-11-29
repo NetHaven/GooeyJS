@@ -1,9 +1,9 @@
 {
   "name": "PasswordField",
   "tagName": "gooeyui-passwordfield",
-  "script": "scripts/PasswordField.js",
+  "script": "PasswordField.js",
   "templates": [
-    { "id": "ui-PasswordField", "file": "templates/PasswordField.html" }
+    { "id": "ui-PasswordField", "file": "PasswordField.html" }
   ],
   "themes": {
     "default": "base",

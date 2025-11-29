@@ -1,9 +1,9 @@
 {
   "name": "TextArea",
   "tagName": "gooeyui-textarea",
-  "script": "scripts/TextArea.js",
+  "script": "TextArea.js",
   "templates": [
-    { "id": "ui-TextArea", "file": "templates/TextArea.html" }
+    { "id": "ui-TextArea", "file": "TextArea.html" }
   ],
   "themes": {
     "default": "base",

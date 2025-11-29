@@ -1,9 +1,9 @@
 {
   "name": "Menu",
   "tagName": "ui-Menu",
-  "script": "scripts/Menu.js",
+  "script": "Menu.js",
   "templates": [
-    { "id": "ui-Menu", "file": "templates/Menu.html" }
+    { "id": "ui-Menu", "file": "Menu.html" }
   ],
   "themes": {
     "default": "base",

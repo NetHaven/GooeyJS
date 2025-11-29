@@ -1,9 +1,9 @@
 {
   "name": "Label",
   "tagName": "ui-label",
-  "script": "scripts/Label.js",
+  "script": "Label.js",
   "templates": [
-    { "id": "ui-Label", "file": "templates/Label.html" }
+    { "id": "ui-Label", "file": "Label.html" }
   ],
   "themes": {
     "default": "base",

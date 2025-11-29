@@ -1,9 +1,9 @@
 {
   "name": "Toolbar",
   "tagName": "ui-Toolbar",
-  "script": "scripts/Toolbar.js",
+  "script": "Toolbar.js",
   "templates": [
-    { "id": "ui-Toolbar", "file": "templates/Toolbar.html" }
+    { "id": "ui-Toolbar", "file": "Toolbar.html" }
   ],
   "themes": {
     "default": "base",
