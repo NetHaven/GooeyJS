@@ -4,16 +4,15 @@ import KeyboardEvent from "../../../events/KeyboardEvent.js";
 import MouseEvent from "../../../events/MouseEvent.js";
 import TreeEvent from '../../../events/TreeEvent.js';
 import TreeItemEvent from '../../../events/TreeItemEvent.js';
+import Template from '../../../util/Template.js';
 
 export default class Tree extends UIComponent {
     constructor() {
         super();
-        
-        const template = document.getElementById("ui-Tree");
-        const clone = document.importNode(template.content, true);
-        this.appendChild(clone);
-        
-        this._treeElement = this.querySelector('.ui-Tree');
+
+        Template.activate("ui-Tree", this);
+
+        this._treeElement = this.shadowRoot.querySelector('.ui-Tree');
         this._selectedItem = null;
         
         this.addValidEvent(KeyboardEvent.KEY_DOWN);

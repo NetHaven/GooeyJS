@@ -1,0 +1,161 @@
+/* Window Base Theme */
+:host {
+    background-color: #c1c0c1;
+    border-style: solid;
+    border-width: 1px;
+    display: none;
+    margin: 0;
+    position: fixed;
+    z-index: 1500;
+}
+
+:host([visible=true]) {
+    display: flex !important;
+    height: 75vh;
+    flex-direction: column;
+}
+
+.WindowTitlebar {
+    background: #010082;
+    color: white;
+    cursor: default;
+    font-weight: bold;
+    height: 20px;
+    text-align: center;
+    user-select: none;
+    width: 100%;
+}
+
+.WindowContent {
+    display: flex;
+    flex: 1;
+    margin: 8px;
+    min-height: 0px;
+}
+
+.WindowButtonbar {
+    display: flex;
+    height: 30px;
+    margin: 10px;
+    justify-content: flex-end;
+}
+
+.WindowButtonbar button {
+    margin-left: 4px;
+    margin-right: 8px;
+    margin-top: 8px;
+    width: 96px;
+}
+
+.uiWindowModal {
+    height: 100%;
+    left: 0;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1400;
+}
+
+/* Ensure modal windows appear above everything else */
+:host([modal]) {
+    z-index: 1600;
+}
+
+/* Dialog Alert Styles */
+.DialogAlert-container {
+    display: flex;
+    align-items: flex-start;
+    padding: 16px;
+    gap: 12px;
+}
+
+.DialogAlert-icon {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+}
+
+.DialogAlert-message {
+    flex: 1;
+    font-family: sans-serif;
+    font-size: 14px;
+    line-height: 1.4;
+    word-wrap: break-word;
+}
+
+/* Dialog Info Styles */
+.DialogInfo-container {
+    display: flex;
+    align-items: flex-start;
+    padding: 16px;
+    gap: 12px;
+}
+
+.DialogInfo-icon {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+}
+
+.DialogInfo-message {
+    flex: 1;
+    font-family: sans-serif;
+    font-size: 14px;
+    line-height: 1.4;
+    word-wrap: break-word;
+}
+
+/* Dialog Confirm Styles */
+.DialogConfirm-container {
+    display: flex;
+    align-items: flex-start;
+    padding: 16px;
+    gap: 12px;
+}
+
+.DialogConfirm-icon {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+}
+
+.DialogConfirm-message {
+    flex: 1;
+    font-family: sans-serif;
+    font-size: 14px;
+    line-height: 1.4;
+    word-wrap: break-word;
+}
+
+/* Dialog Prompt Styles */
+.DialogPrompt-container {
+    display: flex;
+    align-items: flex-start;
+    padding: 16px;
+    gap: 12px;
+}
+
+.DialogPrompt-icon {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+}
+
+.DialogPrompt-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.DialogPrompt-message {
+    font-family: sans-serif;
+    font-size: 14px;
+    line-height: 1.4;
+    word-wrap: break-word;
+}
+
+.DialogPrompt-input {
+    width: 100%;
+}

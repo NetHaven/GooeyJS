@@ -3,11 +3,15 @@ import LayoutType from '../../../layout/Layout/scripts/LayoutType.js';
 import TabEvent from '../../../../events/panel/TabEvent.js';
 import TabPanelEvent from '../../../../events/panel/TabPanelEvent.js';
 import MouseEvent from '../../../../events/MouseEvent.js';
+import Template from '../../../../util/Template.js';
 
 export default class Tab extends Container {
     constructor() {
         super();
-        
+
+        this.attachShadow({ mode: 'open' });
+        Template.activate("ui-Tab", this.shadowRoot);
+
         this.layout = LayoutType.FLOW;
         this._active = false;
         this._tabHeader = null;

@@ -6,7 +6,8 @@ export default class Panel extends Container {
     constructor () {
         super();
 
-        Template.activate("ui-Panel", this);
+        this.attachShadow({ mode: 'open' });
+        Template.activate("ui-Panel", this.shadowRoot);
         this.layout = LayoutType.FLOW;
 
         // Add support for title attribute

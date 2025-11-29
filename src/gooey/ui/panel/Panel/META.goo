@@ -6,8 +6,8 @@
     { "id": "ui-Panel", "file": "templates/Panel.html" }
   ],
   "themes": {
-    "default": null,
-    "available": []
+    "default": "base",
+    "available": ["base"]
   },
   "attributes": {
     "title": { "type": "STRING", "default": null },

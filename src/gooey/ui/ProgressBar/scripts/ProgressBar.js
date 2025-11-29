@@ -8,7 +8,7 @@ export default class ProgressBar extends UIComponent {
         this._max = 100;
         this._indeterminate = false;
         
-        Template.activate("ui-ProgressBar", this);
+        Template.activate("ui-ProgressBar", this.shadowRoot);
         this.render();
     }
 
@@ -17,9 +17,9 @@ export default class ProgressBar extends UIComponent {
     }
 
     render() {
-        const progressBar = this.querySelector('.progress-bar');
-        const progressFill = this.querySelector('.progress-fill');
-        const progressText = this.querySelector('.progress-text');
+        const progressBar = this.shadowRoot.querySelector('.progress-bar');
+        const progressFill = this.shadowRoot.querySelector('.progress-fill');
+        const progressText = this.shadowRoot.querySelector('.progress-text');
 
         if (!progressBar || !progressFill || !progressText) return;
 

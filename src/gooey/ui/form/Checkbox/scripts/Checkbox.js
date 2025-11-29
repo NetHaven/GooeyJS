@@ -7,9 +7,9 @@ export default class Checkbox extends FormElement {
     constructor() {
         super();
 
-        Template.activate("ui-Checkbox", this);
+        Template.activate("ui-Checkbox", this.shadowRoot);
 
-        this.checkbox = this.querySelector("input");
+        this.checkbox = this.shadowRoot.querySelector("input");
         this.formElement = this.checkbox;
 		this.appendChild(this.checkbox);
         

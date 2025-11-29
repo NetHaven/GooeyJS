@@ -2,11 +2,15 @@ import Container from '../../../Container.js';
 import DragEvent from '../../../../events/DragEvent.js';
 import MouseEvent from '../../../../events/MouseEvent.js';
 import SplitPanelEvent from '../../../../events/panel/SplitPanelEvent.js';
+import Template from '../../../../util/Template.js';
 
 export default class SplitPanel extends Container {
     constructor() {
         super();
-        
+
+        this.attachShadow({ mode: 'open' });
+        Template.activate("ui-SplitPanel", this.shadowRoot);
+
         this.classList.add("ui-SplitPanel");
         
         // Default attributes
@@ -76,10 +80,10 @@ export default class SplitPanel extends Container {
             this._secondPane.appendChild(children[1]);
         }
         
-        // Append internal structure
-        this.appendChild(this._firstPane);
-        this.appendChild(this._divider);
-        this.appendChild(this._secondPane);
+        // Append internal structure to shadow root
+        this.shadowRoot.appendChild(this._firstPane);
+        this.shadowRoot.appendChild(this._divider);
+        this.shadowRoot.appendChild(this._secondPane);
     }
     
     _setupEventListeners() {

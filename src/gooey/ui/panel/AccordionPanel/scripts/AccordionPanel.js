@@ -2,11 +2,15 @@ import Container from '../../../Container.js';
 import LayoutType from '../../../layout/Layout/scripts/LayoutType.js';
 import AccordionPanelEvent from '../../../../events/panel/AccordionPanelEvent.js';
 import MouseEvent from '../../../../events/MouseEvent.js';
+import Template from '../../../../util/Template.js';
 
 export default class AccordionPanel extends Container {
     constructor() {
         super();
-        
+
+        this.attachShadow({ mode: 'open' });
+        Template.activate("ui-AccordionPanel", this.shadowRoot);
+
         this.classList.add("ui-AccordionPanel");
         this.layout = LayoutType.VBOX;
         
@@ -94,8 +98,9 @@ export default class AccordionPanel extends Container {
         accordion.appendChild(header);
         accordion.appendChild(content);
         
-        // Replace the original panel
-        this.replaceChild(accordion, panel);
+        // Replace the original panel in light DOM
+        this.insertBefore(accordion, panel);
+        panel.remove();
         
         // Store accordion data
         this._accordions.push({

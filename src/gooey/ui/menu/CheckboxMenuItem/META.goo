@@ -6,8 +6,8 @@
     { "id": "ui-CheckboxmenuItem", "file": "templates/CheckboxMenuItem.html" }
   ],
   "themes": {
-    "default": null,
-    "available": []
+    "default": "base",
+    "available": ["base"]
   },
   "attributes": {
     "checked": { "type": "BOOLEAN", "default": false },

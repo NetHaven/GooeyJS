@@ -9,15 +9,15 @@ export default class ContextMenu extends UIComponent {
         
         // Store existing children (menu items) before clearing
         const existingChildren = Array.from(this.children);
-        
+
         // Override the template to use ContextMenu template
         this.innerHTML = '';
         const template = document.getElementById("ui-ContextMenu");
         const clone = document.importNode(template.content, true);
-        this.appendChild(clone);
-        
-        this._contextMenuElement = this.querySelector('.ui-ContextMenu');
-        
+        this.shadowRoot.appendChild(clone);
+
+        this._contextMenuElement = this.shadowRoot.querySelector('.ui-ContextMenu');
+
         // Restore the existing children to the context menu element
         existingChildren.forEach(child => {
             this._contextMenuElement.appendChild(child);

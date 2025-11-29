@@ -6,8 +6,8 @@
     { "id": "ui-Menu", "file": "templates/Menu.html" }
   ],
   "themes": {
-    "default": null,
-    "available": []
+    "default": "base",
+    "available": ["base"]
   },
   "attributes": {
     "accelerator": { "type": "STRING", "default": null },

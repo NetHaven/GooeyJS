@@ -3,26 +3,25 @@ import TreeItemEvent from '../../../events/TreeItemEvent.js';
 import MouseEvent from '../../../events/MouseEvent.js';
 import DragEvent from '../../../events/DragEvent.js';
 import Key from '../../../io/Key.js';
+import Template from '../../../util/Template.js';
 
 export default class TreeItem extends UIComponent {
     constructor() {
         super();
-        
+
         // Store any existing child ui-treeitem elements before adding template
         const existingChildren = Array.from(this.querySelectorAll(':scope > ui-treeitem'));
-        
-        const template = document.getElementById("ui-TreeItem");
-        const clone = document.importNode(template.content, true);
-        this.appendChild(clone);
-        
+
+        Template.activate("ui-TreeItem", this);
+
         this._expanded = false;
         this._hasChildren = false;
-        
-        this._contentElement = this.querySelector('.ui-TreeItem-content');
-        this._expanderElement = this.querySelector('.ui-TreeItem-expander');
-        this._iconElement = this.querySelector('.ui-TreeItem-icon');
-        this._textElement = this.querySelector('.ui-TreeItem-text');
-        this._childrenElement = this.querySelector('.ui-TreeItem-children');
+
+        this._contentElement = this.shadowRoot.querySelector('.ui-TreeItem-content');
+        this._expanderElement = this.shadowRoot.querySelector('.ui-TreeItem-expander');
+        this._iconElement = this.shadowRoot.querySelector('.ui-TreeItem-icon');
+        this._textElement = this.shadowRoot.querySelector('.ui-TreeItem-text');
+        this._childrenElement = this.shadowRoot.querySelector('.ui-TreeItem-children');
         
         // Validate that essential elements were found
         if (!this._contentElement || !this._childrenElement) {

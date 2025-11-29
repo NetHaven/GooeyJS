@@ -6,8 +6,8 @@
     { "id": "ui-ContextMenu", "file": "templates/ContextMenu.html" }
   ],
   "themes": {
-    "default": null,
-    "available": []
+    "default": "base",
+    "available": ["base"]
   },
   "attributes": {
     "active": { "type": "BOOLEAN", "default": false },

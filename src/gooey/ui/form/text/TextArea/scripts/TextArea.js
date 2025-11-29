@@ -8,8 +8,8 @@ export default class TextArea extends TextElement {
     constructor() {
         super();
 
-        Template.activate("ui-TextArea", this);
-        this.textElement = this.querySelector("textarea");
+        Template.activate("ui-TextArea", this.shadowRoot);
+        this.textElement = this.shadowRoot.querySelector("textarea");
         this.formElement = this.textElement;
 		this.appendChild(this.textElement);
         

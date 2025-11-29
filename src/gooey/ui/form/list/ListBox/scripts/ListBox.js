@@ -11,15 +11,13 @@ export default class ListBox extends FormElement {
         const existingOptions = Array.from(this.querySelectorAll('option'));
 
         Template.activate("ui-ListBox", this);
-        this.listBox = this.querySelector("select");
+        this.listBox = this.shadowRoot.querySelector("select");
         this.formElement = this.listBox;
-        
+
         // Move existing options to the internal select element
         existingOptions.forEach(option => {
             this.listBox.appendChild(option);
         });
-        
-        this.appendChild(this.listBox);
         
         // Add valid events
         this.addValidEvent(ListBoxEvent.CHANGE);

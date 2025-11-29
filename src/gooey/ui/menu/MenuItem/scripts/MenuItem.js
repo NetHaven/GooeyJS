@@ -7,11 +7,11 @@ export default class MenuItem extends UIComponent {
     constructor () {
         super();
 
-        Template.activate("ui-MenuItem", this);
+        Template.activate("ui-MenuItem", this.shadowRoot);
 
-        this.textElement = this.querySelector(".MenuItemText");
-        this.shortcutElement = this.querySelector(".MenuItemShortcut");
-        this.iconElement = this.querySelector(".MenuItemIconImage");
+        this.textElement = this.shadowRoot.querySelector(".MenuItemText");
+        this.shortcutElement = this.shadowRoot.querySelector(".MenuItemShortcut");
+        this.iconElement = this.shadowRoot.querySelector(".MenuItemIconImage");
 
         if (this.hasAttribute("text")) {
             this.text = this.getAttribute("text");

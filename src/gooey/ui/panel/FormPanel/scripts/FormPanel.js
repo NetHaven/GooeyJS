@@ -7,7 +7,8 @@ export default class FormPanel extends Panel {
     constructor () {
         super();
 
-        Template.activate("ui-FormPanel", this);
+        // Panel already created shadowRoot, so we append to it
+        Template.activate("ui-FormPanel", this.shadowRoot);
 
         this.classList.add("ui-FormPanel");
 

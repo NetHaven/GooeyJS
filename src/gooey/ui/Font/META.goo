@@ -6,8 +6,8 @@
     { "id": "ui-Font", "file": "templates/Font.html" }
   ],
   "themes": {
-    "default": null,
-    "available": []
+    "default": "base",
+    "available": ["base"]
   },
   "attributes": {
     "family": { "type": "STRING", "default": null },

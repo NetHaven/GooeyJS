@@ -6,8 +6,8 @@
     { "id": "ui-ToggleButton", "file": "ToggleButton.html" }
   ],
   "themes": {
-    "default": null,
-    "available": []
+    "default": "base",
+    "available": ["base"]
   },
   "attributes": {
     "action": { "type": "STRING", "default": null },

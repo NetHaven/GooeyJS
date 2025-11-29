@@ -8,8 +8,8 @@ export default class Label extends UIComponent {
     constructor () {		
 		super();
 		
-		Template.activate("ui-Label", this);
-		this.container = this.querySelector("div");
+		Template.activate("ui-Label", this.shadowRoot);
+		this.container = this.shadowRoot.querySelector("div");
 		
 		if (this.hasAttribute("icon")) {
 			this.icon = this.getAttribute("icon");			

@@ -4,12 +4,13 @@ import Template from '../../../../util/Template.js';
 export default class GroupBox extends Panel {
     constructor() {
         super();
-        
-        Template.activate("ui-GroupBox", this);
+
+        // Panel already created shadowRoot, so we append to it
+        Template.activate("ui-GroupBox", this.shadowRoot);
         this.classList.add("ui-GroupBox");
-        
-        this.contentPanel = this.querySelector('div');
-        this.textLabel = this.querySelector('span');
+
+        this.contentPanel = this.shadowRoot.querySelector('div');
+        this.textLabel = this.shadowRoot.querySelector('span');
         
         if (this.hasAttribute("text")) {
             this.text = this.getAttribute("text");
@@ -18,13 +19,9 @@ export default class GroupBox extends Panel {
     
     connectedCallback() {
         super.connectedCallback && super.connectedCallback();
-        
-        const children = Array.from(this.childNodes);
-        children.forEach(child => {
-            if (child !== this.contentPanel && child !== this.textLabel) {
-                this.contentPanel.appendChild(child);
-            }
-        });
+
+        // With shadow DOM and slot, children are automatically projected
+        // No need to manually move them
     }
     
     get text() {

@@ -6,8 +6,8 @@
     { "id": "ui-TabPanel", "file": "templates/TabPanel.html" }
   ],
   "themes": {
-    "default": null,
-    "available": []
+    "default": "base",
+    "available": ["base"]
   },
   "attributes": {
     "orientation": { "type": "STRING", "default": "horizontal" },

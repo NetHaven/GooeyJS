@@ -6,8 +6,8 @@
     { "id": "ui-ToolbarSeparator", "file": "templates/ToolbarSeparator.html" }
   ],
   "themes": {
-    "default": null,
-    "available": []
+    "default": "base",
+    "available": ["base"]
   },
   "attributes": {
     "draggable": { "type": "BOOLEAN", "default": false },

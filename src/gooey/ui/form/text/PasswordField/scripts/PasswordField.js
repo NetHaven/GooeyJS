@@ -10,8 +10,8 @@ export default class PasswordField extends TextElement {
     constructor() {
         super();
 
-        Template.activate("ui-PasswordField", this);
-        this.textElement = this.querySelector("input");
+        Template.activate("ui-PasswordField", this.shadowRoot);
+        this.textElement = this.shadowRoot.querySelector("input");
         this.formElement = this.textElement;
         this.appendChild(this.textElement);
         

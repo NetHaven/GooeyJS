@@ -7,8 +7,8 @@
     { "id": "menuHeader", "file": "templates/MenuHeader.html" }
   ],
   "themes": {
-    "default": null,
-    "available": []
+    "default": "base",
+    "available": ["base"]
   },
   "attributes": {
     "active": { "type": "BOOLEAN", "default": false },

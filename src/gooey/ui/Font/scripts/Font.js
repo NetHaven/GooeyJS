@@ -4,7 +4,8 @@ import GooeyElement from "../../../GooeyElement.js";
 
 export default class Font extends GooeyElement {
     constructor() {
-        Template.activate("ui-Font", this);
+        super();
+        Template.activate("ui-Font", this.shadowRoot);
     }
     
     get family() {

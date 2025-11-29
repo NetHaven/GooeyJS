@@ -1,7 +1,10 @@
 /**
  * MetaLoader - Loads and validates META.goo component configuration files
+ * Also handles theme CSS loading and injection for Shadow DOM components
  */
 export default class MetaLoader {
+    // CSS cache for performance - shared stylesheets across component instances
+    static _cssCache = new Map();
     /**
      * Load a META.goo file from a component directory
      * @param {string} componentPath - Full path to the component directory
@@ -140,5 +143,115 @@ export default class MetaLoader {
     static async loadAndValidate(componentPath) {
         const meta = await this.load(componentPath);
         return this.validate(meta);
+    }
+
+    /**
+     * Load theme CSS and return as constructable stylesheet or text
+     * @param {string} componentPath - Full path to component directory
+     * @param {string} themeName - Theme name (e.g., "base")
+     * @returns {Promise<{type: string, sheet?: CSSStyleSheet, cssText: string}>}
+     */
+    static async loadThemeCSS(componentPath, themeName) {
+        const cacheKey = `${componentPath}/${themeName}`;
+
+        // Return cached if available
+        if (this._cssCache.has(cacheKey)) {
+            return this._cssCache.get(cacheKey);
+        }
+
+        const cssPath = `${componentPath}/themes/${themeName}.css`;
+
+        try {
+            const response = await fetch(cssPath, {
+                method: 'GET',
+                cache: 'default',
+                headers: {
+                    'Accept': 'text/css,*/*',
+                    'Cache-Control': 'max-age=3600'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`Theme CSS not found: ${cssPath} (HTTP ${response.status})`);
+            }
+
+            const cssText = await response.text();
+
+            if (!cssText || cssText.trim().length === 0) {
+                throw new Error(`Theme CSS is empty: ${cssPath}`);
+            }
+
+            let result;
+
+            // Use Constructable Stylesheets if available (modern browsers)
+            if ('adoptedStyleSheets' in Document.prototype) {
+                const sheet = new CSSStyleSheet();
+                sheet.replaceSync(cssText);
+                result = { type: 'stylesheet', sheet, cssText };
+            } else {
+                // Fallback for older browsers
+                result = { type: 'text', cssText };
+            }
+
+            // Cache the result for sharing across component instances
+            this._cssCache.set(cacheKey, result);
+
+            return result;
+
+        } catch (error) {
+            console.error(`Failed to load theme CSS: ${cssPath}`, error);
+            throw error;
+        }
+    }
+
+    /**
+     * Inject CSS into a shadow root
+     * @param {ShadowRoot} shadowRoot - Target shadow root
+     * @param {Object} cssResult - Result from loadThemeCSS
+     */
+    static injectCSS(shadowRoot, cssResult) {
+        if (!shadowRoot || !cssResult) {
+            return;
+        }
+
+        if (cssResult.type === 'stylesheet' && cssResult.sheet) {
+            // Use adoptedStyleSheets for efficient sharing
+            shadowRoot.adoptedStyleSheets = [
+                ...shadowRoot.adoptedStyleSheets,
+                cssResult.sheet
+            ];
+        } else if (cssResult.cssText) {
+            // Fallback: inject <style> element
+            const style = document.createElement('style');
+            style.setAttribute('data-theme', 'true');
+            style.textContent = cssResult.cssText;
+            shadowRoot.prepend(style);
+        }
+    }
+
+    /**
+     * Switch theme for a component's shadow root
+     * @param {ShadowRoot} shadowRoot - Target shadow root
+     * @param {string} componentPath - Component directory path
+     * @param {string} newTheme - New theme name
+     */
+    static async switchTheme(shadowRoot, componentPath, newTheme) {
+        const cssResult = await this.loadThemeCSS(componentPath, newTheme);
+
+        // Clear existing adopted stylesheets
+        shadowRoot.adoptedStyleSheets = [];
+
+        // Remove existing <style> elements if using fallback
+        shadowRoot.querySelectorAll('style[data-theme]').forEach(el => el.remove());
+
+        // Inject new theme
+        this.injectCSS(shadowRoot, cssResult);
+    }
+
+    /**
+     * Clear CSS cache (useful for development hot reload)
+     */
+    static clearCache() {
+        this._cssCache.clear();
     }
 }

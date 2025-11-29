@@ -6,8 +6,8 @@
     { "id": "ui-AccordionPanel", "file": "templates/AccordionPanel.html" }
   ],
   "themes": {
-    "default": null,
-    "available": []
+    "default": "base",
+    "available": ["base"]
   },
   "attributes": {
     "multiopen": { "type": "BOOLEAN", "default": false },

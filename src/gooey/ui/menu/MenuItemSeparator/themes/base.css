@@ -1,0 +1,4 @@
+/* MenuItemSeparator styles are typically defined by parent components like ContextMenu */
+:host {
+    display: block;
+}

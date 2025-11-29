@@ -10,15 +10,15 @@ import TextElementEvent from '../../../../../events/form/text/TextElementEvent.j
 export default class ComboBox extends ListBox {
     constructor() {
         super();
-        
+
         Template.activate("ui-ComboBox", this);
 
         // Create the combo box structure
-        this.listBox = this.querySelector("select.combobox-list");
-        this._container = this.querySelector('div.combobox-container');
-        this._textInput = this.querySelector('input.combobox-input');
-        this._dropdownButton = this.querySelector('button.combobox-button');
-        this._dropdownContainer = this.querySelector('div.combobox-dropdown');
+        this.listBox = this.shadowRoot.querySelector("select.combobox-list");
+        this._container = this.shadowRoot.querySelector('div.combobox-container');
+        this._textInput = this.shadowRoot.querySelector('input.combobox-input');
+        this._dropdownButton = this.shadowRoot.querySelector('button.combobox-button');
+        this._dropdownContainer = this.shadowRoot.querySelector('div.combobox-dropdown');
         this._dropdownContainer.style.display = 'none';
         
         // Update formElement reference for FormElement functionality

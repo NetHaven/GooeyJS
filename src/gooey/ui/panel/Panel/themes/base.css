@@ -1,0 +1,9 @@
+/* Panel Base Theme */
+
+:host {
+    display: block;
+}
+
+::slotted(*) {
+    /* Child elements use the container's layout system */
+}

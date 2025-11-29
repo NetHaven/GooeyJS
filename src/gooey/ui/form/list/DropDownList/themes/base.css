@@ -1,0 +1,13 @@
+/* DropDownList Styles */
+
+/* Disabled styles for DropDownList */
+:host([disabled]),
+:host([disabled]) select {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+:host([disabled]) select {
+    background-color: #c1c0c1;
+    color: #808080;
+}

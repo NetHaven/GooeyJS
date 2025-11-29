@@ -1,0 +1,5 @@
+/* FloatingPane Base Theme */
+/* FloatingPane inherits all styles from Window */
+:host {
+    display: block;
+}

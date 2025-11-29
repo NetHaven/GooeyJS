@@ -6,8 +6,8 @@
     { "id": "ui-Tab", "file": "templates/Tab.html" }
   ],
   "themes": {
-    "default": null,
-    "available": []
+    "default": "base",
+    "available": ["base"]
   },
   "attributes": {
     "name": { "type": "STRING", "default": "Tab" },

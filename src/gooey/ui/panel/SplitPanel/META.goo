@@ -6,8 +6,8 @@
     { "id": "ui-SplitPanel", "file": "templates/SplitPanel.html" }
   ],
   "themes": {
-    "default": null,
-    "available": []
+    "default": "base",
+    "available": ["base"]
   },
   "attributes": {
     "dividersize": { "type": "NUMBER", "default": 5 },

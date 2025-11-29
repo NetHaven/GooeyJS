@@ -7,7 +7,8 @@ export default class AppPanel extends Container {
     constructor () {
         super();
 
-        Template.activate("ui-AppPanel", this);
+        this.attachShadow({ mode: 'open' });
+        Template.activate("ui-AppPanel", this.shadowRoot);
         this.layout = LayoutType.BORDER;
         
         // Handle formfactor attribute

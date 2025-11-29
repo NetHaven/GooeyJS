@@ -11,7 +11,7 @@ export default class RichTextEditor extends TextElement {
     constructor() {
         super();
 
-        Template.activate("ui-RichTextEditor", this);
+        Template.activate("ui-RichTextEditor", this.shadowRoot);
         this.classList.add('ui-RichTextEditor');
 
         this._buttons = {};
@@ -86,9 +86,9 @@ export default class RichTextEditor extends TextElement {
     }
 
     _createLayout() {
-        this._shell = this.querySelector('div.richtexteditor-shell');
+        this._shell = this.shadowRoot.querySelector('div.richtexteditor-shell');
 
-        this._toolbar = this.querySelector('div.richtexteditor-toolbar');
+        this._toolbar = this.shadowRoot.querySelector('div.richtexteditor-toolbar');
 
         let buttons = Array.from(this._toolbar.querySelectorAll("button"));
         buttons.forEach((button) => {
@@ -100,7 +100,7 @@ export default class RichTextEditor extends TextElement {
             this._buttons[command] = button;
         });
 
-        this._content = this.querySelector('div.richtexteditor-content');
+        this._content = this.shadowRoot.querySelector('div.richtexteditor-content');
 
         this.textElement = this._content;
         this.formElement = this._content;
@@ -245,7 +245,7 @@ export default class RichTextEditor extends TextElement {
 
     _fixImagePaths() {
         // Fix all image paths to be absolute based on GooeyJS location
-        const images = this.querySelectorAll('img[src]');
+        const images = this.shadowRoot.querySelectorAll('img[src]');
         const basePath = GooeyJS.basePath;
 
         images.forEach(img => {

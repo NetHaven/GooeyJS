@@ -4,7 +4,8 @@ import Template from '../../../util/Template.js';
 
 export default class Border extends GooeyElement {
     constructor() {
-        Template.activate("ui-Border", this);
+        super();
+        Template.activate("ui-Border", this.shadowRoot);
     }
 
     get color() {

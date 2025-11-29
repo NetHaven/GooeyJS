@@ -6,8 +6,8 @@
     { "id": "ui-Border", "file": "templates/Border.html" }
   ],
   "themes": {
-    "default": null,
-    "available": []
+    "default": "base",
+    "available": ["base"]
   },
   "attributes": {
     "color": { "type": "STRING", "default": null },

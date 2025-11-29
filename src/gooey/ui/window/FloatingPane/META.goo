@@ -4,8 +4,8 @@
   "script": "scripts/FloatingPane.js",
   "templates": [],
   "themes": {
-    "default": null,
-    "available": []
+    "default": "base",
+    "available": ["base"]
   },
   "attributes": {
     "wintitle": { "type": "STRING", "default": null },

@@ -1,0 +1,27 @@
+/* GroupBox Base Theme */
+
+:host {
+    position: relative;
+    display: block;
+    padding: 8px;
+    margin: 4px;
+}
+
+.ui-GroupBox-content {
+    border: 2px inset #c1c0c1;
+    padding: 8px;
+    background-color: #c1c0c1;
+    min-height: 20px;
+}
+
+.ui-GroupBox-text {
+    position: absolute;
+    top: 0;
+    left: 13px;
+    background-color: #c1c0c1;
+    padding: 0 4px;
+    font-size: 11px;
+    line-height: 1;
+    transform: translateY(-50%);
+    display: none;
+}

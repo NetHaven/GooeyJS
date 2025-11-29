@@ -5,8 +5,8 @@ export default class Application extends UIComponent {
     constructor() {
         super();
 
-        Template.activate("ui-Application", this);
-        
+        Template.activate("ui-Application", this.shadowRoot);
+
         this.classList.add("ui-Application");
         
         // Application is the root container, set default full viewport dimensions

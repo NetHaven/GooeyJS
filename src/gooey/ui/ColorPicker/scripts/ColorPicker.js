@@ -43,30 +43,30 @@ export default class ColorPicker extends UIComponent {
      * Create the color picker HTML structure
      */
     _createColorPickerStructure() {
-        this._container = this.querySelector('div.colorpicker-container');
-        this._colorButton = this.querySelector('button.colorpicker-button');
-        this._colorDisplay = this.querySelector('div.colorpicker-display');
-        this._arrow = this.querySelector('span.colorpicker-arrow');
-        this._dropdownPanel = this.querySelector('div.colorpicker-dropdown');
+        this._container = this.shadowRoot.querySelector('div.colorpicker-container');
+        this._colorButton = this.shadowRoot.querySelector('button.colorpicker-button');
+        this._colorDisplay = this.shadowRoot.querySelector('div.colorpicker-display');
+        this._arrow = this.shadowRoot.querySelector('span.colorpicker-arrow');
+        this._dropdownPanel = this.shadowRoot.querySelector('div.colorpicker-dropdown');
 
         // Create color palette
         this._createColorPalette();
-        
+
         // Create custom color input section
-        this._createCustomColorSection();        
+        this._createCustomColorSection();
     }
     
     /**
      * Create the color palette grid
      */
     _createColorPalette() {
-        let colorSwatches = Array.from(this.querySelectorAll('button.colorpicker-swatch'));
+        let colorSwatches = Array.from(this.shadowRoot.querySelectorAll('button.colorpicker-swatch'));
         colorSwatches.forEach(colorSwatch => {
             colorSwatch.addEventListener(MouseEvent.CLICK, (e) => {
                 e.stopPropagation();
                 this._selectColor(colorSwatch.title);
             });
-        });        
+        });
     }
     
     /**
@@ -74,10 +74,10 @@ export default class ColorPicker extends UIComponent {
      */
     _createCustomColorSection() {
         // Create hex input
-        this._hexInput = this.querySelector('input.colorpicker-hex-input');
-        
+        this._hexInput = this.shadowRoot.querySelector('input.colorpicker-hex-input');
+
         // Create native color input (fallback)
-        this._nativeInput = this.querySelector('input.colorpicker-native-input');
+        this._nativeInput = this.shadowRoot.querySelector('input.colorpicker-native-input');
     }
     
     /**

@@ -8,7 +8,7 @@ export default class ToggleButtonGroup extends Container {
         super();
         
         this.classList.add("ui-ToggleButtonGroup");
-        Template.activate("ui-ToggleButtonGroup", this);
+        Template.activate("ui-ToggleButtonGroup", this.shadowRoot);
 
         // Initialize state
         this._selectedButton = null;

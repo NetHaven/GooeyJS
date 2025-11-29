@@ -1,0 +1,4 @@
+/* Component Base Theme */
+:host {
+    display: none;
+}

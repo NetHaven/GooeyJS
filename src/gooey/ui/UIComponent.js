@@ -6,10 +6,22 @@ import ModelEvent from '../events/mvc/ModelEvent.js';
 import MouseCursor from '../io/MouseCursor.js';
 import MouseEvent from '../events/MouseEvent.js';
 import DragEvent from '../events/DragEvent.js';
+import MetaLoader from '../util/MetaLoader.js';
+import AttributeRegistry from '../util/AttributeRegistry.js';
 
 export default class UIComponent extends GooeyElement {
     constructor () {
         super();
+
+        // Create Shadow DOM for CSS encapsulation
+        this.attachShadow({ mode: 'open' });
+
+        // Inject theme CSS if available
+        const tagName = this.tagName.toLowerCase();
+        const cssResult = AttributeRegistry.getThemeCSS(tagName);
+        if (cssResult) {
+            MetaLoader.injectCSS(this.shadowRoot, cssResult);
+        }
 
         // MVC additions (optional - only if used)
         this._model = null;
@@ -172,6 +184,15 @@ export default class UIComponent extends GooeyElement {
         if (this._model && this._bindings.length > 0) {
             this.applyBindings();
         }
+    }
+
+    /**
+     * Get the component's root element for DOM queries
+     * Returns shadowRoot for encapsulated styling
+     * @returns {ShadowRoot}
+     */
+    get componentRoot() {
+        return this.shadowRoot;
     }
 
     get cursor() {
@@ -386,6 +407,20 @@ export default class UIComponent extends GooeyElement {
                 this._model.off(ModelEvent.CHANGE, this.onModelChange);
             }
             this._model = null;
+        }
+    }
+
+    /**
+     * Switch the component's theme at runtime
+     * @param {string} themeName - Name of the theme to switch to (e.g., "base", "dark")
+     * @returns {Promise<void>}
+     */
+    async switchTheme(themeName) {
+        const tagName = this.tagName.toLowerCase();
+        const componentPath = AttributeRegistry.getComponentPath(tagName);
+
+        if (componentPath && this.shadowRoot) {
+            await MetaLoader.switchTheme(this.shadowRoot, componentPath, themeName);
         }
     }
 }

@@ -7,9 +7,9 @@ export default class RadioButton extends FormElement {
     constructor() {
         super();
 
-        Template.activate("ui-RadioButton", this);
-        
-        this.radioButton = this.querySelector("input");
+        Template.activate("ui-RadioButton", this.shadowRoot);
+
+        this.radioButton = this.shadowRoot.querySelector("input");
         this.formElement = this.radioButton;
 		this.appendChild(this.radioButton);
         

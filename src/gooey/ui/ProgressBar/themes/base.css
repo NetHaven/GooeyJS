@@ -1,0 +1,46 @@
+:host {
+    display: block;
+    width: 100%;
+    margin: 8px 0;
+}
+
+.progress-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.progress-bar {
+    flex: 1;
+    height: 16px;
+    background-color: #f0f0f0;
+    border: 1px inset #c1c0c1;
+    border-radius: 2px;
+    position: relative;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background-color: #010082;
+    transition: width 0.3s ease;
+    width: 0%;
+}
+
+.progress-bar.indeterminate .progress-fill {
+    width: 30%;
+    animation: progress-indeterminate 1.5s infinite linear;
+}
+
+.progress-text {
+    font-size: 11px;
+    color: #000;
+    white-space: nowrap;
+    min-width: 30px;
+    text-align: right;
+}
+
+@keyframes progress-indeterminate {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(333%); }
+}

@@ -3,17 +3,21 @@ import LayoutType from '../../../layout/Layout/scripts/LayoutType.js';
 import TabEvent from '../../../../events/panel/TabEvent.js';
 import TabPanelEvent from '../../../../events/panel/TabPanelEvent.js';
 import DragEvent from '../../../../events/DragEvent.js';
+import Template from '../../../../util/Template.js';
 
 export default class TabPanel extends Container {
     constructor() {
         super();
-        
+
+        this.attachShadow({ mode: 'open' });
+        Template.activate("ui-TabPanel", this.shadowRoot);
+
         this.layout = LayoutType.FLOW;
         this._tabs = [];
         this._tabStrip = null;
         this._contentPanel = null;
         this._activeTab = null;
-        
+
         // Add valid events
         this.addValidEvent(TabPanelEvent.TAB_CHANGE);
         this.addValidEvent(DragEvent.START);
@@ -81,25 +85,18 @@ export default class TabPanel extends Container {
     }
 
     _setupStructure() {
-        // Clear existing content and rebuild structure
-        this.innerHTML = '';
-        
-        // Create tab strip
-        this._tabStrip = document.createElement('div');
-        this._tabStrip.className = 'tab-strip';
+        // Get references to shadow DOM elements created by template
+        this._tabStrip = this.shadowRoot.querySelector('.tab-strip');
+        this._contentPanel = this.shadowRoot.querySelector('.tab-content');
+
+        // Set ARIA attributes
         this._tabStrip.setAttribute('role', 'tablist');
         this._tabStrip.setAttribute('aria-orientation', this.orientation);
-        this.appendChild(this._tabStrip);
-        
-        // Create content panel
-        this._contentPanel = document.createElement('div');
-        this._contentPanel.className = 'tab-content';
         this._contentPanel.setAttribute('role', 'tabpanel');
-        this.appendChild(this._contentPanel);
-        
+
         // Update orientation classes
         this._updateOrientation();
-        
+
         // Set up drag and drop if enabled
         this._updateDraggable();
     }
@@ -129,10 +126,8 @@ export default class TabPanel extends Container {
             this._setupTabDragAndDrop(tab, tabHeader);
         }
         
-        // Move tab content to content panel
-        if (tab.parentNode !== this._contentPanel) {
-            this._contentPanel.appendChild(tab);
-        }
+        // Tab content will be projected through the slot automatically
+        // No need to manually move it with shadow DOM
         
         // Update tab state
         tab._updateActiveState();

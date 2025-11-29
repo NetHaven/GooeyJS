@@ -5,8 +5,8 @@ import Template from '../../../../util/Template.js';
 export default class Toolbar extends Container {
     constructor () {
         super();
-        
-        Template.activate("ui-Toolbar", this);
+
+        Template.activate("ui-Toolbar", this.shadowRoot);
 
         // Check for wrap attribute during initialization
         if (this.hasAttribute("wrap")) {

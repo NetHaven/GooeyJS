@@ -6,8 +6,8 @@
     { "id": "ui-MenuItemSeparator", "file": "templates/MenuItemSeparator.html" }
   ],
   "themes": {
-    "default": null,
-    "available": []
+    "default": "base",
+    "available": ["base"]
   },
   "attributes": {
     "draggable": { "type": "BOOLEAN", "default": false },

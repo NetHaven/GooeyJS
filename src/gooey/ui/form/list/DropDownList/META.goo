@@ -6,8 +6,8 @@
     { "id": "ui-DropDownList", "file": "templates/DropDownList.html" }
   ],
   "themes": {
-    "default": null,
-    "available": []
+    "default": "base",
+    "available": ["base"]
   },
   "attributes": {
     "draggable": { "type": "BOOLEAN", "default": false },

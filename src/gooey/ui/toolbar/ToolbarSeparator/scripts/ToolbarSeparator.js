@@ -1,13 +1,10 @@
 import UIComponent from '../../../UIComponent.js';
+import Template from '../../../../util/Template.js';
 
 export default class ToolbarSeparator extends UIComponent {
     constructor() {
-        var clone, template;
-
         super();
 
-        template = document.getElementById("ui-ToolbarSeparator");
-        clone = document.importNode(template.content, true);
-        this.appendChild(clone);
+        Template.activate("ui-ToolbarSeparator", this.shadowRoot);
     }
 }

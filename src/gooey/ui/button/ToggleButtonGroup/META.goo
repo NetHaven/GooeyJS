@@ -6,8 +6,8 @@
     { "id": "ui-ToggleButtonGroup", "file": "ToggleButtonGroup.html" }
   ],
   "themes": {
-    "default": null,
-    "available": []
+    "default": "base",
+    "available": ["base"]
   },
   "attributes": {
     "allowdeselect": { "type": "BOOLEAN", "default": false },

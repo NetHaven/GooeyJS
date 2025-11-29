@@ -4,6 +4,7 @@ import WindowEvent from '../../../../events/window/WindowEvent.js';
 import KeyboardEvent from '../../../../events/KeyboardEvent.js';
 import TextFieldEvent from '../../../../events/form/text/TextFieldEvent.js';
 import MouseEvent from '../../../../events/MouseEvent.js';
+import Template from '../../../../util/Template.js';
 
 export default class Window extends UIComponent {
     constructor () {
@@ -11,16 +12,12 @@ export default class Window extends UIComponent {
 
 
         super();
-        
-        template = document.getElementById("ui-Window");
-        clone = document.importNode(template.content, true);
-        content = this.innerHTML;
-        this.innerHTML = "";
-        this.appendChild(clone);
 
-        this.buttonbar = this.querySelector(".WindowButtonbar");
-        this.contentArea = this.querySelector(".WindowContent");
-        this.titlebar = this.querySelector(".WindowTitlebar");
+        Template.activate("ui-Window", this.shadowRoot);
+
+        this.buttonbar = this.shadowRoot.querySelector(".WindowButtonbar");
+        this.contentArea = this.shadowRoot.querySelector(".WindowContent");
+        this.titlebar = this.shadowRoot.querySelector(".WindowTitlebar");
 
         this.contentArea.innerHTML = content;
         
@@ -50,7 +47,7 @@ export default class Window extends UIComponent {
             this.draggable = true;
         }
 
-        cancelButton = this.querySelector(".WindowCancelButton");
+        cancelButton = this.shadowRoot.querySelector(".WindowCancelButton");
         cancelButton.addEventListener(MouseEvent.CLICK, ()=> {
             this.close();
         });
@@ -254,7 +251,7 @@ export default class Window extends UIComponent {
     set winTitle(val) {
         let titlebar;
 
-        titlebar = this.querySelector(".WindowTitlebar");
+        titlebar = this.shadowRoot.querySelector(".WindowTitlebar");
         if (titlebar) {
             titlebar.innerHTML = val;
         }
@@ -262,10 +259,10 @@ export default class Window extends UIComponent {
 
     // Helper methods for common window components
     get okButton() {
-        return this.querySelector(".WindowOKButton");
+        return this.shadowRoot.querySelector(".WindowOKButton");
     }
 
     get cancelButton() {
-        return this.querySelector(".WindowCancelButton");
+        return this.shadowRoot.querySelector(".WindowCancelButton");
     }
 }

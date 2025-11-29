@@ -1,9 +1,11 @@
 /**
  * AttributeRegistry - Global registry for component metadata and attribute definitions
- * Provides attribute validation and default value access
+ * Provides attribute validation, default value access, and theme CSS storage
  */
 export default class AttributeRegistry {
     static _registry = new Map();
+    static _themeCSS = new Map();
+    static _componentPaths = new Map();
 
     /**
      * Register a component's metadata
@@ -203,5 +205,43 @@ export default class AttributeRegistry {
      */
     static clear() {
         this._registry.clear();
+        this._themeCSS.clear();
+        this._componentPaths.clear();
+    }
+
+    /**
+     * Store theme CSS result for a component
+     * @param {string} tagName - Custom element tag name
+     * @param {Object} cssResult - Result from MetaLoader.loadThemeCSS
+     */
+    static setThemeCSS(tagName, cssResult) {
+        this._themeCSS.set(tagName.toLowerCase(), cssResult);
+    }
+
+    /**
+     * Get stored theme CSS result for a component
+     * @param {string} tagName - Custom element tag name
+     * @returns {Object|null} CSS result or null if not found
+     */
+    static getThemeCSS(tagName) {
+        return this._themeCSS.get(tagName.toLowerCase()) || null;
+    }
+
+    /**
+     * Store component path for later use (e.g., theme switching)
+     * @param {string} tagName - Custom element tag name
+     * @param {string} path - Full path to component directory
+     */
+    static setComponentPath(tagName, path) {
+        this._componentPaths.set(tagName.toLowerCase(), path);
+    }
+
+    /**
+     * Get component path
+     * @param {string} tagName - Custom element tag name
+     * @returns {string|null} Component path or null if not found
+     */
+    static getComponentPath(tagName) {
+        return this._componentPaths.get(tagName.toLowerCase()) || null;
     }
 }

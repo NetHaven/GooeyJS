@@ -8,9 +8,9 @@ export default class ToggleButton extends UIComponent {
         super();
         
         this.classList.add("ui-ToggleButton");
-        
-        Template.activate("ui-ToggleButton", this);
-        this.button = this.querySelector("button");
+
+        Template.activate("ui-ToggleButton", this.shadowRoot);
+        this.button = this.shadowRoot.querySelector("button");
         
         // Initialize toggle state
         this._pressed = false;

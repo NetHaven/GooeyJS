@@ -6,8 +6,8 @@
     { "id": "ui-ComboBox", "file": "templates/ComboBox.html" }
   ],
   "themes": {
-    "default": null,
-    "available": []
+    "default": "base",
+    "available": ["base"]
   },
   "attributes": {
     "draggable": { "type": "BOOLEAN", "default": false },

@@ -1,0 +1,54 @@
+:host {
+    display: none;
+    position: absolute;
+    z-index: 1000;
+}
+
+.ui-ContextMenu {
+    background-color: #c1c0c1;
+    border: 1px solid #808080;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+    min-width: 150px;
+    padding: 2px 0;
+}
+
+:host([active]) {
+    display: block;
+}
+
+/* Nested MenuItem styles within ContextMenu */
+::slotted(ui-MenuItem),
+::slotted(ui-CheckboxMenuItem) {
+    display: block;
+    width: 100%;
+    cursor: pointer;
+    padding: 4px 16px;
+    border: none;
+    background: none;
+    text-align: left;
+}
+
+::slotted(ui-MenuItem:hover),
+::slotted(ui-CheckboxMenuItem:hover) {
+    background-color: #010082;
+    color: white;
+}
+
+::slotted(ui-MenuItem[disabled]),
+::slotted(ui-CheckboxMenuItem[disabled]) {
+    color: #808080;
+    cursor: default;
+}
+
+::slotted(ui-MenuItem[disabled]:hover),
+::slotted(ui-CheckboxMenuItem[disabled]:hover) {
+    background-color: transparent;
+    color: #808080;
+}
+
+::slotted(ui-MenuItemSeparator) {
+    height: 1px;
+    background-color: #808080;
+    margin: 2px 0;
+    border: none;
+}

@@ -6,8 +6,8 @@
     { "id": "ui-AppPanel", "file": "templates/AppPanel.html" }
   ],
   "themes": {
-    "default": null,
-    "available": []
+    "default": "base",
+    "available": ["base"]
   },
   "attributes": {
     "formfactor": { "type": "STRING", "default": null },

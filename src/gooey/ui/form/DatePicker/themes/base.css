@@ -1,0 +1,7 @@
+:host {
+    display: inline-block;
+}
+
+input[type="date"] {
+    width: 100%;
+}

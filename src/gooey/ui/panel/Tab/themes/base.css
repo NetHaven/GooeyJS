@@ -1,0 +1,17 @@
+/* Tab Base Theme */
+
+:host {
+    display: none;
+    width: 100%;
+    flex: 1;
+    overflow: auto;
+    padding: 8px;
+    background-color: #c1c0c1;
+    box-sizing: border-box;
+    min-height: 0;
+}
+
+:host([active]) {
+    display: flex;
+    flex-direction: column;
+}

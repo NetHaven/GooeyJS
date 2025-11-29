@@ -6,8 +6,8 @@
     { "id": "ui-Spinner", "file": "templates/Spinner.html" }
   ],
   "themes": {
-    "default": null,
-    "available": []
+    "default": "base",
+    "available": ["base"]
   },
   "attributes": {
     "draggable": { "type": "BOOLEAN", "default": false },

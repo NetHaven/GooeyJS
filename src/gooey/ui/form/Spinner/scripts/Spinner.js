@@ -12,7 +12,7 @@ export default class Spinner extends FormElement {
     constructor() {
         super();
 
-        Template.activate("ui-Spinner", this);
+        Template.activate("ui-Spinner", this.shadowRoot);
         this._value = 0;
         this._min = Number.MIN_SAFE_INTEGER;
         this._max = Number.MAX_SAFE_INTEGER;
@@ -119,7 +119,7 @@ export default class Spinner extends FormElement {
      * Update the display to show current value
      */
     updateDisplay() {
-        const input = this.querySelector('input');
+        const input = this.shadowRoot.querySelector('input');
         if (input) {
             input.value = this._value;
         }
@@ -138,9 +138,9 @@ export default class Spinner extends FormElement {
      * Set up event listeners for input and buttons
      */
     setupEventListeners() {
-        const input = this.querySelector('input');
-        const incrementBtn = this.querySelector('.increment-btn');
-        const decrementBtn = this.querySelector('.decrement-btn');
+        const input = this.shadowRoot.querySelector('input');
+        const incrementBtn = this.shadowRoot.querySelector('.increment-btn');
+        const decrementBtn = this.shadowRoot.querySelector('.decrement-btn');
 
         if (input) {
             input.addEventListener('input', (e) => {

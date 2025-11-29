@@ -1,0 +1,70 @@
+/* SplitPanel Base Theme */
+
+:host {
+    display: flex;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-color: #c1c0c1;
+}
+
+.splitpanel-pane {
+    overflow: auto;
+    background-color: #c1c0c1;
+    border: 1px inset #c1c0c1;
+    display: flex;
+    flex-direction: column;
+}
+
+.splitpanel-divider {
+    background-color: #c1c0c1;
+    border: 1px outset #c1c0c1;
+    user-select: none;
+    flex-shrink: 0;
+    position: relative;
+}
+
+.splitpanel-divider:hover {
+    background-color: #d4d0c8;
+}
+
+.splitpanel-divider:active,
+:host(.splitpanel-dragging) .splitpanel-divider {
+    background-color: #b4b0a8;
+    border: 1px inset #c1c0c1;
+}
+
+/* Horizontal orientation (left/right split) */
+:host([orientation="horizontal"]) {
+    flex-direction: row;
+}
+
+:host([orientation="horizontal"]) .splitpanel-divider {
+    cursor: col-resize;
+    min-width: 3px;
+    width: 5px;
+}
+
+/* Vertical orientation (top/bottom split) */
+:host([orientation="vertical"]) {
+    flex-direction: column;
+}
+
+:host([orientation="vertical"]) .splitpanel-divider {
+    cursor: row-resize;
+    min-height: 3px;
+    height: 5px;
+}
+
+/* Dragging state */
+:host(.splitpanel-dragging) {
+    user-select: none;
+}
+
+:host(.splitpanel-dragging) * {
+    pointer-events: none;
+}
+
+:host(.splitpanel-dragging) .splitpanel-divider {
+    pointer-events: auto;
+}

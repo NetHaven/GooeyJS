@@ -6,8 +6,8 @@
     { "id": "ui-Toolbar", "file": "templates/Toolbar.html" }
   ],
   "themes": {
-    "default": null,
-    "available": []
+    "default": "base",
+    "available": ["base"]
   },
   "attributes": {
     "buttonsize": { "type": "STRING", "default": null },

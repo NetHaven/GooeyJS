@@ -6,8 +6,9 @@ export default class Button extends UIComponent {
 	constructor() {
 		super();
 	
-		Template.activate("ui-button", this);
-		this.button = this.querySelector("button");
+		// Activate template into shadow root (created by UIComponent)
+		Template.activate("ui-button", this.shadowRoot);
+		this.button = this.shadowRoot.querySelector("button");
 
 		if (this.hasAttribute("icon")) {
 			this.icon = this.getAttribute("icon");			

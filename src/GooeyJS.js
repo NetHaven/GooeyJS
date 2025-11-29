@@ -160,10 +160,20 @@ export default class GooeyJS {
                         }
                     }
 
-                    // Load default theme if specified
+                    // Load and cache default theme CSS for Shadow DOM injection
                     if (meta.themes && meta.themes.default) {
-                        await this._loadTheme(`${fullComponentPath}/themes/${meta.themes.default}`);
+                        try {
+                            const cssResult = await MetaLoader.loadThemeCSS(fullComponentPath, meta.themes.default);
+                            AttributeRegistry.setThemeCSS(meta.tagName, cssResult);
+                            AttributeRegistry.setComponentPath(meta.tagName, fullComponentPath);
+                            console.log(`Loaded theme CSS for ${meta.tagName}: ${meta.themes.default}`);
+                        } catch (themeError) {
+                            console.warn(`Failed to load theme CSS for ${meta.tagName}:`, themeError);
+                        }
                     }
+
+                    // Store component path for theme switching even if no default theme
+                    AttributeRegistry.setComponentPath(meta.tagName, fullComponentPath);
 
                     console.log(`Registered ${meta.tagName} from ${modulePath}`);
                 } catch (error) {
@@ -185,25 +195,6 @@ export default class GooeyJS {
         });
     }
 
-    /**
-     * Load a CSS theme file
-     * @param {string} themePath - Full path to the CSS file
-     */
-    async _loadTheme(themePath) {
-        try {
-            const linkEl = document.createElement('link');
-            linkEl.setAttribute("rel", "stylesheet");
-            linkEl.setAttribute("href", themePath);
-
-            const headEl = document.head;
-            if (headEl) {
-                headEl.appendChild(linkEl);
-                console.log(`Loaded theme from ${themePath}`);
-            }
-        } catch (error) {
-            console.warn(`Failed to load theme ${themePath}:`, error);
-        }
-    }
 }
 
 window.addEventListener('load', function() { new GooeyJS();}());

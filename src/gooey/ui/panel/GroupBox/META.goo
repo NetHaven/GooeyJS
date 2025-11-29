@@ -6,8 +6,8 @@
     { "id": "ui-GroupBox", "file": "templates/GroupBox.html" }
   ],
   "themes": {
-    "default": null,
-    "available": []
+    "default": "base",
+    "available": ["base"]
   },
   "attributes": {
     "text": { "type": "STRING", "default": null },

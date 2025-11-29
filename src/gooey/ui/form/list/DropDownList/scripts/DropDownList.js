@@ -11,15 +11,13 @@ export default class DropDownList extends FormElement {
         const existingOptions = Array.from(this.querySelectorAll('option'));
 
         Template.activate("ui-DropDownList", this);
-        this.dropDownList = this.querySelector("select");
+        this.dropDownList = this.shadowRoot.querySelector("select");
         this.formElement = this.dropDownList;
-        
+
         // Move existing options to the internal select element
         existingOptions.forEach(option => {
             this.dropDownList.appendChild(option);
         });
-        
-        this.appendChild(this.dropDownList);
         
         // Add valid events
         this.addValidEvent(DropDownListEvent.CHANGE);

@@ -11,8 +11,8 @@ export default class TextField extends TextElement {
     constructor() {
         super();
 
-        Template.activate("ui-TextField", this);
-        this.textElement = this.querySelector("input");
+        Template.activate("ui-TextField", this.shadowRoot);
+        this.textElement = this.shadowRoot.querySelector("input");
         this.formElement = this.textElement;
         this.appendChild(this.textElement);
         

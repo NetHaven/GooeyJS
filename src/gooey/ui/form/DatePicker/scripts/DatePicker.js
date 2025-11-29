@@ -5,8 +5,8 @@ export default class DatePicker extends FormElement {
     constructor() {
         super();
 
-        Template.activate("ui-DatePicker", this);
-        this.dateElement = this.querySelector("input");
+        Template.activate("ui-DatePicker", this.shadowRoot);
+        this.dateElement = this.shadowRoot.querySelector("input");
 
         if (this.hasAttribute("max")) {
             this.max = this.getAttribute("max");

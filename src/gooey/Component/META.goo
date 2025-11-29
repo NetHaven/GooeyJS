@@ -4,8 +4,8 @@
   "script": "scripts/Component.js",
   "templates": [],
   "themes": {
-    "default": null,
-    "available": []
+    "default": "base",
+    "available": ["base"]
   },
   "attributes": {
     "src": { "type": "STRING", "default": null, "required": true },

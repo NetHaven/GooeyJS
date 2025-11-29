@@ -6,8 +6,8 @@
     { "id": "ui-RichTextEditor", "file": "templates/RichTextEditor.html" }
   ],
   "themes": {
-    "default": null,
-    "available": []
+    "default": "base",
+    "available": ["base"]
   },
   "attributes": {
     "draggable": { "type": "BOOLEAN", "default": false },

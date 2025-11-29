@@ -6,7 +6,7 @@ export default class RadioButtonGroup extends UIComponent {
     constructor() {
         super();
 
-        Template.activate("ui-RadioButtonGroup", this);
+        Template.activate("ui-RadioButtonGroup", this.shadowRoot);
 
         // Generate unique group name for mutual exclusivity
         this._groupName = `radio-group-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
