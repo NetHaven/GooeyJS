@@ -8,8 +8,6 @@
     "available": ["base"]
   },
   "attributes": {
-    "src": { "type": "STRING", "default": null, "required": true },
-    "name": { "type": "STRING", "default": null, "required": true },
-    "prefix": { "type": "STRING", "default": null, "required": true }
+    "href": { "type": "STRING", "default": null, "required": true }
   }
 }
