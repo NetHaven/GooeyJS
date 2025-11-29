@@ -1,6 +1,6 @@
 {
   "name": "Window",
-  "tagName": "ui-Window",
+  "tagName": "gooeyui-window",
   "script": "Window.js",
   "templates": [
     { "id": "ui-Window", "file": "Window.html" }

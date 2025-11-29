@@ -1,6 +1,6 @@
 {
   "name": "ColorPicker",
-  "tagName": "ui-colorpicker",
+  "tagName": "gooeyui-colorpicker",
   "script": "ColorPicker.js",
   "templates": [
     { "id": "ui-ColorPicker", "file": "ColorPicker.html" }

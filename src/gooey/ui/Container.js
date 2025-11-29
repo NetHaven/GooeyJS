@@ -1,7 +1,7 @@
 import UIComponent from "./UIComponent.js";
-import LayoutAlign from "./layout/LayoutAlign.js";
-import LayoutJustify from "./layout/LayoutJustify.js";
-import LayoutType from "./layout/LayoutType.js";
+import LayoutAlign from "./layout/Layout/scripts/LayoutAlign.js";
+import LayoutJustify from "./layout/Layout/scripts/LayoutJustify.js";
+import LayoutType from "./layout/Layout/scripts/LayoutType.js";
 
 export default class Container extends UIComponent {
     constructor () {

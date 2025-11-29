@@ -1,6 +1,6 @@
 {
   "name": "FloatingPane",
-  "tagName": "ui-FloatingPane",
+  "tagName": "gooeyui-floatingpane",
   "script": "FloatingPane.js",
   "templates": [],
   "themes": {

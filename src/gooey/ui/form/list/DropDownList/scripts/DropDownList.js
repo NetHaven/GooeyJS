@@ -10,7 +10,7 @@ export default class DropDownList extends FormElement {
         // Store any existing option elements before creating the select
         const existingOptions = Array.from(this.querySelectorAll('option'));
 
-        Template.activate("ui-DropDownList", this);
+        Template.activate("ui-DropDownList", this.shadowRoot);
         this.dropDownList = this.shadowRoot.querySelector("select");
         this.formElement = this.dropDownList;
 

@@ -38,8 +38,8 @@ export default class RadioButtonGroup extends UIComponent {
     }
 
     _assignGroupName() {
-        // Find all ui-radiobutton elements and assign the group name to their input elements
-        const radioButtons = this.querySelectorAll('ui-radiobutton');
+        // Find all gooeyui-radiobutton elements and assign the group name to their input elements
+        const radioButtons = this.querySelectorAll('gooeyui-radiobutton');
         radioButtons.forEach(radioButton => {
             const input = radioButton.querySelector('input[type="radio"]');
             if (input) {

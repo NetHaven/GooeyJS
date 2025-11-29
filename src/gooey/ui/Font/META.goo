@@ -1,6 +1,6 @@
 {
   "name": "Font",
-  "tagName": "ui-font",
+  "tagName": "gooeyui-font",
   "script": "Font.js",
   "templates": [
     { "id": "ui-Font", "file": "Font.html" }

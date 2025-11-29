@@ -10,9 +10,9 @@ export default class Menubar extends UIComponent {
 
         super();
 
-        Template.activate("ui-Menubar", this);
+        Template.activate("ui-Menubar", this.shadowRoot);
         menubar = this;
-        menuList = Array.from(this.querySelectorAll(":scope > ui-Menu"));
+        menuList = Array.from(this.querySelectorAll(":scope > gooeyui-menu"));
         menuHeaderList = [];
 
         menuList.forEach(function(menu) {
@@ -54,7 +54,7 @@ export default class Menubar extends UIComponent {
                         menuText = event.currentTarget.innerHTML;
                         menuText = menuText.replace("<u>", "");
                         menuText = menuText.replace("</u>", "");
-                        menu = document.querySelector("ui-Menu[text=" + menuText + "]");
+                        menu = document.querySelector("gooeyui-menu[text=" + menuText + "]");
                         if (menu) {
                             // Reposition menu before making it active
                             menubar.positionMenu(menu, event.currentTarget);
@@ -70,7 +70,7 @@ export default class Menubar extends UIComponent {
                     menuText = event.currentTarget.innerHTML;
                     menuText = menuText.replace("<u>", "");
                     menuText = menuText.replace("</u>", "");
-                    menu = document.querySelector("ui-Menu[text=" + menuText + "]");
+                    menu = document.querySelector("gooeyui-menu[text=" + menuText + "]");
                     
                     activeMenu = menubar.getActiveMenu();
                     if (activeMenu) {
@@ -97,7 +97,7 @@ export default class Menubar extends UIComponent {
 
             // Check if click is inside any menu header or menu
             const isMenuClick = event.target.closest('.menuHeader') || 
-                                event.target.closest('ui-Menu');
+                                event.target.closest('gooeyui-menu');
          
             if (!isMenuClick) {
                 activeMenu = this.getActiveMenu();
@@ -189,7 +189,7 @@ export default class Menubar extends UIComponent {
     }
 
     getActiveMenu() {
-        const activeMenu = document.querySelector("ui-Menu[active]");
+        const activeMenu = document.querySelector("gooeyui-menu[active]");
         return activeMenu;
     }
 

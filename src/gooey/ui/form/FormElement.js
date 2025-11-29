@@ -33,7 +33,7 @@ export default class FormElement extends UIComponent {
 
     _updateRequiredIndicator() {
         // Find the parent FormPanel
-        const formPanel = this.closest('ui-FormPanel');
+        const formPanel = this.closest('gooeyui-formpanel');
         
         if (this.required) {
             if (!this._requiredIndicator) {

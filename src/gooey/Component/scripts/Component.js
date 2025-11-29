@@ -80,14 +80,8 @@ export default class Component extends Observable {
             const basePath = `${this._href}/scripts/${meta.script}`;
             const modulePath = new URL(basePath, document.baseURI).href;
 
-            // Dynamically import the component class
-            const module = await import(modulePath);
-            const ComponentClass = module.default;
-
-            // Register the custom element
-            customElements.define(tagName, ComponentClass);
-
-            // Load templates if defined in META.goo
+            // Load templates BEFORE defining custom element
+            // (constructors need templates available when triggered by define())
             if (meta.templates && meta.templates.length > 0) {
                 for (const template of meta.templates) {
                     const templatePath = `${this._href}/templates/${template.file}`;
@@ -99,6 +93,13 @@ export default class Component extends Observable {
                     }
                 }
             }
+
+            // Dynamically import the component class
+            const module = await import(modulePath);
+            const ComponentClass = module.default;
+
+            // Register the custom element (triggers constructor for existing DOM elements)
+            customElements.define(tagName, ComponentClass);
 
             console.log(`Successfully registered ${tagName} from ${modulePath}`);
 

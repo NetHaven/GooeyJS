@@ -42,10 +42,10 @@ export default class MenuItem extends UIComponent {
         this.addEventListener(MouseEvent.CLICK, (evt) => {
             let subMenu;
 
-            subMenu = this.querySelector("ui-Menu");
+            subMenu = this.querySelector("gooeyui-menu");
             if ((!this.disabled) && (!subMenu)) {
                 this.active = false;
-                
+
                 // Dispatch custom select event
                 this.fireEvent(MenuItemEvent.SELECT, {
                     menuItem: this,
@@ -53,27 +53,27 @@ export default class MenuItem extends UIComponent {
                     action: this.action,
                     originalEvent: evt
                 });
-                
+
                 // Close all ancestor menus in the hierarchy
-                let currentMenu = this.closest('ui-Menu');
+                let currentMenu = this.closest('gooeyui-menu');
                 while (currentMenu) {
                     currentMenu.active = false;
                     // Find the next ancestor menu by looking for a parent MenuItem that contains a Menu
-                    const parentMenuItem = currentMenu.closest('ui-MenuItem');
-                    currentMenu = parentMenuItem ? parentMenuItem.closest('ui-Menu') : null;
+                    const parentMenuItem = currentMenu.closest('gooeyui-menuitem');
+                    currentMenu = parentMenuItem ? parentMenuItem.closest('gooeyui-menu') : null;
                 }
-                
+
                 // Close active menu header
-                const menubar = document.querySelector('ui-Menubar');
+                const menubar = document.querySelector('gooeyui-menubar');
                 if (menubar) {
                     const activeMenuHeader = menubar.getActiveMenuHeader();
                     if (activeMenuHeader) {
                         activeMenuHeader.removeAttribute('active');
                     }
                 }
-                
+
                 // Close any active context menu
-                const contextMenu = this.closest('ui-ContextMenu');
+                const contextMenu = this.closest('gooeyui-contextmenu');
                 if (contextMenu && typeof contextMenu.hide === 'function') {
                     contextMenu.hide();
                 }
@@ -124,7 +124,7 @@ export default class MenuItem extends UIComponent {
     set active(val) {
         let box, left, menu;
 
-        menu = this.querySelector("ui-menu");
+        menu = this.querySelector("gooeyui-menu");
         if (val) {
             this.setAttribute("active", "");
             if (menu) {

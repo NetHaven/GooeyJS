@@ -10,7 +10,7 @@ export default class Tree extends UIComponent {
     constructor() {
         super();
 
-        Template.activate("ui-Tree", this);
+        Template.activate("ui-Tree", this.shadowRoot);
 
         this._treeElement = this.shadowRoot.querySelector('.ui-Tree');
         this._selectedItem = null;
@@ -60,7 +60,7 @@ export default class Tree extends UIComponent {
     }
     
     expandAll() {
-        const items = this.querySelectorAll('ui-treeitem');
+        const items = this.querySelectorAll('gooeyui-treeitem');
         items.forEach(item => {
             if (item.hasChildren) {
                 item.expanded = true;
@@ -69,7 +69,7 @@ export default class Tree extends UIComponent {
     }
     
     collapseAll() {
-        const items = this.querySelectorAll('ui-treeitem');
+        const items = this.querySelectorAll('gooeyui-treeitem');
         items.forEach(item => {
             item.expanded = false;
         });
@@ -135,7 +135,7 @@ export default class Tree extends UIComponent {
     }
     
     _selectPreviousItem() {
-        const items = Array.from(this.querySelectorAll('ui-treeitem'));
+        const items = Array.from(this.querySelectorAll('gooeyui-treeitem'));
         const currentIndex = items.indexOf(this._selectedItem);
         if (currentIndex > 0) {
             this.selectedItem = items[currentIndex - 1];
@@ -143,7 +143,7 @@ export default class Tree extends UIComponent {
     }
     
     _selectNextItem() {
-        const items = Array.from(this.querySelectorAll('ui-treeitem'));
+        const items = Array.from(this.querySelectorAll('gooeyui-treeitem'));
         const currentIndex = items.indexOf(this._selectedItem);
         if (currentIndex < items.length - 1) {
             this.selectedItem = items[currentIndex + 1];

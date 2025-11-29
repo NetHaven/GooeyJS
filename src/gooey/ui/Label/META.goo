@@ -1,6 +1,6 @@
 {
   "name": "Label",
-  "tagName": "ui-label",
+  "tagName": "gooeyui-label",
   "script": "Label.js",
   "templates": [
     { "id": "ui-Label", "file": "Label.html" }

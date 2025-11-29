@@ -11,7 +11,7 @@ export default class ComboBox extends ListBox {
     constructor() {
         super();
 
-        Template.activate("ui-ComboBox", this);
+        Template.activate("ui-ComboBox", this.shadowRoot);
 
         // Create the combo box structure
         this.listBox = this.shadowRoot.querySelector("select.combobox-list");

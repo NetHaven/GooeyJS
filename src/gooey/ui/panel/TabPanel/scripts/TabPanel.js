@@ -31,7 +31,7 @@ export default class TabPanel extends Container {
         this._setupStructure();
         
         // Process any existing tab children
-        const existingTabs = Array.from(this.querySelectorAll('ui-Tab'));
+        const existingTabs = Array.from(this.querySelectorAll('gooeyui-tab'));
         existingTabs.forEach(tab => this._addTab(tab));
         
         // If no tab is active and we have tabs, activate the first one
@@ -219,7 +219,7 @@ export default class TabPanel extends Container {
 
     // Public API methods
     addTab(name, content, options = {}) {
-        const tab = document.createElement('ui-Tab');
+        const tab = document.createElement('gooeyui-tab');
         tab.name = name;
         
         if (options.closeable) {

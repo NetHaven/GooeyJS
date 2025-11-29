@@ -5,6 +5,6 @@ export default class MenuItemSeparator extends UIComponent {
     constructor() {
         super();
        
-        Template.activate("ui-MenuItemSeparator", this);
+        Template.activate("ui-MenuItemSeparator", this.shadowRoot);
     }
 }

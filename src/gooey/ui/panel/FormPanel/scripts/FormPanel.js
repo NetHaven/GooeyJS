@@ -32,7 +32,7 @@ export default class FormPanel extends Panel {
     }
 
     _ensureThirdColumnElements() {
-        const formElements = this.querySelectorAll('ui-textfield, ui-textarea, ui-dropdown, ui-dropdownlist, ui-listbox, ui-combobox, ui-checkbox, ui-radiobutton, ui-radiobuttongroup');
+        const formElements = this.querySelectorAll('gooeyui-textfield, gooeyui-textarea, gooeyui-dropdown, gooeyui-dropdownlist, gooeyui-listbox, gooeyui-combobox, gooeyui-checkbox, gooeyui-radiobutton, gooeyui-radiobuttongroup');
         
         formElements.forEach(element => {
             // Check if this element already has a corresponding indicator or empty span
@@ -60,7 +60,7 @@ export default class FormPanel extends Panel {
 
     validate() {
         // Get all form element components within this panel
-        const formElements = this.querySelectorAll('ui-textfield, ui-textarea, ui-dropdown, ui-dropdownlist, ui-listbox, ui-combobox, ui-checkbox, ui-radiobutton, ui-radiobuttongroup');
+        const formElements = this.querySelectorAll('gooeyui-textfield, gooeyui-textarea, gooeyui-dropdown, gooeyui-dropdownlist, gooeyui-listbox, gooeyui-combobox, gooeyui-checkbox, gooeyui-radiobutton, gooeyui-radiobuttongroup');
         const invalidElements = [];
         
         for (const element of formElements) {
@@ -70,15 +70,15 @@ export default class FormPanel extends Panel {
                 let value = '';
                 let isValid = true;
                 
-                if (element.tagName.toLowerCase() === 'ui-checkbox' || element.tagName.toLowerCase() === 'ui-radiobutton') {
+                if (element.tagName.toLowerCase() === 'gooeyui-checkbox' || element.tagName.toLowerCase() === 'gooeyui-radiobutton') {
                     // For checkboxes and radio buttons, check if they are checked
                     const input = element.querySelector('input');
                     if (!input || !input.checked) {
                         isValid = false;
                     }
-                } else if (element.tagName.toLowerCase() === 'ui-radiobuttongroup') {
+                } else if (element.tagName.toLowerCase() === 'gooeyui-radiobuttongroup') {
                     // For radio button groups, check if any radio button is selected
-                    const radioButtons = element.querySelectorAll('ui-radiobutton input');
+                    const radioButtons = element.querySelectorAll('gooeyui-radiobutton input');
                     let hasSelection = false;
                     for (const radio of radioButtons) {
                         if (radio.checked) {
@@ -136,16 +136,16 @@ export default class FormPanel extends Panel {
     
     reset() {
         // Get all form elements and reset their values
-        const formElements = this.querySelectorAll('ui-textfield, ui-textarea, ui-dropdown, ui-dropdownlist, ui-listbox, ui-combobox, ui-checkbox, ui-radiobutton, ui-radiobuttongroup');
+        const formElements = this.querySelectorAll('gooeyui-textfield, gooeyui-textarea, gooeyui-dropdown, gooeyui-dropdownlist, gooeyui-listbox, gooeyui-combobox, gooeyui-checkbox, gooeyui-radiobutton, gooeyui-radiobuttongroup');
         
         formElements.forEach(element => {
-            if (element.tagName.toLowerCase() === 'ui-checkbox' || element.tagName.toLowerCase() === 'ui-radiobutton') {
+            if (element.tagName.toLowerCase() === 'gooeyui-checkbox' || element.tagName.toLowerCase() === 'gooeyui-radiobutton') {
                 const input = element.querySelector('input');
                 if (input) {
                     input.checked = false;
                 }
-            } else if (element.tagName.toLowerCase() === 'ui-radiobuttongroup') {
-                const radioButtons = element.querySelectorAll('ui-radiobutton input');
+            } else if (element.tagName.toLowerCase() === 'gooeyui-radiobuttongroup') {
+                const radioButtons = element.querySelectorAll('gooeyui-radiobutton input');
                 radioButtons.forEach(radio => { 
                     radio.checked = false
                 });
@@ -161,21 +161,21 @@ export default class FormPanel extends Panel {
     getFormData() {
         // Collect all form data into an object
         const formData = {};
-        const formElements = this.querySelectorAll('ui-textfield, ui-textarea, ui-dropdown, ui-dropdownlist, ui-listbox, ui-combobox, ui-checkbox, ui-radiobutton, ui-radiobuttongroup');
+        const formElements = this.querySelectorAll('gooeyui-textfield, gooeyui-textarea, gooeyui-dropdown, gooeyui-dropdownlist, gooeyui-listbox, gooeyui-combobox, gooeyui-checkbox, gooeyui-radiobutton, gooeyui-radiobuttongroup');
         
         formElements.forEach(element => {
             const name = element.getAttribute('name') || element.getAttribute('id');
             if (name) {
-                if (element.tagName.toLowerCase() === 'ui-checkbox') {
+                if (element.tagName.toLowerCase() === 'gooeyui-checkbox') {
                     const input = element.querySelector('input');
                     formData[name] = input ? input.checked : false;
-                } else if (element.tagName.toLowerCase() === 'ui-radiobutton') {
+                } else if (element.tagName.toLowerCase() === 'gooeyui-radiobutton') {
                     const input = element.querySelector('input');
                     if (input && input.checked) {
                         formData[name] = element.value || input.value;
                     }
-                } else if (element.tagName.toLowerCase() === 'ui-radiobuttongroup') {
-                    const radioButtons = element.querySelectorAll('ui-radiobutton input');
+                } else if (element.tagName.toLowerCase() === 'gooeyui-radiobuttongroup') {
+                    const radioButtons = element.querySelectorAll('gooeyui-radiobutton input');
                     for (const radio of radioButtons) {
                         if (radio.checked) {
                             formData[name] = radio.value;
@@ -193,23 +193,23 @@ export default class FormPanel extends Panel {
     
     setFormData(data) {
         // Set form data from an object
-        const formElements = this.querySelectorAll('ui-textfield, ui-textarea, ui-dropdown, ui-dropdownlist, ui-listbox, ui-combobox, ui-checkbox, ui-radiobutton, ui-radiobuttongroup');
+        const formElements = this.querySelectorAll('gooeyui-textfield, gooeyui-textarea, gooeyui-dropdown, gooeyui-dropdownlist, gooeyui-listbox, gooeyui-combobox, gooeyui-checkbox, gooeyui-radiobutton, gooeyui-radiobuttongroup');
         
         formElements.forEach(element => {
             const name = element.getAttribute('name') || element.getAttribute('id');
             if (name && data.hasOwnProperty(name)) {
-                if (element.tagName.toLowerCase() === 'ui-checkbox') {
+                if (element.tagName.toLowerCase() === 'gooeyui-checkbox') {
                     const input = element.querySelector('input');
                     if (input) {
                         input.checked = Boolean(data[name]);
                     }
-                } else if (element.tagName.toLowerCase() === 'ui-radiobutton') {
+                } else if (element.tagName.toLowerCase() === 'gooeyui-radiobutton') {
                     const input = element.querySelector('input');
                     if (input && input.value === data[name]) {
                         input.checked = true;
                     }
-                } else if (element.tagName.toLowerCase() === 'ui-radiobuttongroup') {
-                    const radioButtons = element.querySelectorAll('ui-radiobutton input');
+                } else if (element.tagName.toLowerCase() === 'gooeyui-radiobuttongroup') {
+                    const radioButtons = element.querySelectorAll('gooeyui-radiobutton input');
                     radioButtons.forEach(radio => {
                         radio.checked = (radio.value === data[name]);
                     });

@@ -1,6 +1,6 @@
 {
   "name": "Border",
-  "tagName": "ui-border",
+  "tagName": "gooeyui-border",
   "script": "Border.js",
   "templates": [
     { "id": "ui-Border", "file": "Border.html" }

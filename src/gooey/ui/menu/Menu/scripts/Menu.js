@@ -11,7 +11,7 @@ export default class Menu extends UIComponent {
 
         super();
 
-        Template.activate("ui-Menu", this);
+        Template.activate("ui-Menu", this.shadowRoot);
         this.visible = false;
         
         // Add valid events
@@ -34,7 +34,7 @@ export default class Menu extends UIComponent {
         });
 
         document.addEventListener(KeyboardEvent.KEY_DOWN, (event) => {
-            menuItemList = Array.from(this.querySelectorAll("ui-MenuItem, ui-CheckboxMenuItem"));
+            menuItemList = Array.from(this.querySelectorAll("gooeyui-menuitem, gooeyui-checkboxmenuitem"));
 
             if (event.ctrlKey) {
                 shortcutItem = menuItemList.find((element) => {
@@ -114,7 +114,7 @@ export default class Menu extends UIComponent {
     get menuItems() {
         let menuItemList;
 
-        menuItemList = Array.from(this.querySelectorAll("ui-MenuItem"));
+        menuItemList = Array.from(this.querySelectorAll("gooeyui-menuitem"));
 
         return menuItemList;
     }

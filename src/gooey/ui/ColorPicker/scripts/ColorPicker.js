@@ -11,7 +11,7 @@ export default class ColorPicker extends UIComponent {
         super();
         
         this.classList.add("ui-ColorPicker");
-        Template.activate("ui-ColorPicker", this);
+        Template.activate("ui-ColorPicker", this.shadowRoot);
 
         // Create the color picker structure
         this._createColorPickerStructure();

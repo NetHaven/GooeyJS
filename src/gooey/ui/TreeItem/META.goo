@@ -1,6 +1,6 @@
 {
   "name": "TreeItem",
-  "tagName": "ui-treeitem",
+  "tagName": "gooeyui-treeitem",
   "script": "TreeItem.js",
   "templates": [
     { "id": "ui-TreeItem", "file": "TreeItem.html" }

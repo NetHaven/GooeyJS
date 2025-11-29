@@ -7,7 +7,7 @@ export default class CheckboxMenuItem extends MenuItem {
     constructor () {
         super();
 
-        Template.activate("ui-CheckboxmenuItem", this);
+        Template.activate("ui-CheckboxmenuItem", this.shadowRoot);
         if (this.hasAttribute("checked")) {
             this.checked = true;
         }
@@ -51,16 +51,16 @@ export default class CheckboxMenuItem extends MenuItem {
         }
         
         // Close all ancestor menus in the hierarchy
-        let currentMenu = this.closest('ui-Menu');
+        let currentMenu = this.closest('gooeyui-menu');
         while (currentMenu) {
             currentMenu.active = false;
             // Find the next ancestor menu by looking for a parent MenuItem that contains a Menu
-            const parentMenuItem = currentMenu.closest('ui-MenuItem');
-            currentMenu = parentMenuItem ? parentMenuItem.closest('ui-Menu') : null;
+            const parentMenuItem = currentMenu.closest('gooeyui-menuitem');
+            currentMenu = parentMenuItem ? parentMenuItem.closest('gooeyui-menu') : null;
         }
-        
+
         // Close active menu header
-        const menubar = document.querySelector('ui-Menubar');
+        const menubar = document.querySelector('gooeyui-menubar');
         if (menubar) {
             const activeMenuHeader = menubar.getActiveMenuHeader();
             if (activeMenuHeader) {
@@ -69,7 +69,7 @@ export default class CheckboxMenuItem extends MenuItem {
         }
         
         // Close any active context menu
-        const contextMenu = this.closest('ui-ContextMenu');
+        const contextMenu = this.closest('gooeyui-contextmenu');
         if (contextMenu && typeof contextMenu.hide === 'function') {
             contextMenu.hide();
         }

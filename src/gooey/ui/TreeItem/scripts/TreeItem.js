@@ -9,10 +9,10 @@ export default class TreeItem extends UIComponent {
     constructor() {
         super();
 
-        // Store any existing child ui-treeitem elements before adding template
-        const existingChildren = Array.from(this.querySelectorAll(':scope > ui-treeitem'));
+        // Store any existing child gooeyui-treeitem elements before adding template
+        const existingChildren = Array.from(this.querySelectorAll(':scope > gooeyui-treeitem'));
 
-        Template.activate("ui-TreeItem", this);
+        Template.activate("ui-TreeItem", this.shadowRoot);
 
         this._expanded = false;
         this._hasChildren = false;
@@ -60,7 +60,7 @@ export default class TreeItem extends UIComponent {
 
     connectedCallback() {
         // Handle any child tree items that were added after construction
-        const orphanedChildren = Array.from(this.querySelectorAll(':scope > ui-treeitem:not(.ui-TreeItem-children ui-treeitem)'));
+        const orphanedChildren = Array.from(this.querySelectorAll(':scope > gooeyui-treeitem:not(.ui-TreeItem-children gooeyui-treeitem)'));
         orphanedChildren.forEach(child => {
             this.addChild(child);
         });

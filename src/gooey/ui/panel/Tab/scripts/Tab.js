@@ -21,7 +21,7 @@ export default class Tab extends Container {
     connectedCallback() {
         
         // Find parent TabPanel
-        this._tabPanel = this.closest('ui-TabPanel');
+        this._tabPanel = this.closest('gooeyui-tabpanel');
         
         if (this._tabPanel) {
             this._tabPanel._addTab(this);

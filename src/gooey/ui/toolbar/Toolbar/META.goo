@@ -1,6 +1,6 @@
 {
   "name": "Toolbar",
-  "tagName": "ui-Toolbar",
+  "tagName": "gooeyui-toolbar",
   "script": "Toolbar.js",
   "templates": [
     { "id": "ui-Toolbar", "file": "Toolbar.html" }
