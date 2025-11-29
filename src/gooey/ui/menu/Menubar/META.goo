@@ -1,6 +1,6 @@
 {
   "name": "Menubar",
-  "tagName": "ui-Menubar",
+  "tagName": "gooeyui-menubar",
   "script": "Menubar.js",
   "templates": [
     { "id": "ui-Menubar", "file": "Menubar.html" },

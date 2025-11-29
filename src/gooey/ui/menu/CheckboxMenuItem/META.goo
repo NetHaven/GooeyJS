@@ -1,6 +1,6 @@
 {
   "name": "CheckboxMenuItem",
-  "tagName": "ui-CheckboxMenuItem",
+  "tagName": "gooeyui-checkboxmenuitem",
   "script": "CheckboxMenuItem.js",
   "templates": [
     { "id": "ui-CheckboxmenuItem", "file": "CheckboxMenuItem.html" }

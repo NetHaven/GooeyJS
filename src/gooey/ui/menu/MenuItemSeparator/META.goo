@@ -1,6 +1,6 @@
 {
   "name": "MenuItemSeparator",
-  "tagName": "ui-MenuItemSeparator",
+  "tagName": "gooeyui-menuitemseparator",
   "script": "MenuItemSeparator.js",
   "templates": [
     { "id": "ui-MenuItemSeparator", "file": "MenuItemSeparator.html" }

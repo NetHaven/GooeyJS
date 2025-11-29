@@ -76,7 +76,9 @@ export default class Component extends Observable {
 
         try {
             // Build paths for module and template using META.goo configuration
-            const modulePath = `${this._href}/${meta.script}`;
+            // Resolve against document base URL to get absolute URL for dynamic import
+            const basePath = `${this._href}/scripts/${meta.script}`;
+            const modulePath = new URL(basePath, document.baseURI).href;
 
             // Dynamically import the component class
             const module = await import(modulePath);
@@ -88,11 +90,11 @@ export default class Component extends Observable {
             // Load templates if defined in META.goo
             if (meta.templates && meta.templates.length > 0) {
                 for (const template of meta.templates) {
-                    const templatePath = `${this._href}/${template.file}`;
+                    const templatePath = `${this._href}/templates/${template.file}`;
                     try {
                         await Template.load(templatePath, template.id);
                         console.log(`Loaded template ${template.id} from ${templatePath}`);
-                    } catch (templateError) {
+                    } catch {
                         console.debug(`Failed to load template ${template.id} from ${templatePath}`);
                     }
                 }

@@ -1,6 +1,6 @@
 {
   "name": "ToolbarSeparator",
-  "tagName": "ui-ToolbarSeparator",
+  "tagName": "gooeyui-toolbarseparator",
   "script": "ToolbarSeparator.js",
   "templates": [
     { "id": "ui-ToolbarSeparator", "file": "ToolbarSeparator.html" }

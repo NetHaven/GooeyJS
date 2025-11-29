@@ -95,7 +95,7 @@ export default class MetaLoader {
 
         // Validate each attribute definition
         if (meta.attributes && typeof meta.attributes === 'object') {
-            const validTypes = ['STRING', 'NUMBER', 'BOOLEAN'];
+            const validTypes = ['STRING', 'NUMBER', 'BOOLEAN', 'ENUM'];
 
             Object.entries(meta.attributes).forEach(([attrName, attrDef]) => {
                 if (!attrDef || typeof attrDef !== 'object') {
@@ -104,12 +104,17 @@ export default class MetaLoader {
                 }
 
                 if (!attrDef.type || !validTypes.includes(attrDef.type)) {
-                    errors.push(`attributes.${attrName}: invalid type "${attrDef.type}" (must be STRING, NUMBER, or BOOLEAN)`);
+                    errors.push(`attributes.${attrName}: invalid type "${attrDef.type}" (must be STRING, NUMBER, BOOLEAN, or ENUM)`);
                 }
 
-                // Validate enum is array if present
-                if (attrDef.enum !== undefined && !Array.isArray(attrDef.enum)) {
-                    errors.push(`attributes.${attrName}: "enum" must be an array`);
+                // ENUM type requires a values array
+                if (attrDef.type === 'ENUM' && (!attrDef.values || !Array.isArray(attrDef.values))) {
+                    errors.push(`attributes.${attrName}: ENUM type requires a "values" array`);
+                }
+
+                // Validate values is array if present
+                if (attrDef.values !== undefined && !Array.isArray(attrDef.values)) {
+                    errors.push(`attributes.${attrName}: "values" must be an array`);
                 }
 
                 // Validate min/max are numbers if present

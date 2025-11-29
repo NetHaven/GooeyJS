@@ -1,6 +1,6 @@
 {
   "name": "ContextMenu",
-  "tagName": "ui-ContextMenu",
+  "tagName": "gooeyui-contextmenu",
   "script": "ContextMenu.js",
   "templates": [
     { "id": "ui-ContextMenu", "file": "ContextMenu.html" }
