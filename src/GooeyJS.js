@@ -1,4 +1,4 @@
-import Template from './gooey/util/Template.js';
+﻿import Template from './gooey/util/Template.js';
 import MetaLoader from './gooey/util/MetaLoader.js';
 import ComponentRegistry from './gooey/util/ComponentRegistry.js';
 
@@ -31,83 +31,6 @@ export default class GooeyJS {
             elements: [
                 { name: "Application" },
                 { name: "Component" }
-            ]
-        },{
-            pkg: "gooey.ui",
-            elements: [
-                { name: "Border" },
-                { name: "ColorPicker" },
-                { name: "Font" },
-                { name: "Label" },
-                { name: "ProgressBar" },
-                { name: "Tree" },
-                { name: "TreeItem" }
-            ]
-        },{
-            pkg: "gooey.ui.button",
-            elements: [
-                { name: "Button" },
-                { name: "ToggleButton" },
-                { name: "ToggleButtonGroup" }
-            ]
-        },{
-            pkg: "gooey.ui.form",
-            elements: [
-                { name: "Checkbox" },
-                { name: "DatePicker" },
-                { name: "RadioButton" },
-                { name: "RadioButtonGroup" },
-                { name: "Spinner" },
-                { name: "TimePicker" }
-            ]
-        },{
-            pkg: "gooey.ui.form.list",
-            elements: [
-                { name: "ComboBox" },
-                { name: "DropDownList" },
-                { name: "ListBox" }
-            ]
-        },{
-            pkg: "gooey.ui.form.text",
-            elements: [
-                { name: "PasswordField" },
-                { name: "RichTextEditor" },
-                { name: "TextArea" },
-                { name: "TextField" }
-            ]
-        },{
-            pkg: "gooey.ui.menu",
-            elements: [
-                { name: "CheckboxMenuItem" },
-                { name: "ContextMenu" },
-                { name: "Menu" },
-                { name: "Menubar" },
-                { name: "MenuItem" },
-                { name: "MenuItemSeparator" }
-            ]
-        },{
-            pkg: "gooey.ui.panel",
-            elements: [
-                { name: "AccordionPanel" },
-                { name: "AppPanel" },
-                { name: "FormPanel" },
-                { name: "GroupBox" },
-                { name: "Panel" },
-                { name: "SplitPanel" },
-                { name: "Tab" },
-                { name: "TabPanel" }
-            ]
-        },{
-            pkg: "gooey.ui.toolbar",
-            elements: [
-                { name: "Toolbar" },
-                { name: "ToolbarSeparator" }
-            ]
-        },{
-            pkg: "gooey.ui.window",
-            elements: [
-                { name: "Window" },
-                { name: "FloatingPane" }
             ]
         }]
 
