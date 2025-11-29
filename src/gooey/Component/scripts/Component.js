@@ -1,6 +1,7 @@
 import Observable from '../../events/Observable.js';
 import ComponentEvent from '../../events/ComponentEvent.js';
 import Template from '../../util/Template.js';
+import MetaLoader from '../../util/MetaLoader.js';
 
 export default class Component extends Observable {
     constructor() {
@@ -14,9 +15,8 @@ export default class Component extends Observable {
         // Hide this element - it's just a loader
         this.style.display = 'none';
 
-        this._src = null;
-        this._name = null;
-        this._prefix = null;
+        this._href = null;
+        this._meta = null;
         this._loaded = false;
     }
 
@@ -31,39 +31,33 @@ export default class Component extends Observable {
 
     async loadComponent() {
         // Validate required attributes
-        if (!this.hasAttribute('src')) {
-            console.error('Component loading error: "src" attribute is required');
+        if (!this.hasAttribute('href')) {
+            console.error('Component loading error: "href" attribute is required');
             this.fireEvent(ComponentEvent.ERROR, {
-                error: 'Missing required attribute: src',
+                error: 'Missing required attribute: href',
                 component: this
             });
             return;
         }
 
-        if (!this.hasAttribute('name')) {
-            console.error('Component loading error: "name" attribute is required');
+        this._href = this.getAttribute('href');
+
+        // Load and validate META.goo to get component configuration
+        let meta;
+        try {
+            meta = await MetaLoader.loadAndValidate(this._href);
+            this._meta = meta;
+        } catch (metaError) {
+            console.error(`Failed to load META.goo from ${this._href}:`, metaError);
             this.fireEvent(ComponentEvent.ERROR, {
-                error: 'Missing required attribute: name',
+                error: metaError.message,
+                href: this._href,
                 component: this
             });
             return;
         }
 
-        if (!this.hasAttribute('prefix')) {
-            console.error('Component loading error: "prefix" attribute is required');
-            this.fireEvent(ComponentEvent.ERROR, {
-                error: 'Missing required attribute: prefix',
-                component: this
-            });
-            return;
-        }
-
-        this._src = this.getAttribute('src');
-        this._name = this.getAttribute('name');
-        this._prefix = this.getAttribute('prefix');
-
-        // Generate tag name (e.g., "gooeyui-button")
-        const tagName = `${this._prefix}-${this._name}`.toLowerCase();
+        const tagName = meta.tagName;
 
         // Check if component is already registered
         if (customElements.get(tagName)) {
@@ -74,17 +68,14 @@ export default class Component extends Observable {
         // Fire LOADING event
         this.fireEvent(ComponentEvent.LOADING, {
             tagName: tagName,
-            src: this._src,
-            name: this._name,
-            prefix: this._prefix,
+            href: this._href,
+            meta: meta,
             component: this
         });
 
         try {
-            // Build paths for module and template
-            const modulePath = `${this._src}/${this._name}.js`;
-            const templatePath = `${this._src}/${this._name}.html`;
-            const templateId = `${this._prefix}-${this._name}`;
+            // Build paths for module and template using META.goo configuration
+            const modulePath = `${this._href}/${meta.script}`;
 
             // Dynamically import the component class
             const module = await import(modulePath);
@@ -93,13 +84,17 @@ export default class Component extends Observable {
             // Register the custom element
             customElements.define(tagName, ComponentClass);
 
-            // Load template if it exists
-            try {
-                await Template.load(templatePath, templateId);
-                console.log(`Loaded template ${templateId} from ${templatePath}`);
-            } catch (templateError) {
-                // Template might not exist for all components
-                console.debug(`No template found for ${this._name} at ${templatePath}`);
+            // Load templates if defined in META.goo
+            if (meta.templates && meta.templates.length > 0) {
+                for (const template of meta.templates) {
+                    const templatePath = `${this._href}/${template.file}`;
+                    try {
+                        await Template.load(templatePath, template.id);
+                        console.log(`Loaded template ${template.id} from ${templatePath}`);
+                    } catch (templateError) {
+                        console.debug(`Failed to load template ${template.id} from ${templatePath}`);
+                    }
+                }
             }
 
             console.log(`Successfully registered ${tagName} from ${modulePath}`);
@@ -110,37 +105,39 @@ export default class Component extends Observable {
             this.fireEvent(ComponentEvent.LOADED, {
                 tagName: tagName,
                 componentClass: ComponentClass,
-                src: this._src,
-                name: this._name,
-                prefix: this._prefix,
+                href: this._href,
+                meta: meta,
                 component: this
             });
 
         } catch (error) {
-            console.error(`Failed to load component ${this._name}:`, error);
+            console.error(`Failed to load component ${meta.name}:`, error);
 
             // Fire ERROR event
             this.fireEvent(ComponentEvent.ERROR, {
                 error: error.message,
                 tagName: tagName,
-                src: this._src,
-                name: this._name,
-                prefix: this._prefix,
+                href: this._href,
+                meta: meta,
                 component: this
             });
         }
     }
 
-    get src() {
-        return this._src;
+    get href() {
+        return this._href;
+    }
+
+    get meta() {
+        return this._meta;
     }
 
     get name() {
-        return this._name;
+        return this._meta?.name;
     }
 
-    get prefix() {
-        return this._prefix;
+    get tagName() {
+        return this._meta?.tagName;
     }
 
     get loaded() {
