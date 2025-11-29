@@ -8,7 +8,6 @@ export default class SplitPanel extends Container {
     constructor() {
         super();
 
-        this.attachShadow({ mode: 'open' });
         Template.activate("ui-SplitPanel", this.shadowRoot);
 
         this.classList.add("ui-SplitPanel");

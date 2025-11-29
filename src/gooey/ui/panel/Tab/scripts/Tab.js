@@ -9,7 +9,6 @@ export default class Tab extends Container {
     constructor() {
         super();
 
-        this.attachShadow({ mode: 'open' });
         Template.activate("ui-Tab", this.shadowRoot);
 
         this.layout = LayoutType.FLOW;

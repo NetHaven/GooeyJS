@@ -6,7 +6,6 @@ export default class Panel extends Container {
     constructor () {
         super();
 
-        this.attachShadow({ mode: 'open' });
         Template.activate("ui-Panel", this.shadowRoot);
         this.layout = LayoutType.FLOW;
 

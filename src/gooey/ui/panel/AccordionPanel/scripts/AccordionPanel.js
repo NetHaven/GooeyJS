@@ -8,7 +8,6 @@ export default class AccordionPanel extends Container {
     constructor() {
         super();
 
-        this.attachShadow({ mode: 'open' });
         Template.activate("ui-AccordionPanel", this.shadowRoot);
 
         this.classList.add("ui-AccordionPanel");

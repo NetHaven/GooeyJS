@@ -9,7 +9,6 @@ export default class TabPanel extends Container {
     constructor() {
         super();
 
-        this.attachShadow({ mode: 'open' });
         Template.activate("ui-TabPanel", this.shadowRoot);
 
         this.layout = LayoutType.FLOW;
