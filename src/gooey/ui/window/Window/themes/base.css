@@ -159,3 +159,21 @@
 .DialogPrompt-input {
     width: 100%;
 }
+
+/* Alert Dialog specific - buttonbar centered, no cancel button */
+:host([dialogtype="alert"]) .WindowButtonbar {
+    justify-content: center;
+}
+
+:host([dialogtype="alert"]) .WindowCancelButton {
+    display: none;
+}
+
+/* Info Dialog specific - buttonbar centered, no cancel button */
+:host([dialogtype="info"]) .WindowButtonbar {
+    justify-content: center;
+}
+
+:host([dialogtype="info"]) .WindowCancelButton {
+    display: none;
+}
