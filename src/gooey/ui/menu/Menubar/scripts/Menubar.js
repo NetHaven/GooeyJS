@@ -31,7 +31,7 @@ export default class Menubar extends UIComponent {
                     }
                 }
                 menuHeader.innerHTML = menuText;
-                menubar.appendChild(clone);
+                menubar.shadowRoot.appendChild(clone);
                 menuHeaderList.push(menuHeader);
 
                 menuHeader.addEventListener(MouseEvent.MOUSE_OVER, event => {
@@ -96,8 +96,12 @@ export default class Menubar extends UIComponent {
             var activeMenu, activeMenuHeader;
 
             // Check if click is inside any menu header or menu
-            const isMenuClick = event.target.closest('.menuHeader') || 
-                                event.target.closest('gooeyui-menu');
+            // Use composedPath() to see through shadow DOM boundaries
+            const path = event.composedPath();
+            const isMenuClick = path.some(el =>
+                el.classList?.contains('menuHeader') ||
+                el.tagName?.toLowerCase() === 'gooeyui-menu'
+            );
          
             if (!isMenuClick) {
                 activeMenu = this.getActiveMenu();
@@ -184,7 +188,7 @@ export default class Menubar extends UIComponent {
     }
 
     getActiveMenuHeader() {
-        const activeHeader = document.querySelector(".menuHeader[active]");
+        const activeHeader = this.shadowRoot.querySelector(".menuHeader[active]");
         return activeHeader;
     }
 
