@@ -81,7 +81,6 @@ GooeyJS 2.0 will include:
 ### New Components
 GooeyJS 2.0 will at the very least include the following components:
 - AccordionPanel
-- DataGrid
 - DatePicker
 - FormPanel
 - GroupBox
@@ -92,12 +91,11 @@ It will also include components specifically geared for configuring:
 - Background Images
 - Borders
 - Fonts
-- Gradients
 
 Currently some components use HTML template files, while others create HTML dynamically. GooeyJS 2.0 will move to a more consistent structure where all necessary HTML is created via template files instead of being created dynamically in JS.
 
 ## Getting Started
-Download GooeyJS.v1.7.0.zip and unzip to your codebase. To include GooeyJS, just use the following:
+Download GooeyJS.v1.8.0.zip and unzip to your codebase. To include GooeyJS, just use the following:
 
     <script type="module" src="GooeyJS/GooeyJS.js"></script>
 
