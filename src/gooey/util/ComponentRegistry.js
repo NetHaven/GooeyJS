@@ -1,8 +1,8 @@
 /**
- * AttributeRegistry - Global registry for component metadata and attribute definitions
+ * ComponentRegistry - Global registry for component metadata and attribute definitions
  * Provides attribute validation, default value access, and theme CSS storage
  */
-export default class AttributeRegistry {
+export default class ComponentRegistry {
     static _registry = new Map();
     static _themeCSS = new Map();
     static _componentPaths = new Map();

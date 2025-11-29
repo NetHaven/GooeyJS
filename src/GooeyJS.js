@@ -1,6 +1,6 @@
 import Template from './gooey/util/Template.js';
 import MetaLoader from './gooey/util/MetaLoader.js';
-import AttributeRegistry from './gooey/util/AttributeRegistry.js';
+import ComponentRegistry from './gooey/util/ComponentRegistry.js';
 
 const SCRIPT_PATH = new URL(import.meta.url, document.baseURI);
 const PATH = SCRIPT_PATH.href.substring(0, SCRIPT_PATH.href.lastIndexOf('/'));
@@ -129,8 +129,8 @@ export default class GooeyJS {
                     // Load and validate META.goo (required - strict mode)
                     const meta = await MetaLoader.loadAndValidate(fullComponentPath);
 
-                    // Register in AttributeRegistry
-                    AttributeRegistry.register(meta.tagName, meta);
+                    // Register in ComponentRegistry
+                    ComponentRegistry.register(meta.tagName, meta);
 
                     // Build script path from META.goo
                     const modulePath = `./${componentPath}/scripts/${meta.script}`;
@@ -164,8 +164,8 @@ export default class GooeyJS {
                     if (meta.themes && meta.themes.default) {
                         try {
                             const cssResult = await MetaLoader.loadThemeCSS(fullComponentPath, meta.themes.default);
-                            AttributeRegistry.setThemeCSS(meta.tagName, cssResult);
-                            AttributeRegistry.setComponentPath(meta.tagName, fullComponentPath);
+                            ComponentRegistry.setThemeCSS(meta.tagName, cssResult);
+                            ComponentRegistry.setComponentPath(meta.tagName, fullComponentPath);
                             console.log(`Loaded theme CSS for ${meta.tagName}: ${meta.themes.default}`);
                         } catch (themeError) {
                             console.warn(`Failed to load theme CSS for ${meta.tagName}:`, themeError);
@@ -173,7 +173,7 @@ export default class GooeyJS {
                     }
 
                     // Store component path for theme switching even if no default theme
-                    AttributeRegistry.setComponentPath(meta.tagName, fullComponentPath);
+                    ComponentRegistry.setComponentPath(meta.tagName, fullComponentPath);
 
                     console.log(`Registered ${meta.tagName} from ${modulePath}`);
                 } catch (error) {
@@ -191,7 +191,7 @@ export default class GooeyJS {
     _injectObservedAttributes(ComponentClass, tagName) {
         Object.defineProperty(ComponentClass, 'observedAttributes', {
             configurable: true,
-            get: () => AttributeRegistry.getObservedAttributes(tagName)
+            get: () => ComponentRegistry.getObservedAttributes(tagName)
         });
     }
 

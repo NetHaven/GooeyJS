@@ -7,7 +7,7 @@ import MouseCursor from '../io/MouseCursor.js';
 import MouseEvent from '../events/MouseEvent.js';
 import DragEvent from '../events/DragEvent.js';
 import MetaLoader from '../util/MetaLoader.js';
-import AttributeRegistry from '../util/AttributeRegistry.js';
+import ComponentRegistry from '../util/ComponentRegistry.js';
 
 export default class UIComponent extends GooeyElement {
     constructor () {
@@ -18,7 +18,7 @@ export default class UIComponent extends GooeyElement {
 
         // Inject theme CSS if available
         const tagName = this.tagName.toLowerCase();
-        const cssResult = AttributeRegistry.getThemeCSS(tagName);
+        const cssResult = ComponentRegistry.getThemeCSS(tagName);
         if (cssResult) {
             MetaLoader.injectCSS(this.shadowRoot, cssResult);
         }
@@ -417,7 +417,7 @@ export default class UIComponent extends GooeyElement {
      */
     async switchTheme(themeName) {
         const tagName = this.tagName.toLowerCase();
-        const componentPath = AttributeRegistry.getComponentPath(tagName);
+        const componentPath = ComponentRegistry.getComponentPath(tagName);
 
         if (componentPath && this.shadowRoot) {
             await MetaLoader.switchTheme(this.shadowRoot, componentPath, themeName);
