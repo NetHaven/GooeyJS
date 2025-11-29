@@ -71,6 +71,21 @@ export default class GooeyJS {
                     // Register in ComponentRegistry
                     ComponentRegistry.register(meta.tagName, meta);
 
+                    // Store component path early (needed for theme loading)
+                    ComponentRegistry.setComponentPath(meta.tagName, fullComponentPath);
+
+                    // Load and cache default theme CSS BEFORE defining custom element
+                    // (constructors need theme CSS available when triggered by define())
+                    if (meta.themes && meta.themes.default) {
+                        try {
+                            const cssResult = await MetaLoader.loadThemeCSS(fullComponentPath, meta.themes.default);
+                            ComponentRegistry.setThemeCSS(meta.tagName, cssResult);
+                            console.log(`Loaded theme CSS for ${meta.tagName}: ${meta.themes.default}`);
+                        } catch (themeError) {
+                            console.warn(`Failed to load theme CSS for ${meta.tagName}:`, themeError);
+                        }
+                    }
+
                     // Build script path from META.goo
                     const modulePath = `./${componentPath}/scripts/${meta.script}`;
 
@@ -100,21 +115,6 @@ export default class GooeyJS {
                     // Register the custom element with tag name from META.goo
                     // (triggers constructor for any existing DOM elements)
                     customElements.define(meta.tagName, ComponentClass);
-
-                    // Load and cache default theme CSS for Shadow DOM injection
-                    if (meta.themes && meta.themes.default) {
-                        try {
-                            const cssResult = await MetaLoader.loadThemeCSS(fullComponentPath, meta.themes.default);
-                            ComponentRegistry.setThemeCSS(meta.tagName, cssResult);
-                            ComponentRegistry.setComponentPath(meta.tagName, fullComponentPath);
-                            console.log(`Loaded theme CSS for ${meta.tagName}: ${meta.themes.default}`);
-                        } catch (themeError) {
-                            console.warn(`Failed to load theme CSS for ${meta.tagName}:`, themeError);
-                        }
-                    }
-
-                    // Store component path for theme switching even if no default theme
-                    ComponentRegistry.setComponentPath(meta.tagName, fullComponentPath);
 
                     console.log(`Registered ${meta.tagName} from ${modulePath}`);
                 } catch (error) {

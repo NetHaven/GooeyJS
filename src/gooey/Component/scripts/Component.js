@@ -2,6 +2,7 @@ import Observable from '../../events/Observable.js';
 import ComponentEvent from '../../events/ComponentEvent.js';
 import Template from '../../util/Template.js';
 import MetaLoader from '../../util/MetaLoader.js';
+import ComponentRegistry from '../../util/ComponentRegistry.js';
 
 export default class Component extends Observable {
     constructor() {
@@ -75,6 +76,24 @@ export default class Component extends Observable {
         });
 
         try {
+            // Register in ComponentRegistry
+            ComponentRegistry.register(tagName, meta);
+
+            // Store component path early (needed for theme loading)
+            ComponentRegistry.setComponentPath(tagName, this._href);
+
+            // Load and cache default theme CSS BEFORE defining custom element
+            // (constructors need theme CSS available when triggered by define())
+            if (meta.themes && meta.themes.default) {
+                try {
+                    const cssResult = await MetaLoader.loadThemeCSS(this._href, meta.themes.default);
+                    ComponentRegistry.setThemeCSS(tagName, cssResult);
+                    console.log(`Loaded theme CSS for ${tagName}: ${meta.themes.default}`);
+                } catch (themeError) {
+                    console.warn(`Failed to load theme CSS for ${tagName}:`, themeError);
+                }
+            }
+
             // Build paths for module and template using META.goo configuration
             // Resolve against document base URL to get absolute URL for dynamic import
             const basePath = `${this._href}/scripts/${meta.script}`;
