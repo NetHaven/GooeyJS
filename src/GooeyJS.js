@@ -6,6 +6,22 @@ const SCRIPT_PATH = new URL(import.meta.url, document.baseURI);
 const PATH = SCRIPT_PATH.href.substring(0, SCRIPT_PATH.href.lastIndexOf('/'));
 
 export default class GooeyJS {
+    static _initialized = false;
+    static _instance = null;
+
+    /**
+     * Initialize GooeyJS. Safe to call multiple times; only the first call takes effect.
+     * @returns {GooeyJS} The singleton instance
+     */
+    static init() {
+        if (GooeyJS._initialized) {
+            return GooeyJS._instance;
+        }
+        GooeyJS._initialized = true;
+        GooeyJS._instance = new GooeyJS();
+        return GooeyJS._instance;
+    }
+
     constructor() {
         let headEl, htmlEl, linkEl;
 
@@ -197,4 +213,4 @@ export default class GooeyJS {
 
 }
 
-window.addEventListener('load', function() { new GooeyJS();}());
+window.addEventListener('load', () => GooeyJS.init());
