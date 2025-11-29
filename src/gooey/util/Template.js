@@ -52,6 +52,14 @@ export default class Template {
 
                 // Final check before DOM injection
                 if (!document.getElementById(templateId)) {
+                    // Extract template directory path for resolving relative URLs
+                    const templateDir = templateName.substring(0, templateName.lastIndexOf('/') + 1);
+
+                    // Rewrite relative URLs in media elements to be relative to template location
+                    if (templateDir) {
+                        html = Template._rewriteMediaUrls(html, templateDir);
+                    }
+
                     // Parse HTML in an inert context (CSP-safe, no script execution)
                     const parser = new DOMParser();
                     const doc = parser.parseFromString(html, 'text/html');
@@ -93,6 +101,32 @@ export default class Template {
         Template._loading.set(templateId, loadPromise);
 
         return loadPromise;
+    }
+
+    /**
+     * Rewrites relative URLs in media elements (img, video, audio) to be relative to template location
+     * @param {string} html - The HTML content to process
+     * @param {string} templateDir - The directory path where the template is located
+     * @returns {string} - HTML with rewritten URLs
+     */
+    static _rewriteMediaUrls(html, templateDir) {
+        // Match src attributes in img, video, audio, and source tags
+        // Only rewrite relative paths (not absolute, protocol-relative, or data URIs)
+        return html.replace(
+            /(<(?:img|video|audio|source)[^>]*\ssrc=["'])([^"']+)(["'][^>]*>)/gi,
+            (match, before, url, after) => {
+                // Skip absolute URLs, protocol-relative URLs, and data URIs
+                if (url.startsWith('/') ||
+                    url.startsWith('http://') ||
+                    url.startsWith('https://') ||
+                    url.startsWith('data:') ||
+                    url.startsWith('//')) {
+                    return match;
+                }
+                // Prepend template directory to relative URL
+                return `${before}${templateDir}${url}${after}`;
+            }
+        );
     }
 
      /**
