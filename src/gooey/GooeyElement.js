@@ -1,4 +1,4 @@
-import Observable from '../events/Observable.js';
+import Observable from './events/Observable.js';
 
 export default class GooeyElement extends Observable {
     static get observedAttributes() {
