@@ -1,0 +1,7 @@
+/* Application Dark Theme */
+
+:host {
+    display: block;
+    background-color: #1e1e1e;
+    color: #e0e0e0;
+}

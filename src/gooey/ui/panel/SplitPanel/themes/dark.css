@@ -1,0 +1,70 @@
+/* SplitPanel Dark Theme */
+
+:host {
+    display: flex;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-color: #2d2d2d;
+}
+
+.splitpanel-pane {
+    overflow: auto;
+    background-color: #2d2d2d;
+    border: 1px inset #505050;
+    display: flex;
+    flex-direction: column;
+}
+
+.splitpanel-divider {
+    background-color: #3d3d3d;
+    border: 1px outset #505050;
+    user-select: none;
+    flex-shrink: 0;
+    position: relative;
+}
+
+.splitpanel-divider:hover {
+    background-color: #4a4a4a;
+}
+
+.splitpanel-divider:active,
+:host(.splitpanel-dragging) .splitpanel-divider {
+    background-color: #4a90e2;
+    border: 1px inset #505050;
+}
+
+/* Horizontal orientation (left/right split) */
+:host([orientation="horizontal"]) {
+    flex-direction: row;
+}
+
+:host([orientation="horizontal"]) .splitpanel-divider {
+    cursor: col-resize;
+    min-width: 3px;
+    width: 5px;
+}
+
+/* Vertical orientation (top/bottom split) */
+:host([orientation="vertical"]) {
+    flex-direction: column;
+}
+
+:host([orientation="vertical"]) .splitpanel-divider {
+    cursor: row-resize;
+    min-height: 3px;
+    height: 5px;
+}
+
+/* Dragging state */
+:host(.splitpanel-dragging) {
+    user-select: none;
+}
+
+:host(.splitpanel-dragging) * {
+    pointer-events: none;
+}
+
+:host(.splitpanel-dragging) .splitpanel-divider {
+    pointer-events: auto;
+}

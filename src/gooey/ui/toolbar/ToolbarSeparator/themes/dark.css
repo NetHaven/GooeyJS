@@ -1,0 +1,9 @@
+/* ToolbarSeparator Dark Theme */
+
+:host {
+    border-color: #505050;
+    border-style: solid;
+    border-width: 1px;
+    margin: 2px;
+    width: 1px;
+}

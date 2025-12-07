@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GooeyJS Element Reference</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="data.js"></script>
+    <script src="app.js" defer></script>
+</head>
+<body>
+    <div class="app-container">
+        <div class="title-bar">
+            <svg class="title-bar-icon" viewBox="0 0 16 16" fill="currentColor">
+                <rect x="1" y="1" width="6" height="6" fill="#ff0"/>
+                <rect x="9" y="1" width="6" height="6" fill="#0f0"/>
+                <rect x="1" y="9" width="6" height="6" fill="#f00"/>
+                <rect x="9" y="9" width="6" height="6" fill="#00f"/>
+            </svg>
+            GooeyJS Element Reference
+        </div>
+        <div class="content-area">
+            <div class="left-panel">
+                <div class="panel-header">Elements</div>
+                <div class="tree-container" id="elementTree"></div>
+            </div>
+            <div class="main-panel">
+                <div class="element-details" id="elementDetails">
+                    <div class="welcome-screen">
+                        <h2>GooeyJS Element Reference</h2>
+                        <p>Select an element from the tree on the left to view its documentation.</p>
+                        <p style="margin-top: 16px;">This reference contains documentation for all GooeyJS custom elements,<br>including element-specific attributes and inherited attributes from base classes.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

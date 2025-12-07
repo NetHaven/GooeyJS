@@ -1,0 +1,17 @@
+/* TextField Dark Theme */
+
+input[type='text'] {
+    height: 100%;
+    width: 100%;
+    background-color: #1e1e1e;
+    color: #e0e0e0;
+    border: 2px inset #505050;
+}
+
+input[type='text']:focus {
+    border-color: #4a90e2;
+}
+
+input[type='text']::placeholder {
+    color: #707070;
+}

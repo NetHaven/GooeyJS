@@ -1,0 +1,6 @@
+/* Border Dark Theme */
+
+:host {
+    display: block;
+    border-color: #505050;
+}

@@ -1,0 +1,165 @@
+/* TabPanel Dark Theme */
+
+:host {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+:host(.vertical) {
+    flex-direction: row;
+}
+
+.tab-strip {
+    display: flex;
+    flex-direction: row;
+    background-color: #2d2d2d;
+    overflow-x: auto;
+    flex-shrink: 0;
+}
+
+:host(.vertical) .tab-strip {
+    flex-direction: column;
+    border-bottom: none;
+    border-right: 1px solid #505050;
+    overflow-x: visible;
+    overflow-y: auto;
+    width: 150px;
+}
+
+.tab-content {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+    background-color: #2d2d2d;
+    border: 1px solid #505050;
+    display: flex;
+    min-height: 0;
+}
+
+.tab-header {
+    display: flex;
+    align-items: center;
+    padding: 6px 12px;
+    border: 1px solid #505050;
+    border-bottom: none;
+    border-radius: 6px 6px 0 0;
+    background-color: #353535;
+    cursor: pointer;
+    user-select: none;
+    font-size: 11px;
+    font-family: sans-serif;
+    margin-right: -1px;
+    position: relative;
+    min-width: 0;
+    white-space: nowrap;
+    color: #a0a0a0;
+    transition: all 0.15s ease;
+}
+
+:host(.vertical) .tab-header {
+    border-right: none;
+    border-bottom: 1px solid #505050;
+    margin-right: 0;
+    margin-bottom: -1px;
+    justify-content: flex-start;
+    width: 100%;
+}
+
+.tab-header:hover {
+    background-color: #404040;
+    color: #e0e0e0;
+}
+
+.tab-header.active {
+    background-color: #2d2d2d;
+    border-bottom: 1px solid #2d2d2d;
+    border-color: #4a90e2;
+    border-width: 2px;
+    color: #ffffff;
+    font-weight: 600;
+    z-index: 1;
+    box-shadow: 0 -2px 4px rgba(74, 144, 226, 0.3);
+}
+
+:host(.vertical) .tab-header.active {
+    background-color: #2d2d2d;
+    border-bottom: 1px solid #505050;
+    border-right: 1px solid #2d2d2d;
+    border-color: #4a90e2;
+    border-width: 2px;
+    color: #ffffff;
+    font-weight: 600;
+    box-shadow: -2px 0 4px rgba(74, 144, 226, 0.3);
+}
+
+.tab-header:focus {
+    outline: 2px solid #4a90e2;
+    outline-offset: -2px;
+}
+
+.tab-title {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.tab-close-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+    margin-left: 8px;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 2px;
+    color: #a0a0a0;
+    flex-shrink: 0;
+    background-image: url('resources/icons/close24.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 18px 18px;
+}
+
+.tab-close-button:hover {
+    background-color: #e81123;
+    color: white;
+}
+
+.tab-close-button:focus {
+    outline: 1px solid #4a90e2;
+    outline-offset: 1px;
+}
+
+/* Tab Drag and Drop Styles */
+.tab-header[draggable="true"] {
+    cursor: grab;
+}
+
+.tab-header[draggable="true"]:active {
+    cursor: grabbing;
+}
+
+.tab-header.drag-over-left {
+    border-left: 3px solid #4a90e2;
+}
+
+.tab-header.drag-over-right {
+    border-right: 3px solid #4a90e2;
+}
+
+.tab-header.drag-over-top {
+    border-top: 3px solid #4a90e2;
+}
+
+.tab-header.drag-over-bottom {
+    border-bottom: 3px solid #4a90e2;
+}

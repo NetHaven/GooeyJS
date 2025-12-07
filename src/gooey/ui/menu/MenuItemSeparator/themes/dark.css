@@ -1,0 +1,8 @@
+/* MenuItemSeparator Dark Theme */
+
+:host {
+    display: block;
+    height: 1px;
+    background-color: #505050;
+    margin: 2px 0;
+}

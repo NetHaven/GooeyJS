@@ -1,0 +1,15 @@
+/* Checkbox Dark Theme */
+
+:host {
+    display: inline-block;
+    color: #e0e0e0;
+}
+
+input[type="checkbox"] {
+    cursor: pointer;
+    accent-color: #4a90e2;
+}
+
+label {
+    color: #e0e0e0;
+}

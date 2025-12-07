@@ -1,0 +1,17 @@
+/* DatePicker Dark Theme */
+
+:host {
+    display: inline-block;
+}
+
+input[type="date"] {
+    width: 100%;
+    background-color: #1e1e1e;
+    color: #e0e0e0;
+    border: 2px inset #505050;
+    color-scheme: dark;
+}
+
+input[type="date"]:focus {
+    border-color: #4a90e2;
+}

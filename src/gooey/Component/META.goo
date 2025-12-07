@@ -5,7 +5,7 @@
   "templates": [],
   "themes": {
     "default": "base",
-    "available": ["base"]
+    "available": ["base", "dark"]
   },
   "attributes": {
     "href": { "type": "STRING", "default": null, "required": true }

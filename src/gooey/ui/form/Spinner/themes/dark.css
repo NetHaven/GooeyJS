@@ -1,0 +1,35 @@
+/* Spinner Dark Theme */
+
+:host {
+    display: inline-block;
+}
+
+.spinner-container {
+    display: flex;
+    align-items: center;
+}
+
+input[type="number"] {
+    flex: 1;
+    min-width: 60px;
+    background-color: #1e1e1e;
+    color: #e0e0e0;
+    border: 2px inset #505050;
+}
+
+input[type="number"]:focus {
+    border-color: #4a90e2;
+}
+
+.increment-btn,
+.decrement-btn {
+    cursor: pointer;
+    background-color: #3d3d3d;
+    color: #e0e0e0;
+    border: 2px outset #505050;
+}
+
+.increment-btn:hover,
+.decrement-btn:hover {
+    background-color: #4a4a4a;
+}

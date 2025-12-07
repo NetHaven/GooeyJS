@@ -1,0 +1,17 @@
+/* PasswordField Dark Theme */
+
+input[type='password'] {
+    height: 100%;
+    width: 100%;
+    background-color: #1e1e1e;
+    color: #e0e0e0;
+    border: 2px inset #505050;
+}
+
+input[type='password']:focus {
+    border-color: #4a90e2;
+}
+
+input[type='password']::placeholder {
+    color: #707070;
+}

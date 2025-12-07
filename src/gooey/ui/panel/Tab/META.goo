@@ -7,7 +7,7 @@
   ],
   "themes": {
     "default": "base",
-    "available": ["base"]
+    "available": ["base", "dark"]
   },
   "attributes": {
     "name": { "type": "STRING", "default": "Tab" },
