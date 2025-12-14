@@ -1,4 +1,5 @@
 {
+  "MetaGooVersion": "1.0",
   "name": "Window",
   "tagName": "gooeyui-window",
   "script": "Window.js",

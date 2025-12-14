@@ -1,4 +1,5 @@
 {
+  "MetaGooVersion": "1.0",
   "name": "ListBox",
   "tagName": "gooeyui-listbox",
   "script": "ListBox.js",

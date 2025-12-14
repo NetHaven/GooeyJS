@@ -1,4 +1,5 @@
 {
+  "MetaGooVersion": "1.0",
   "name": "ContextMenu",
   "tagName": "gooeyui-contextmenu",
   "script": "ContextMenu.js",

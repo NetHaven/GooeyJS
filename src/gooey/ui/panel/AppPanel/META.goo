@@ -1,4 +1,5 @@
 {
+  "MetaGooVersion": "1.0",
   "name": "AppPanel",
   "tagName": "gooeyui-apppanel",
   "script": "AppPanel.js",

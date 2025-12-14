@@ -1,4 +1,5 @@
 {
+  "MetaGooVersion": "1.0",
   "name": "ToggleButtonGroup",
   "tagName": "gooeyui-togglebuttongroup",
   "script": "ToggleButtonGroup.js",

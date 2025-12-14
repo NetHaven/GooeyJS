@@ -1,4 +1,5 @@
 {
+  "MetaGooVersion": "1.0",
   "name": "AccordionPanel",
   "tagName": "gooeyui-accordionpanel",
   "script": "AccordionPanel.js",

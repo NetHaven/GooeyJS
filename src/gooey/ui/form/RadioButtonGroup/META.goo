@@ -1,4 +1,5 @@
 {
+  "MetaGooVersion": "1.0",
   "name": "RadioButtonGroup",
   "tagName": "gooeyui-radiobuttongroup",
   "script": "RadioButtonGroup.js",

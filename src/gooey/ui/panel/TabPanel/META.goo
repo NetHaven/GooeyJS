@@ -1,4 +1,5 @@
 {
+  "MetaGooVersion": "1.0",
   "name": "TabPanel",
   "tagName": "gooeyui-tabpanel",
   "script": "TabPanel.js",

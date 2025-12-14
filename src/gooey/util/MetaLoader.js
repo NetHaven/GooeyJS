@@ -3,8 +3,61 @@
  * Also handles theme CSS loading and injection for Shadow DOM components
  */
 export default class MetaLoader {
+    // Supported META.goo version - update this when parser changes
+    static SUPPORTED_META_VERSION = "1.0";
+
     // CSS cache for performance - shared stylesheets across component instances
     static _cssCache = new Map();
+
+    /**
+     * Compare two version strings (e.g., "1.0", "1.1", "2.0")
+     * @param {string} v1 - First version
+     * @param {string} v2 - Second version
+     * @returns {number} -1 if v1 < v2, 0 if equal, 1 if v1 > v2
+     */
+    static _compareVersions(v1, v2) {
+        const parts1 = v1.split('.').map(Number);
+        const parts2 = v2.split('.').map(Number);
+        const maxLength = Math.max(parts1.length, parts2.length);
+
+        for (let i = 0; i < maxLength; i++) {
+            const num1 = parts1[i] || 0;
+            const num2 = parts2[i] || 0;
+            if (num1 < num2) return -1;
+            if (num1 > num2) return 1;
+        }
+        return 0;
+    }
+
+    /**
+     * Check META.goo version compatibility and log appropriate warnings
+     * @param {Object} meta - Parsed META.goo content
+     * @param {string} metaPath - Path to the META.goo file (for logging)
+     */
+    static _checkVersion(meta, metaPath) {
+        const fileVersion = meta.MetaGooVersion;
+
+        if (!fileVersion) {
+            console.warn(
+                `META.goo version missing: ${metaPath}\n` +
+                `  Consider adding "MetaGooVersion": "${this.SUPPORTED_META_VERSION}" to ensure future compatibility.`
+            );
+            return;
+        }
+
+        const comparison = this._compareVersions(fileVersion, this.SUPPORTED_META_VERSION);
+
+        if (comparison > 0) {
+            console.warn(
+                `META.goo version mismatch: ${metaPath}\n` +
+                `  File version: ${fileVersion}\n` +
+                `  Supported version: ${this.SUPPORTED_META_VERSION}\n` +
+                `  This META.goo file uses a newer format than this version of GooeyJS supports.\n` +
+                `  Please upgrade GooeyJS to the latest release to ensure full compatibility.\n` +
+                `  Attempting to parse anyway...`
+            );
+        }
+    }
     /**
      * Load a META.goo file from a component directory
      * @param {string} componentPath - Full path to the component directory
@@ -28,7 +81,9 @@ export default class MetaLoader {
             }
 
             try {
-                return JSON.parse(text);
+                const meta = JSON.parse(text);
+                this._checkVersion(meta, metaPath);
+                return meta;
             } catch (parseError) {
                 throw new Error(`META.goo contains invalid JSON: ${metaPath} - ${parseError.message}`);
             }

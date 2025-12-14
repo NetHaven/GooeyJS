@@ -1,4 +1,5 @@
 {
+  "MetaGooVersion": "1.0",
   "name": "PasswordField",
   "tagName": "gooeyui-passwordfield",
   "script": "PasswordField.js",

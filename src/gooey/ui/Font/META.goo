@@ -1,4 +1,5 @@
 {
+  "MetaGooVersion": "1.0",
   "name": "Font",
   "tagName": "gooeyui-font",
   "script": "Font.js",
