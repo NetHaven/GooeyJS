@@ -32,6 +32,13 @@ export default class Model extends Observable {
     }
   }
 
+  // Enable change tracking by transitioning to UNCHANGED state
+  // Called after initial attributes are set to establish the "clean" baseline
+  _enableChangeTracking() {
+    this._originalValues = {};
+    this._entityState = EntityState.UNCHANGED;
+  }
+
   // Define properties based on metadata
   _defineProperties() {
     Object.entries(this._metadata).forEach(([key]) => {
