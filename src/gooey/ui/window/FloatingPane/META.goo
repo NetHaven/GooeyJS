@@ -6,7 +6,7 @@
   "templates": [],
   "themes": {
     "default": "base",
-    "available": ["base", "dark"]
+    "available": ["base", "dark", "janus"]
   },
   "attributes": {
     "wintitle": { "type": "STRING", "default": null },

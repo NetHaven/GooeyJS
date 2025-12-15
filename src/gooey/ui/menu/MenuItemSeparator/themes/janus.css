@@ -1,0 +1,10 @@
+/* MenuItemSeparator - Windows 3.1 Janus Theme */
+
+:host {
+    display: block;
+    height: 2px;
+    margin: 2px 4px;
+    /* Windows 3.1 etched line */
+    border-top: 1px solid #808080;
+    border-bottom: 1px solid #ffffff;
+}

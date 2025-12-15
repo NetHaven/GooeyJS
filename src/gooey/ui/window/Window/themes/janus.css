@@ -1,0 +1,234 @@
+/* Window - Windows 3.1 Janus Theme */
+
+:host {
+    background-color: #c0c0c0;
+    display: none;
+    margin: 0;
+    position: fixed;
+    z-index: 1500;
+    font-family: "MS Sans Serif", "Segoe UI", Tahoma, sans-serif;
+    font-size: 11px;
+    /* Windows 3.1 raised window border */
+    border-top: 1px solid #ffffff;
+    border-left: 1px solid #ffffff;
+    border-right: 1px solid #808080;
+    border-bottom: 1px solid #808080;
+    box-shadow:
+        inset -1px -1px 0 #000000,
+        inset 1px 1px 0 #dfdfdf,
+        2px 2px 0 #000000;
+}
+
+:host([visible=true]) {
+    display: flex !important;
+    height: 75vh;
+    flex-direction: column;
+}
+
+.WindowTitlebar {
+    background: #000080;
+    color: #ffffff;
+    cursor: default;
+    font-weight: bold;
+    height: 18px;
+    text-align: center;
+    user-select: none;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    /* Windows 3.1 title bar - no inner shadows */
+    border-bottom: 1px solid #808080;
+}
+
+.WindowContent {
+    display: flex;
+    flex: 1;
+    margin: 4px;
+    min-height: 0px;
+    background-color: #c0c0c0;
+}
+
+.WindowButtonbar {
+    display: flex;
+    height: 28px;
+    margin: 4px 8px 8px 8px;
+    justify-content: flex-end;
+    gap: 6px;
+}
+
+.WindowButtonbar button {
+    margin: 0;
+    width: 75px;
+    min-height: 23px;
+    font-family: "MS Sans Serif", "Segoe UI", Tahoma, sans-serif;
+    font-size: 11px;
+    background-color: #c0c0c0;
+    color: #000000;
+    cursor: pointer;
+    /* Windows 3.1 button */
+    border-top: 1px solid #ffffff;
+    border-left: 1px solid #ffffff;
+    border-right: 1px solid #808080;
+    border-bottom: 1px solid #808080;
+    box-shadow:
+        inset -1px -1px 0 #000000,
+        inset 1px 1px 0 #dfdfdf;
+}
+
+.WindowButtonbar button:active {
+    border-top: 1px solid #808080;
+    border-left: 1px solid #808080;
+    border-right: 1px solid #ffffff;
+    border-bottom: 1px solid #ffffff;
+    box-shadow:
+        inset 1px 1px 0 #000000,
+        inset -1px -1px 0 #dfdfdf;
+}
+
+.uiWindowModal {
+    height: 100%;
+    left: 0;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 1400;
+}
+
+/* Ensure modal windows appear above everything else */
+:host([modal]) {
+    z-index: 1600;
+}
+
+/* Dialog Alert Styles */
+.DialogAlert-container {
+    display: flex;
+    align-items: flex-start;
+    padding: 12px;
+    gap: 10px;
+}
+
+.DialogAlert-icon {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+}
+
+.DialogAlert-message {
+    flex: 1;
+    font-family: "MS Sans Serif", "Segoe UI", Tahoma, sans-serif;
+    font-size: 11px;
+    line-height: 1.3;
+    word-wrap: break-word;
+    color: #000000;
+}
+
+/* Dialog Info Styles */
+.DialogInfo-container {
+    display: flex;
+    align-items: flex-start;
+    padding: 12px;
+    gap: 10px;
+}
+
+.DialogInfo-icon {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+}
+
+.DialogInfo-message {
+    flex: 1;
+    font-family: "MS Sans Serif", "Segoe UI", Tahoma, sans-serif;
+    font-size: 11px;
+    line-height: 1.3;
+    word-wrap: break-word;
+    color: #000000;
+}
+
+/* Dialog Confirm Styles */
+.DialogConfirm-container {
+    display: flex;
+    align-items: flex-start;
+    padding: 12px;
+    gap: 10px;
+}
+
+.DialogConfirm-icon {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+}
+
+.DialogConfirm-message {
+    flex: 1;
+    font-family: "MS Sans Serif", "Segoe UI", Tahoma, sans-serif;
+    font-size: 11px;
+    line-height: 1.3;
+    word-wrap: break-word;
+    color: #000000;
+}
+
+/* Dialog Prompt Styles */
+.DialogPrompt-container {
+    display: flex;
+    align-items: flex-start;
+    padding: 12px;
+    gap: 10px;
+}
+
+.DialogPrompt-icon {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+}
+
+.DialogPrompt-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.DialogPrompt-message {
+    font-family: "MS Sans Serif", "Segoe UI", Tahoma, sans-serif;
+    font-size: 11px;
+    line-height: 1.3;
+    word-wrap: break-word;
+    color: #000000;
+}
+
+.DialogPrompt-input {
+    width: 100%;
+    padding: 2px 4px;
+    font-family: "MS Sans Serif", "Segoe UI", Tahoma, sans-serif;
+    font-size: 11px;
+    background-color: #ffffff;
+    color: #000000;
+    /* Windows 3.1 sunken input */
+    border-top: 1px solid #808080;
+    border-left: 1px solid #808080;
+    border-right: 1px solid #ffffff;
+    border-bottom: 1px solid #ffffff;
+    box-shadow: inset 1px 1px 0 #000000;
+}
+
+/* Alert Dialog specific - buttonbar centered, no cancel button */
+:host([dialogtype="alert"]) .WindowButtonbar {
+    justify-content: center;
+}
+
+:host([dialogtype="alert"]) .WindowCancelButton {
+    display: none;
+}
+
+/* Info Dialog specific - buttonbar centered, no cancel button */
+:host([dialogtype="info"]) .WindowButtonbar {
+    justify-content: center;
+}
+
+:host([dialogtype="info"]) .WindowCancelButton {
+    display: none;
+}

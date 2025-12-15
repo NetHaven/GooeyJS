@@ -8,7 +8,7 @@
   ],
   "themes": {
     "default": "base",
-    "available": ["base", "dark"]
+    "available": ["base", "dark", "janus"]
   },
   "attributes": {
     "multiopen": { "type": "BOOLEAN", "default": false },

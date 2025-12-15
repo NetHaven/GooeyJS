@@ -1,0 +1,174 @@
+/* TabPanel - Windows 3.1 Janus Theme */
+
+:host {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    font-family: "MS Sans Serif", "Segoe UI", Tahoma, sans-serif;
+    font-size: 11px;
+}
+
+:host(.vertical) {
+    flex-direction: row;
+}
+
+.tab-strip {
+    display: flex;
+    flex-direction: row;
+    background-color: #c0c0c0;
+    overflow-x: auto;
+    flex-shrink: 0;
+}
+
+:host(.vertical) .tab-strip {
+    flex-direction: column;
+    border-bottom: none;
+    border-right: 1px solid #808080;
+    overflow-x: visible;
+    overflow-y: auto;
+    width: 120px;
+}
+
+.tab-content {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+    background-color: #c0c0c0;
+    display: flex;
+    min-height: 0;
+    /* Windows 3.1 raised border */
+    border-top: 1px solid #ffffff;
+    border-left: 1px solid #ffffff;
+    border-right: 1px solid #808080;
+    border-bottom: 1px solid #808080;
+    box-shadow: inset -1px -1px 0 #000000;
+}
+
+.tab-header {
+    display: flex;
+    align-items: center;
+    padding: 4px 12px;
+    background-color: #c0c0c0;
+    cursor: pointer;
+    user-select: none;
+    font-size: 11px;
+    font-family: "MS Sans Serif", "Segoe UI", Tahoma, sans-serif;
+    margin-right: -1px;
+    position: relative;
+    min-width: 0;
+    white-space: nowrap;
+    color: #000000;
+    /* Windows 3.1 raised tab */
+    border-top: 1px solid #ffffff;
+    border-left: 1px solid #ffffff;
+    border-right: 1px solid #808080;
+    border-bottom: none;
+}
+
+:host(.vertical) .tab-header {
+    border-right: none;
+    border-bottom: 1px solid #808080;
+    margin-right: 0;
+    margin-bottom: -1px;
+    justify-content: flex-start;
+    width: 100%;
+}
+
+.tab-header:hover {
+    background-color: #d4d4d4;
+}
+
+.tab-header.active {
+    background-color: #c0c0c0;
+    color: #000000;
+    font-weight: bold;
+    z-index: 1;
+    /* Active tab sits on top of content */
+    border-bottom: 1px solid #c0c0c0;
+    margin-bottom: -1px;
+}
+
+:host(.vertical) .tab-header.active {
+    border-bottom: 1px solid #808080;
+    border-right: 1px solid #c0c0c0;
+    margin-right: -1px;
+    margin-bottom: 0;
+}
+
+.tab-header:focus {
+    outline: 1px dotted #000000;
+    outline-offset: -2px;
+}
+
+.tab-title {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.tab-close-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
+    line-height: 1;
+    margin-left: 8px;
+    padding: 2px;
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #000000;
+    flex-shrink: 0;
+    /* Windows 3.1 small button */
+    background-color: #c0c0c0;
+    border-top: 1px solid #ffffff;
+    border-left: 1px solid #ffffff;
+    border-right: 1px solid #808080;
+    border-bottom: 1px solid #808080;
+}
+
+.tab-close-button:hover {
+    background-color: #ff0000;
+    color: #ffffff;
+}
+
+.tab-close-button:active {
+    border-top: 1px solid #808080;
+    border-left: 1px solid #808080;
+    border-right: 1px solid #ffffff;
+    border-bottom: 1px solid #ffffff;
+}
+
+.tab-close-button:focus {
+    outline: 1px dotted #000000;
+}
+
+/* Tab Drag and Drop Styles */
+.tab-header[draggable="true"] {
+    cursor: grab;
+}
+
+.tab-header[draggable="true"]:active {
+    cursor: grabbing;
+}
+
+.tab-header.drag-over-left {
+    border-left: 2px solid #000080;
+}
+
+.tab-header.drag-over-right {
+    border-right: 2px solid #000080;
+}
+
+.tab-header.drag-over-top {
+    border-top: 2px solid #000080;
+}
+
+.tab-header.drag-over-bottom {
+    border-bottom: 2px solid #000080;
+}

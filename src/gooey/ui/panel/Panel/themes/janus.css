@@ -1,0 +1,12 @@
+/* Panel - Windows 3.1 Janus Theme */
+
+:host {
+    display: block;
+    background-color: #c0c0c0;
+    font-family: "MS Sans Serif", "Segoe UI", Tahoma, sans-serif;
+    font-size: 11px;
+}
+
+::slotted(*) {
+    /* Child elements use the container's layout system */
+}

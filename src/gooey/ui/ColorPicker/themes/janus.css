@@ -1,0 +1,190 @@
+/* ColorPicker - Windows 3.1 Janus Theme */
+
+:host {
+    display: inline-block;
+    position: relative;
+    min-width: 40px;
+    font-family: "MS Sans Serif", "Segoe UI", Tahoma, sans-serif;
+    font-size: 11px;
+}
+
+.colorpicker-container {
+    position: relative;
+    display: inline-block;
+}
+
+.colorpicker-button {
+    display: flex;
+    align-items: center;
+    background-color: #c0c0c0;
+    padding: 2px 4px;
+    cursor: pointer;
+    outline: none;
+    min-width: 40px;
+    height: 24px;
+    font-family: "MS Sans Serif", "Segoe UI", Tahoma, sans-serif;
+    /* Windows 3.1 raised button */
+    border-top: 1px solid #ffffff;
+    border-left: 1px solid #ffffff;
+    border-right: 1px solid #808080;
+    border-bottom: 1px solid #808080;
+    box-shadow:
+        inset -1px -1px 0 #000000,
+        inset 1px 1px 0 #dfdfdf;
+}
+
+.colorpicker-button:hover {
+    background-color: #d4d4d4;
+}
+
+.colorpicker-button:active,
+:host(.colorpicker-open) .colorpicker-button {
+    background-color: #c0c0c0;
+    border-top: 1px solid #808080;
+    border-left: 1px solid #808080;
+    border-right: 1px solid #ffffff;
+    border-bottom: 1px solid #ffffff;
+    box-shadow:
+        inset 1px 1px 0 #000000,
+        inset -1px -1px 0 #dfdfdf;
+}
+
+.colorpicker-button:focus {
+    outline: 1px dotted #000000;
+    outline-offset: -3px;
+}
+
+.colorpicker-display {
+    flex: 1;
+    height: 16px;
+    margin-right: 4px;
+    background-color: #000000;
+    /* Windows 3.1 sunken color display */
+    border-top: 1px solid #808080;
+    border-left: 1px solid #808080;
+    border-right: 1px solid #ffffff;
+    border-bottom: 1px solid #ffffff;
+}
+
+.colorpicker-arrow {
+    font-size: 10px;
+    color: #000000;
+    user-select: none;
+    font-family: monospace;
+}
+
+.colorpicker-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    background-color: #c0c0c0;
+    padding: 4px;
+    min-width: 160px;
+    max-width: 180px;
+    /* Windows 3.1 raised dropdown */
+    border-top: 1px solid #ffffff;
+    border-left: 1px solid #ffffff;
+    border-right: 1px solid #808080;
+    border-bottom: 1px solid #808080;
+    box-shadow:
+        inset -1px -1px 0 #000000,
+        2px 2px 0 #000000;
+}
+
+.colorpicker-palette {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 2px;
+    margin-bottom: 4px;
+}
+
+.colorpicker-swatch {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    outline: none;
+    background-color: #000000;
+    /* Windows 3.1 sunken swatch */
+    border-top: 1px solid #808080;
+    border-left: 1px solid #808080;
+    border-right: 1px solid #ffffff;
+    border-bottom: 1px solid #ffffff;
+}
+
+.colorpicker-swatch:hover {
+    /* Raised on hover */
+    border-top: 1px solid #ffffff;
+    border-left: 1px solid #ffffff;
+    border-right: 1px solid #808080;
+    border-bottom: 1px solid #808080;
+}
+
+.colorpicker-swatch:focus {
+    outline: 1px dotted #000000;
+}
+
+.colorpicker-custom {
+    padding-top: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    /* Windows 3.1 etched separator */
+    border-top: 1px solid #808080;
+    box-shadow: 0 -1px 0 #ffffff;
+    margin-top: 4px;
+}
+
+.colorpicker-custom-label {
+    font-size: 11px;
+    color: #000000;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-family: "MS Sans Serif", "Segoe UI", Tahoma, sans-serif;
+}
+
+.colorpicker-hex-input {
+    padding: 2px 4px;
+    font-size: 11px;
+    font-family: monospace;
+    width: 60px;
+    text-transform: uppercase;
+    background-color: #ffffff;
+    color: #000000;
+    /* Windows 3.1 sunken input */
+    border-top: 1px solid #808080;
+    border-left: 1px solid #808080;
+    border-right: 1px solid #ffffff;
+    border-bottom: 1px solid #ffffff;
+    box-shadow: inset 1px 1px 0 #000000;
+}
+
+.colorpicker-hex-input:focus {
+    outline: none;
+}
+
+.colorpicker-native-input {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    padding: 0;
+    /* Windows 3.1 sunken input */
+    border-top: 1px solid #808080;
+    border-left: 1px solid #808080;
+    border-right: 1px solid #ffffff;
+    border-bottom: 1px solid #ffffff;
+}
+
+/* Disabled state */
+:host([disabled]) .colorpicker-button,
+:host([disabled]) .colorpicker-hex-input,
+:host([disabled]) .colorpicker-native-input {
+    cursor: not-allowed;
+}
+
+:host([disabled]) .colorpicker-button {
+    background-color: #c0c0c0;
+    color: #808080;
+    text-shadow: 1px 1px 0 #ffffff;
+}

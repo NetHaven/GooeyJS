@@ -1,0 +1,23 @@
+/* Tree - Windows 3.1 Janus Theme */
+
+:host {
+    display: block;
+    font-family: "MS Sans Serif", "Segoe UI", Tahoma, sans-serif;
+    font-size: 11px;
+}
+
+.ui-Tree {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-family: "MS Sans Serif", "Segoe UI", Tahoma, sans-serif;
+    font-size: 11px;
+    user-select: none;
+    background-color: #ffffff;
+    /* Windows 3.1 sunken tree view */
+    border-top: 1px solid #808080;
+    border-left: 1px solid #808080;
+    border-right: 1px solid #ffffff;
+    border-bottom: 1px solid #ffffff;
+    box-shadow: inset 1px 1px 0 #000000;
+}

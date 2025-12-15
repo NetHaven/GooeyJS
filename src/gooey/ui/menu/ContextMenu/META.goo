@@ -8,7 +8,7 @@
   ],
   "themes": {
     "default": "base",
-    "available": ["base", "dark"]
+    "available": ["base", "dark", "janus"]
   },
   "attributes": {
     "active": { "type": "BOOLEAN", "default": false },

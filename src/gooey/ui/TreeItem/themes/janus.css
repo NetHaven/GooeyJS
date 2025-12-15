@@ -1,0 +1,115 @@
+/* TreeItem - Windows 3.1 Janus Theme */
+
+:host {
+    display: block;
+    font-family: "MS Sans Serif", "Segoe UI", Tahoma, sans-serif;
+    font-size: 11px;
+}
+
+.ui-TreeItem {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.ui-TreeItem-content {
+    display: flex;
+    align-items: center;
+    padding: 1px 4px;
+    cursor: pointer;
+    order: 1;
+    color: #000000;
+}
+
+.ui-TreeItem-content:hover {
+    background-color: #c0c0c0;
+}
+
+:host(.selected) .ui-TreeItem-content {
+    background-color: #000080;
+    color: #ffffff;
+}
+
+.ui-TreeItem-expander {
+    width: 14px;
+    height: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    margin-right: 2px;
+    cursor: pointer;
+    font-family: monospace;
+}
+
+.ui-TreeItem-expander.expanded {
+    /* Rotated arrow not needed - we'll use +/- */
+}
+
+.ui-TreeItem-icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 4px;
+    flex-shrink: 0;
+}
+
+.ui-TreeItem-text {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ui-TreeItem-children {
+    list-style: none;
+    margin: 0;
+    padding-left: 16px;
+    overflow: hidden;
+    order: 2;
+    /* Windows 3.1 tree lines would be here */
+    border-left: 1px dotted #808080;
+    margin-left: 7px;
+}
+
+.ui-TreeItem-children:not(.expanded) {
+    display: none;
+}
+
+.ui-TreeItem-children.expanded {
+    display: block;
+}
+
+:host(:focus) {
+    outline: 1px dotted #000000;
+    outline-offset: -1px;
+}
+
+/* TreeItem Drag and Drop Styles */
+.ui-TreeItem-content[draggable="true"] {
+    cursor: grab;
+}
+
+.ui-TreeItem-content[draggable="true"]:active {
+    cursor: grabbing;
+}
+
+.ui-TreeItem-content.drop-before {
+    border-top: 2px solid #000080;
+}
+
+.ui-TreeItem-content.drop-after {
+    border-bottom: 2px solid #000080;
+}
+
+.ui-TreeItem-content.drop-inside {
+    background-color: rgba(0, 0, 128, 0.2);
+    border: 1px dashed #000080;
+}
+
+.ui-TreeItem-content.drop-invalid {
+    background-color: rgba(255, 0, 0, 0.1);
+    border: 1px dashed #ff0000;
+    cursor: not-allowed;
+}

@@ -1,0 +1,43 @@
+/* ListBox - Windows 3.1 Janus Theme */
+
+:host {
+    display: block;
+    width: 100%;
+    font-family: "MS Sans Serif", "Segoe UI", Tahoma, sans-serif;
+    font-size: 11px;
+}
+
+select {
+    width: 100%;
+    padding: 2px;
+    background-color: #ffffff;
+    color: #000000;
+    font-family: "MS Sans Serif", "Segoe UI", Tahoma, sans-serif;
+    font-size: 11px;
+    /* Windows 3.1 sunken border */
+    border-top: 1px solid #808080;
+    border-left: 1px solid #808080;
+    border-right: 1px solid #ffffff;
+    border-bottom: 1px solid #ffffff;
+    box-shadow: inset 1px 1px 0 #000000;
+}
+
+select:focus {
+    outline: none;
+}
+
+select option {
+    padding: 2px 4px;
+}
+
+select option:checked {
+    background-color: #000080;
+    color: #ffffff;
+}
+
+/* Disabled state */
+:host([disabled]) select {
+    background-color: #c0c0c0;
+    color: #808080;
+    cursor: not-allowed;
+}

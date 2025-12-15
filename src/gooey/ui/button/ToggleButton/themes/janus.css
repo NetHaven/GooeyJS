@@ -1,0 +1,126 @@
+/* ToggleButton - Windows 3.1 Janus Theme */
+
+:host {
+    display: inline-block;
+    position: relative;
+    user-select: none;
+    margin: 2px;
+}
+
+.toggle-button,
+button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #c0c0c0;
+    padding: 4px 8px;
+    cursor: pointer;
+    outline: none;
+    font-family: "MS Sans Serif", "Segoe UI", Tahoma, sans-serif;
+    font-size: 11px;
+    min-width: 24px;
+    min-height: 23px;
+    color: #000000;
+    /* Windows 3.1 chiseled border effect */
+    border: none;
+    border-top: 1px solid #ffffff;
+    border-left: 1px solid #ffffff;
+    border-right: 1px solid #808080;
+    border-bottom: 1px solid #808080;
+    box-shadow:
+        inset -1px -1px 0 #000000,
+        inset 1px 1px 0 #dfdfdf;
+}
+
+.toggle-button:hover,
+button:hover {
+    background-color: #d4d4d4;
+}
+
+.toggle-button:active,
+button:active {
+    border-top: 1px solid #808080;
+    border-left: 1px solid #808080;
+    border-right: 1px solid #ffffff;
+    border-bottom: 1px solid #ffffff;
+    box-shadow:
+        inset 1px 1px 0 #000000,
+        inset -1px -1px 0 #dfdfdf;
+}
+
+.toggle-button:focus,
+button:focus {
+    outline: 1px dotted #000000;
+    outline-offset: -3px;
+}
+
+/* Pressed state */
+:host(.pressed) .toggle-button,
+:host(.pressed) button {
+    background-color: #000080;
+    color: #ffffff;
+    border-top: 1px solid #808080;
+    border-left: 1px solid #808080;
+    border-right: 1px solid #ffffff;
+    border-bottom: 1px solid #ffffff;
+    box-shadow:
+        inset 1px 1px 0 #000000,
+        inset -1px -1px 0 #dfdfdf;
+}
+
+:host(.pressed) .toggle-button:hover,
+:host(.pressed) button:hover {
+    background-color: #000066;
+}
+
+:host(.pressed) .toggle-button:active,
+:host(.pressed) button:active {
+    background-color: #000050;
+}
+
+/* Disabled state */
+:host([disabled]) .toggle-button,
+:host([disabled]) button {
+    cursor: not-allowed;
+    background-color: #c0c0c0;
+    color: #808080;
+    text-shadow: 1px 1px 0 #ffffff;
+}
+
+:host([disabled]) .toggle-button:hover,
+:host([disabled]) button:hover,
+:host([disabled]) .toggle-button:active,
+:host([disabled]) button:active {
+    background-color: #c0c0c0;
+    border-top: 1px solid #ffffff;
+    border-left: 1px solid #ffffff;
+    border-right: 1px solid #808080;
+    border-bottom: 1px solid #808080;
+    box-shadow:
+        inset -1px -1px 0 #000000,
+        inset 1px 1px 0 #dfdfdf;
+}
+
+:host([disabled].pressed) .toggle-button,
+:host([disabled].pressed) button {
+    background-color: #808080;
+    color: #c0c0c0;
+}
+
+/* Icon and text styling */
+.toggle-button img,
+button img {
+    margin-right: 4px;
+    display: block;
+}
+
+.toggle-button span,
+button span {
+    display: inline-block;
+    line-height: 1;
+}
+
+.toggle-button img:only-child,
+button img:only-child {
+    margin-right: 0;
+}

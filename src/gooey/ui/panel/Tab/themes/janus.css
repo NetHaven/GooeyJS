@@ -1,0 +1,19 @@
+/* Tab - Windows 3.1 Janus Theme */
+
+:host {
+    display: none;
+    width: 100%;
+    flex: 1;
+    overflow: auto;
+    padding: 8px;
+    background-color: #c0c0c0;
+    box-sizing: border-box;
+    min-height: 0;
+    font-family: "MS Sans Serif", "Segoe UI", Tahoma, sans-serif;
+    font-size: 11px;
+}
+
+:host([active]) {
+    display: flex;
+    flex-direction: column;
+}

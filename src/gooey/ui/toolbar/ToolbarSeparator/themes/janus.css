@@ -1,0 +1,10 @@
+/* ToolbarSeparator - Windows 3.1 Janus Theme */
+
+:host {
+    margin: 2px 4px;
+    width: 2px;
+    height: 24px;
+    /* Windows 3.1 etched vertical line */
+    border-left: 1px solid #808080;
+    border-right: 1px solid #ffffff;
+}

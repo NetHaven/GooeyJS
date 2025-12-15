@@ -1,0 +1,23 @@
+/* Label - Windows 3.1 Janus Theme */
+
+:host {
+    display: inline-block;
+    font-family: "MS Sans Serif", "Segoe UI", Tahoma, sans-serif;
+    font-size: 11px;
+    color: #000000;
+}
+
+div {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+img {
+    vertical-align: middle;
+    margin-right: 4px;
+}
+
+span {
+    vertical-align: middle;
+}

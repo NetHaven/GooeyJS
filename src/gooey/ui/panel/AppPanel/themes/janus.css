@@ -1,0 +1,23 @@
+/* AppPanel - Windows 3.1 Janus Theme */
+
+:host {
+    background-color: #c0c0c0;
+    height: 100%;
+    width: 100%;
+    display: grid !important;
+    grid-template-areas:
+        "north north north"
+        "west center east"
+        "south south south";
+    grid-template-rows: auto 1fr auto;
+    grid-template-columns: auto 1fr auto;
+    font-family: "MS Sans Serif", "Segoe UI", Tahoma, sans-serif;
+    font-size: 11px;
+}
+
+/* Border layout region positioning */
+::slotted([region="north"]) { grid-area: north; }
+::slotted([region="south"]) { grid-area: south; }
+::slotted([region="west"]) { grid-area: west; }
+::slotted([region="east"]) { grid-area: east; }
+::slotted([region="center"]) { grid-area: center; }

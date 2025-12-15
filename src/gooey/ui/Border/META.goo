@@ -8,7 +8,7 @@
   ],
   "themes": {
     "default": "base",
-    "available": ["base", "dark"]
+    "available": ["base", "dark", "janus"]
   },
   "attributes": {
     "color": { "type": "STRING", "default": null },
