@@ -3,6 +3,11 @@ import ModelEvent from "../events/mvc/ModelEvent.js";
 import Observable from "../events/Observable.js";
 
 export default class Model extends Observable {
+  // Subclasses must define their own adapter for save() operations
+  static get adapter() {
+    throw new Error('Adapter must be defined in subclass or passed to save()');
+  }
+
   constructor(attributes = {}, options = {}) {
     super();
 
@@ -161,7 +166,7 @@ export default class Model extends Observable {
     }
 
     try {
-      const adapter = options.adapter || this.constructor.adapter || new RestAdapter();
+      const adapter = options.adapter || this.constructor.adapter;
       const result = await adapter.save(this);
 
       this.set(result, { silent: true });
