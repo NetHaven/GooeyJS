@@ -1,4 +1,4 @@
-import Event from "./Event.js";
+import Event from "../Event.js";
 
 export default class CollectionEvent extends Event {
     static ADD = "add";
