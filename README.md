@@ -95,7 +95,7 @@ It will also include components specifically geared for configuring:
 Currently some components use HTML template files, while others create HTML dynamically. GooeyJS 2.0 will move to a more consistent structure where all necessary HTML is created via template files instead of being created dynamically in JS.
 
 ## Getting Started
-Download GooeyJS.v1.8.0.zip and unzip to your codebase. To include GooeyJS, just use the following:
+Download GooeyJS.v1.9.0.zip and unzip to your codebase. To include GooeyJS, just use the following:
 
     <script type="module" src="GooeyJS/GooeyJS.js"></script>
 
