@@ -1,7 +1,8 @@
 {
   "MetaGooVersion": "1.0",
   "name": "TimePicker",
-  "tagName": "gooeyui-timepicker",
+  "prefix": "gooeyui",
+  "tagName": "timepicker",
   "script": "TimePicker.js",
   "templates": [
     { "id": "ui-TimePicker", "file": "TimePicker.html" }

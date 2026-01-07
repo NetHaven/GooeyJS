@@ -1,7 +1,8 @@
 {
   "MetaGooVersion": "1.0",
   "name": "SplitPanel",
-  "tagName": "gooeyui-splitpanel",
+  "prefix": "gooeyui",
+  "tagName": "splitpanel",
   "script": "SplitPanel.js",
   "templates": [
     { "id": "ui-SplitPanel", "file": "SplitPanel.html" }

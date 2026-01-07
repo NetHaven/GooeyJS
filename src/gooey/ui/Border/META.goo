@@ -1,7 +1,8 @@
 {
   "MetaGooVersion": "1.0",
   "name": "Border",
-  "tagName": "gooeyui-border",
+  "prefix": "gooeyui",
+  "tagName": "border",
   "script": "Border.js",
   "templates": [
     { "id": "ui-Border", "file": "Border.html" }

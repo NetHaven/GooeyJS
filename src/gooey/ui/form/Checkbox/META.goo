@@ -1,7 +1,8 @@
 {
   "MetaGooVersion": "1.0",
   "name": "Checkbox",
-  "tagName": "gooeyui-checkbox",
+  "prefix": "gooeyui",
+  "tagName": "checkbox",
   "script": "Checkbox.js",
   "templates": [
     { "id": "ui-Checkbox", "file": "Checkbox.html" }

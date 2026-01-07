@@ -1,7 +1,8 @@
 {
   "MetaGooVersion": "1.0",
   "name": "RichTextEditor",
-  "tagName": "gooeyui-richtexteditor",
+  "prefix": "gooeyui",
+  "tagName": "richtexteditor",
   "script": "RichTextEditor.js",
   "templates": [
     { "id": "ui-RichTextEditor", "file": "RichTextEditor.html" }

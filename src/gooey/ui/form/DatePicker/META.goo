@@ -1,7 +1,8 @@
 {
   "MetaGooVersion": "1.0",
   "name": "DatePicker",
-  "tagName": "gooeyui-datepicker",
+  "prefix": "gooeyui",
+  "tagName": "datepicker",
   "script": "DatePicker.js",
   "templates": [
     { "id": "ui-DatePicker", "file": "DatePicker.html" }

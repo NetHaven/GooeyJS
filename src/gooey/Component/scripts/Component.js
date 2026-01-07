@@ -59,17 +59,17 @@ export default class Component extends Observable {
             return;
         }
 
-        const tagName = meta.tagName;
+        const fullTagName = meta.fullTagName;
 
         // Check if component is already registered
-        if (customElements.get(tagName)) {
-            console.log(`Component ${tagName} is already registered, skipping load`);
+        if (customElements.get(fullTagName)) {
+            console.log(`Component ${fullTagName} is already registered, skipping load`);
             return;
         }
 
         // Fire LOADING event
         this.fireEvent(ComponentEvent.LOADING, {
-            tagName: tagName,
+            tagName: fullTagName,
             href: this._href,
             meta: meta,
             component: this
@@ -77,20 +77,20 @@ export default class Component extends Observable {
 
         try {
             // Register in ComponentRegistry
-            ComponentRegistry.register(tagName, meta);
+            ComponentRegistry.register(fullTagName, meta);
 
             // Store component path early (needed for theme loading)
-            ComponentRegistry.setComponentPath(tagName, this._href);
+            ComponentRegistry.setComponentPath(fullTagName, this._href);
 
             // Load and cache default theme CSS BEFORE defining custom element
             // (constructors need theme CSS available when triggered by define())
             if (meta.themes && meta.themes.default) {
                 try {
                     const cssResult = await MetaLoader.loadThemeCSS(this._href, meta.themes.default);
-                    ComponentRegistry.setThemeCSS(tagName, cssResult);
-                    console.log(`Loaded theme CSS for ${tagName}: ${meta.themes.default}`);
+                    ComponentRegistry.setThemeCSS(fullTagName, cssResult);
+                    console.log(`Loaded theme CSS for ${fullTagName}: ${meta.themes.default}`);
                 } catch (themeError) {
-                    console.warn(`Failed to load theme CSS for ${tagName}:`, themeError);
+                    console.warn(`Failed to load theme CSS for ${fullTagName}:`, themeError);
                 }
             }
 
@@ -118,15 +118,15 @@ export default class Component extends Observable {
             const ComponentClass = module.default;
 
             // Register the custom element (triggers constructor for existing DOM elements)
-            customElements.define(tagName, ComponentClass);
+            customElements.define(fullTagName, ComponentClass);
 
-            console.log(`Successfully registered ${tagName} from ${modulePath}`);
+            console.log(`Successfully registered ${fullTagName} from ${modulePath}`);
 
             this._loaded = true;
 
             // Fire LOADED event
             this.fireEvent(ComponentEvent.LOADED, {
-                tagName: tagName,
+                tagName: fullTagName,
                 componentClass: ComponentClass,
                 href: this._href,
                 meta: meta,
@@ -139,7 +139,7 @@ export default class Component extends Observable {
             // Fire ERROR event
             this.fireEvent(ComponentEvent.ERROR, {
                 error: error.message,
-                tagName: tagName,
+                tagName: fullTagName,
                 href: this._href,
                 meta: meta,
                 component: this
@@ -160,7 +160,7 @@ export default class Component extends Observable {
     }
 
     get tagName() {
-        return this._meta?.tagName;
+        return this._meta?.fullTagName;
     }
 
     get loaded() {

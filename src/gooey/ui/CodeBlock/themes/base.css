@@ -1,0 +1,102 @@
+/* CodeBlock Base Theme */
+
+:host {
+    display: block;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.codeblock-container {
+    border: 1px solid #d0d0d0;
+    border-radius: 4px;
+    background-color: #f8f8f8;
+    overflow: hidden;
+}
+
+.codeblock-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 12px;
+    background-color: #e8e8e8;
+    border-bottom: 1px solid #d0d0d0;
+    min-height: 28px;
+}
+
+.language-label {
+    font-size: 12px;
+    color: #666666;
+    text-transform: lowercase;
+    font-weight: 500;
+}
+
+.copy-button {
+    padding: 4px 12px;
+    font-size: 12px;
+    font-family: inherit;
+    background-color: #ffffff;
+    border: 1px solid #c0c0c0;
+    border-radius: 3px;
+    cursor: pointer;
+    color: #333333;
+}
+
+.copy-button:hover {
+    background-color: #f0f0f0;
+    border-color: #a0a0a0;
+}
+
+.copy-button:active {
+    background-color: #e0e0e0;
+}
+
+.copy-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.codeblock-body {
+    display: flex;
+    overflow-x: auto;
+}
+
+.line-numbers {
+    display: flex;
+    flex-direction: column;
+    padding: 12px 12px 12px 12px;
+    background-color: #f0f0f0;
+    border-right: 1px solid #d0d0d0;
+    text-align: right;
+    user-select: none;
+    color: #999999;
+    min-width: 40px;
+}
+
+.line-numbers span {
+    display: block;
+}
+
+.code-content {
+    flex: 1;
+    margin: 0;
+    padding: 12px;
+    overflow-x: auto;
+    background-color: #f8f8f8;
+    color: #333333;
+}
+
+.code-content code {
+    display: block;
+    white-space: pre;
+    font-family: inherit;
+}
+
+/* Disabled state */
+:host([disabled]) .codeblock-container {
+    opacity: 0.6;
+}
+
+:host([disabled]) .copy-button {
+    pointer-events: none;
+}

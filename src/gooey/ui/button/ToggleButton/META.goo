@@ -1,7 +1,8 @@
 {
   "MetaGooVersion": "1.0",
   "name": "ToggleButton",
-  "tagName": "gooeyui-togglebutton",
+  "prefix": "gooeyui",
+  "tagName": "togglebutton",
   "script": "ToggleButton.js",
   "templates": [
     { "id": "ui-ToggleButton", "file": "ToggleButton.html" }

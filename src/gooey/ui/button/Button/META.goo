@@ -1,7 +1,8 @@
 {
   "MetaGooVersion": "1.0",
   "name": "Button",
-  "tagName": "gooeyui-button",
+  "prefix": "gooeyui",
+  "tagName": "button",
   "script": "Button.js",
   "templates": [
     { "id": "ui-button", "file": "Button.html" }

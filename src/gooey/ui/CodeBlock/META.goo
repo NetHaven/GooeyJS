@@ -1,20 +1,20 @@
 {
   "MetaGooVersion": "1.0",
-  "name": "Window",
+  "name": "CodeBlock",
   "prefix": "gooeyui",
-  "tagName": "window",
-  "script": "Window.js",
+  "tagName": "codeblock",
+  "script": "CodeBlock.js",
   "templates": [
-    { "id": "ui-Window", "file": "Window.html" }
+    { "id": "ui-CodeBlock", "file": "CodeBlock.html" }
   ],
   "themes": {
     "default": "base",
     "available": ["base", "dark", "janus"]
   },
   "attributes": {
-    "wintitle": { "type": "STRING", "default": null },
-    "constrainviewport": { "type": "BOOLEAN", "default": false },
-    "modal": { "type": "BOOLEAN", "default": false },
+    "language": { "type": "STRING", "default": null },
+    "linenumbers": { "type": "BOOLEAN", "default": true },
+    "copybutton": { "type": "BOOLEAN", "default": true },
     "draggable": { "type": "BOOLEAN", "default": false },
     "droppable": { "type": "BOOLEAN", "default": false },
     "dropzone": { "type": "STRING", "default": null },

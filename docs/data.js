@@ -1673,6 +1673,61 @@ const GooeyData = {
               "code": "<gooeyui-treeitem text=\"New Folder\" editable></gooeyui-treeitem>"
             }
           ]
+        },
+        {
+          "name": "CodeBlock",
+          "tagName": "gooeyui-codeblock",
+          "description": "A code display component for showing code snippets with line numbers, copy button, and language label.",
+          "inherits": ["UIComponent"],
+          "attributes": [
+            {
+              "name": "language",
+              "type": "STRING",
+              "description": "Language name displayed in the header badge (e.g., 'javascript', 'python')",
+              "required": false
+            },
+            {
+              "name": "linenumbers",
+              "type": "BOOLEAN",
+              "description": "When true, displays line numbers in a gutter on the left side",
+              "required": false,
+              "default": "true"
+            },
+            {
+              "name": "copybutton",
+              "type": "BOOLEAN",
+              "description": "When true, displays a copy button to copy code to clipboard",
+              "required": false,
+              "default": "true"
+            }
+          ],
+          "examples": [
+            {
+              "title": "Basic Code Block",
+              "description": "A simple code block with line numbers.",
+              "code": "<gooeyui-codeblock>\nfunction hello() {\n    console.log(\"Hello, World!\");\n}\n</gooeyui-codeblock>"
+            },
+            {
+              "title": "Code Block with Language",
+              "description": "A code block displaying the language name in the header.",
+              "code": "<gooeyui-codeblock language=\"javascript\">\nconst greeting = \"Hello\";\nconsole.log(greeting);\n</gooeyui-codeblock>"
+            },
+            {
+              "title": "Code Block without Line Numbers",
+              "description": "A minimal code block without line numbers.",
+              "code": "<gooeyui-codeblock linenumbers=\"false\">\nnpm install gooeyjs\n</gooeyui-codeblock>"
+            },
+            {
+              "title": "Minimal Code Block",
+              "description": "A code block with no header elements.",
+              "code": "<gooeyui-codeblock linenumbers=\"false\" copybutton=\"false\">\nSimple text display\n</gooeyui-codeblock>"
+            },
+            {
+              "title": "Multi-language Examples",
+              "description": "Code blocks for different programming languages.",
+              "code": "<gooeyui-codeblock language=\"python\">\ndef greet(name):\n    print(f\"Hello, {name}!\")\n</gooeyui-codeblock>\n\n<gooeyui-codeblock language=\"html\">\n<div class=\"container\">\n    <h1>Title</h1>\n</div>\n</gooeyui-codeblock>"
+            }
+          ]
         }
       ]
     }

@@ -1,7 +1,8 @@
 {
   "MetaGooVersion": "1.0",
   "name": "GroupBox",
-  "tagName": "gooeyui-groupbox",
+  "prefix": "gooeyui",
+  "tagName": "groupbox",
   "script": "GroupBox.js",
   "templates": [
     { "id": "ui-GroupBox", "file": "GroupBox.html" }

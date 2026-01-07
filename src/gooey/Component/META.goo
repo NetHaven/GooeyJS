@@ -1,7 +1,8 @@
 {
   "MetaGooVersion": "1.0",
   "name": "Component",
-  "tagName": "gooey-component",
+  "prefix": "gooey",
+  "tagName": "component",
   "script": "Component.js",
   "templates": [],
   "themes": {

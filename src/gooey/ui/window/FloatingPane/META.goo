@@ -1,7 +1,8 @@
 {
   "MetaGooVersion": "1.0",
   "name": "FloatingPane",
-  "tagName": "gooeyui-floatingpane",
+  "prefix": "gooeyui",
+  "tagName": "floatingpane",
   "script": "FloatingPane.js",
   "templates": [],
   "themes": {

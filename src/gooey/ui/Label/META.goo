@@ -1,7 +1,8 @@
 {
   "MetaGooVersion": "1.0",
   "name": "Label",
-  "tagName": "gooeyui-label",
+  "prefix": "gooeyui",
+  "tagName": "label",
   "script": "Label.js",
   "templates": [
     { "id": "ui-Label", "file": "Label.html" }

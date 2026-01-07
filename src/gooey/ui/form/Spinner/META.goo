@@ -1,7 +1,8 @@
 {
   "MetaGooVersion": "1.0",
   "name": "Spinner",
-  "tagName": "gooeyui-spinner",
+  "prefix": "gooeyui",
+  "tagName": "spinner",
   "script": "Spinner.js",
   "templates": [
     { "id": "ui-Spinner", "file": "Spinner.html" }

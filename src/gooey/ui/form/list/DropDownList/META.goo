@@ -1,7 +1,8 @@
 {
   "MetaGooVersion": "1.0",
   "name": "DropDownList",
-  "tagName": "gooeyui-dropdownlist",
+  "prefix": "gooeyui",
+  "tagName": "dropdownlist",
   "script": "DropDownList.js",
   "templates": [
     { "id": "ui-DropDownList", "file": "DropDownList.html" }

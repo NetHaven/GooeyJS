@@ -1,7 +1,8 @@
 {
   "MetaGooVersion": "1.0",
   "name": "Tree",
-  "tagName": "gooeyui-tree",
+  "prefix": "gooeyui",
+  "tagName": "tree",
   "script": "Tree.js",
   "templates": [
     { "id": "ui-Tree", "file": "Tree.html" }

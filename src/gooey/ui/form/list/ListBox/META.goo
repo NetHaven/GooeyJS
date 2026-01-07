@@ -1,7 +1,8 @@
 {
   "MetaGooVersion": "1.0",
   "name": "ListBox",
-  "tagName": "gooeyui-listbox",
+  "prefix": "gooeyui",
+  "tagName": "listbox",
   "script": "ListBox.js",
   "templates": [
     { "id": "ui-ListBox", "file": "ListBox.html" }

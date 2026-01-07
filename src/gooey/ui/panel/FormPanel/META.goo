@@ -1,7 +1,8 @@
 {
   "MetaGooVersion": "1.0",
   "name": "FormPanel",
-  "tagName": "gooeyui-formpanel",
+  "prefix": "gooeyui",
+  "tagName": "formpanel",
   "script": "FormPanel.js",
   "templates": [
     { "id": "ui-FormPanel", "file": "FormPanel.html" }

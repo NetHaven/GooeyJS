@@ -1,7 +1,8 @@
 {
   "MetaGooVersion": "1.0",
   "name": "Application",
-  "tagName": "gooey-application",
+  "prefix": "gooey",
+  "tagName": "application",
   "script": "Application.js",
   "templates": [
     { "id": "gooey-Application", "file": "Application.html" }

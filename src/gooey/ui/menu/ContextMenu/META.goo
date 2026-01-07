@@ -1,7 +1,8 @@
 {
   "MetaGooVersion": "1.0",
   "name": "ContextMenu",
-  "tagName": "gooeyui-contextmenu",
+  "prefix": "gooeyui",
+  "tagName": "contextmenu",
   "script": "ContextMenu.js",
   "templates": [
     { "id": "ui-ContextMenu", "file": "ContextMenu.html" }

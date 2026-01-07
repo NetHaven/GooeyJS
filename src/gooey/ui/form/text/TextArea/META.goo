@@ -1,7 +1,8 @@
 {
   "MetaGooVersion": "1.0",
   "name": "TextArea",
-  "tagName": "gooeyui-textarea",
+  "prefix": "gooeyui",
+  "tagName": "textarea",
   "script": "TextArea.js",
   "templates": [
     { "id": "ui-TextArea", "file": "TextArea.html" }

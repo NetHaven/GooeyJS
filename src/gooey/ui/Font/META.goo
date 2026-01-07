@@ -1,7 +1,8 @@
 {
   "MetaGooVersion": "1.0",
   "name": "Font",
-  "tagName": "gooeyui-font",
+  "prefix": "gooeyui",
+  "tagName": "font",
   "script": "Font.js",
   "templates": [
     { "id": "ui-Font", "file": "Font.html" }

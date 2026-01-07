@@ -1,7 +1,8 @@
 {
   "MetaGooVersion": "1.0",
   "name": "ToolbarSeparator",
-  "tagName": "gooeyui-toolbarseparator",
+  "prefix": "gooeyui",
+  "tagName": "toolbarseparator",
   "script": "ToolbarSeparator.js",
   "templates": [
     { "id": "ui-ToolbarSeparator", "file": "ToolbarSeparator.html" }

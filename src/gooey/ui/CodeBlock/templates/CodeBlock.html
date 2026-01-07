@@ -1,0 +1,12 @@
+<template id="ui-CodeBlock">
+  <div class="codeblock-container">
+    <div class="codeblock-header">
+      <span class="language-label"></span>
+      <button class="copy-button" type="button" title="Copy to clipboard">Copy</button>
+    </div>
+    <div class="codeblock-body">
+      <div class="line-numbers"></div>
+      <pre class="code-content"><code><slot></slot></code></pre>
+    </div>
+  </div>
+</template>

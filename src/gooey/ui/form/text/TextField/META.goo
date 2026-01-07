@@ -1,7 +1,8 @@
 {
   "MetaGooVersion": "1.0",
   "name": "TextField",
-  "tagName": "gooeyui-textfield",
+  "prefix": "gooeyui",
+  "tagName": "textfield",
   "script": "TextField.js",
   "templates": [
     { "id": "ui-TextField", "file": "TextField.html" }

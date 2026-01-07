@@ -1,7 +1,8 @@
 {
   "MetaGooVersion": "1.0",
   "name": "Toolbar",
-  "tagName": "gooeyui-toolbar",
+  "prefix": "gooeyui",
+  "tagName": "toolbar",
   "script": "Toolbar.js",
   "templates": [
     { "id": "ui-Toolbar", "file": "Toolbar.html" }

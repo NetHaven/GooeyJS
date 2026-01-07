@@ -1,7 +1,8 @@
 {
   "MetaGooVersion": "1.0",
   "name": "Menubar",
-  "tagName": "gooeyui-menubar",
+  "prefix": "gooeyui",
+  "tagName": "menubar",
   "script": "Menubar.js",
   "templates": [
     { "id": "ui-Menubar", "file": "Menubar.html" },

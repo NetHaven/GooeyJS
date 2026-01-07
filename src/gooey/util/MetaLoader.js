@@ -98,7 +98,7 @@ export default class MetaLoader {
     /**
      * Validate a META.goo configuration object
      * @param {Object} meta - Parsed META.goo content
-     * @returns {Object} The validated meta object
+     * @returns {Object} The validated meta object with computed fullTagName
      * @throws {Error} If validation fails
      */
     static validate(meta) {
@@ -107,6 +107,10 @@ export default class MetaLoader {
         // Required fields
         if (!meta.name || typeof meta.name !== 'string') {
             errors.push('Missing or invalid "name" field (string required)');
+        }
+
+        if (!meta.prefix || typeof meta.prefix !== 'string') {
+            errors.push('Missing or invalid "prefix" field (string required)');
         }
 
         if (!meta.tagName || typeof meta.tagName !== 'string') {
@@ -191,6 +195,9 @@ export default class MetaLoader {
         if (errors.length > 0) {
             throw new Error(`META.goo validation failed for "${meta.name || 'unknown'}":\n  - ${errors.join('\n  - ')}`);
         }
+
+        // Compute fullTagName from prefix and tagName
+        meta.fullTagName = `${meta.prefix}-${meta.tagName}`;
 
         return meta;
     }

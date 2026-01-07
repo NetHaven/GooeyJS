@@ -1,7 +1,8 @@
 {
   "MetaGooVersion": "1.0",
   "name": "ProgressBar",
-  "tagName": "gooeyui-progressbar",
+  "prefix": "gooeyui",
+  "tagName": "progressbar",
   "script": "ProgressBar.js",
   "templates": [
     { "id": "ui-ProgressBar", "file": "ProgressBar.html" }

@@ -1,7 +1,8 @@
 {
   "MetaGooVersion": "1.0",
   "name": "RadioButtonGroup",
-  "tagName": "gooeyui-radiobuttongroup",
+  "prefix": "gooeyui",
+  "tagName": "radiobuttongroup",
   "script": "RadioButtonGroup.js",
   "templates": [
     { "id": "ui-RadioButtonGroup", "file": "RadioButtonGroup.html" }

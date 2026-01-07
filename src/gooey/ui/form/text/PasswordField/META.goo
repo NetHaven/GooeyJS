@@ -1,7 +1,8 @@
 {
   "MetaGooVersion": "1.0",
   "name": "PasswordField",
-  "tagName": "gooeyui-passwordfield",
+  "prefix": "gooeyui",
+  "tagName": "passwordfield",
   "script": "PasswordField.js",
   "templates": [
     { "id": "ui-PasswordField", "file": "PasswordField.html" }

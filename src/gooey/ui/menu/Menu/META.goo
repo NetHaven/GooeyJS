@@ -1,7 +1,8 @@
 {
   "MetaGooVersion": "1.0",
   "name": "Menu",
-  "tagName": "gooeyui-menu",
+  "prefix": "gooeyui",
+  "tagName": "menu",
   "script": "Menu.js",
   "templates": [
     { "id": "ui-Menu", "file": "Menu.html" }

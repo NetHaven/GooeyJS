@@ -1,7 +1,8 @@
 {
   "MetaGooVersion": "1.0",
   "name": "ColorPicker",
-  "tagName": "gooeyui-colorpicker",
+  "prefix": "gooeyui",
+  "tagName": "colorpicker",
   "script": "ColorPicker.js",
   "templates": [
     { "id": "ui-ColorPicker", "file": "ColorPicker.html" }

@@ -1,7 +1,8 @@
 {
   "MetaGooVersion": "1.0",
   "name": "TabPanel",
-  "tagName": "gooeyui-tabpanel",
+  "prefix": "gooeyui",
+  "tagName": "tabpanel",
   "script": "TabPanel.js",
   "templates": [
     { "id": "ui-TabPanel", "file": "TabPanel.html" }

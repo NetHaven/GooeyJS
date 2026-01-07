@@ -1,7 +1,8 @@
 {
   "MetaGooVersion": "1.0",
   "name": "AccordionPanel",
-  "tagName": "gooeyui-accordionpanel",
+  "prefix": "gooeyui",
+  "tagName": "accordionpanel",
   "script": "AccordionPanel.js",
   "templates": [
     { "id": "ui-AccordionPanel", "file": "AccordionPanel.html" }

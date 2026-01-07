@@ -1,7 +1,8 @@
 {
   "MetaGooVersion": "1.0",
   "name": "ComboBox",
-  "tagName": "gooeyui-combobox",
+  "prefix": "gooeyui",
+  "tagName": "combobox",
   "script": "ComboBox.js",
   "templates": [
     { "id": "ui-ComboBox", "file": "ComboBox.html" }

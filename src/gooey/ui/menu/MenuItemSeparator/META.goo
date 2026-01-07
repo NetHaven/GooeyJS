@@ -1,7 +1,8 @@
 {
   "MetaGooVersion": "1.0",
   "name": "MenuItemSeparator",
-  "tagName": "gooeyui-menuitemseparator",
+  "prefix": "gooeyui",
+  "tagName": "menuitemseparator",
   "script": "MenuItemSeparator.js",
   "templates": [
     { "id": "ui-MenuItemSeparator", "file": "MenuItemSeparator.html" }
