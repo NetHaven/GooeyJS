@@ -1,0 +1,56 @@
+{
+  "MetaGooVersion": "1.0",
+  "name": "Background",
+  "prefix": "gooeyui",
+  "tagName": "background",
+  "script": "Background.js",
+  "templates": [
+    { "id": "ui-Background", "file": "Background.html" }
+  ],
+  "themes": {
+    "default": "base",
+    "available": ["base", "dark", "janus"]
+  },
+  "attributes": {
+    "color": {
+      "type": "STRING",
+      "default": null
+    },
+    "image": {
+      "type": "STRING",
+      "default": null
+    },
+    "gradient": {
+      "type": "STRING",
+      "default": null
+    },
+    "size": {
+      "type": "ENUM",
+      "default": "auto",
+      "values": ["auto", "cover", "contain"]
+    },
+    "position": {
+      "type": "STRING",
+      "default": "center"
+    },
+    "repeat": {
+      "type": "ENUM",
+      "default": "no-repeat",
+      "values": ["repeat", "repeat-x", "repeat-y", "no-repeat", "space", "round"]
+    },
+    "attachment": {
+      "type": "ENUM",
+      "default": "scroll",
+      "values": ["scroll", "fixed", "local"]
+    },
+    "opacity": {
+      "type": "NUMBER",
+      "default": 1
+    },
+    "blend": {
+      "type": "ENUM",
+      "default": "normal",
+      "values": ["normal", "multiply", "screen", "overlay", "darken", "lighten"]
+    }
+  }
+}

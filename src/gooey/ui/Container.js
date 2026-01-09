@@ -16,12 +16,20 @@ export default class Container extends UIComponent {
         if (this.hasAttribute("border")) {
             this.border = this.getAttribute("border");
         }
+
+        if (this.hasAttribute("background")) {
+            this.background = this.getAttribute("background");
+        }
     }
 
     get active() {
 		return this.getAttribute("active");
 	}
-    
+
+    get background() {
+        return this.getAttribute("background");
+    }
+
     get border() {
         return this.getAttribute("border");
     }
@@ -37,7 +45,46 @@ export default class Container extends UIComponent {
     set active(val) {
         this.setAttribute("active", val);
     }
-	
+
+    set background(val) {
+        let backgroundElement;
+
+        backgroundElement = document.querySelector(val);
+        if (backgroundElement) {
+            if (typeof backgroundElement.applyTo === 'function') {
+                backgroundElement.applyTo(this);
+            } else {
+                // Fallback for simple color/image backgrounds
+                if (backgroundElement.color) {
+                    this.style.backgroundColor = backgroundElement.color;
+                }
+
+                if (backgroundElement.image) {
+                    this.style.backgroundImage = `url('${backgroundElement.image}')`;
+                }
+
+                if (backgroundElement.size) {
+                    this.style.backgroundSize = backgroundElement.size;
+                }
+
+                if (backgroundElement.position) {
+                    this.style.backgroundPosition = backgroundElement.position;
+                }
+
+                if (backgroundElement.repeat) {
+                    this.style.backgroundRepeat = backgroundElement.repeat;
+                }
+
+                if (backgroundElement.attachment) {
+                    this.style.backgroundAttachment = backgroundElement.attachment;
+                }
+            }
+            this.setAttribute("background", val);
+        } else {
+            console.log(`Background ${val} not found.`);
+        }
+    }
+
 	set border(val) {
         let borderElement, side;
 

@@ -1655,6 +1655,99 @@ const GooeyData = {
           ]
         },
         {
+          "name": "Background",
+          "tagName": "gooeyui-background",
+          "description": "A background styling component defining colors, images, and gradients that can be referenced by containers.",
+          "inherits": ["GooeyElement"],
+          "attributes": [
+            {
+              "name": "color",
+              "type": "STRING",
+              "description": "CSS color value for solid background (hex, rgb, hsl, or named color)",
+              "required": false
+            },
+            {
+              "name": "image",
+              "type": "STRING",
+              "description": "URL path to a background image",
+              "required": false
+            },
+            {
+              "name": "gradient",
+              "type": "STRING",
+              "description": "CSS selector referencing a gooeyui-gradient element",
+              "required": false
+            },
+            {
+              "name": "size",
+              "type": "ENUM",
+              "values": ["auto", "cover", "contain"],
+              "description": "Background size behavior for images (default: auto)",
+              "required": false
+            },
+            {
+              "name": "position",
+              "type": "STRING",
+              "description": "CSS background-position value (default: center)",
+              "required": false
+            },
+            {
+              "name": "repeat",
+              "type": "ENUM",
+              "values": ["repeat", "repeat-x", "repeat-y", "no-repeat", "space", "round"],
+              "description": "Background repeat behavior (default: no-repeat)",
+              "required": false
+            },
+            {
+              "name": "attachment",
+              "type": "ENUM",
+              "values": ["scroll", "fixed", "local"],
+              "description": "Background attachment behavior (default: scroll)",
+              "required": false
+            },
+            {
+              "name": "opacity",
+              "type": "NUMBER",
+              "description": "Background opacity from 0 (transparent) to 1 (opaque)",
+              "required": false
+            },
+            {
+              "name": "blend",
+              "type": "ENUM",
+              "values": ["normal", "multiply", "screen", "overlay", "darken", "lighten"],
+              "description": "Background blend mode for layered effects",
+              "required": false
+            }
+          ],
+          "examples": [
+            {
+              "title": "Solid Color Background",
+              "description": "A simple solid color background definition.",
+              "code": "<gooeyui-background id=\"blueBg\" color=\"#3498db\"></gooeyui-background>\n<gooeyui-panel background=\"#blueBg\">Blue panel</gooeyui-panel>"
+            },
+            {
+              "title": "Image Background",
+              "description": "A background with a cover image.",
+              "code": "<gooeyui-background id=\"heroBg\" image=\"images/hero.jpg\" size=\"cover\" position=\"center\"></gooeyui-background>\n<gooeyui-panel background=\"#heroBg\" height=\"300\">Hero section</gooeyui-panel>"
+            },
+            {
+              "title": "Gradient Background",
+              "description": "A background using a referenced gradient element.",
+              "code": "<gooeyui-gradient id=\"sunsetGrad\" type=\"linear\" angle=\"135deg\" stops=\"#667eea 0%, #764ba2 100%\"></gooeyui-gradient>\n<gooeyui-background id=\"gradBg\" gradient=\"#sunsetGrad\"></gooeyui-background>\n<gooeyui-panel background=\"#gradBg\">Gradient panel</gooeyui-panel>"
+            },
+            {
+              "title": "Tiled Pattern",
+              "description": "A repeating pattern background.",
+              "code": "<gooeyui-background id=\"patternBg\" image=\"images/pattern.png\" repeat=\"repeat\" size=\"auto\"></gooeyui-background>"
+            },
+            {
+              "title": "Fixed Parallax Background",
+              "description": "A background image that stays fixed during scroll.",
+              "code": "<gooeyui-background id=\"parallaxBg\" image=\"images/landscape.jpg\" size=\"cover\" attachment=\"fixed\"></gooeyui-background>"
+            }
+          ]
+        },
+        {
           "name": "ColorPicker",
           "tagName": "gooeyui-colorpicker",
           "description": "An interactive color picker for selecting and displaying colors.",

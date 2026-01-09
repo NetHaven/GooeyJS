@@ -53,6 +53,12 @@ export default class GooeyJS {
                 { name: "Gradient" },
                 { name: "GradientStop" }
             ]
+        },
+        {
+            pkg: "gooey.ui",
+            elements: [
+                { name: "Background" }
+            ]
         }]
 
         this.createElements();
