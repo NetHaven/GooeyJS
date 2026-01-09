@@ -40,3 +40,14 @@
     background-color: #010082 !important;
     color: white;
 }
+
+/* Keyboard-only focus indicator for accessibility */
+:host(:focus-visible) {
+    outline: 2px solid #005fcc;
+    outline-offset: -2px;
+}
+
+:host([disabled]) {
+    opacity: 0.5;
+    cursor: not-allowed;
+}

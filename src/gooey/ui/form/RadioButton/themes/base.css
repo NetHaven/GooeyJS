@@ -5,3 +5,14 @@
 input[type="radio"] {
     cursor: pointer;
 }
+
+/* Keyboard-only focus indicator for accessibility */
+input[type="radio"]:focus-visible {
+    outline: 2px solid #005fcc;
+    outline-offset: 2px;
+}
+
+:host([disabled]) input[type="radio"] {
+    cursor: not-allowed;
+    opacity: 0.5;
+}

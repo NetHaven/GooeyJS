@@ -1,4 +1,21 @@
+:host {
+    display: inline-block;
+}
+
 input[type='text'] {
     height: 100%;
     width: 100%;
+    box-sizing: border-box;
+}
+
+/* Keyboard-only focus indicator for accessibility */
+input[type='text']:focus-visible {
+    outline: 2px solid #005fcc;
+    outline-offset: -1px;
+}
+
+:host([disabled]) input[type='text'] {
+    cursor: not-allowed;
+    opacity: 0.5;
+    background-color: #f0f0f0;
 }

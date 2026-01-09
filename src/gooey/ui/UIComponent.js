@@ -207,6 +207,20 @@ export default class UIComponent extends GooeyElement {
         return this.hasAttribute("disabled");
     }
 
+    // =========== ARIA Accessibility Properties ===========
+
+    get ariaLabel() {
+        return this.getAttribute("aria-label");
+    }
+
+    get ariaDescribedBy() {
+        return this.getAttribute("aria-describedby");
+    }
+
+    get ariaLabelledBy() {
+        return this.getAttribute("aria-labelledby");
+    }
+
     get draggable() {
         if (this.hasAttribute("draggable")) {
             if (this.getAttribute("draggable") === true) {
@@ -341,9 +355,37 @@ export default class UIComponent extends GooeyElement {
     set disabled(val) {
         if (val) {
             this.setAttribute("disabled", "");
+            this.setAttribute("aria-disabled", "true");
         }
         else {
             this.removeAttribute("disabled");
+            this.removeAttribute("aria-disabled");
+        }
+    }
+
+    // =========== ARIA Accessibility Setters ===========
+
+    set ariaLabel(val) {
+        if (val) {
+            this.setAttribute("aria-label", val);
+        } else {
+            this.removeAttribute("aria-label");
+        }
+    }
+
+    set ariaDescribedBy(val) {
+        if (val) {
+            this.setAttribute("aria-describedby", val);
+        } else {
+            this.removeAttribute("aria-describedby");
+        }
+    }
+
+    set ariaLabelledBy(val) {
+        if (val) {
+            this.setAttribute("aria-labelledby", val);
+        } else {
+            this.removeAttribute("aria-labelledby");
         }
     }
 
@@ -422,5 +464,33 @@ export default class UIComponent extends GooeyElement {
         if (componentPath && this.shadowRoot) {
             await MetaLoader.switchTheme(this.shadowRoot, componentPath, themeName);
         }
+    }
+
+    // =========== Static Accessibility Utilities ===========
+
+    /**
+     * Announce a message to screen readers via a live region
+     * @param {string} message - The message to announce
+     * @param {string} priority - 'polite' (default) or 'assertive'
+     */
+    static announce(message, priority = 'polite') {
+        let region = document.getElementById('gooey-live-region');
+        if (!region) {
+            region = document.createElement('div');
+            region.id = 'gooey-live-region';
+            region.className = 'sr-only';
+            region.setAttribute('aria-live', priority);
+            region.setAttribute('aria-atomic', 'true');
+            // Screen-reader-only styles
+            region.style.cssText = 'position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;';
+            document.body.appendChild(region);
+        } else {
+            region.setAttribute('aria-live', priority);
+        }
+        // Clear and set message to trigger announcement
+        region.textContent = '';
+        setTimeout(() => {
+            region.textContent = message;
+        }, 100);
     }
 }

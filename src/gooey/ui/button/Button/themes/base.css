@@ -39,6 +39,12 @@ button:focus {
     border: 2px inset #010082;
 }
 
+/* Keyboard-only focus indicator for accessibility */
+button:focus-visible {
+    outline: 2px solid #005fcc;
+    outline-offset: 2px;
+}
+
 /* Disabled state */
 :host([disabled]) button {
     opacity: 0.5;

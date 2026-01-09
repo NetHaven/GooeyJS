@@ -11,6 +11,12 @@ export default class RadioButtonGroup extends UIComponent {
         // Generate unique group name for mutual exclusivity
         this._groupName = `radio-group-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
 
+        // ARIA: Set radiogroup role
+        this.setAttribute('role', 'radiogroup');
+
+        // ARIA: Set up label if provided
+        this._setupAriaLabel();
+
         // Assign group name to existing radio buttons
         this._assignGroupName();
 
@@ -19,6 +25,38 @@ export default class RadioButtonGroup extends UIComponent {
 
         // Set up mutation observer to watch for radio button changes
         this._setupSelectionHandling();
+    }
+
+    /**
+     * Set up ARIA label for the radiogroup
+     */
+    _setupAriaLabel() {
+        if (this.hasAttribute('label')) {
+            const label = this.getAttribute('label');
+            const legendId = `radiogroup-legend-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+
+            // Create a visually hidden legend element in the shadow root
+            const legend = document.createElement('span');
+            legend.id = legendId;
+            legend.className = 'sr-only';
+            legend.textContent = label;
+            // Screen-reader-only styles
+            legend.style.cssText = 'position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;';
+            this.shadowRoot.prepend(legend);
+
+            this.setAttribute('aria-labelledby', legendId);
+        }
+    }
+
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (name === 'label') {
+            // Update aria-label if label attribute changes
+            if (newValue) {
+                this.setAttribute('aria-label', newValue);
+            } else {
+                this.removeAttribute('aria-label');
+            }
+        }
     }
     
     _setupSelectionHandling() {

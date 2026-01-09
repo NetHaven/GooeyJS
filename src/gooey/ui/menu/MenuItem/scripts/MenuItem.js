@@ -1,6 +1,8 @@
 import UIComponent from '../../../UIComponent.js';
 import MenuItemEvent from '../../../../events/menu/MenuItemEvent.js';
 import MouseEvent from '../../../../events/MouseEvent.js';
+import KeyboardEvent from '../../../../events/KeyboardEvent.js';
+import Key from '../../../../io/Key.js';
 import Template from '../../../../util/Template.js';
 
 export default class MenuItem extends UIComponent {
@@ -13,6 +15,10 @@ export default class MenuItem extends UIComponent {
         this.shortcutElement = this.shadowRoot.querySelector(".MenuItemShortcut");
         this.iconElement = this.shadowRoot.querySelector(".MenuItemIconImage");
 
+        // ARIA: Set menuitem role and make focusable
+        this.setAttribute('role', 'menuitem');
+        this.setAttribute('tabindex', '-1');
+
         if (this.hasAttribute("text")) {
             this.text = this.getAttribute("text");
         }
@@ -24,7 +30,7 @@ export default class MenuItem extends UIComponent {
         if (this.hasAttribute("icon")) {
             this.icon = this.getAttribute("icon");
         }
-        
+
         this.addValidEvent(MenuItemEvent.SELECT);
         
         this.addEventListener(MouseEvent.MOUSE_OVER, () => {
@@ -87,6 +93,99 @@ export default class MenuItem extends UIComponent {
                 }
             }
         });
+
+        // ARIA: Keyboard navigation for menu items
+        this.addEventListener(KeyboardEvent.KEY_DOWN, (event) => {
+            this._handleKeyDown(event);
+        });
+    }
+
+    /**
+     * Handle keyboard navigation for accessibility
+     */
+    _handleKeyDown(event) {
+        // Get sibling menu items
+        const parentMenu = this.parentElement;
+        if (!parentMenu) return;
+
+        const items = Array.from(parentMenu.querySelectorAll('gooeyui-menuitem:not([disabled])'));
+        const currentIndex = items.indexOf(this);
+
+        switch (event.key) {
+            case Key.ARROW_DOWN:
+                event.preventDefault();
+                event.stopPropagation();
+                if (currentIndex < items.length - 1) {
+                    items[currentIndex + 1].focus();
+                } else {
+                    // Wrap to first
+                    items[0]?.focus();
+                }
+                break;
+
+            case Key.ARROW_UP:
+                event.preventDefault();
+                event.stopPropagation();
+                if (currentIndex > 0) {
+                    items[currentIndex - 1].focus();
+                } else {
+                    // Wrap to last
+                    items[items.length - 1]?.focus();
+                }
+                break;
+
+            case Key.ARROW_RIGHT:
+                event.preventDefault();
+                event.stopPropagation();
+                // Open submenu if exists
+                const subMenu = this.querySelector('gooeyui-menu');
+                if (subMenu) {
+                    this.active = true;
+                    const firstSubItem = subMenu.querySelector('gooeyui-menuitem:not([disabled])');
+                    firstSubItem?.focus();
+                }
+                break;
+
+            case Key.ARROW_LEFT:
+                event.preventDefault();
+                event.stopPropagation();
+                // Close submenu and return focus to parent
+                const parentMenuItem = parentMenu.closest('gooeyui-menuitem');
+                if (parentMenuItem) {
+                    parentMenu.active = false;
+                    parentMenuItem.focus();
+                }
+                break;
+
+            case Key.ENTER:
+            case Key.SPACE:
+                event.preventDefault();
+                event.stopPropagation();
+                this.click();
+                break;
+
+            case Key.ESCAPE:
+                event.preventDefault();
+                event.stopPropagation();
+                // Close menu
+                const menu = this.closest('gooeyui-menu');
+                if (menu) {
+                    menu.active = false;
+                }
+                break;
+
+            case Key.HOME:
+                event.preventDefault();
+                event.stopPropagation();
+                items[0]?.focus();
+                break;
+
+            case Key.END:
+                event.preventDefault();
+                event.stopPropagation();
+                items[items.length - 1]?.focus();
+                break;
+        }
     }
 
     get accelerator() {

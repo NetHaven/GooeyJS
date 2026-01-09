@@ -2,6 +2,7 @@ import UIComponent from '../../UIComponent.js';
 import TreeItemEvent from '../../../events/TreeItemEvent.js';
 import MouseEvent from '../../../events/MouseEvent.js';
 import DragEvent from '../../../events/DragEvent.js';
+import KeyboardEvent from '../../../events/KeyboardEvent.js';
 import Key from '../../../io/Key.js';
 import Template from '../../../util/Template.js';
 
@@ -22,7 +23,7 @@ export default class TreeItem extends UIComponent {
         this._iconElement = this.shadowRoot.querySelector('.ui-TreeItem-icon');
         this._textElement = this.shadowRoot.querySelector('.ui-TreeItem-text');
         this._childrenElement = this.shadowRoot.querySelector('.ui-TreeItem-children');
-        
+
         // Validate that essential elements were found
         if (!this._contentElement || !this._childrenElement) {
             console.error('TREEITEM_INIT_FAILED', 'TreeItem initialization failed - missing essential DOM elements', {
@@ -31,12 +32,16 @@ export default class TreeItem extends UIComponent {
                 innerHTML: this.innerHTML
             });
         }
-        
+
+        // ARIA: Set treeitem role and make focusable
+        this.setAttribute('role', 'treeitem');
+        this._contentElement.setAttribute('tabindex', '0');
+
         // Move any existing child tree items to the proper container
         existingChildren.forEach(child => {
             this.addChild(child);
         });
-        
+
         // Add valid events
         this.addValidEvent(TreeItemEvent.TREE_ITEM_EXPAND);
         this.addValidEvent(TreeItemEvent.TREE_ITEM_COLLAPSE);
@@ -46,7 +51,7 @@ export default class TreeItem extends UIComponent {
         this.addValidEvent(DragEvent.START);
         this.addValidEvent(DragEvent.END);
         this.addValidEvent(TreeItemEvent.TREE_ITEM_REORDER);
-        
+
         this._setupEventListeners();
         this._updateAttributes();
 
@@ -64,6 +69,24 @@ export default class TreeItem extends UIComponent {
         orphanedChildren.forEach(child => {
             this.addChild(child);
         });
+
+        // ARIA: Compute and set the tree level
+        this._computeAriaLevel();
+    }
+
+    /**
+     * Compute the aria-level based on nesting depth
+     */
+    _computeAriaLevel() {
+        let level = 1;
+        let parent = this.parentElement;
+        while (parent) {
+            if (parent.tagName === 'GOOEYUI-TREEITEM') {
+                level++;
+            }
+            parent = parent.parentElement;
+        }
+        this.setAttribute('aria-level', level);
     }
 
     attributeChangedCallback(name) {
@@ -302,18 +325,209 @@ export default class TreeItem extends UIComponent {
             }
             this.fireEvent(MouseEvent.CLICK, { treeItem: this });
         });
-        
+
         // Add double-click event
         this._contentElement.addEventListener(MouseEvent.DOUBLE_CLICK, () => {
             this.fireEvent(MouseEvent.DOUBLE_CLICK, { treeItem: this });
         });
-        
+
         this._expanderElement.addEventListener(MouseEvent.CLICK, (e) => {
             e.stopPropagation();
             if (this._hasChildren) {
                 this.toggle();
             }
         });
+
+        // ARIA: Keyboard navigation for tree items
+        this._contentElement.addEventListener(KeyboardEvent.KEY_DOWN, (event) => {
+            this._handleKeyDown(event);
+        });
+    }
+
+    /**
+     * Handle keyboard navigation for accessibility
+     */
+    _handleKeyDown(event) {
+        switch (event.key) {
+            case Key.ARROW_RIGHT:
+                event.preventDefault();
+                if (this._hasChildren) {
+                    if (!this.expanded) {
+                        // Expand the item
+                        this.expanded = true;
+                    } else {
+                        // Move focus to first child
+                        this._focusFirstChild();
+                    }
+                }
+                break;
+
+            case Key.ARROW_LEFT:
+                event.preventDefault();
+                if (this._hasChildren && this.expanded) {
+                    // Collapse the item
+                    this.expanded = false;
+                } else {
+                    // Move focus to parent
+                    this._focusParent();
+                }
+                break;
+
+            case Key.ARROW_DOWN:
+                event.preventDefault();
+                this._focusNext();
+                break;
+
+            case Key.ARROW_UP:
+                event.preventDefault();
+                this._focusPrevious();
+                break;
+
+            case Key.ENTER:
+            case Key.SPACE:
+                event.preventDefault();
+                if (this._hasChildren) {
+                    this.toggle();
+                }
+                this.fireEvent(MouseEvent.CLICK, { treeItem: this });
+                break;
+
+            case Key.HOME:
+                event.preventDefault();
+                this._focusFirst();
+                break;
+
+            case Key.END:
+                event.preventDefault();
+                this._focusLast();
+                break;
+        }
+    }
+
+    /**
+     * Focus the first child tree item
+     */
+    _focusFirstChild() {
+        const firstChild = this._childrenElement?.querySelector('gooeyui-treeitem');
+        if (firstChild) {
+            firstChild._contentElement?.focus();
+        }
+    }
+
+    /**
+     * Focus the parent tree item
+     */
+    _focusParent() {
+        let parent = this.parentElement;
+        while (parent) {
+            if (parent.tagName === 'GOOEYUI-TREEITEM') {
+                parent._contentElement?.focus();
+                return;
+            }
+            parent = parent.parentElement;
+        }
+    }
+
+    /**
+     * Focus the next visible tree item
+     */
+    _focusNext() {
+        // If expanded and has children, go to first child
+        if (this.expanded && this._hasChildren) {
+            this._focusFirstChild();
+            return;
+        }
+
+        // Otherwise find next sibling or parent's next sibling
+        let current = this;
+        while (current) {
+            const nextSibling = current.nextElementSibling;
+            if (nextSibling && nextSibling.tagName === 'GOOEYUI-TREEITEM') {
+                nextSibling._contentElement?.focus();
+                return;
+            }
+            // Move up to parent and try its sibling
+            let parent = current.parentElement;
+            while (parent && parent.tagName !== 'GOOEYUI-TREEITEM') {
+                parent = parent.parentElement;
+            }
+            current = parent;
+        }
+    }
+
+    /**
+     * Focus the previous visible tree item
+     */
+    _focusPrevious() {
+        const prevSibling = this.previousElementSibling;
+        if (prevSibling && prevSibling.tagName === 'GOOEYUI-TREEITEM') {
+            // Go to last visible descendant of previous sibling
+            let target = prevSibling;
+            while (target.expanded && target._hasChildren) {
+                const lastChild = target._childrenElement?.querySelector('gooeyui-treeitem:last-child');
+                if (lastChild) {
+                    target = lastChild;
+                } else {
+                    break;
+                }
+            }
+            target._contentElement?.focus();
+            return;
+        }
+
+        // Otherwise go to parent
+        this._focusParent();
+    }
+
+    /**
+     * Focus the first tree item in the tree
+     */
+    _focusFirst() {
+        // Find the root tree container and its first item
+        let root = this;
+        while (root.parentElement) {
+            if (root.parentElement.tagName === 'GOOEYUI-TREEITEM') {
+                root = root.parentElement;
+            } else {
+                break;
+            }
+        }
+        // Now root is at the top level, find the first sibling
+        let first = root;
+        while (first.previousElementSibling && first.previousElementSibling.tagName === 'GOOEYUI-TREEITEM') {
+            first = first.previousElementSibling;
+        }
+        first._contentElement?.focus();
+    }
+
+    /**
+     * Focus the last visible tree item in the tree
+     */
+    _focusLast() {
+        // Find the root tree container
+        let root = this;
+        while (root.parentElement) {
+            if (root.parentElement.tagName === 'GOOEYUI-TREEITEM') {
+                root = root.parentElement;
+            } else {
+                break;
+            }
+        }
+        // Find the last sibling at root level
+        let last = root;
+        while (last.nextElementSibling && last.nextElementSibling.tagName === 'GOOEYUI-TREEITEM') {
+            last = last.nextElementSibling;
+        }
+        // Go to last visible descendant
+        while (last.expanded && last._hasChildren) {
+            const lastChild = last._childrenElement?.querySelector('gooeyui-treeitem:last-child');
+            if (lastChild) {
+                last = lastChild;
+            } else {
+                break;
+            }
+        }
+        last._contentElement?.focus();
     }
     
     _updateAttributes() {
@@ -340,12 +554,19 @@ export default class TreeItem extends UIComponent {
     _updateExpanded() {
         const wasExpanded = this._expanded;
         this._expanded = this.expanded;
-        
+
+        // ARIA: Update expanded state (only set if item has children)
+        if (this._hasChildren) {
+            this.setAttribute('aria-expanded', this._expanded.toString());
+        } else {
+            this.removeAttribute('aria-expanded');
+        }
+
         if (this._expanded) {
             if (this._expanderElement) this._expanderElement.classList.add('expanded');
             if (this._childrenElement) this._childrenElement.classList.add('expanded');
             this.classList.add('expanded');
-            
+
             // Dispatch expand event if state changed
             if (!wasExpanded) {
                 this.fireEvent(TreeItemEvent.TREE_ITEM_EXPAND, { treeItem: this });
@@ -354,7 +575,7 @@ export default class TreeItem extends UIComponent {
             if (this._expanderElement) this._expanderElement.classList.remove('expanded');
             if (this._childrenElement) this._childrenElement.classList.remove('expanded');
             this.classList.remove('expanded');
-            
+
             // Dispatch collapse event if state changed
             if (wasExpanded) {
                 this.fireEvent(TreeItemEvent.TREE_ITEM_COLLAPSE, { treeItem: this });
@@ -366,8 +587,12 @@ export default class TreeItem extends UIComponent {
         if (this._expanderElement) {
             if (this._hasChildren) {
                 this._expanderElement.style.visibility = 'visible';
+                // ARIA: Set expanded state when item gains children
+                this.setAttribute('aria-expanded', this._expanded.toString());
             } else {
                 this._expanderElement.style.visibility = 'hidden';
+                // ARIA: Remove expanded state when item has no children
+                this.removeAttribute('aria-expanded');
             }
         }
     }

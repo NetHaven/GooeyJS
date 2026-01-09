@@ -158,6 +158,11 @@ export default class DataGrid extends UIComponent {
     connectedCallback() {
         super.connectedCallback && super.connectedCallback();
 
+        // Set ARIA grid role and attributes
+        this.setAttribute('role', 'grid');
+        this._headerRow.setAttribute('role', 'row');
+        this._bodyViewport.setAttribute('role', 'rowgroup');
+
         // Collect DataGridColumn children
         this._collectColumns();
 
@@ -177,6 +182,16 @@ export default class DataGrid extends UIComponent {
         this._renderFilterRow();
         this._updateSpacerHeight();
         this._renderVisibleRows();
+
+        // Update aria-rowcount
+        this._updateAriaRowCount();
+    }
+
+    /**
+     * Update aria-rowcount attribute based on current data
+     */
+    _updateAriaRowCount() {
+        this.setAttribute('aria-rowcount', this._sortedData.length);
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -308,6 +323,12 @@ export default class DataGrid extends UIComponent {
 
         // Clear selection if selected rows no longer exist
         this._validateSelection();
+
+        // ARIA: Update row count and announce changes
+        this._updateAriaRowCount();
+        if (this._filters.size > 0) {
+            UIComponent.announce(`${this._sortedData.length} rows displayed`);
+        }
     }
 
     // =========== Filtering ===========
@@ -539,9 +560,17 @@ export default class DataGrid extends UIComponent {
                 header.classList.add('sorted');
                 indicator.className = 'sort-indicator ' +
                     (this._sortDirection === SortDirection.ASCENDING ? 'asc' : 'desc');
+                // ARIA: Update sort direction
+                header.setAttribute('aria-sort',
+                    this._sortDirection === SortDirection.ASCENDING ? 'ascending' : 'descending'
+                );
             } else {
                 header.classList.remove('sorted');
                 indicator.className = 'sort-indicator';
+                // ARIA: Reset to none for non-sorted columns
+                if (column.sortable) {
+                    header.setAttribute('aria-sort', 'none');
+                }
             }
         });
     }
@@ -726,8 +755,12 @@ export default class DataGrid extends UIComponent {
             const index = parseInt(row.dataset.rowIndex, 10);
             if (this._selectedRows.has(index)) {
                 row.classList.add('selected');
+                // ARIA: Mark row as selected
+                row.setAttribute('aria-selected', 'true');
             } else {
                 row.classList.remove('selected');
+                // ARIA: Mark row as not selected
+                row.setAttribute('aria-selected', 'false');
             }
         });
     }
@@ -852,6 +885,10 @@ export default class DataGrid extends UIComponent {
             header.style.minWidth = `${column.minWidth}px`;
             header.dataset.columnIndex = index;
 
+            // ARIA: columnheader role and column index
+            header.setAttribute('role', 'columnheader');
+            header.setAttribute('aria-colindex', index + 1);
+
             // Title
             const titleSpan = document.createElement('span');
             titleSpan.className = 'column-title';
@@ -863,6 +900,9 @@ export default class DataGrid extends UIComponent {
                 const sortIndicator = document.createElement('span');
                 sortIndicator.className = 'sort-indicator';
                 header.appendChild(sortIndicator);
+
+                // ARIA: sortable columns start with aria-sort="none"
+                header.setAttribute('aria-sort', 'none');
 
                 // Click to sort
                 header.addEventListener('click', (e) => {
@@ -965,6 +1005,10 @@ export default class DataGrid extends UIComponent {
         row.style.transform = `translateY(${rowIndex * this._rowHeight}px)`;
         row.style.height = `${this._rowHeight}px`;
 
+        // ARIA: row role and row index (1-based)
+        row.setAttribute('role', 'row');
+        row.setAttribute('aria-rowindex', rowIndex + 1);
+
         // Click handling
         row.addEventListener('click', (e) => {
             this._onRowClick(rowIndex, e);
@@ -989,6 +1033,10 @@ export default class DataGrid extends UIComponent {
             cell.style.width = `${column.width}px`;
             cell.style.minWidth = `${column.minWidth}px`;
             cell.dataset.columnIndex = colIndex;
+
+            // ARIA: gridcell role and column index (1-based)
+            cell.setAttribute('role', 'gridcell');
+            cell.setAttribute('aria-colindex', colIndex + 1);
 
             // Cell content
             const value = rowData[column.field];

@@ -81,8 +81,13 @@
 }
 
 :host(:focus) {
-    outline: 2px solid #010082;
-    outline-offset: -2px;
+    outline: none;
+}
+
+/* Keyboard-only focus indicator for accessibility */
+.ui-TreeItem-content:focus-visible {
+    outline: 2px solid #005fcc;
+    outline-offset: 2px;
 }
 
 /* TreeItem Drag and Drop Styles */

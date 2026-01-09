@@ -20,9 +20,24 @@ export default class ComboBox extends ListBox {
         this._dropdownButton = this.shadowRoot.querySelector('button.combobox-button');
         this._dropdownContainer = this.shadowRoot.querySelector('div.combobox-dropdown');
         this._dropdownContainer.style.display = 'none';
-        
+
         // Update formElement reference for FormElement functionality
         this.formElement = this._textInput;
+
+        // ARIA: Set combobox role and attributes
+        this.setAttribute('role', 'combobox');
+
+        // Generate unique ID for the listbox
+        const listboxId = `combobox-listbox-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        this._dropdownContainer.id = listboxId;
+        this._dropdownContainer.setAttribute('role', 'listbox');
+
+        // Link input to listbox
+        this._textInput.setAttribute('aria-haspopup', 'listbox');
+        this._textInput.setAttribute('aria-expanded', 'false');
+        this._textInput.setAttribute('aria-controls', listboxId);
+        this._textInput.setAttribute('aria-owns', listboxId);
+        this._textInput.setAttribute('aria-autocomplete', this.hasAttribute('editable') ? 'list' : 'none');
 
         // Set up event handlers
         this._setupEventHandlers();
@@ -267,38 +282,44 @@ export default class ComboBox extends ListBox {
      */
     _openDropdown() {
         if (this._isDropdownOpen) return;
-        
+
         this._isDropdownOpen = true;
         this._dropdownContainer.style.display = 'block';
         this._dropdownButton.innerHTML = '▲';
         this.classList.add('dropdown-open');
-        
+
+        // ARIA: Update expanded state
+        this._textInput.setAttribute('aria-expanded', 'true');
+
         // Reset filter if in editable mode
         if (this._editable) {
             this._filterOptions(this._textInput.value);
         }
-        
+
         // Set dropdown width to match input width
         const inputWidth = this._textInput.offsetWidth + this._dropdownButton.offsetWidth;
         this._dropdownContainer.style.width = `${inputWidth}px`;
-        
+
         // Dispatch event
         this.fireEvent(ComboBoxEvent.DROPDOWN_OPEN);
     }
-    
+
     _closeDropdown() {
         if (!this._isDropdownOpen) return;
-        
+
         this._isDropdownOpen = false;
         this._dropdownContainer.style.display = 'none';
         this._dropdownButton.innerHTML = '▼';
         this.classList.remove('dropdown-open');
-        
+
+        // ARIA: Update expanded state
+        this._textInput.setAttribute('aria-expanded', 'false');
+
         // Show all options when closed
         for (let i = 0; i < this.listBox.options.length; i++) {
             this.listBox.options[i].style.display = '';
         }
-        
+
         // Dispatch event
         this.fireEvent(ComboBoxEvent.DROPDOWN_CLOSE);
     }

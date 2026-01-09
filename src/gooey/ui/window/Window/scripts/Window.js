@@ -4,6 +4,7 @@ import WindowEvent from '../../../../events/window/WindowEvent.js';
 import KeyboardEvent from '../../../../events/KeyboardEvent.js';
 import TextFieldEvent from '../../../../events/form/text/TextFieldEvent.js';
 import MouseEvent from '../../../../events/MouseEvent.js';
+import Key from '../../../../io/Key.js';
 import Template from '../../../../util/Template.js';
 
 export default class Window extends UIComponent {
@@ -20,7 +21,21 @@ export default class Window extends UIComponent {
         this.titlebar = this.shadowRoot.querySelector(".WindowTitlebar");
 
         this.contentArea.innerHTML = content;
-        
+
+        // ARIA: Set dialog role and attributes
+        const dialogType = this.getAttribute('dialogtype');
+        this.setAttribute('role', dialogType === 'alert' ? 'alertdialog' : 'dialog');
+
+        // ARIA: Generate unique ID for titlebar and set aria-labelledby
+        const titleId = `window-title-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        if (this.titlebar) {
+            this.titlebar.id = titleId;
+            this.setAttribute('aria-labelledby', titleId);
+        }
+
+        // Store reference to previously focused element for restoration
+        this._previousFocus = null;
+
         // Add remaining valid events
         this.addValidEvent(WindowEvent.CLOSE);
         this.addValidEvent(WindowEvent.OPEN);
@@ -67,9 +82,15 @@ export default class Window extends UIComponent {
             window: this,
             winTitle: this.winTitle
         }, { cancelable: true });
-        
+
         if (shouldClose) {
             this.visible = false;
+
+            // ARIA: Restore focus to previously focused element
+            if (this._previousFocus && typeof this._previousFocus.focus === 'function') {
+                this._previousFocus.focus();
+                this._previousFocus = null;
+            }
         }
     }
 
@@ -100,6 +121,9 @@ export default class Window extends UIComponent {
     open(position = null) {
         let xLocation, yLocation;
 
+        // ARIA: Store the currently focused element for later restoration
+        this._previousFocus = document.activeElement;
+
         if (position && position instanceof Point) {
             xLocation = position.x;
             yLocation = position.y;
@@ -114,13 +138,38 @@ export default class Window extends UIComponent {
         this.visible = true;
         this.style.left = xLocation + "px";
         this.style.top = yLocation + "px";
-        
+
         // Dispatch open event after opening
-        this.fireEvent(WindowEvent.OPEN, { 
+        this.fireEvent(WindowEvent.OPEN, {
             window: this,
             winTitle: this.winTitle,
             position: { x: xLocation, y: yLocation }
         });
+
+        // ARIA: Focus the first focusable element in the dialog
+        setTimeout(() => {
+            this._focusFirstElement();
+        }, 0);
+    }
+
+    /**
+     * Focus the first focusable element within the window
+     */
+    _focusFirstElement() {
+        const focusableSelector = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+
+        // Try shadow root first (for built-in buttons)
+        let focusable = this.shadowRoot.querySelector(focusableSelector);
+        if (focusable) {
+            focusable.focus();
+            return;
+        }
+
+        // Try light DOM content
+        focusable = this.querySelector(focusableSelector);
+        if (focusable) {
+            focusable.focus();
+        }
     }
 
     set constrainViewport(val) {
@@ -216,6 +265,8 @@ export default class Window extends UIComponent {
     set modal(val) {
         if (val) {
             this.setAttribute("modal", "");
+            // ARIA: Mark dialog as modal
+            this.setAttribute("aria-modal", "true");
             if (!this.modalScreen) {
                 this.modalScreen = document.createElement('div');
                 this.modalScreen.classList.add("uiWindowModal");
@@ -228,6 +279,7 @@ export default class Window extends UIComponent {
         }
         else {
             this.removeAttribute("modal");
+            this.removeAttribute("aria-modal");
         }
     }
 
