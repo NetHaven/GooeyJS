@@ -1,0 +1,28 @@
+{
+  "MetaGooVersion": "1.0",
+  "name": "GradientStop",
+  "prefix": "gooeyui",
+  "tagName": "gradientstop",
+  "script": "GradientStop.js",
+  "templates": [
+    { "id": "ui-GradientStop", "file": "GradientStop.html" }
+  ],
+  "themes": {
+    "default": "base",
+    "available": ["base", "dark", "janus"]
+  },
+  "attributes": {
+    "color": {
+      "type": "STRING",
+      "required": true
+    },
+    "position": {
+      "type": "STRING",
+      "default": null
+    },
+    "hint": {
+      "type": "STRING",
+      "default": null
+    }
+  }
+}

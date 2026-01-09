@@ -1,0 +1,51 @@
+{
+  "MetaGooVersion": "1.0",
+  "name": "Gradient",
+  "prefix": "gooeyui",
+  "tagName": "gradient",
+  "script": "Gradient.js",
+  "templates": [
+    { "id": "ui-Gradient", "file": "Gradient.html" }
+  ],
+  "themes": {
+    "default": "base",
+    "available": ["base", "dark", "janus"]
+  },
+  "attributes": {
+    "type": {
+      "type": "ENUM",
+      "default": "linear",
+      "values": ["linear", "radial", "conic"]
+    },
+    "repeating": {
+      "type": "BOOLEAN",
+      "default": false
+    },
+    "angle": {
+      "type": "STRING",
+      "default": "180deg"
+    },
+    "shape": {
+      "type": "ENUM",
+      "default": "ellipse",
+      "values": ["circle", "ellipse"]
+    },
+    "size": {
+      "type": "ENUM",
+      "default": "farthest-corner",
+      "values": ["closest-side", "closest-corner", "farthest-side", "farthest-corner"]
+    },
+    "position": {
+      "type": "STRING",
+      "default": "center"
+    },
+    "from": {
+      "type": "STRING",
+      "default": "0deg"
+    },
+    "stops": {
+      "type": "STRING",
+      "default": null
+    }
+  }
+}

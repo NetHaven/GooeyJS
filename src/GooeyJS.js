@@ -46,6 +46,13 @@ export default class GooeyJS {
             elements: [
                 { name: "HamburgerMenu" }
             ]
+        },
+        {
+            pkg: "gooey.graphics.gradient",
+            elements: [
+                { name: "Gradient" },
+                { name: "GradientStop" }
+            ]
         }]
 
         this.createElements();
