@@ -1,0 +1,25 @@
+{
+  "MetaGooVersion": "1.0",
+  "name": "DataGridColumn",
+  "prefix": "gooeyui",
+  "tagName": "datagridcolumn",
+  "script": "DataGridColumn.js",
+  "templates": [
+    { "id": "ui-DataGridColumn", "file": "DataGridColumn.html" }
+  ],
+  "themes": {
+    "default": "base",
+    "available": ["base", "dark", "janus"]
+  },
+  "attributes": {
+    "field": { "type": "STRING", "default": "" },
+    "header": { "type": "STRING", "default": "" },
+    "width": { "type": "NUMBER", "default": 100 },
+    "minwidth": { "type": "NUMBER", "default": 50 },
+    "sortable": { "type": "BOOLEAN", "default": true },
+    "filterable": { "type": "BOOLEAN", "default": false },
+    "editable": { "type": "BOOLEAN", "default": false },
+    "resizable": { "type": "BOOLEAN", "default": true },
+    "visible": { "type": "BOOLEAN", "default": true }
+  }
+}

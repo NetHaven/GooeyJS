@@ -1,0 +1,41 @@
+{
+  "MetaGooVersion": "1.0",
+  "name": "HamburgerMenu",
+  "prefix": "gooeyui",
+  "tagName": "hamburgermenu",
+  "script": "HamburgerMenu.js",
+  "templates": [
+    { "id": "ui-HamburgerMenu", "file": "HamburgerMenu.html" }
+  ],
+  "themes": {
+    "default": "base",
+    "available": ["base", "dark", "janus"]
+  },
+  "attributes": {
+    "active": { "type": "BOOLEAN", "default": false },
+    "position": {
+      "type": "ENUM",
+      "default": "left",
+      "values": ["left", "right", "top", "bottom"]
+    },
+    "mode": {
+      "type": "ENUM",
+      "default": "slide",
+      "values": ["slide", "overlay", "push"]
+    },
+    "icon": { "type": "STRING", "default": null },
+    "text": { "type": "STRING", "default": null },
+    "panelwidth": { "type": "STRING", "default": "250px" },
+    "panelheight": { "type": "STRING", "default": null },
+    "closeonselect": { "type": "BOOLEAN", "default": true },
+    "closeonclickoutside": { "type": "BOOLEAN", "default": true },
+    "draggable": { "type": "BOOLEAN", "default": false },
+    "droppable": { "type": "BOOLEAN", "default": false },
+    "dropzone": { "type": "STRING", "default": null },
+    "height": { "type": "STRING", "default": null },
+    "width": { "type": "STRING", "default": null },
+    "tooltip": { "type": "STRING", "default": null },
+    "visible": { "type": "BOOLEAN", "default": true },
+    "disabled": { "type": "BOOLEAN", "default": false }
+  }
+}

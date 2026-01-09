@@ -1,0 +1,26 @@
+<template id="ui-DataGrid">
+    <div class="datagrid-container">
+        <!-- Fixed header section -->
+        <div class="datagrid-header-viewport">
+            <div class="datagrid-header-row"></div>
+        </div>
+
+        <!-- Optional filter row -->
+        <div class="datagrid-filter-viewport">
+            <div class="datagrid-filter-row"></div>
+        </div>
+
+        <!-- Scrollable body section -->
+        <div class="datagrid-body-viewport">
+            <!-- Spacer maintains scroll height for virtual scrolling -->
+            <div class="datagrid-body-spacer"></div>
+            <!-- Only visible rows are rendered here -->
+            <div class="datagrid-body-rows"></div>
+        </div>
+
+        <!-- Hidden slot for DataGridColumn children -->
+        <div class="datagrid-columns-slot" style="display: none;">
+            <slot></slot>
+        </div>
+    </div>
+</template>

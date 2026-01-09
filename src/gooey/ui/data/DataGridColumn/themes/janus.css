@@ -1,0 +1,5 @@
+/* DataGridColumn Janus Theme */
+/* DataGridColumn is a configuration-only component - not visually rendered */
+:host {
+    display: none;
+}

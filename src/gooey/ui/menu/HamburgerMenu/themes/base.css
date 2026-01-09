@@ -1,0 +1,213 @@
+:host {
+    display: inline-block;
+    position: relative;
+}
+
+/* Hamburger Button */
+.hamburger-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 14px;
+    color: inherit;
+}
+
+.hamburger-button:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.hamburger-button:focus {
+    outline: 2px solid #0066cc;
+    outline-offset: 2px;
+}
+
+:host([disabled]) .hamburger-button {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Hamburger Icon (three bars) */
+.hamburger-icon {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 24px;
+    height: 18px;
+}
+
+.hamburger-icon .bar {
+    display: block;
+    width: 100%;
+    height: 3px;
+    background-color: #333;
+    border-radius: 2px;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+/* Animated hamburger to X transformation when active */
+:host([active]) .hamburger-icon .bar:nth-child(1) {
+    transform: translateY(7.5px) rotate(45deg);
+}
+
+:host([active]) .hamburger-icon .bar:nth-child(2) {
+    opacity: 0;
+}
+
+:host([active]) .hamburger-icon .bar:nth-child(3) {
+    transform: translateY(-7.5px) rotate(-45deg);
+}
+
+/* Custom icon image */
+.hamburger-icon img {
+    width: 24px;
+    height: 24px;
+}
+
+.hamburger-text {
+    display: none;
+}
+
+.hamburger-text:not(:empty) {
+    display: inline;
+}
+
+/* Backdrop overlay */
+.hamburger-backdrop {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 998;
+}
+
+:host([active]) .hamburger-backdrop {
+    display: block;
+}
+
+/* Navigation Panel */
+.hamburger-panel {
+    position: fixed;
+    background-color: #ffffff;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
+    z-index: 999;
+    transition: transform 0.3s ease;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Position: Left (default) */
+:host .hamburger-panel,
+:host([position="left"]) .hamburger-panel {
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: var(--hamburger-panel-width, 250px);
+    transform: translateX(-100%);
+}
+
+:host([active]) .hamburger-panel,
+:host([position="left"][active]) .hamburger-panel {
+    transform: translateX(0);
+}
+
+/* Position: Right */
+:host([position="right"]) .hamburger-panel {
+    top: 0;
+    right: 0;
+    left: auto;
+    height: 100vh;
+    width: var(--hamburger-panel-width, 250px);
+    transform: translateX(100%);
+    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.2);
+}
+
+:host([position="right"][active]) .hamburger-panel {
+    transform: translateX(0);
+}
+
+/* Position: Top */
+:host([position="top"]) .hamburger-panel {
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: var(--hamburger-panel-height, auto);
+    max-height: 80vh;
+    transform: translateY(-100%);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+:host([position="top"][active]) .hamburger-panel {
+    transform: translateY(0);
+}
+
+/* Position: Bottom */
+:host([position="bottom"]) .hamburger-panel {
+    bottom: 0;
+    left: 0;
+    top: auto;
+    width: 100vw;
+    height: var(--hamburger-panel-height, auto);
+    max-height: 80vh;
+    transform: translateY(100%);
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.2);
+}
+
+:host([position="bottom"][active]) .hamburger-panel {
+    transform: translateY(0);
+}
+
+/* Panel Header */
+.panel-header {
+    display: flex;
+    justify-content: flex-end;
+    padding: 8px;
+    border-bottom: 1px solid #e0e0e0;
+    flex-shrink: 0;
+}
+
+.close-button {
+    padding: 4px 12px;
+    border: none;
+    background: transparent;
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+    line-height: 1;
+}
+
+.close-button:hover {
+    color: #333;
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.close-button:focus {
+    outline: 2px solid #0066cc;
+    outline-offset: 2px;
+}
+
+/* Panel Content */
+.panel-content {
+    padding: 8px 0;
+    flex: 1;
+    overflow-y: auto;
+}
+
+/* Slotted MenuItem styling */
+::slotted(gooeyui-menuitem) {
+    display: block;
+    width: 100%;
+}
+
+::slotted(gooeyui-menuitemseparator) {
+    display: block;
+    width: 100%;
+}

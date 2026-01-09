@@ -1,0 +1,32 @@
+{
+  "MetaGooVersion": "1.0",
+  "name": "DataGrid",
+  "prefix": "gooeyui",
+  "tagName": "datagrid",
+  "script": "DataGrid.js",
+  "templates": [
+    { "id": "ui-DataGrid", "file": "DataGrid.html" }
+  ],
+  "themes": {
+    "default": "base",
+    "available": ["base", "dark", "janus"]
+  },
+  "attributes": {
+    "draggable": { "type": "BOOLEAN", "default": false },
+    "droppable": { "type": "BOOLEAN", "default": false },
+    "dropzone": { "type": "STRING", "default": null },
+    "height": { "type": "STRING", "default": "300px" },
+    "width": { "type": "STRING", "default": "100%" },
+    "tooltip": { "type": "STRING", "default": null },
+    "visible": { "type": "BOOLEAN", "default": true },
+    "disabled": { "type": "BOOLEAN", "default": false },
+    "selectionmode": {
+      "type": "ENUM",
+      "default": "single-row",
+      "values": ["none", "single-row", "multiple-row", "cell"]
+    },
+    "rowheight": { "type": "NUMBER", "default": 30 },
+    "showfilters": { "type": "BOOLEAN", "default": false },
+    "editable": { "type": "BOOLEAN", "default": false }
+  }
+}

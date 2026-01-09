@@ -1,4 +1,4 @@
-﻿import Template from './gooey/util/Template.js';
+import Template from './gooey/util/Template.js';
 import MetaLoader from './gooey/util/MetaLoader.js';
 import ComponentRegistry from './gooey/util/ComponentRegistry.js';
 
@@ -32,6 +32,19 @@ export default class GooeyJS {
             elements: [
                 { name: "Application" },
                 { name: "Component" }
+            ]
+        },
+        {
+            pkg: "gooey.ui.data",
+            elements: [
+                { name: "DataGridColumn" },
+                { name: "DataGrid" }
+            ]
+        },
+        {
+            pkg: "gooey.ui.menu",
+            elements: [
+                { name: "HamburgerMenu" }
             ]
         }]
 

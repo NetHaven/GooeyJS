@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataGrid Component Example - GooeyJS</title>
+    <script type="module" src="../src/GooeyJS.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            color: #555;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+        }
+
+        .description {
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .example-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .controls {
+            margin-bottom: 15px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 8px 16px;
+            background-color: #0078d7;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        button:hover {
+            background-color: #0066b8;
+        }
+
+        select {
+            padding: 8px 12px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .event-log {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #f8f8f8;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: 'Consolas', monospace;
+            font-size: 12px;
+        }
+
+        .event-log-entry {
+            padding: 4px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .event-log-entry:last-child {
+            border-bottom: none;
+        }
+
+        .event-log-time {
+            color: #888;
+            margin-right: 8px;
+        }
+
+        .event-log-name {
+            color: #0078d7;
+            font-weight: bold;
+        }
+
+        label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>DataGrid Component</h1>
+    <p class="description">
+        A full-featured data grid component with virtual scrolling, sorting, filtering,
+        multiple selection modes, column resizing, and inline cell editing.
+    </p>
+
+    <!-- Basic Example -->
+    <h2>Basic Example</h2>
+    <div class="example-container">
+        <div class="controls">
+            <button onclick="loadData()">Load Data (1000 rows)</button>
+            <button onclick="loadLargeData()">Load Large Data (10000 rows)</button>
+            <button onclick="clearData()">Clear Data</button>
+            <label>
+                Selection Mode:
+                <select id="selectionMode" onchange="changeSelectionMode()">
+                    <option value="single-row">Single Row</option>
+                    <option value="multiple-row">Multiple Rows</option>
+                    <option value="cell">Cell</option>
+                    <option value="none">None</option>
+                </select>
+            </label>
+            <label>
+                Theme:
+                <select id="theme" onchange="changeTheme()">
+                    <option value="base">Base (Light)</option>
+                    <option value="dark">Dark</option>
+                    <option value="janus">Janus</option>
+                </select>
+            </label>
+        </div>
+
+        <gooeyui-datagrid id="basicGrid" height="400" selectionmode="single-row" showfilters="true">
+            <gooeyui-datagridcolumn field="id" header="ID" width="70" sortable></gooeyui-datagridcolumn>
+            <gooeyui-datagridcolumn field="firstName" header="First Name" width="120" sortable filterable editable></gooeyui-datagridcolumn>
+            <gooeyui-datagridcolumn field="lastName" header="Last Name" width="120" sortable filterable editable></gooeyui-datagridcolumn>
+            <gooeyui-datagridcolumn field="email" header="Email" width="220" sortable filterable></gooeyui-datagridcolumn>
+            <gooeyui-datagridcolumn field="department" header="Department" width="130" sortable filterable></gooeyui-datagridcolumn>
+            <gooeyui-datagridcolumn field="salary" header="Salary" width="100" sortable></gooeyui-datagridcolumn>
+            <gooeyui-datagridcolumn field="startDate" header="Start Date" width="110" sortable></gooeyui-datagridcolumn>
+            <gooeyui-datagridcolumn field="status" header="Status" width="90" sortable filterable></gooeyui-datagridcolumn>
+        </gooeyui-datagrid>
+
+        <div class="controls" style="margin-top: 15px;">
+            <button onclick="getSelection()">Log Selection</button>
+            <button onclick="selectAll()">Select All</button>
+            <button onclick="clearSelection()">Clear Selection</button>
+            <button onclick="scrollToRow()">Scroll to Row 500</button>
+        </div>
+
+        <h3>Event Log</h3>
+        <div id="eventLog" class="event-log">
+            <div class="event-log-entry">
+                <span class="event-log-time">--:--:--</span>
+                <span>Waiting for events...</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Minimal Example (Read-only) -->
+    <h2>Read-Only Grid (No Filters)</h2>
+    <div class="example-container">
+        <gooeyui-datagrid id="readOnlyGrid" height="250" selectionmode="multiple-row">
+            <gooeyui-datagridcolumn field="id" header="ID" width="60"></gooeyui-datagridcolumn>
+            <gooeyui-datagridcolumn field="product" header="Product" width="200"></gooeyui-datagridcolumn>
+            <gooeyui-datagridcolumn field="category" header="Category" width="120"></gooeyui-datagridcolumn>
+            <gooeyui-datagridcolumn field="price" header="Price" width="100"></gooeyui-datagridcolumn>
+            <gooeyui-datagridcolumn field="stock" header="Stock" width="80"></gooeyui-datagridcolumn>
+        </gooeyui-datagrid>
+    </div>
+
+    <script type="module">
+        // Sample data generators
+        const firstNames = ['John', 'Jane', 'Michael', 'Sarah', 'David', 'Emily', 'Chris', 'Lisa', 'Robert', 'Emma'];
+        const lastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez'];
+        const departments = ['Engineering', 'Sales', 'Marketing', 'HR', 'Finance', 'Operations', 'IT', 'Legal'];
+        const statuses = ['Active', 'On Leave', 'Remote', 'Training'];
+
+        function generateEmployeeData(count) {
+            const data = [];
+            for (let i = 1; i <= count; i++) {
+                const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+                const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+                data.push({
+                    id: i,
+                    firstName: firstName,
+                    lastName: lastName,
+                    email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}${i}@company.com`,
+                    department: departments[Math.floor(Math.random() * departments.length)],
+                    salary: Math.floor(50000 + Math.random() * 100000),
+                    startDate: new Date(2015 + Math.floor(Math.random() * 10), Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1).toISOString().split('T')[0],
+                    status: statuses[Math.floor(Math.random() * statuses.length)]
+                });
+            }
+            return data;
+        }
+
+        function generateProductData(count) {
+            const products = ['Widget', 'Gadget', 'Tool', 'Device', 'Component', 'Module', 'Unit', 'System'];
+            const categories = ['Electronics', 'Hardware', 'Software', 'Services', 'Accessories'];
+            const data = [];
+            for (let i = 1; i <= count; i++) {
+                data.push({
+                    id: i,
+                    product: `${products[Math.floor(Math.random() * products.length)]} ${String.fromCharCode(65 + Math.floor(Math.random() * 26))}${i}`,
+                    category: categories[Math.floor(Math.random() * categories.length)],
+                    price: `$${(10 + Math.random() * 990).toFixed(2)}`,
+                    stock: Math.floor(Math.random() * 1000)
+                });
+            }
+            return data;
+        }
+
+        // Wait for custom elements to be defined
+        customElements.whenDefined('gooeyui-datagrid').then(() => {
+            const basicGrid = document.getElementById('basicGrid');
+            const readOnlyGrid = document.getElementById('readOnlyGrid');
+
+            // Set up event listeners for the basic grid
+            setupEventListeners(basicGrid);
+
+            // Load initial data
+            basicGrid.setData(generateEmployeeData(100));
+            readOnlyGrid.setData(generateProductData(50));
+
+            // Make functions available globally
+            window.loadData = () => {
+                basicGrid.setData(generateEmployeeData(1000));
+                logEvent('data-loaded', { count: 1000 });
+            };
+
+            window.loadLargeData = () => {
+                basicGrid.setData(generateEmployeeData(10000));
+                logEvent('data-loaded', { count: 10000 });
+            };
+
+            window.clearData = () => {
+                basicGrid.setData([]);
+                logEvent('data-cleared', {});
+            };
+
+            window.changeSelectionMode = () => {
+                const mode = document.getElementById('selectionMode').value;
+                basicGrid.selectionMode = mode;
+                logEvent('selection-mode-changed', { mode });
+            };
+
+            window.changeTheme = async () => {
+                const theme = document.getElementById('theme').value;
+                await basicGrid.switchTheme(theme);
+                logEvent('theme-changed', { theme });
+            };
+
+            window.getSelection = () => {
+                const rows = basicGrid.getSelectedRows();
+                const indices = basicGrid.getSelectedIndices();
+                console.log('Selected rows:', rows);
+                console.log('Selected indices:', indices);
+                logEvent('selection-logged', { count: rows.length, indices });
+            };
+
+            window.selectAll = () => {
+                basicGrid.selectAll();
+            };
+
+            window.clearSelection = () => {
+                basicGrid.clearSelection();
+            };
+
+            window.scrollToRow = () => {
+                basicGrid.scrollToRow(500);
+                logEvent('scrolled-to-row', { row: 500 });
+            };
+        });
+
+        function setupEventListeners(grid) {
+            grid.addEventListener('selection-changed', (e, detail) => {
+                logEvent('selection-changed', { count: detail?.selectedIndices?.length || 0 });
+            });
+
+            grid.addEventListener('sort-changed', (e, detail) => {
+                logEvent('sort-changed', { field: detail?.field, direction: detail?.direction });
+            });
+
+            grid.addEventListener('filter-changed', (e, detail) => {
+                logEvent('filter-changed', { field: detail?.field, filteredCount: detail?.filteredCount, totalCount: detail?.totalCount });
+            });
+
+            grid.addEventListener('cell-edit-end', (e, detail) => {
+                logEvent('cell-edit-end', { field: detail?.field, oldValue: detail?.oldValue, newValue: detail?.newValue });
+            });
+
+            grid.addEventListener('column-resize', (e, detail) => {
+                logEvent('column-resize', { field: detail?.field, width: detail?.width });
+            });
+
+            grid.addEventListener('row-activated', (e, detail) => {
+                logEvent('row-activated', { row: detail?.row, name: detail?.data?.firstName + ' ' + detail?.data?.lastName });
+            });
+        }
+
+        function logEvent(eventName, data) {
+            const logEl = document.getElementById('eventLog');
+            const time = new Date().toLocaleTimeString();
+
+            const entry = document.createElement('div');
+            entry.className = 'event-log-entry';
+            entry.innerHTML = `
+                <span class="event-log-time">${time}</span>
+                <span class="event-log-name">${eventName}</span>
+                <span>${JSON.stringify(data)}</span>
+            `;
+
+            // Insert at top
+            if (logEl.firstChild) {
+                logEl.insertBefore(entry, logEl.firstChild);
+            } else {
+                logEl.appendChild(entry);
+            }
+
+            // Limit to 50 entries
+            while (logEl.children.length > 50) {
+                logEl.removeChild(logEl.lastChild);
+            }
+        }
+    </script>
+</body>
+</html>
