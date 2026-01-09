@@ -253,6 +253,149 @@ const GooeyData = {
       ]
     },
     {
+      "name": "Data",
+      "elements": [
+        {
+          "name": "DataGrid",
+          "tagName": "gooeyui-datagrid",
+          "description": "A full-featured data grid component with virtual scrolling, sorting, filtering, multiple selection modes, column resizing, and inline cell editing. Efficiently handles large datasets (10,000+ rows) through virtual scrolling.",
+          "inherits": ["UIComponent"],
+          "attributes": [
+            {
+              "name": "selectionmode",
+              "type": "ENUM",
+              "values": ["none", "single-row", "multiple-row", "cell"],
+              "description": "Selection behavior: 'none' disables selection, 'single-row' allows one row, 'multiple-row' allows multiple rows with Ctrl/Shift, 'cell' allows individual cell selection",
+              "required": false
+            },
+            {
+              "name": "rowheight",
+              "type": "NUMBER",
+              "description": "Height of each row in pixels (default: 30)",
+              "required": false
+            },
+            {
+              "name": "showfilters",
+              "type": "BOOLEAN",
+              "description": "When true, displays a filter row below the header for column filtering",
+              "required": false
+            },
+            {
+              "name": "editable",
+              "type": "BOOLEAN",
+              "description": "When true, enables inline cell editing via double-click or F2 key",
+              "required": false
+            }
+          ],
+          "examples": [
+            {
+              "title": "Basic DataGrid",
+              "description": "A simple data grid with sortable columns.",
+              "code": "<gooeyui-datagrid id=\"grid\" height=\"300\">\n  <gooeyui-datagridcolumn field=\"id\" header=\"ID\" width=\"60\"></gooeyui-datagridcolumn>\n  <gooeyui-datagridcolumn field=\"name\" header=\"Name\" width=\"150\"></gooeyui-datagridcolumn>\n  <gooeyui-datagridcolumn field=\"email\" header=\"Email\" width=\"200\"></gooeyui-datagridcolumn>\n</gooeyui-datagrid>\n\n<script>\n  document.getElementById('grid').setData([\n    { id: 1, name: 'John Doe', email: 'john@example.com' },\n    { id: 2, name: 'Jane Smith', email: 'jane@example.com' }\n  ]);\n</script>"
+            },
+            {
+              "title": "DataGrid with Filtering",
+              "description": "A data grid with filter row enabled for searching data.",
+              "code": "<gooeyui-datagrid showfilters=\"true\" selectionmode=\"multiple-row\">\n  <gooeyui-datagridcolumn field=\"name\" header=\"Name\" filterable></gooeyui-datagridcolumn>\n  <gooeyui-datagridcolumn field=\"department\" header=\"Department\" filterable></gooeyui-datagridcolumn>\n  <gooeyui-datagridcolumn field=\"salary\" header=\"Salary\"></gooeyui-datagridcolumn>\n</gooeyui-datagrid>"
+            },
+            {
+              "title": "Editable DataGrid",
+              "description": "A data grid with inline cell editing capability.",
+              "code": "<gooeyui-datagrid editable=\"true\" selectionmode=\"cell\">\n  <gooeyui-datagridcolumn field=\"product\" header=\"Product\" editable></gooeyui-datagridcolumn>\n  <gooeyui-datagridcolumn field=\"quantity\" header=\"Qty\" width=\"80\" editable></gooeyui-datagridcolumn>\n  <gooeyui-datagridcolumn field=\"price\" header=\"Price\" width=\"100\" editable></gooeyui-datagridcolumn>\n</gooeyui-datagrid>"
+            },
+            {
+              "title": "DataGrid with Event Handling",
+              "description": "A data grid with event listeners for user interactions.",
+              "code": "<gooeyui-datagrid id=\"eventGrid\" selectionmode=\"single-row\">\n  <gooeyui-datagridcolumn field=\"id\" header=\"ID\" width=\"60\"></gooeyui-datagridcolumn>\n  <gooeyui-datagridcolumn field=\"title\" header=\"Title\" width=\"200\"></gooeyui-datagridcolumn>\n</gooeyui-datagrid>\n\n<script>\n  const grid = document.getElementById('eventGrid');\n  \n  grid.addEventListener('selection-changed', (e, detail) => {\n    console.log('Selected:', detail.selectedRows);\n  });\n  \n  grid.addEventListener('sort-changed', (e, detail) => {\n    console.log('Sorted by:', detail.field, detail.direction);\n  });\n  \n  grid.addEventListener('row-activated', (e, detail) => {\n    console.log('Double-clicked row:', detail.data);\n  });\n</script>"
+            }
+          ]
+        },
+        {
+          "name": "DataGridColumn",
+          "tagName": "gooeyui-datagridcolumn",
+          "description": "A column definition component used within DataGrid to define column properties including data field binding, header text, width, and behavior flags for sorting, filtering, editing, and resizing.",
+          "inherits": ["UIComponent"],
+          "attributes": [
+            {
+              "name": "field",
+              "type": "STRING",
+              "description": "The data field name this column displays from the row data object",
+              "required": true
+            },
+            {
+              "name": "header",
+              "type": "STRING",
+              "description": "Display text shown in the column header (defaults to field name if not specified)",
+              "required": false
+            },
+            {
+              "name": "width",
+              "type": "NUMBER",
+              "description": "Column width in pixels (default: 100)",
+              "required": false
+            },
+            {
+              "name": "minwidth",
+              "type": "NUMBER",
+              "description": "Minimum column width in pixels when resizing (default: 50)",
+              "required": false
+            },
+            {
+              "name": "sortable",
+              "type": "BOOLEAN",
+              "description": "When true (default), clicking the column header sorts the data",
+              "required": false
+            },
+            {
+              "name": "filterable",
+              "type": "BOOLEAN",
+              "description": "When true, displays a filter input for this column when showfilters is enabled on the grid",
+              "required": false
+            },
+            {
+              "name": "editable",
+              "type": "BOOLEAN",
+              "description": "When true, cells in this column can be edited inline",
+              "required": false
+            },
+            {
+              "name": "resizable",
+              "type": "BOOLEAN",
+              "description": "When true (default), the column can be resized by dragging the header border",
+              "required": false
+            }
+          ],
+          "examples": [
+            {
+              "title": "Basic Column",
+              "description": "A simple sortable column definition.",
+              "code": "<gooeyui-datagridcolumn field=\"name\" header=\"Full Name\" width=\"150\"></gooeyui-datagridcolumn>"
+            },
+            {
+              "title": "ID Column (Non-Sortable)",
+              "description": "A narrow column for identifiers that cannot be sorted.",
+              "code": "<gooeyui-datagridcolumn field=\"id\" header=\"ID\" width=\"60\" sortable=\"false\" resizable=\"false\"></gooeyui-datagridcolumn>"
+            },
+            {
+              "title": "Filterable Column",
+              "description": "A column that shows a filter input when filters are enabled.",
+              "code": "<gooeyui-datagridcolumn field=\"department\" header=\"Department\" filterable></gooeyui-datagridcolumn>"
+            },
+            {
+              "title": "Editable Column",
+              "description": "A column whose cells can be edited by double-clicking.",
+              "code": "<gooeyui-datagridcolumn field=\"notes\" header=\"Notes\" width=\"250\" editable></gooeyui-datagridcolumn>"
+            },
+            {
+              "title": "Full-Featured Column",
+              "description": "A column with all features enabled.",
+              "code": "<gooeyui-datagridcolumn \n  field=\"email\" \n  header=\"Email Address\" \n  width=\"200\" \n  minwidth=\"100\" \n  sortable \n  filterable \n  editable \n  resizable>\n</gooeyui-datagridcolumn>"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "name": "Forms",
       "elements": [
         {
@@ -1105,6 +1248,97 @@ const GooeyData = {
           ]
         },
         {
+          "name": "HamburgerMenu",
+          "tagName": "gooeyui-hamburgermenu",
+          "description": "A collapsible navigation menu triggered by a hamburger icon button. Supports slide-out panels from left, right, top, or bottom positions with multiple animation modes.",
+          "inherits": ["UIComponent"],
+          "attributes": [
+            {
+              "name": "active",
+              "type": "BOOLEAN",
+              "description": "When true, the menu panel is open and visible",
+              "required": false
+            },
+            {
+              "name": "position",
+              "type": "ENUM",
+              "values": ["left", "right", "top", "bottom"],
+              "description": "The edge of the screen from which the panel slides out (default: left)",
+              "required": false
+            },
+            {
+              "name": "mode",
+              "type": "ENUM",
+              "values": ["slide", "overlay", "push"],
+              "description": "Animation mode: 'slide' slides panel over content, 'overlay' shows panel with backdrop, 'push' pushes content aside (default: slide)",
+              "required": false
+            },
+            {
+              "name": "icon",
+              "type": "STRING",
+              "description": "URL path to a custom icon image replacing the default hamburger bars",
+              "required": false
+            },
+            {
+              "name": "text",
+              "type": "STRING",
+              "description": "Optional text displayed next to the hamburger icon",
+              "required": false
+            },
+            {
+              "name": "panelwidth",
+              "type": "STRING",
+              "description": "Width of the slide-out panel as CSS value (default: 250px)",
+              "required": false
+            },
+            {
+              "name": "panelheight",
+              "type": "STRING",
+              "description": "Height of the slide-out panel as CSS value (used for top/bottom positions)",
+              "required": false
+            },
+            {
+              "name": "closeonselect",
+              "type": "BOOLEAN",
+              "description": "When true, automatically closes the panel when a menu item is selected (default: true)",
+              "required": false
+            },
+            {
+              "name": "closeonclickoutside",
+              "type": "BOOLEAN",
+              "description": "When true, closes the panel when clicking outside of it (default: true)",
+              "required": false
+            }
+          ],
+          "examples": [
+            {
+              "title": "Basic Hamburger Menu",
+              "description": "A simple navigation menu with menu items.",
+              "code": "<gooeyui-hamburgermenu>\n  <gooeyui-menuitem text=\"Home\" action=\"navigate-home\"></gooeyui-menuitem>\n  <gooeyui-menuitem text=\"About\" action=\"navigate-about\"></gooeyui-menuitem>\n  <gooeyui-menuitem text=\"Contact\" action=\"navigate-contact\"></gooeyui-menuitem>\n</gooeyui-hamburgermenu>"
+            },
+            {
+              "title": "Right-Side Menu",
+              "description": "A hamburger menu that slides out from the right edge.",
+              "code": "<gooeyui-hamburgermenu position=\"right\" panelwidth=\"300px\">\n  <gooeyui-menuitem text=\"Profile\"></gooeyui-menuitem>\n  <gooeyui-menuitem text=\"Settings\"></gooeyui-menuitem>\n  <gooeyui-menuitemseparator></gooeyui-menuitemseparator>\n  <gooeyui-menuitem text=\"Logout\"></gooeyui-menuitem>\n</gooeyui-hamburgermenu>"
+            },
+            {
+              "title": "Menu with Text Label",
+              "description": "A hamburger menu displaying text next to the icon.",
+              "code": "<gooeyui-hamburgermenu text=\"Menu\">\n  <gooeyui-menuitem text=\"Dashboard\"></gooeyui-menuitem>\n  <gooeyui-menuitem text=\"Reports\"></gooeyui-menuitem>\n  <gooeyui-menuitem text=\"Analytics\"></gooeyui-menuitem>\n</gooeyui-hamburgermenu>"
+            },
+            {
+              "title": "Persistent Menu",
+              "description": "A hamburger menu that stays open when items are selected.",
+              "code": "<gooeyui-hamburgermenu closeonselect=\"false\">\n  <gooeyui-checkboxmenuitem text=\"Option A\"></gooeyui-checkboxmenuitem>\n  <gooeyui-checkboxmenuitem text=\"Option B\"></gooeyui-checkboxmenuitem>\n  <gooeyui-checkboxmenuitem text=\"Option C\"></gooeyui-checkboxmenuitem>\n</gooeyui-hamburgermenu>"
+            },
+            {
+              "title": "Top Navigation Drawer",
+              "description": "A hamburger menu that slides down from the top.",
+              "code": "<gooeyui-hamburgermenu position=\"top\" panelheight=\"200px\">\n  <gooeyui-menuitem text=\"Quick Actions\"></gooeyui-menuitem>\n  <gooeyui-menuitem text=\"Notifications\"></gooeyui-menuitem>\n</gooeyui-hamburgermenu>"
+            }
+          ]
+        },
+        {
           "name": "Menu",
           "tagName": "gooeyui-menu",
           "description": "A dropdown menu containing menu items and submenus.",
@@ -1726,149 +1960,6 @@ const GooeyData = {
               "title": "Multi-language Examples",
               "description": "Code blocks for different programming languages.",
               "code": "<gooeyui-codeblock language=\"python\">\ndef greet(name):\n    print(f\"Hello, {name}!\")\n</gooeyui-codeblock>\n\n<gooeyui-codeblock language=\"html\">\n<div class=\"container\">\n    <h1>Title</h1>\n</div>\n</gooeyui-codeblock>"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "name": "Data",
-      "elements": [
-        {
-          "name": "DataGrid",
-          "tagName": "gooeyui-datagrid",
-          "description": "A full-featured data grid component with virtual scrolling, sorting, filtering, multiple selection modes, column resizing, and inline cell editing. Efficiently handles large datasets (10,000+ rows) through virtual scrolling.",
-          "inherits": ["UIComponent"],
-          "attributes": [
-            {
-              "name": "selectionmode",
-              "type": "ENUM",
-              "values": ["none", "single-row", "multiple-row", "cell"],
-              "description": "Selection behavior: 'none' disables selection, 'single-row' allows one row, 'multiple-row' allows multiple rows with Ctrl/Shift, 'cell' allows individual cell selection",
-              "required": false
-            },
-            {
-              "name": "rowheight",
-              "type": "NUMBER",
-              "description": "Height of each row in pixels (default: 30)",
-              "required": false
-            },
-            {
-              "name": "showfilters",
-              "type": "BOOLEAN",
-              "description": "When true, displays a filter row below the header for column filtering",
-              "required": false
-            },
-            {
-              "name": "editable",
-              "type": "BOOLEAN",
-              "description": "When true, enables inline cell editing via double-click or F2 key",
-              "required": false
-            }
-          ],
-          "examples": [
-            {
-              "title": "Basic DataGrid",
-              "description": "A simple data grid with sortable columns.",
-              "code": "<gooeyui-datagrid id=\"grid\" height=\"300\">\n  <gooeyui-datagridcolumn field=\"id\" header=\"ID\" width=\"60\"></gooeyui-datagridcolumn>\n  <gooeyui-datagridcolumn field=\"name\" header=\"Name\" width=\"150\"></gooeyui-datagridcolumn>\n  <gooeyui-datagridcolumn field=\"email\" header=\"Email\" width=\"200\"></gooeyui-datagridcolumn>\n</gooeyui-datagrid>\n\n<script>\n  document.getElementById('grid').setData([\n    { id: 1, name: 'John Doe', email: 'john@example.com' },\n    { id: 2, name: 'Jane Smith', email: 'jane@example.com' }\n  ]);\n</script>"
-            },
-            {
-              "title": "DataGrid with Filtering",
-              "description": "A data grid with filter row enabled for searching data.",
-              "code": "<gooeyui-datagrid showfilters=\"true\" selectionmode=\"multiple-row\">\n  <gooeyui-datagridcolumn field=\"name\" header=\"Name\" filterable></gooeyui-datagridcolumn>\n  <gooeyui-datagridcolumn field=\"department\" header=\"Department\" filterable></gooeyui-datagridcolumn>\n  <gooeyui-datagridcolumn field=\"salary\" header=\"Salary\"></gooeyui-datagridcolumn>\n</gooeyui-datagrid>"
-            },
-            {
-              "title": "Editable DataGrid",
-              "description": "A data grid with inline cell editing capability.",
-              "code": "<gooeyui-datagrid editable=\"true\" selectionmode=\"cell\">\n  <gooeyui-datagridcolumn field=\"product\" header=\"Product\" editable></gooeyui-datagridcolumn>\n  <gooeyui-datagridcolumn field=\"quantity\" header=\"Qty\" width=\"80\" editable></gooeyui-datagridcolumn>\n  <gooeyui-datagridcolumn field=\"price\" header=\"Price\" width=\"100\" editable></gooeyui-datagridcolumn>\n</gooeyui-datagrid>"
-            },
-            {
-              "title": "DataGrid with Event Handling",
-              "description": "A data grid with event listeners for user interactions.",
-              "code": "<gooeyui-datagrid id=\"eventGrid\" selectionmode=\"single-row\">\n  <gooeyui-datagridcolumn field=\"id\" header=\"ID\" width=\"60\"></gooeyui-datagridcolumn>\n  <gooeyui-datagridcolumn field=\"title\" header=\"Title\" width=\"200\"></gooeyui-datagridcolumn>\n</gooeyui-datagrid>\n\n<script>\n  const grid = document.getElementById('eventGrid');\n  \n  grid.addEventListener('selection-changed', (e, detail) => {\n    console.log('Selected:', detail.selectedRows);\n  });\n  \n  grid.addEventListener('sort-changed', (e, detail) => {\n    console.log('Sorted by:', detail.field, detail.direction);\n  });\n  \n  grid.addEventListener('row-activated', (e, detail) => {\n    console.log('Double-clicked row:', detail.data);\n  });\n</script>"
-            }
-          ]
-        },
-        {
-          "name": "DataGridColumn",
-          "tagName": "gooeyui-datagridcolumn",
-          "description": "A column definition component used within DataGrid to define column properties including data field binding, header text, width, and behavior flags for sorting, filtering, editing, and resizing.",
-          "inherits": ["UIComponent"],
-          "attributes": [
-            {
-              "name": "field",
-              "type": "STRING",
-              "description": "The data field name this column displays from the row data object",
-              "required": true
-            },
-            {
-              "name": "header",
-              "type": "STRING",
-              "description": "Display text shown in the column header (defaults to field name if not specified)",
-              "required": false
-            },
-            {
-              "name": "width",
-              "type": "NUMBER",
-              "description": "Column width in pixels (default: 100)",
-              "required": false
-            },
-            {
-              "name": "minwidth",
-              "type": "NUMBER",
-              "description": "Minimum column width in pixels when resizing (default: 50)",
-              "required": false
-            },
-            {
-              "name": "sortable",
-              "type": "BOOLEAN",
-              "description": "When true (default), clicking the column header sorts the data",
-              "required": false
-            },
-            {
-              "name": "filterable",
-              "type": "BOOLEAN",
-              "description": "When true, displays a filter input for this column when showfilters is enabled on the grid",
-              "required": false
-            },
-            {
-              "name": "editable",
-              "type": "BOOLEAN",
-              "description": "When true, cells in this column can be edited inline",
-              "required": false
-            },
-            {
-              "name": "resizable",
-              "type": "BOOLEAN",
-              "description": "When true (default), the column can be resized by dragging the header border",
-              "required": false
-            }
-          ],
-          "examples": [
-            {
-              "title": "Basic Column",
-              "description": "A simple sortable column definition.",
-              "code": "<gooeyui-datagridcolumn field=\"name\" header=\"Full Name\" width=\"150\"></gooeyui-datagridcolumn>"
-            },
-            {
-              "title": "ID Column (Non-Sortable)",
-              "description": "A narrow column for identifiers that cannot be sorted.",
-              "code": "<gooeyui-datagridcolumn field=\"id\" header=\"ID\" width=\"60\" sortable=\"false\" resizable=\"false\"></gooeyui-datagridcolumn>"
-            },
-            {
-              "title": "Filterable Column",
-              "description": "A column that shows a filter input when filters are enabled.",
-              "code": "<gooeyui-datagridcolumn field=\"department\" header=\"Department\" filterable></gooeyui-datagridcolumn>"
-            },
-            {
-              "title": "Editable Column",
-              "description": "A column whose cells can be edited by double-clicking.",
-              "code": "<gooeyui-datagridcolumn field=\"notes\" header=\"Notes\" width=\"250\" editable></gooeyui-datagridcolumn>"
-            },
-            {
-              "title": "Full-Featured Column",
-              "description": "A column with all features enabled.",
-              "code": "<gooeyui-datagridcolumn \n  field=\"email\" \n  header=\"Email Address\" \n  width=\"200\" \n  minwidth=\"100\" \n  sortable \n  filterable \n  editable \n  resizable>\n</gooeyui-datagridcolumn>"
             }
           ]
         }
