@@ -10,6 +10,13 @@ export default class Timer extends Observable {
         this.repeatCount = timerRepeatCount;
         this.running = false;
         this.interval = 0;
+
+        // Register valid timer events
+        this.addValidEvent(TimerEvent.TIMER);
+        this.addValidEvent(TimerEvent.COMPLETE);
+
+        // Bind callback to preserve this context
+        this.callback = this.callback.bind(this);
     }
     
     callback() {

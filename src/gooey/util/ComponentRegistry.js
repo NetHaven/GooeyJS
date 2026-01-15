@@ -128,10 +128,10 @@ export default class ComponentRegistry {
                 if (typeof value !== 'string') {
                     value = String(value);
                 }
-                // Enum validation
-                if (attrDef.enum && attrDef.enum.length > 0) {
-                    if (!attrDef.enum.includes(value)) {
-                        return { valid: false, error: `${name} must be one of: ${attrDef.enum.join(', ')}` };
+                // Enum validation using 'values' array from META.goo
+                if (attrDef.values && attrDef.values.length > 0) {
+                    if (!attrDef.values.includes(value)) {
+                        return { valid: false, error: `${name} must be one of: ${attrDef.values.join(', ')}` };
                     }
                 }
                 // Pattern validation
@@ -144,6 +144,18 @@ export default class ComponentRegistry {
                     } catch (e) {
                         // Invalid regex in definition - log but don't fail
                         console.warn(`Invalid pattern for attribute ${name}:`, attrDef.pattern);
+                    }
+                }
+                return { valid: true };
+
+            case 'ENUM':
+                if (typeof value !== 'string') {
+                    value = String(value);
+                }
+                // ENUM type requires values array in META.goo
+                if (attrDef.values && attrDef.values.length > 0) {
+                    if (!attrDef.values.includes(value)) {
+                        return { valid: false, error: `${name} must be one of: ${attrDef.values.join(', ')}` };
                     }
                 }
                 return { valid: true };
@@ -177,6 +189,7 @@ export default class ComponentRegistry {
                 const num = Number(value);
                 return isNaN(num) ? attrDef.default : num;
 
+            case 'ENUM':
             case 'STRING':
             default:
                 return value;

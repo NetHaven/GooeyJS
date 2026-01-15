@@ -222,6 +222,11 @@ export default class Model extends Observable {
       case 'number':
         return Number(value) || 0;
       case 'boolean':
+        // Handle string "false" and "0" correctly
+        if (typeof value === 'string') {
+          const lower = value.toLowerCase();
+          return lower !== 'false' && lower !== '0' && lower !== '';
+        }
         return Boolean(value);
       case 'date':
         return value instanceof Date ? value : new Date(value);

@@ -63,7 +63,15 @@ export default class Component extends Observable {
 
         // Check if component is already registered
         if (customElements.get(fullTagName)) {
-            console.log(`Component ${fullTagName} is already registered, skipping load`);
+            console.log(`Component ${fullTagName} is already registered`);
+            this._loaded = true;
+            this.fireEvent(ComponentEvent.LOADED, {
+                tagName: fullTagName,
+                componentClass: customElements.get(fullTagName),
+                href: this._href,
+                meta: meta,
+                component: this
+            });
             return;
         }
 
@@ -116,6 +124,12 @@ export default class Component extends Observable {
             // Dynamically import the component class
             const module = await import(modulePath);
             const ComponentClass = module.default;
+
+            // Inject observedAttributes from registry
+            Object.defineProperty(ComponentClass, 'observedAttributes', {
+                configurable: true,
+                get: () => ComponentRegistry.getObservedAttributes(fullTagName)
+            });
 
             // Register the custom element (triggers constructor for existing DOM elements)
             customElements.define(fullTagName, ComponentClass);

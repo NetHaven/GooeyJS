@@ -11,7 +11,6 @@ export default class TextArea extends TextElement {
         Template.activate("ui-TextArea", this.shadowRoot);
         this.textElement = this.shadowRoot.querySelector("textarea");
         this.formElement = this.textElement;
-		this.appendChild(this.textElement);
         
         // Add valid events
         this.addValidEvent(TextElementEvent.INPUT);
@@ -86,6 +85,9 @@ export default class TextArea extends TextElement {
         if (this.hasAttribute("rows")) {
             this.rows = this.getAttribute("rows");
         }
+
+        // Update required indicator after form element is set up
+        this._updateRequiredIndicator();
     }
 
     get cols() {

@@ -146,7 +146,7 @@ export default class Observable extends HTMLElement {
     // Add reactive property watching
     watch(property, callback, options = {}) {
         if (!this._watchers.has(property)) {
-        this._watchers.set(property, []);
+            this._watchers.set(property, []);
         }
 
         const watcher = { callback, ...options };
@@ -154,10 +154,28 @@ export default class Observable extends HTMLElement {
 
         // Register property change event if not already valid
         const eventName = `change:${property}`;
-        if (!this._validEvents.has(eventName)) {
-        this.addValidEvent(eventName);
+        if (!this.hasEvent(eventName)) {
+            this.addValidEvent(eventName);
         }
 
         return () => this.unwatch(property, callback);
+    }
+
+    // Remove a property watcher
+    unwatch(property, callback) {
+        if (!this._watchers.has(property)) {
+            return;
+        }
+
+        const watchers = this._watchers.get(property);
+        const index = watchers.findIndex(w => w.callback === callback);
+        if (index !== -1) {
+            watchers.splice(index, 1);
+        }
+
+        // Clean up empty watcher arrays
+        if (watchers.length === 0) {
+            this._watchers.delete(property);
+        }
     }
 }

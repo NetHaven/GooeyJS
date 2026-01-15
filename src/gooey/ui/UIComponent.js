@@ -27,6 +27,7 @@ export default class UIComponent extends GooeyElement {
         this._model = null;
         this._controller = null;
         this._bindings = [];
+        this._boundModelChangeHandler = null;
 
         // Add MVC events to valid events
         this.addValidEvent(UIComponentEvent.MODEL_CHANGE);
@@ -158,7 +159,8 @@ export default class UIComponent extends GooeyElement {
 
         // Auto-bind model changes to component updates
         if (model instanceof Model) {
-            model.on(ModelEvent.CHANGE, this.onModelChange.bind(this));
+            this._boundModelChangeHandler = this.onModelChange.bind(this);
+            model.addEventListener(ModelEvent.CHANGE, this._boundModelChangeHandler);
         }
 
         // Apply bindings immediately to sync component with model
@@ -198,7 +200,7 @@ export default class UIComponent extends GooeyElement {
     get cursor() {
         let compStyle, cursor;
 
-        compStyle = getComputedStyle(this.element);
+        compStyle = getComputedStyle(this);
         cursor = compStyle.getPropertyValue("cursor")
         return cursor;
     }
@@ -223,30 +225,20 @@ export default class UIComponent extends GooeyElement {
 
     get draggable() {
         if (this.hasAttribute("draggable")) {
-            if (this.getAttribute("draggable") === true) {
-                return true;
-            }
-            else {
-                return false;
-            }
+            const val = this.getAttribute("draggable");
+            // Treat "true" string or empty attribute as true
+            return val === "true" || val === "";
         }
-        else {
-            return false;
-        }
+        return false;
     }
 
     get droppable() {
         if (this.hasAttribute("droppable")) {
-            if (this.getAttribute("droppable") === true) {
-                return true;
-            }
-            else {
-                return false;
-            }
+            const val = this.getAttribute("droppable");
+            // Treat "true" string or empty attribute as true
+            return val === "true" || val === "";
         }
-        else {
-            return false;
-        }
+        return false;
     }
 
     get dropZone() {
@@ -260,7 +252,7 @@ export default class UIComponent extends GooeyElement {
     get position() {
         let compStyle, pos;
 
-        compStyle = getComputedStyle(this.element);
+        compStyle = getComputedStyle(this);
         pos = new Point();
         pos.x = parseInt(compStyle.getPropertyValue("left"));
         pos.y = parseInt(compStyle.getPropertyValue("top"));
@@ -348,7 +340,7 @@ export default class UIComponent extends GooeyElement {
             case MouseCursor.WAIT:
             case MouseCursor.VERTICAL_TEXT:
             case MouseCursor.ZOOM_IN:
-            case MouseCursor.ZOOM_OUT: this.element.style.cursor = val;
+            case MouseCursor.ZOOM_OUT: this.style.cursor = val;
         }
     }
 
@@ -403,12 +395,17 @@ export default class UIComponent extends GooeyElement {
 
     set height(val) {
         this.setAttribute("height", val);
-        this.style.height = `${val}px`;
+        // Only add px suffix for numbers; strings may already include units
+        if (typeof val === 'number') {
+            this.style.height = `${val}px`;
+        } else {
+            this.style.height = val;
+        }
     }
 
     set position(val) {
-        this.element.style.left = `${val.x}px`;
-        this.element.style.top = `${val.y}px`;
+        this.style.left = `${val.x}px`;
+        this.style.top = `${val.y}px`;
     }
 
     set tooltip(val) {
@@ -438,15 +435,21 @@ export default class UIComponent extends GooeyElement {
 
     set width(val) {
         this.setAttribute("width", val);
-        this.style.width = `${val}px`;
+        // Only add px suffix for numbers; strings may already include units
+        if (typeof val === 'number') {
+            this.style.width = `${val}px`;
+        } else {
+            this.style.width = val;
+        }
     }
 
     // Unbind from current model
     unbindModel() {
         if (this._model) {
             // Remove model change listener
-            if (this._model instanceof Model) {
-                this._model.off(ModelEvent.CHANGE, this.onModelChange);
+            if (this._model instanceof Model && this._boundModelChangeHandler) {
+                this._model.removeEventListener(ModelEvent.CHANGE, this._boundModelChangeHandler);
+                this._boundModelChangeHandler = null;
             }
             this._model = null;
         }

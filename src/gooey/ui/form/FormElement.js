@@ -5,7 +5,8 @@ export default class FormElement extends UIComponent {
         super();
         this._requiredIndicator = null;
         this._errorElement = null;
-        this._updateRequiredIndicator();
+        // Note: _updateRequiredIndicator() should be called by subclasses
+        // after they have assigned formElement
     }
 
     attributeChangedCallback(name) {

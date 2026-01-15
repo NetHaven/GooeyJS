@@ -13,7 +13,6 @@ export default class PasswordField extends TextElement {
         Template.activate("ui-PasswordField", this.shadowRoot);
         this.textElement = this.shadowRoot.querySelector("input");
         this.formElement = this.textElement;
-        this.appendChild(this.textElement);
         
         // Add valid events
         this.addValidEvent(PasswordFieldEvent.ENTER_PRESSED);
@@ -85,6 +84,9 @@ export default class PasswordField extends TextElement {
         if (this.hasAttribute("size")) {
             this.size = this.getAttribute("size");
         }
+
+        // Update required indicator after form element is set up
+        this._updateRequiredIndicator();
     }
 
     get inputmode() {
