@@ -27,6 +27,7 @@
     },
     "rowheight": { "type": "NUMBER", "default": 30 },
     "showfilters": { "type": "BOOLEAN", "default": false },
-    "editable": { "type": "BOOLEAN", "default": false }
+    "editable": { "type": "BOOLEAN", "default": false },
+    "store": { "type": "STRING", "default": null }
   }
 }

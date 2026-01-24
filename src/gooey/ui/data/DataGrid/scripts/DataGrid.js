@@ -1,6 +1,7 @@
 import UIComponent from '../../../UIComponent.js';
 import Template from '../../../../util/Template.js';
 import DataGridEvent from '../../../../events/data/DataGridEvent.js';
+import DataStoreEvent from '../../../../events/data/DataStoreEvent.js';
 import MouseEvent from '../../../../events/MouseEvent.js';
 import KeyboardEvent from '../../../../events/KeyboardEvent.js';
 import Key from '../../../../io/Key.js';
@@ -75,6 +76,11 @@ export default class DataGrid extends UIComponent {
         this._editingCell = null;
         this._editField = null;
 
+        // =========== Store Binding State ===========
+        this._storeRef = null;
+        this._boundStoreHandler = null;
+        this._storeWaitObserver = null;
+
         // =========== Event Registration ===========
         this._registerEvents();
 
@@ -110,6 +116,10 @@ export default class DataGrid extends UIComponent {
 
         // Data events
         this.addValidEvent(DataGridEvent.DATA_CHANGED);
+
+        // Store events
+        this.addValidEvent(DataGridEvent.STORE_BOUND);
+        this.addValidEvent(DataGridEvent.STORE_UNBOUND);
 
         // Mouse/Keyboard events
         this.addValidEvent(MouseEvent.CLICK);
@@ -185,6 +195,16 @@ export default class DataGrid extends UIComponent {
 
         // Update aria-rowcount
         this._updateAriaRowCount();
+
+        // Bind to store if attribute is present
+        if (this.hasAttribute('store')) {
+            this._bindToStore(this.getAttribute('store'));
+        }
+    }
+
+    disconnectedCallback() {
+        // Clean up store binding
+        this._unbindFromStore();
     }
 
     /**
@@ -209,6 +229,14 @@ export default class DataGrid extends UIComponent {
                 break;
             case 'disabled':
                 this._updateDisabledState();
+                break;
+            case 'store':
+                if (oldValue !== newValue) {
+                    this._unbindFromStore();
+                    if (newValue) {
+                        this._bindToStore(newValue);
+                    }
+                }
                 break;
         }
     }
@@ -1479,6 +1507,183 @@ export default class DataGrid extends UIComponent {
             this._container.classList.add('disabled');
         } else {
             this._container.classList.remove('disabled');
+        }
+    }
+
+    // =========== Store Binding ===========
+
+    /**
+     * Get the store attribute value
+     * @returns {string|null} - The store id
+     */
+    get store() {
+        return this.getAttribute('store');
+    }
+
+    /**
+     * Set the store attribute value
+     * @param {string|null} value - The store id
+     */
+    set store(value) {
+        if (value) {
+            this.setAttribute('store', value);
+        } else {
+            this.removeAttribute('store');
+        }
+    }
+
+    /**
+     * Get the currently bound DataStore element
+     * @returns {HTMLElement|null} - The bound store element
+     */
+    getStoreElement() {
+        return this._storeRef;
+    }
+
+    /**
+     * Bind to a store by its id
+     * @param {string} storeId - The id of the store element
+     */
+    _bindToStore(storeId) {
+        if (!storeId) return;
+
+        // Try to find the store immediately
+        const store = document.getElementById(storeId);
+
+        if (store && store.tagName.toLowerCase() === 'gooeydata-store') {
+            this._connectToStore(store);
+        } else {
+            // Store not found yet - wait for it
+            this._waitForStore(storeId);
+        }
+    }
+
+    /**
+     * Wait for a store element to appear in the DOM
+     * @param {string} storeId - The id of the store to wait for
+     */
+    _waitForStore(storeId) {
+        const TIMEOUT_MS = 10000; // 10 second timeout
+        const startTime = Date.now();
+
+        // Clean up any existing wait observer
+        if (this._storeWaitObserver) {
+            this._storeWaitObserver.disconnect();
+            this._storeWaitObserver = null;
+        }
+
+        this._storeWaitObserver = new MutationObserver((mutations, observer) => {
+            // Check if timeout exceeded
+            if (Date.now() - startTime > TIMEOUT_MS) {
+                console.warn(`DataGrid: Timeout waiting for store '${storeId}'`);
+                observer.disconnect();
+                this._storeWaitObserver = null;
+                return;
+            }
+
+            // Try to find the store
+            const store = document.getElementById(storeId);
+            if (store && store.tagName.toLowerCase() === 'gooeydata-store') {
+                observer.disconnect();
+                this._storeWaitObserver = null;
+                this._connectToStore(store);
+            }
+        });
+
+        // Observe document for changes
+        this._storeWaitObserver.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+
+        // Also set a timeout to clean up if store never appears
+        setTimeout(() => {
+            if (this._storeWaitObserver) {
+                console.warn(`DataGrid: Timeout waiting for store '${storeId}'`);
+                this._storeWaitObserver.disconnect();
+                this._storeWaitObserver = null;
+            }
+        }, TIMEOUT_MS);
+    }
+
+    /**
+     * Connect to a store element
+     * @param {HTMLElement} store - The store element
+     */
+    _connectToStore(store) {
+        this._storeRef = store;
+
+        // Create bound handler
+        this._boundStoreHandler = (eventName, data) => {
+            this._onStoreDataChanged(eventName, data);
+        };
+
+        // Register as consumer
+        if (typeof store.registerConsumer === 'function') {
+            store.registerConsumer(this);
+        }
+
+        // Add listener for data changes
+        store.addEventListener(DataStoreEvent.DATA_CHANGED, this._boundStoreHandler);
+        store.addEventListener(DataStoreEvent.RESET, this._boundStoreHandler);
+
+        // Load initial data from store
+        if (typeof store.getData === 'function') {
+            this.setData(store.getData());
+        }
+
+        // Fire store bound event
+        this.fireEvent(DataGridEvent.STORE_BOUND, {
+            store: store,
+            storeId: store.id
+        });
+    }
+
+    /**
+     * Unbind from the current store
+     */
+    _unbindFromStore() {
+        // Clean up wait observer
+        if (this._storeWaitObserver) {
+            this._storeWaitObserver.disconnect();
+            this._storeWaitObserver = null;
+        }
+
+        if (!this._storeRef) return;
+
+        const store = this._storeRef;
+
+        // Remove listeners
+        if (this._boundStoreHandler) {
+            store.removeEventListener(DataStoreEvent.DATA_CHANGED, this._boundStoreHandler);
+            store.removeEventListener(DataStoreEvent.RESET, this._boundStoreHandler);
+            this._boundStoreHandler = null;
+        }
+
+        // Unregister as consumer
+        if (typeof store.unregisterConsumer === 'function') {
+            store.unregisterConsumer(this);
+        }
+
+        const storeId = store.id;
+        this._storeRef = null;
+
+        // Fire store unbound event
+        this.fireEvent(DataGridEvent.STORE_UNBOUND, {
+            storeId: storeId
+        });
+    }
+
+    /**
+     * Handle store data changes
+     * @param {string} eventName - The event name
+     * @param {Object} data - The event data
+     */
+    _onStoreDataChanged(eventName, data) {
+        if (eventName === DataStoreEvent.RESET) {
+            this.setData([]);
+        } else if (data && data.data) {
+            this.setData(data.data);
         }
     }
 }

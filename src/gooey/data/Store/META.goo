@@ -1,0 +1,15 @@
+{
+  "MetaGooVersion": "1.0",
+  "name": "Store",
+  "prefix": "gooeydata",
+  "tagName": "store",
+  "script": "Store.js",
+  "templates": [
+    { "id": "data-Store", "file": "Store.html" }
+  ],
+  "themes": {
+    "default": "base",
+    "available": ["base"]
+  },
+  "attributes": {}
+}

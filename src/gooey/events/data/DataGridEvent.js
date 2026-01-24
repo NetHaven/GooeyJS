@@ -26,6 +26,10 @@ export default class DataGridEvent extends Event {
     // Data events
     static DATA_CHANGED = "data-changed";
 
+    // Store events
+    static STORE_BOUND = "store-bound";
+    static STORE_UNBOUND = "store-unbound";
+
     constructor() {
         super();
     }

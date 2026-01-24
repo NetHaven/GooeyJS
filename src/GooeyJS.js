@@ -59,6 +59,13 @@ export default class GooeyJS {
             elements: [
                 { name: "Background" }
             ]
+        },
+        {
+            pkg: "gooey.data",
+            elements: [
+                { name: "Store" },
+                { name: "Data" }
+            ]
         }]
 
         this.createElements();
