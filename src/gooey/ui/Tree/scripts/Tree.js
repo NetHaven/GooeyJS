@@ -14,7 +14,16 @@ export default class Tree extends UIComponent {
 
         this._treeElement = this.shadowRoot.querySelector('.ui-Tree');
         this._selectedItem = null;
-        
+
+        // Track tree items we've attached listeners to
+        this._attachedTreeItems = new Set();
+
+        // Bind event handlers
+        this._boundClickHandler = this._handleTreeItemClick.bind(this);
+        this._boundExpandHandler = this._handleTreeItemExpand.bind(this);
+        this._boundCollapseHandler = this._handleTreeItemCollapse.bind(this);
+        this._boundKeyDownHandler = this._handleKeyDown.bind(this);
+
         this.addValidEvent(KeyboardEvent.KEY_DOWN);
         this.addValidEvent(MouseEvent.CLICK);
         this.addValidEvent(TreeItemEvent.TREE_ITEM_COLLAPSE);
@@ -23,6 +32,80 @@ export default class Tree extends UIComponent {
         this.addValidEvent(TreeEvent.ITEM_EXPAND);
         this.addValidEvent(TreeEvent.ITEM_COLLAPSE);
         this._setupEventListeners();
+    }
+
+    connectedCallback() {
+        super.connectedCallback && super.connectedCallback();
+
+        // Attach listeners to existing tree items
+        this._attachTreeItemListeners();
+
+        // Watch for dynamically added tree items
+        this._treeItemObserver = new MutationObserver(() => {
+            this._attachTreeItemListeners();
+        });
+        this._treeItemObserver.observe(this, { childList: true, subtree: true });
+    }
+
+    disconnectedCallback() {
+        super.disconnectedCallback && super.disconnectedCallback();
+
+        // Clean up mutation observer
+        if (this._treeItemObserver) {
+            this._treeItemObserver.disconnect();
+            this._treeItemObserver = null;
+        }
+
+        // Remove listeners from all tree items
+        this._detachTreeItemListeners();
+    }
+
+    _attachTreeItemListeners() {
+        const treeItems = this.querySelectorAll('gooeyui-treeitem');
+        treeItems.forEach(treeItem => {
+            if (!this._attachedTreeItems.has(treeItem)) {
+                treeItem.addEventListener(MouseEvent.CLICK, this._boundClickHandler);
+                treeItem.addEventListener(TreeItemEvent.TREE_ITEM_EXPAND, this._boundExpandHandler);
+                treeItem.addEventListener(TreeItemEvent.TREE_ITEM_COLLAPSE, this._boundCollapseHandler);
+                this._attachedTreeItems.add(treeItem);
+            }
+        });
+    }
+
+    _detachTreeItemListeners() {
+        this._attachedTreeItems.forEach(treeItem => {
+            treeItem.removeEventListener(MouseEvent.CLICK, this._boundClickHandler);
+            treeItem.removeEventListener(TreeItemEvent.TREE_ITEM_EXPAND, this._boundExpandHandler);
+            treeItem.removeEventListener(TreeItemEvent.TREE_ITEM_COLLAPSE, this._boundCollapseHandler);
+        });
+        this._attachedTreeItems.clear();
+    }
+
+    _handleTreeItemClick(eventName, data) {
+        if (data?.treeItem) {
+            this.selectedItem = data.treeItem;
+        }
+    }
+
+    _handleTreeItemExpand(eventName, data) {
+        this.fireEvent(TreeEvent.ITEM_EXPAND, {
+            treeItem: data?.treeItem,
+            expanded: true
+        });
+    }
+
+    _handleTreeItemCollapse(eventName, data) {
+        this.fireEvent(TreeEvent.ITEM_COLLAPSE, {
+            treeItem: data?.treeItem,
+            expanded: false
+        });
+    }
+
+    _handleKeyDown(eventName, data) {
+        const event = data?.originalEvent || data;
+        if (event) {
+            this._handleKeyNavigation(event);
+        }
     }
     
     get selectedItem() {
@@ -76,28 +159,8 @@ export default class Tree extends UIComponent {
     }
     
     _setupEventListeners() {
-        this.addEventListener(MouseEvent.CLICK, (e) => {
-            this.selectedItem = e.detail.treeItem;
-        });
-        
-        // Listen for expand/collapse events from tree items
-        this.addEventListener(TreeItemEvent.TREE_ITEM_EXPAND, (e) => {
-            this.fireEvent(TreeEvent.ITEM_EXPAND, { 
-                treeItem: e.detail.treeItem,
-                expanded: true
-            });
-        });
-        
-        this.addEventListener(TreeItemEvent.TREE_ITEM_COLLAPSE, (e) => {
-            this.fireEvent(TreeEvent.ITEM_COLLAPSE, { 
-                treeItem: e.detail.treeItem,
-                expanded: false
-            });
-        });
-        
-        this.addEventListener(KeyboardEvent.KEY_DOWN, (e) => {
-            this._handleKeyNavigation(e);
-        });
+        // Keyboard navigation is handled on the Tree itself
+        this.addEventListener(KeyboardEvent.KEY_DOWN, this._boundKeyDownHandler);
     }
     
     _handleKeyNavigation(e) {
