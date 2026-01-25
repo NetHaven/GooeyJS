@@ -127,7 +127,10 @@ export default class Model extends GooeyElement {
             return null;
         }
 
-        switch (type) {
+        // Normalize type to lowercase for case-insensitive matching
+        const normalizedType = type ? type.toLowerCase() : 'string';
+
+        switch (normalizedType) {
             case 'boolean':
                 if (value === 'true' || value === true) {
                     return true;

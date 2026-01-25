@@ -72,11 +72,12 @@ export default class Field extends GooeyElement {
     }
 
     /**
-     * Get the field type
+     * Get the field type (normalized to lowercase)
      * @returns {string} - The field type (defaults to 'string')
      */
     get type() {
-        return this.getAttribute('type') || 'string';
+        const type = this.getAttribute('type');
+        return type ? type.toLowerCase() : 'string';
     }
 
     /**
