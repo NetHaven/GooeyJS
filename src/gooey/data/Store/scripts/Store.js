@@ -139,37 +139,25 @@ export default class Store extends GooeyElement {
     // =========== Observer Setup ===========
 
     /**
-     * Set up MutationObserver to watch for child element changes
+     * Set up MutationObserver to watch for gooeydata-data elements being added/removed.
+     * Note: Attribute changes on Data elements are handled by Data's own observer,
+     * which calls _notifyParentStore() to update the Store. This avoids double-firing.
      */
     _setupObserver() {
         this._observer = new MutationObserver((mutations) => {
-            let needsUpdate = false;
-
             for (const mutation of mutations) {
-                if (mutation.type === 'childList') {
-                    // Only react if gooeydata-data elements were added or removed
-                    if (this._hasDataElementChange(mutation.addedNodes) ||
-                        this._hasDataElementChange(mutation.removedNodes)) {
-                        needsUpdate = true;
-                        break;
-                    }
-                } else if (mutation.type === 'attributes' &&
-                           mutation.target.tagName &&
-                           mutation.target.tagName.toLowerCase() === 'gooeydata-data') {
-                    // Attribute changed on a data element
-                    needsUpdate = true;
-                    break;
+                // Only react if gooeydata-data elements were added or removed
+                if (this._hasDataElementChange(mutation.addedNodes) ||
+                    this._hasDataElementChange(mutation.removedNodes)) {
+                    this._collectDataFromChildren();
+                    this._notifyDataChanged();
+                    return; // Exit early, one update is sufficient
                 }
-            }
-
-            if (needsUpdate) {
-                this._collectDataFromChildren();
-                this._notifyDataChanged();
             }
         });
 
-        // Observe direct children only for childList (not subtree)
-        // Data elements handle their own attribute changes and notify the store
+        // Only observe direct child additions/removals
+        // Attribute changes are handled by each Data element's own observer
         this._observer.observe(this, {
             childList: true,
             subtree: false
