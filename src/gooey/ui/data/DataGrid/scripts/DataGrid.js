@@ -205,6 +205,15 @@ export default class DataGrid extends UIComponent {
     disconnectedCallback() {
         // Clean up store binding
         this._unbindFromStore();
+
+        // Clean up resize listeners if removed mid-resize
+        if (this._resizing) {
+            document.removeEventListener('mousemove', this._onResizeMove);
+            document.removeEventListener('mouseup', this._onResizeEnd);
+            document.body.style.cursor = '';
+            document.body.style.userSelect = '';
+            this._resizing = null;
+        }
     }
 
     /**
