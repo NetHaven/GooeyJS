@@ -11,7 +11,6 @@ export default class Checkbox extends FormElement {
 
         this.checkbox = this.shadowRoot.querySelector("input");
         this.formElement = this.checkbox;
-		this.appendChild(this.checkbox);
         
         this.addValidEvent(CheckboxEvent.CHANGE);
         this.addValidEvent(MouseEvent.CLICK);

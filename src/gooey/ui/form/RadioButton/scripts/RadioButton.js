@@ -11,7 +11,6 @@ export default class RadioButton extends FormElement {
 
         this.radioButton = this.shadowRoot.querySelector("input");
         this.formElement = this.radioButton;
-		this.appendChild(this.radioButton);
         
         this.addValidEvent(MouseEvent.CLICK);
         this.addValidEvent(RadioButtonEvent.CHANGE);
