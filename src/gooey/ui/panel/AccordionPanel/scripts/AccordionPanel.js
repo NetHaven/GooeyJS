@@ -20,14 +20,9 @@ export default class AccordionPanel extends Container {
         // Add valid events
         this.addValidEvent(AccordionPanelEvent.ACCORDION_OPENED);
         this.addValidEvent(AccordionPanelEvent.ACCORDION_CLOSED);
-        
+
         // Observer for child changes
         this._childObserver = null;
-        
-        // Initialize when connected
-        this.addEventListener('DOMContentLoaded', () => {
-            this._initializeAccordions();
-        });
     }
     
     connectedCallback() {
@@ -44,15 +39,15 @@ export default class AccordionPanel extends Container {
     }
     
     /**
-     * Initialize accordion structure from child ui-Panel elements
+     * Initialize accordion structure from child gooeyui-panel elements
      */
     _initializeAccordions() {
         // Clear existing accordions
         this._accordions = [];
-        
-        // Find all direct child ui-Panel elements
-        const childPanels = Array.from(this.children).filter(child => 
-            child.tagName.toLowerCase() === 'ui-panel'
+
+        // Find all direct child gooeyui-panel elements
+        const childPanels = Array.from(this.children).filter(child =>
+            child.tagName.toLowerCase() === 'gooeyui-panel'
         );
         
         // Convert each panel to an accordion
@@ -122,17 +117,17 @@ export default class AccordionPanel extends Container {
     _setupChildObserver() {
         this._childObserver = new MutationObserver((mutations) => {
             let shouldReinitialize = false;
-            
+
             mutations.forEach((mutation) => {
                 if (mutation.type === 'childList') {
-                    // Check if ui-Panel elements were added or removed
-                    const addedPanels = Array.from(mutation.addedNodes).filter(node => 
-                        node.tagName && node.tagName.toLowerCase() === 'ui-panel'
+                    // Check if gooeyui-panel elements were added or removed
+                    const addedPanels = Array.from(mutation.addedNodes).filter(node =>
+                        node.tagName && node.tagName.toLowerCase() === 'gooeyui-panel'
                     );
-                    const removedPanels = Array.from(mutation.removedNodes).filter(node => 
-                        node.tagName && node.tagName.toLowerCase() === 'ui-panel'
+                    const removedPanels = Array.from(mutation.removedNodes).filter(node =>
+                        node.tagName && node.tagName.toLowerCase() === 'gooeyui-panel'
                     );
-                    
+
                     if (addedPanels.length > 0 || removedPanels.length > 0) {
                         shouldReinitialize = true;
                     }
