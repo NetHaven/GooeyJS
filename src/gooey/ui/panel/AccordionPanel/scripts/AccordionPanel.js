@@ -16,7 +16,8 @@ export default class AccordionPanel extends Container {
         // Track accordion state
         this._accordions = [];
         this._activeAccordion = null;
-        
+        this._initialized = false;
+
         // Add valid events
         this.addValidEvent(AccordionPanelEvent.ACCORDION_OPENED);
         this.addValidEvent(AccordionPanelEvent.ACCORDION_CLOSED);
@@ -24,10 +25,15 @@ export default class AccordionPanel extends Container {
         // Observer for child changes
         this._childObserver = null;
     }
-    
+
     connectedCallback() {
-        // Initialize accordions when component is connected to DOM
-        this._initializeAccordions();
+        if (this._initialized) {
+            // Already initialized - rebuild _accordions from existing DOM
+            this._rebuildAccordionsFromDOM();
+        } else {
+            // First time - initialize from gooeyui-panel children
+            this._initializeAccordions();
+        }
         this._setupChildObserver();
     }
     
@@ -40,6 +46,7 @@ export default class AccordionPanel extends Container {
     
     /**
      * Initialize accordion structure from child gooeyui-panel elements
+     * Only called on first connection
      */
     _initializeAccordions() {
         // Clear existing accordions
@@ -49,16 +56,59 @@ export default class AccordionPanel extends Container {
         const childPanels = Array.from(this.children).filter(child =>
             child.tagName.toLowerCase() === 'gooeyui-panel'
         );
-        
+
         // Convert each panel to an accordion
         childPanels.forEach((panel, index) => {
             this._createAccordionFromPanel(panel, index);
         });
-        
+
+        // Mark as initialized after first pass
+        this._initialized = true;
+
         // Open first accordion by default if none specified
-        if (this._accordions.length > 0 && !this._activeAccordion) {
+        if (this._accordions.length > 0 && this._activeAccordion === null) {
             this._openAccordion(0);
         }
+    }
+
+    /**
+     * Rebuild _accordions array from existing DOM elements after reconnect
+     * Used when component is disconnected and reconnected to DOM
+     */
+    _rebuildAccordionsFromDOM() {
+        this._accordions = [];
+
+        // Find existing accordion-item elements
+        const accordionItems = Array.from(this.children).filter(child =>
+            child.classList && child.classList.contains('accordion-item')
+        );
+
+        accordionItems.forEach((accordion, index) => {
+            const header = accordion.querySelector('.accordion-header');
+            const content = accordion.querySelector('.accordion-content');
+            const titleSpan = header?.querySelector('.accordion-title');
+
+            if (header && content) {
+                this._accordions.push({
+                    element: accordion,
+                    header: header,
+                    content: content,
+                    title: titleSpan?.textContent || `Accordion ${index + 1}`,
+                    originalPanel: null
+                });
+
+                // Update data-index to match current position
+                header.setAttribute('data-index', index);
+            }
+        });
+
+        // Restore active accordion state from DOM
+        this._activeAccordion = null;
+        this._accordions.forEach((acc, index) => {
+            if (acc.header.classList.contains('active')) {
+                this._activeAccordion = index;
+            }
+        });
     }
     
     /**
@@ -123,33 +173,39 @@ export default class AccordionPanel extends Container {
      * Set up mutation observer to watch for child changes
      */
     _setupChildObserver() {
+        // Clean up existing observer if any
+        if (this._childObserver) {
+            this._childObserver.disconnect();
+        }
+
         this._childObserver = new MutationObserver((mutations) => {
-            let shouldReinitialize = false;
+            const addedPanels = [];
 
             mutations.forEach((mutation) => {
                 if (mutation.type === 'childList') {
-                    // Check if gooeyui-panel elements were added or removed
-                    const addedPanels = Array.from(mutation.addedNodes).filter(node =>
-                        node.tagName && node.tagName.toLowerCase() === 'gooeyui-panel'
-                    );
-                    const removedPanels = Array.from(mutation.removedNodes).filter(node =>
-                        node.tagName && node.tagName.toLowerCase() === 'gooeyui-panel'
-                    );
-
-                    if (addedPanels.length > 0 || removedPanels.length > 0) {
-                        shouldReinitialize = true;
-                    }
+                    // Collect newly added gooeyui-panel elements
+                    mutation.addedNodes.forEach(node => {
+                        if (node.tagName && node.tagName.toLowerCase() === 'gooeyui-panel') {
+                            addedPanels.push(node);
+                        }
+                    });
                 }
             });
-            
-            if (shouldReinitialize) {
-                // Delay to allow DOM to settle
+
+            // Only process newly added panels - append to existing accordions
+            if (addedPanels.length > 0) {
                 setTimeout(() => {
-                    this._initializeAccordions();
+                    addedPanels.forEach(panel => {
+                        // Only process if panel is still in the DOM and not already processed
+                        if (panel.parentNode === this) {
+                            const newIndex = this._accordions.length;
+                            this._createAccordionFromPanel(panel, newIndex);
+                        }
+                    });
                 }, 0);
             }
         });
-        
+
         this._childObserver.observe(this, {
             childList: true,
             subtree: false
