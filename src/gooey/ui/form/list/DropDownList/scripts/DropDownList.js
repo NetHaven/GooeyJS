@@ -51,7 +51,7 @@ export default class DropDownList extends FormElement {
         });
 
         if (this.hasAttribute("disabled")) {
-            this.disabled = this.getAttribute("disabled") === "true";
+            this.disabled = true;
         }
     }
 
@@ -60,12 +60,12 @@ export default class DropDownList extends FormElement {
     }
 
     set disabled(val) {
-        this.dropDownList.disabled = val;
-        // Prevent infinite recursion by checking if attribute value is already correct
-        const currentAttr = this.getAttribute("disabled");
-        if (val && currentAttr !== "true") {
-            this.setAttribute("disabled", "true");
-        } else if (!val && currentAttr !== null) {
+        this.dropDownList.disabled = !!val;
+        if (val) {
+            if (!this.hasAttribute("disabled")) {
+                this.setAttribute("disabled", "");
+            }
+        } else {
             this.removeAttribute("disabled");
         }
     }
@@ -106,7 +106,8 @@ export default class DropDownList extends FormElement {
     attributeChangedCallback(name, oldValue, newValue) {
         super.attributeChangedCallback?.(name, oldValue, newValue);
         if (name === 'disabled') {
-            this.disabled = newValue === "true";
+            // Boolean attribute: presence means true, absence means false
+            this.dropDownList.disabled = newValue !== null;
         }
     }
 }

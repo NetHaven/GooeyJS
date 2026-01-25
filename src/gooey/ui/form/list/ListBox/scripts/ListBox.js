@@ -57,7 +57,7 @@ export default class ListBox extends FormElement {
         });
 
         if (this.hasAttribute("disabled")) {
-            this.disabled = this.getAttribute("disabled") === "true";
+            this.disabled = true;
         }
 
         if (this.hasAttribute("size")) {
@@ -104,9 +104,11 @@ export default class ListBox extends FormElement {
     }
 
     set disabled(val) {
-        this.listBox.disabled = val;
+        this.listBox.disabled = !!val;
         if (val) {
-            this.setAttribute("disabled", "true");
+            if (!this.hasAttribute("disabled")) {
+                this.setAttribute("disabled", "");
+            }
         } else {
             this.removeAttribute("disabled");
         }
@@ -171,7 +173,8 @@ export default class ListBox extends FormElement {
         super.attributeChangedCallback?.(name, oldValue, newValue);
 
         if (name === 'disabled') {
-            this.disabled = newValue === "true";
+            // Boolean attribute: presence means true, absence means false
+            this.listBox.disabled = newValue !== null;
         } else if (name === 'size') {
             this.size = parseInt(newValue) || 4;
         }
