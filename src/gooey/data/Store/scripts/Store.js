@@ -239,14 +239,26 @@ export default class Store extends GooeyElement {
         });
     }
 
+    /**
+     * Create a deep clone of a record to prevent external mutation
+     * @param {Object} record - The record to clone
+     * @returns {Object} - A deep copy of the record
+     */
+    _cloneRecord(record) {
+        if (record === null || record === undefined) {
+            return record;
+        }
+        return JSON.parse(JSON.stringify(record));
+    }
+
     // =========== Public API ===========
 
     /**
-     * Get a copy of all data records
-     * @returns {Array} - Array of data records
+     * Get a deep copy of all data records
+     * @returns {Array} - Array of cloned data records
      */
     getData() {
-        return [...this._data];
+        return this._data.map(record => this._cloneRecord(record));
     }
 
     /**
@@ -254,7 +266,10 @@ export default class Store extends GooeyElement {
      * @param {Array} data - Array of data records
      */
     setData(data) {
-        this._data = Array.isArray(data) ? [...data] : [];
+        // Clone all records to prevent external mutation
+        this._data = Array.isArray(data)
+            ? data.map(record => this._cloneRecord(record))
+            : [];
         this._notifyDataChanged();
     }
 
@@ -265,18 +280,20 @@ export default class Store extends GooeyElement {
      * @returns {number} - The index where the record was added
      */
     addRecord(record, index) {
+        // Clone the record to prevent external mutation
+        const clonedRecord = this._cloneRecord(record);
         let insertIndex;
 
         if (typeof index === 'number' && index >= 0 && index <= this._data.length) {
-            this._data.splice(index, 0, record);
+            this._data.splice(index, 0, clonedRecord);
             insertIndex = index;
         } else {
-            this._data.push(record);
+            this._data.push(clonedRecord);
             insertIndex = this._data.length - 1;
         }
 
         this.fireEvent(DataStoreEvent.RECORD_ADDED, {
-            record: record,
+            record: this._cloneRecord(clonedRecord),
             index: insertIndex,
             data: this.getData(),
             count: this._data.length
@@ -290,7 +307,7 @@ export default class Store extends GooeyElement {
     /**
      * Remove a record from the store
      * @param {number|Function} indexOrPredicate - Index or predicate function
-     * @returns {Object|null} - The removed record or null if not found
+     * @returns {Object|null} - A clone of the removed record or null if not found
      */
     removeRecord(indexOrPredicate) {
         let index;
@@ -308,7 +325,7 @@ export default class Store extends GooeyElement {
             removedRecord = this._data.splice(index, 1)[0];
 
             this.fireEvent(DataStoreEvent.RECORD_REMOVED, {
-                record: removedRecord,
+                record: this._cloneRecord(removedRecord),
                 index: index,
                 data: this.getData(),
                 count: this._data.length
@@ -317,28 +334,27 @@ export default class Store extends GooeyElement {
             this._notifyDataChanged();
         }
 
-        return removedRecord;
+        return this._cloneRecord(removedRecord);
     }
 
     /**
      * Update a record in the store
      * @param {number} index - The index of the record to update
      * @param {Object} updates - Object with properties to update
-     * @returns {Object|null} - The updated record or null if not found
+     * @returns {Object|null} - A clone of the updated record or null if not found
      */
     updateRecord(index, updates) {
         if (index < 0 || index >= this._data.length) {
             return null;
         }
 
-        const oldRecord = { ...this._data[index] };
-        this._data[index] = { ...this._data[index], ...updates };
-        const newRecord = this._data[index];
+        const oldRecord = this._cloneRecord(this._data[index]);
+        this._data[index] = { ...this._data[index], ...this._cloneRecord(updates) };
 
         this.fireEvent(DataStoreEvent.RECORD_UPDATED, {
-            record: newRecord,
+            record: this._cloneRecord(this._data[index]),
             oldRecord: oldRecord,
-            updates: updates,
+            updates: this._cloneRecord(updates),
             index: index,
             data: this.getData(),
             count: this._data.length
@@ -346,7 +362,7 @@ export default class Store extends GooeyElement {
 
         this._notifyDataChanged();
 
-        return newRecord;
+        return this._cloneRecord(this._data[index]);
     }
 
     /**
@@ -360,10 +376,11 @@ export default class Store extends GooeyElement {
     /**
      * Find a record by predicate
      * @param {Function} predicate - Function to test each record
-     * @returns {Object|undefined} - Found record or undefined
+     * @returns {Object|undefined} - A clone of the found record or undefined
      */
     findRecord(predicate) {
-        return this._data.find(predicate);
+        const record = this._data.find(predicate);
+        return record ? this._cloneRecord(record) : undefined;
     }
 
     /**
@@ -378,10 +395,10 @@ export default class Store extends GooeyElement {
     /**
      * Filter records by predicate
      * @param {Function} predicate - Function to test each record
-     * @returns {Array} - Array of matching records
+     * @returns {Array} - Array of cloned matching records
      */
     filterRecords(predicate) {
-        return this._data.filter(predicate);
+        return this._data.filter(predicate).map(record => this._cloneRecord(record));
     }
 
     /**
