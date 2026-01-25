@@ -115,11 +115,36 @@ export default class Tree extends UIComponent {
 
     _detachTreeItemListeners() {
         this._attachedTreeItems.forEach(treeItem => {
-            treeItem.removeEventListener(MouseEvent.CLICK, this._boundClickHandler);
-            treeItem.removeEventListener(TreeItemEvent.TREE_ITEM_EXPAND, this._boundExpandHandler);
-            treeItem.removeEventListener(TreeItemEvent.TREE_ITEM_COLLAPSE, this._boundCollapseHandler);
+            this._detachSingleTreeItemListener(treeItem);
         });
         this._attachedTreeItems.clear();
+    }
+
+    /**
+     * Detach listeners from a single tree item and remove from tracking set
+     * @param {Element} treeItem - The tree item to detach
+     */
+    _detachSingleTreeItemListener(treeItem) {
+        treeItem.removeEventListener(MouseEvent.CLICK, this._boundClickHandler);
+        treeItem.removeEventListener(TreeItemEvent.TREE_ITEM_EXPAND, this._boundExpandHandler);
+        treeItem.removeEventListener(TreeItemEvent.TREE_ITEM_COLLAPSE, this._boundCollapseHandler);
+        this._attachedTreeItems.delete(treeItem);
+    }
+
+    /**
+     * Detach listeners from a tree item and all its descendants
+     * @param {Element} treeItem - The root tree item
+     */
+    _detachTreeItemAndDescendants(treeItem) {
+        // Collect all descendants including the item itself
+        const items = [treeItem];
+        this._collectTreeItems(treeItem, items);
+
+        items.forEach(item => {
+            if (this._attachedTreeItems.has(item)) {
+                this._detachSingleTreeItemListener(item);
+            }
+        });
     }
 
     _handleTreeItemClick(eventName, data) {
@@ -172,13 +197,19 @@ export default class Tree extends UIComponent {
     }
     
     removeItem(treeItem) {
+        // Detach listeners from the item and its descendants before removing
+        this._detachTreeItemAndDescendants(treeItem);
+
         this._treeElement.removeChild(treeItem);
         if (this._selectedItem === treeItem) {
             this.selectedItem = null;
         }
     }
-    
+
     clear() {
+        // Detach listeners from all tracked items before clearing
+        this._detachTreeItemListeners();
+
         this._treeElement.innerHTML = '';
         this.selectedItem = null;
     }
