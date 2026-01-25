@@ -158,7 +158,15 @@ export default class Observable extends HTMLElement {
         }
     }
 
-    fireEvent(eventName, configObj) {
+    /**
+     * Fire an event to all registered listeners
+     * @param {string} eventName - The event name to fire
+     * @param {Object} configObj - Event data/configuration
+     * @param {Object} [options] - Event options
+     * @param {boolean} [options.cancelable=false] - Whether the event can be cancelled by listeners
+     * @returns {boolean} True if event was not cancelled (or not cancelable), false if cancelled
+     */
+    fireEvent(eventName, configObj, options = {}) {
         var err;
 
         if (!(this.hasEvent(eventName))) {
@@ -166,20 +174,42 @@ export default class Observable extends HTMLElement {
             err.name = Observable.INVALID_EVENT_EXCEPTION;
             throw err;
         }
-        
+
         if (this.eventSuspension) {
             return false;
         }
-       
-        // Also fire to internal listeners for backward compatibility
+
+        // Track if event was cancelled (only matters if cancelable)
+        let defaultPrevented = false;
+
+        // Create event object for listeners
+        const eventObject = {
+            type: eventName,
+            target: this,
+            ...configObj,
+            preventDefault: () => {
+                if (options.cancelable) {
+                    defaultPrevented = true;
+                }
+            },
+            get defaultPrevented() {
+                return defaultPrevented;
+            }
+        };
+
+        // Fire to internal listeners
         if (this.eventListenerList[eventName]) {
-            this.eventListenerList[eventName].forEach(function(listener) {
-                listener(eventName, configObj);
-            });
+            for (const listener of this.eventListenerList[eventName]) {
+                listener(eventName, eventObject);
+                // Stop processing if cancelled and cancelable
+                if (options.cancelable && defaultPrevented) {
+                    break;
+                }
+            }
         }
-        
+
         // Return true if event was not cancelled, false if it was
-        return true;
+        return !defaultPrevented;
     }
 
     getEventListener(eventName, index) {
