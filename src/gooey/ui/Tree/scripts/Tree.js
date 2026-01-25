@@ -41,12 +41,20 @@ export default class Tree extends UIComponent {
         this._attachTreeItemListeners();
 
         // Watch for dynamically added tree items in light DOM
-        this._treeItemObserver = new MutationObserver(() => {
+        this._lightDOMObserver = new MutationObserver(() => {
             this._attachTreeItemListeners();
         });
-        this._treeItemObserver.observe(this, { childList: true, subtree: true });
+        this._lightDOMObserver.observe(this, { childList: true, subtree: true });
 
-        // Listen for children added to TreeItems (which go into shadow DOM)
+        // Watch for dynamically added tree items in shadow DOM (_treeElement)
+        if (this._treeElement) {
+            this._shadowDOMObserver = new MutationObserver(() => {
+                this._attachTreeItemListeners();
+            });
+            this._shadowDOMObserver.observe(this._treeElement, { childList: true, subtree: true });
+        }
+
+        // Listen for children added to TreeItems (which go into their shadow DOM)
         this._boundChildAddedHandler = () => {
             this._attachTreeItemListeners();
         };
@@ -56,10 +64,14 @@ export default class Tree extends UIComponent {
     disconnectedCallback() {
         super.disconnectedCallback && super.disconnectedCallback();
 
-        // Clean up mutation observer
-        if (this._treeItemObserver) {
-            this._treeItemObserver.disconnect();
-            this._treeItemObserver = null;
+        // Clean up mutation observers
+        if (this._lightDOMObserver) {
+            this._lightDOMObserver.disconnect();
+            this._lightDOMObserver = null;
+        }
+        if (this._shadowDOMObserver) {
+            this._shadowDOMObserver.disconnect();
+            this._shadowDOMObserver = null;
         }
 
         // Remove child-added listener
@@ -85,11 +97,17 @@ export default class Tree extends UIComponent {
 
     /**
      * Recursively find all tree items including those nested in shadow DOM
+     * Scans both light DOM (markup) and shadow DOM (_treeElement for programmatic items)
      * @returns {Array} Array of all gooeyui-treeitem elements
      */
     _getAllTreeItems() {
         const items = [];
+        // Collect from light DOM (items added via markup)
         this._collectTreeItems(this, items);
+        // Collect from shadow DOM _treeElement (items added via addItem())
+        if (this._treeElement) {
+            this._collectTreeItems(this._treeElement, items);
+        }
         return items;
     }
 
@@ -99,10 +117,13 @@ export default class Tree extends UIComponent {
      * @param {Array} items - Array to collect items into
      */
     _collectTreeItems(root, items) {
-        // Query direct tree items in light DOM
-        const lightItems = root.querySelectorAll(':scope > gooeyui-treeitem');
-        lightItems.forEach(item => {
-            items.push(item);
+        // Query direct tree items
+        const directItems = root.querySelectorAll(':scope > gooeyui-treeitem');
+        directItems.forEach(item => {
+            // Avoid duplicates (item might be found from multiple paths)
+            if (!items.includes(item)) {
+                items.push(item);
+            }
             // Check the item's shadow DOM for nested children
             if (item.shadowRoot) {
                 const childrenContainer = item.shadowRoot.querySelector('.ui-TreeItem-children');
@@ -200,7 +221,11 @@ export default class Tree extends UIComponent {
         // Detach listeners from the item and its descendants before removing
         this._detachTreeItemAndDescendants(treeItem);
 
-        this._treeElement.removeChild(treeItem);
+        // Remove from wherever the item is located (light DOM or shadow DOM)
+        if (treeItem.parentNode) {
+            treeItem.parentNode.removeChild(treeItem);
+        }
+
         if (this._selectedItem === treeItem) {
             this.selectedItem = null;
         }
@@ -210,7 +235,15 @@ export default class Tree extends UIComponent {
         // Detach listeners from all tracked items before clearing
         this._detachTreeItemListeners();
 
-        this._treeElement.innerHTML = '';
+        // Clear shadow DOM items (added via addItem())
+        if (this._treeElement) {
+            this._treeElement.innerHTML = '';
+        }
+
+        // Clear light DOM items (added via markup)
+        const lightDOMItems = this.querySelectorAll(':scope > gooeyui-treeitem');
+        lightDOMItems.forEach(item => item.remove());
+
         this.selectedItem = null;
     }
     
