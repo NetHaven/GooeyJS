@@ -105,6 +105,25 @@ export default class TreeItem extends UIComponent {
         this.setAttribute('aria-level', level);
     }
 
+    /**
+     * Recursively update aria-level for this item and all descendant tree items.
+     * Called after reparenting operations (drag/drop, addChild) to fix stale levels.
+     */
+    _updateAriaLevelRecursively() {
+        // Update this item's level
+        this._computeAriaLevel();
+
+        // Update all descendant tree items
+        if (this._childrenElement) {
+            const descendants = this._childrenElement.querySelectorAll('gooeyui-treeitem');
+            descendants.forEach(item => {
+                if (item._computeAriaLevel) {
+                    item._computeAriaLevel();
+                }
+            });
+        }
+    }
+
     attributeChangedCallback(name, oldValue, newValue) {
         super.attributeChangedCallback?.(name, oldValue, newValue);
 
@@ -200,6 +219,12 @@ export default class TreeItem extends UIComponent {
         this._childrenElement.appendChild(treeItem);
         this._hasChildren = true;
         this._updateExpanderVisibility();
+
+        // Recompute aria-level for the added item and its descendants
+        // (connectedCallback won't fire if the item was just reparented)
+        if (treeItem._updateAriaLevelRecursively) {
+            treeItem._updateAriaLevelRecursively();
+        }
 
         // Dispatch composed event so Tree can detect shadow DOM changes
         this.dispatchEvent(new CustomEvent('treeitem-child-added', {
@@ -884,7 +909,7 @@ export default class TreeItem extends UIComponent {
     
     _performDrop(draggedItem, dropPosition) {
         const draggedParent = draggedItem.parentElement;
-        
+
         try {
             switch (dropPosition) {
                 case 'before':
@@ -903,7 +928,13 @@ export default class TreeItem extends UIComponent {
                     this.expanded = true;
                     break;
             }
-            
+
+            // Recompute aria-level for moved item and descendants
+            // (addChild already handles 'inside' case, so only do for before/after)
+            if (dropPosition !== 'inside' && draggedItem._updateAriaLevelRecursively) {
+                draggedItem._updateAriaLevelRecursively();
+            }
+
             // Update parent's child state if it no longer has children
             if (draggedParent && draggedParent !== this.parentElement && draggedParent.removeChild) {
                 // Safely check if draggedParent has _childrenElement before accessing it
@@ -914,14 +945,14 @@ export default class TreeItem extends UIComponent {
                     console.warn('TREEITEM_DRAG_PARENT_MISSING_CHILDREN', 'TreeItem drag parent missing _childrenElement - parent may not be properly initialized');
                 }
             }
-            
+
             // Dispatch reorder event
             this.fireEvent(TreeItemEvent.TREE_ITEM_REORDER, {
                 movedItem: draggedItem,
                 newParent: dropPosition === 'inside' ? this : this.parentElement,
                 dropPosition: dropPosition
             });
-            
+
         } catch (error) {
             console.error('TREEITEM_DROP_ERROR', 'Error performing tree item drop', { error: error.message });
         }
