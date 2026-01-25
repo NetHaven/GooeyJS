@@ -31,9 +31,36 @@ export default class FormPanel extends Panel {
         this._ensureThirdColumnElements();
     }
 
+    /**
+     * Get the internal input element from a checkbox or radio button component
+     * @param {HTMLElement} element - The gooeyui-checkbox or gooeyui-radiobutton element
+     * @returns {HTMLInputElement|null}
+     */
+    _getInputFromElement(element) {
+        // Input lives in shadow DOM, not light DOM
+        return element.shadowRoot?.querySelector('input') || null;
+    }
+
+    /**
+     * Get all radio button inputs from a radio button group
+     * @param {HTMLElement} group - The gooeyui-radiobuttongroup element
+     * @returns {HTMLInputElement[]}
+     */
+    _getRadioInputsFromGroup(group) {
+        const radioButtons = group.querySelectorAll('gooeyui-radiobutton');
+        const inputs = [];
+        radioButtons.forEach(rb => {
+            const input = this._getInputFromElement(rb);
+            if (input) {
+                inputs.push(input);
+            }
+        });
+        return inputs;
+    }
+
     _ensureThirdColumnElements() {
         const formElements = this.querySelectorAll('gooeyui-textfield, gooeyui-textarea, gooeyui-dropdown, gooeyui-dropdownlist, gooeyui-listbox, gooeyui-combobox, gooeyui-checkbox, gooeyui-radiobutton, gooeyui-radiobuttongroup');
-        
+
         formElements.forEach(element => {
             // Check if this element already has a corresponding indicator or empty span
             const nextSibling = element.nextElementSibling;
@@ -72,15 +99,15 @@ export default class FormPanel extends Panel {
                 
                 if (element.tagName.toLowerCase() === 'gooeyui-checkbox' || element.tagName.toLowerCase() === 'gooeyui-radiobutton') {
                     // For checkboxes and radio buttons, check if they are checked
-                    const input = element.querySelector('input');
+                    const input = this._getInputFromElement(element);
                     if (!input || !input.checked) {
                         isValid = false;
                     }
                 } else if (element.tagName.toLowerCase() === 'gooeyui-radiobuttongroup') {
                     // For radio button groups, check if any radio button is selected
-                    const radioButtons = element.querySelectorAll('gooeyui-radiobutton input');
+                    const radioInputs = this._getRadioInputsFromGroup(element);
                     let hasSelection = false;
-                    for (const radio of radioButtons) {
+                    for (const radio of radioInputs) {
                         if (radio.checked) {
                             hasSelection = true;
                             break;
@@ -140,14 +167,14 @@ export default class FormPanel extends Panel {
         
         formElements.forEach(element => {
             if (element.tagName.toLowerCase() === 'gooeyui-checkbox' || element.tagName.toLowerCase() === 'gooeyui-radiobutton') {
-                const input = element.querySelector('input');
+                const input = this._getInputFromElement(element);
                 if (input) {
                     input.checked = false;
                 }
             } else if (element.tagName.toLowerCase() === 'gooeyui-radiobuttongroup') {
-                const radioButtons = element.querySelectorAll('gooeyui-radiobutton input');
-                radioButtons.forEach(radio => { 
-                    radio.checked = false
+                const radioInputs = this._getRadioInputsFromGroup(element);
+                radioInputs.forEach(radio => {
+                    radio.checked = false;
                 });
             } else {
                 // Reset value for text fields, text areas, dropdowns, and list boxes
@@ -167,16 +194,16 @@ export default class FormPanel extends Panel {
             const name = element.getAttribute('name') || element.getAttribute('id');
             if (name) {
                 if (element.tagName.toLowerCase() === 'gooeyui-checkbox') {
-                    const input = element.querySelector('input');
+                    const input = this._getInputFromElement(element);
                     formData[name] = input ? input.checked : false;
                 } else if (element.tagName.toLowerCase() === 'gooeyui-radiobutton') {
-                    const input = element.querySelector('input');
+                    const input = this._getInputFromElement(element);
                     if (input && input.checked) {
                         formData[name] = element.value || input.value;
                     }
                 } else if (element.tagName.toLowerCase() === 'gooeyui-radiobuttongroup') {
-                    const radioButtons = element.querySelectorAll('gooeyui-radiobutton input');
-                    for (const radio of radioButtons) {
+                    const radioInputs = this._getRadioInputsFromGroup(element);
+                    for (const radio of radioInputs) {
                         if (radio.checked) {
                             formData[name] = radio.value;
                             break;
@@ -187,7 +214,7 @@ export default class FormPanel extends Panel {
                 }
             }
         });
-        
+
         return formData;
     }
     
@@ -199,18 +226,18 @@ export default class FormPanel extends Panel {
             const name = element.getAttribute('name') || element.getAttribute('id');
             if (name && data.hasOwnProperty(name)) {
                 if (element.tagName.toLowerCase() === 'gooeyui-checkbox') {
-                    const input = element.querySelector('input');
+                    const input = this._getInputFromElement(element);
                     if (input) {
                         input.checked = Boolean(data[name]);
                     }
                 } else if (element.tagName.toLowerCase() === 'gooeyui-radiobutton') {
-                    const input = element.querySelector('input');
+                    const input = this._getInputFromElement(element);
                     if (input && input.value === data[name]) {
                         input.checked = true;
                     }
                 } else if (element.tagName.toLowerCase() === 'gooeyui-radiobuttongroup') {
-                    const radioButtons = element.querySelectorAll('gooeyui-radiobutton input');
-                    radioButtons.forEach(radio => {
+                    const radioInputs = this._getRadioInputsFromGroup(element);
+                    radioInputs.forEach(radio => {
                         radio.checked = (radio.value === data[name]);
                     });
                 } else {
