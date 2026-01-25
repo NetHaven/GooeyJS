@@ -62,11 +62,7 @@ export default class TextElement extends FormElement {
                     }
                     break;
                 case 'readOnly':
-                    if (newValue !== null) {
-                        this.textElement.setAttribute('readOnly', newValue);
-                    } else {
-                        this.textElement.removeAttribute('readOnly');
-                    }
+                    this.textElement.readOnly = newValue !== null;
                     break;
             }
         }
@@ -85,17 +81,7 @@ export default class TextElement extends FormElement {
     }
 
     get readOnly() {
-        if (this.hasAttribute("readOnly")) {
-            if (this.getAttribute("readOnly") === "false") {
-                return false;
-            }
-            else {
-                return true;
-            }
-        }
-        else {
-            return false;
-        }
+        return this.hasAttribute("readOnly");
     }
 
     set maxLength(val) {
@@ -124,13 +110,12 @@ export default class TextElement extends FormElement {
     }
 
     set readOnly(val) {
+        this.textElement.readOnly = !!val;
         if (val) {
-            this.setAttribute("readOnly", "true");
-            this.textElement.setAttribute("readOnly", "true");
+            this.setAttribute("readOnly", "");
         }
         else {
-            this.setAttribute("readOnly", "false");
-            this.textElement.setAttribute("readOnly", "false");
+            this.removeAttribute("readOnly");
         }
     }
 
