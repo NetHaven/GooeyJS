@@ -168,6 +168,8 @@ export default class ListBox extends FormElement {
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
+        super.attributeChangedCallback?.(name, oldValue, newValue);
+
         if (name === 'disabled') {
             this.disabled = newValue === "true";
         } else if (name === 'size') {

@@ -89,7 +89,9 @@ export default class TreeItem extends UIComponent {
         this.setAttribute('aria-level', level);
     }
 
-    attributeChangedCallback(name) {
+    attributeChangedCallback(name, oldValue, newValue) {
+        super.attributeChangedCallback?.(name, oldValue, newValue);
+
         if (name === 'text') {
             this._updateText();
         } else if (name === 'icon') {

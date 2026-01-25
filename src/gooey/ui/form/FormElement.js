@@ -9,7 +9,9 @@ export default class FormElement extends UIComponent {
         // after they have assigned formElement
     }
 
-    attributeChangedCallback(name) {
+    attributeChangedCallback(name, oldValue, newValue) {
+        super.attributeChangedCallback?.(name, oldValue, newValue);
+
         if (name === 'required') {
             this._updateRequiredIndicator();
         }

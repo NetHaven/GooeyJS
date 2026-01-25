@@ -41,6 +41,8 @@ export default class Label extends UIComponent {
 	}
 
     attributeChangedCallback(name, oldValue, newValue) {
+        super.attributeChangedCallback?.(name, oldValue, newValue);
+
         if (oldValue === newValue) return;
 
         switch (name) {
