@@ -40,11 +40,17 @@ export default class Tree extends UIComponent {
         // Attach listeners to existing tree items
         this._attachTreeItemListeners();
 
-        // Watch for dynamically added tree items
+        // Watch for dynamically added tree items in light DOM
         this._treeItemObserver = new MutationObserver(() => {
             this._attachTreeItemListeners();
         });
         this._treeItemObserver.observe(this, { childList: true, subtree: true });
+
+        // Listen for children added to TreeItems (which go into shadow DOM)
+        this._boundChildAddedHandler = () => {
+            this._attachTreeItemListeners();
+        };
+        this.addEventListener('treeitem-child-added', this._boundChildAddedHandler);
     }
 
     disconnectedCallback() {
@@ -56,18 +62,53 @@ export default class Tree extends UIComponent {
             this._treeItemObserver = null;
         }
 
+        // Remove child-added listener
+        if (this._boundChildAddedHandler) {
+            this.removeEventListener('treeitem-child-added', this._boundChildAddedHandler);
+        }
+
         // Remove listeners from all tree items
         this._detachTreeItemListeners();
     }
 
     _attachTreeItemListeners() {
-        const treeItems = this.querySelectorAll('gooeyui-treeitem');
+        const treeItems = this._getAllTreeItems();
         treeItems.forEach(treeItem => {
             if (!this._attachedTreeItems.has(treeItem)) {
                 treeItem.addEventListener(MouseEvent.CLICK, this._boundClickHandler);
                 treeItem.addEventListener(TreeItemEvent.TREE_ITEM_EXPAND, this._boundExpandHandler);
                 treeItem.addEventListener(TreeItemEvent.TREE_ITEM_COLLAPSE, this._boundCollapseHandler);
                 this._attachedTreeItems.add(treeItem);
+            }
+        });
+    }
+
+    /**
+     * Recursively find all tree items including those nested in shadow DOM
+     * @returns {Array} Array of all gooeyui-treeitem elements
+     */
+    _getAllTreeItems() {
+        const items = [];
+        this._collectTreeItems(this, items);
+        return items;
+    }
+
+    /**
+     * Recursively collect tree items from an element and its shadow DOM
+     * @param {Element} root - The root element to search from
+     * @param {Array} items - Array to collect items into
+     */
+    _collectTreeItems(root, items) {
+        // Query direct tree items in light DOM
+        const lightItems = root.querySelectorAll(':scope > gooeyui-treeitem');
+        lightItems.forEach(item => {
+            items.push(item);
+            // Check the item's shadow DOM for nested children
+            if (item.shadowRoot) {
+                const childrenContainer = item.shadowRoot.querySelector('.ui-TreeItem-children');
+                if (childrenContainer) {
+                    this._collectTreeItems(childrenContainer, items);
+                }
             }
         });
     }
@@ -143,16 +184,16 @@ export default class Tree extends UIComponent {
     }
     
     expandAll() {
-        const items = this.querySelectorAll('gooeyui-treeitem');
+        const items = this._getAllTreeItems();
         items.forEach(item => {
             if (item.hasChildren) {
                 item.expanded = true;
             }
         });
     }
-    
+
     collapseAll() {
-        const items = this.querySelectorAll('gooeyui-treeitem');
+        const items = this._getAllTreeItems();
         items.forEach(item => {
             item.expanded = false;
         });
@@ -198,15 +239,15 @@ export default class Tree extends UIComponent {
     }
     
     _selectPreviousItem() {
-        const items = Array.from(this.querySelectorAll('gooeyui-treeitem'));
+        const items = this._getAllTreeItems();
         const currentIndex = items.indexOf(this._selectedItem);
         if (currentIndex > 0) {
             this.selectedItem = items[currentIndex - 1];
         }
     }
-    
+
     _selectNextItem() {
-        const items = Array.from(this.querySelectorAll('gooeyui-treeitem'));
+        const items = this._getAllTreeItems();
         const currentIndex = items.indexOf(this._selectedItem);
         if (currentIndex < items.length - 1) {
             this.selectedItem = items[currentIndex + 1];

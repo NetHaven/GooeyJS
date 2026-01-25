@@ -200,6 +200,13 @@ export default class TreeItem extends UIComponent {
         this._childrenElement.appendChild(treeItem);
         this._hasChildren = true;
         this._updateExpanderVisibility();
+
+        // Dispatch composed event so Tree can detect shadow DOM changes
+        this.dispatchEvent(new CustomEvent('treeitem-child-added', {
+            bubbles: true,
+            composed: true,
+            detail: { child: treeItem, parent: this }
+        }));
     }
     
     removeChild(treeItem) {
