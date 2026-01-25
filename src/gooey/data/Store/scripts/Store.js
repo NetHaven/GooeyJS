@@ -147,13 +147,18 @@ export default class Store extends GooeyElement {
 
             for (const mutation of mutations) {
                 if (mutation.type === 'childList') {
-                    // Children added or removed
-                    needsUpdate = true;
+                    // Only react if gooeydata-data elements were added or removed
+                    if (this._hasDataElementChange(mutation.addedNodes) ||
+                        this._hasDataElementChange(mutation.removedNodes)) {
+                        needsUpdate = true;
+                        break;
+                    }
                 } else if (mutation.type === 'attributes' &&
                            mutation.target.tagName &&
                            mutation.target.tagName.toLowerCase() === 'gooeydata-data') {
                     // Attribute changed on a data element
                     needsUpdate = true;
+                    break;
                 }
             }
 
@@ -163,13 +168,28 @@ export default class Store extends GooeyElement {
             }
         });
 
-        // Observe child list changes and attribute changes on data elements
+        // Observe direct children only for childList (not subtree)
+        // Data elements handle their own attribute changes and notify the store
         this._observer.observe(this, {
             childList: true,
-            subtree: true,
-            attributes: true,
-            attributeFilter: ['data-*']
+            subtree: false
         });
+    }
+
+    /**
+     * Check if a NodeList contains any gooeydata-data elements
+     * @param {NodeList} nodes - The nodes to check
+     * @returns {boolean} - True if any node is a gooeydata-data element
+     */
+    _hasDataElementChange(nodes) {
+        for (const node of nodes) {
+            if (node.nodeType === Node.ELEMENT_NODE) {
+                if (node.tagName.toLowerCase() === 'gooeydata-data') {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
