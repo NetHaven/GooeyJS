@@ -95,7 +95,8 @@ export default class RadioButtonGroup extends UIComponent {
         // Find all gooeyui-radiobutton elements and assign the group name to their input elements
         const radioButtons = this.querySelectorAll('gooeyui-radiobutton');
         radioButtons.forEach(radioButton => {
-            const input = radioButton.querySelector('input[type="radio"]');
+            // Input lives in shadow DOM, not light DOM
+            const input = radioButton.shadowRoot?.querySelector('input[type="radio"]');
             if (input) {
                 input.name = this._groupName;
             }
@@ -108,7 +109,8 @@ export default class RadioButtonGroup extends UIComponent {
             mutations.forEach(mutation => {
                 mutation.addedNodes.forEach(node => {
                     if (node.matches && node.matches('gooeyui-radiobutton')) {
-                        const input = node.querySelector('input[type="radio"]');
+                        // Input lives in shadow DOM, not light DOM
+                        const input = node.shadowRoot?.querySelector('input[type="radio"]');
                         if (input) {
                             input.name = this._groupName;
                         }
