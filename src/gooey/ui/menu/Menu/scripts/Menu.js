@@ -6,14 +6,11 @@ import Template from '../../../../util/Template.js';
 
 export default class Menu extends UIComponent {
     constructor () {
-        var acceleratedItem, accelerator, activeMenuItem, activeMenuItemIndex, menuItemList,
-            menuText, shortcutItem;
-
         super();
 
         Template.activate("ui-Menu", this.shadowRoot);
         this.visible = false;
-        
+
         // Add valid events
         this.addValidEvent(MenuEvent.MENU_SHOW);
         this.addValidEvent(MenuEvent.MENU_HIDE);
@@ -22,85 +19,98 @@ export default class Menu extends UIComponent {
             this.text = this.getAttribute("text");
         }
 
-        this.menuItems.forEach(function(menuItem) {
-            menuText = menuItem.getAttribute("text");
-            accelerator = menuItem.getAttribute("accelerator");
+        this.menuItems.forEach((menuItem) => {
+            let menuText = menuItem.getAttribute("text");
+            const accelerator = menuItem.getAttribute("accelerator");
             if (accelerator) {
                 if (menuText.indexOf(accelerator) !== -1) {
                     menuText = menuText.replace(accelerator, "<u>" + accelerator + "</u>");
                 }
             }
-            menuItem.setAttribute("text", menuText);    
+            menuItem.setAttribute("text", menuText);
         });
 
-        document.addEventListener(KeyboardEvent.KEY_DOWN, (event) => {
-            menuItemList = Array.from(this.querySelectorAll("gooeyui-menuitem, gooeyui-checkboxmenuitem"));
+        // Bind the handler so it can be removed later
+        this._handleKeyDown = this._handleKeyDown.bind(this);
+    }
 
-            if (event.ctrlKey) {
-                shortcutItem = menuItemList.find((element) => {
-                    if (element.shortcut) {
-                        return element.shortcut.toLowerCase() === event.key.toLowerCase();
-                    }
-                    else {
-                        return false;
-                    }
-                });
+    connectedCallback() {
+        super.connectedCallback?.();
+        document.addEventListener(KeyboardEvent.KEY_DOWN, this._handleKeyDown);
+    }
 
-                if (shortcutItem) {
-                    if (!shortcutItem.disabled) {
-                        document.dispatchEvent(new Event(shortcutItem.action));
-                    }
-                }
-            }
+    disconnectedCallback() {
+        super.disconnectedCallback?.();
+        document.removeEventListener(KeyboardEvent.KEY_DOWN, this._handleKeyDown);
+    }
 
-            if (this.active) {
-                activeMenuItemIndex = menuItemList.findIndex((element) => element.active);
-                if (event.key === Key.ARROW_DOWN) {
-                    if (activeMenuItemIndex === -1) {
-                        activeMenuItemIndex = 0;
-                    }
-                    else {
-                        activeMenuItem = menuItemList[activeMenuItemIndex];
-                        activeMenuItem.active = false;
-                        activeMenuItemIndex++;
-                        if (activeMenuItemIndex > menuItemList.length - 1) {
-                            activeMenuItemIndex = 0;
-                        }
-                    }
-                    menuItemList[activeMenuItemIndex].active = true;
-                }
-                else if (event.key === Key.ARROW_UP) {
-                    if (activeMenuItemIndex === -1) {
-                        activeMenuItemIndex = menuItemList.length - 1;
-                    }
-                    else {
-                        activeMenuItem = menuItemList[activeMenuItemIndex];
-                        activeMenuItem.active = false;
-                        activeMenuItemIndex--;
-                        if (activeMenuItemIndex < 0 ) {
-                            activeMenuItemIndex = menuItemList.length - 1;
-                        }
-                    }
-                    menuItemList[activeMenuItemIndex].active = true;
+    _handleKeyDown(event) {
+        const menuItemList = Array.from(this.querySelectorAll("gooeyui-menuitem, gooeyui-checkboxmenuitem"));
+
+        if (event.ctrlKey) {
+            const shortcutItem = menuItemList.find((element) => {
+                if (element.shortcut) {
+                    return element.shortcut.toLowerCase() === event.key.toLowerCase();
                 }
                 else {
-                    // Check for accelerators
-                    if (!event.altKey) {
-                        acceleratedItem = menuItemList.find((element) => {
-                            if (element.accelerator) {
-                                return element.accelerator.toLowerCase() === event.key.toLowerCase();
-                            }
-                            return false;
-                        });
+                    return false;
+                }
+            });
 
-                        if (acceleratedItem && !acceleratedItem.disabled) {
-                            this.active = false;
-                            document.dispatchEvent(new Event(acceleratedItem.action));
-                        }    
-                    } 
+            if (shortcutItem) {
+                if (!shortcutItem.disabled) {
+                    document.dispatchEvent(new Event(shortcutItem.action));
                 }
             }
-        });
+        }
+
+        if (this.active) {
+            let activeMenuItemIndex = menuItemList.findIndex((element) => element.active);
+            if (event.key === Key.ARROW_DOWN) {
+                if (activeMenuItemIndex === -1) {
+                    activeMenuItemIndex = 0;
+                }
+                else {
+                    const activeMenuItem = menuItemList[activeMenuItemIndex];
+                    activeMenuItem.active = false;
+                    activeMenuItemIndex++;
+                    if (activeMenuItemIndex > menuItemList.length - 1) {
+                        activeMenuItemIndex = 0;
+                    }
+                }
+                menuItemList[activeMenuItemIndex].active = true;
+            }
+            else if (event.key === Key.ARROW_UP) {
+                if (activeMenuItemIndex === -1) {
+                    activeMenuItemIndex = menuItemList.length - 1;
+                }
+                else {
+                    const activeMenuItem = menuItemList[activeMenuItemIndex];
+                    activeMenuItem.active = false;
+                    activeMenuItemIndex--;
+                    if (activeMenuItemIndex < 0 ) {
+                        activeMenuItemIndex = menuItemList.length - 1;
+                    }
+                }
+                menuItemList[activeMenuItemIndex].active = true;
+            }
+            else {
+                // Check for accelerators
+                if (!event.altKey) {
+                    const acceleratedItem = menuItemList.find((element) => {
+                        if (element.accelerator) {
+                            return element.accelerator.toLowerCase() === event.key.toLowerCase();
+                        }
+                        return false;
+                    });
+
+                    if (acceleratedItem && !acceleratedItem.disabled) {
+                        this.active = false;
+                        document.dispatchEvent(new Event(acceleratedItem.action));
+                    }
+                }
+            }
+        }
     }
 
     get accelerator() {
