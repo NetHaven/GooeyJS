@@ -11,6 +11,9 @@ export default class RadioButtonGroup extends UIComponent {
         // Generate unique group name for mutual exclusivity
         this._groupName = `radio-group-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
 
+        // MutationObserver for dynamically added radio buttons
+        this._observer = null;
+
         // ARIA: Set radiogroup role
         this.setAttribute('role', 'radiogroup');
 
@@ -25,6 +28,14 @@ export default class RadioButtonGroup extends UIComponent {
 
         // Set up mutation observer to watch for radio button changes
         this._setupSelectionHandling();
+    }
+
+    disconnectedCallback() {
+        // Clean up observer to prevent memory leaks
+        if (this._observer) {
+            this._observer.disconnect();
+            this._observer = null;
+        }
     }
 
     /**
@@ -88,7 +99,7 @@ export default class RadioButtonGroup extends UIComponent {
 
     _observeRadioButtons() {
         // Use MutationObserver to watch for dynamically added radio buttons
-        const observer = new MutationObserver((mutations) => {
+        this._observer = new MutationObserver((mutations) => {
             mutations.forEach(mutation => {
                 mutation.addedNodes.forEach(node => {
                     if (node.tagName === 'UI-RADIOBUTTON') {
@@ -101,7 +112,7 @@ export default class RadioButtonGroup extends UIComponent {
             });
         });
 
-        observer.observe(this, {
+        this._observer.observe(this, {
             childList: true,
             subtree: true
         });
