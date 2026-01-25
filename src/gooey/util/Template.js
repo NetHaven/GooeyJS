@@ -24,22 +24,25 @@ export default class Template {
 
         const maxRetries = 3;
         const retryDelay = 1000; // 1 second
-
-        // Create timeout-wrapped fetch with proper async error handling
         const timeoutMs = 10000; // 10 second timeout
-        const loadPromise = Template._timeoutPromise(
-            fetch(templateName, {
-                method: 'GET',
-                cache: 'default',
-                headers: {
-                    'Accept': 'text/html,text/plain,*/*',
-                    'Cache-Control': 'max-age=3600'
-                }
-            }),
-            timeoutMs,
-            `Template loading timeout for ${templateName}`
-        )
+
+        // Create AbortController to properly cancel fetch on timeout
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => {
+            controller.abort();
+        }, timeoutMs);
+
+        const loadPromise = fetch(templateName, {
+            method: 'GET',
+            cache: 'default',
+            headers: {
+                'Accept': 'text/html,text/plain,*/*',
+                'Cache-Control': 'max-age=3600'
+            },
+            signal: controller.signal
+        })
             .then(response => {
+                clearTimeout(timeoutId);
                 if (!response.ok) {
                     throw new Error(`Failed to load template ${templateName}: ${response.status} ${response.statusText}`);
                 }
@@ -83,10 +86,22 @@ export default class Template {
                 }
             })
             .catch(error => {
-                console.error('TEMPLATE_LOAD_ERROR', `Template loading error for ${templateId}`, { error: error.message, templateId });
+                clearTimeout(timeoutId);
 
-                // Retry logic for network errors
-                if (retryCount < maxRetries && (error.name === 'TypeError' || error.message.includes('Failed to fetch'))) {
+                // Convert abort errors to timeout errors for clearer messaging
+                const isTimeout = error.name === 'AbortError';
+                const errorMessage = isTimeout
+                    ? `Template loading timeout for ${templateName} (exceeded ${timeoutMs}ms)`
+                    : error.message;
+
+                console.error('TEMPLATE_LOAD_ERROR', `Template loading error for ${templateId}`, { error: errorMessage, templateId });
+
+                // Retry logic for network errors and timeouts
+                const isRetryable = error.name === 'TypeError' ||
+                    error.message.includes('Failed to fetch') ||
+                    isTimeout;
+
+                if (retryCount < maxRetries && isRetryable) {
                     console.warn('TEMPLATE_RETRY', `Retrying template load for ${templateId} (attempt ${retryCount + 1}/${maxRetries})`);
                     return new Promise(resolve => {
                         setTimeout(() => {
@@ -94,7 +109,8 @@ export default class Template {
                         }, retryDelay * (retryCount + 1)); // Exponential backoff
                     });
                 }
-                throw error;
+
+                throw isTimeout ? new Error(errorMessage) : error;
             })
             .finally(() => {
                 // Clean up loading state to allow future re-fetches
@@ -153,26 +169,4 @@ export default class Template {
         );
     }
 
-     /**
-     * Creates a timeout-wrapped promise for async operations
-     * @param {Promise} promise - The promise to wrap with timeout
-     * @param {number} timeoutMs - Timeout in milliseconds
-     * @param {string} errorMessage - Error message for timeout
-     * @returns {Promise} - Promise that rejects if timeout is reached
-     */
-    static _timeoutPromise(promise, timeoutMs, errorMessage) {
-        return new Promise((resolve, reject) => {
-            // Create timeout promise that rejects after specified time
-            const timeoutPromise = new Promise((_, timeoutReject) => {
-                setTimeout(() => {
-                    timeoutReject(new Error(errorMessage || `Operation timed out after ${timeoutMs}ms`));
-                }, timeoutMs);
-            });
-
-            // Race between the original promise and timeout
-            Promise.race([promise, timeoutPromise])
-                .then(resolve)
-                .catch(reject);
-        });
-    }
 }
