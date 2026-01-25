@@ -290,6 +290,11 @@ export default class Window extends UIComponent {
         else {
             this.removeAttribute("modal");
             this.removeAttribute("aria-modal");
+            // Remove modal screen when modal is toggled off
+            if (this.modalScreen && this.modalScreen.parentNode) {
+                this.modalScreen.parentNode.removeChild(this.modalScreen);
+                this.modalScreen = null;
+            }
         }
     }
 
