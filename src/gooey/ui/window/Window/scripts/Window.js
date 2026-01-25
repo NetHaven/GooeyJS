@@ -9,8 +9,7 @@ import Template from '../../../../util/Template.js';
 
 export default class Window extends UIComponent {
     constructor () {
-        var cancelButton, clone, content, template, xLocation, yLocation;
-
+        var cancelButton, xLocation, yLocation;
 
         super();
 
@@ -19,8 +18,6 @@ export default class Window extends UIComponent {
         this.buttonbar = this.shadowRoot.querySelector(".WindowButtonbar");
         this.contentArea = this.shadowRoot.querySelector(".WindowContent");
         this.titlebar = this.shadowRoot.querySelector(".WindowTitlebar");
-
-        this.contentArea.innerHTML = content;
 
         // ARIA: Set dialog role and attributes
         const dialogType = this.getAttribute('dialogtype');
@@ -51,7 +48,7 @@ export default class Window extends UIComponent {
         }
 
         xLocation = (window.innerWidth - parseInt(this.width)) / 2;
-        yLocation - (window.innerHeight - parseInt(this.height)) / 2;
+        yLocation = (window.innerHeight - parseInt(this.height)) / 2;
         if (yLocation < 0) {
             yLocation = 0;
         }
@@ -174,7 +171,7 @@ export default class Window extends UIComponent {
 
     set constrainViewport(val) {
         if (val) {
-            this.setAttribute("contrainviewport", "");
+            this.setAttribute("constrainviewport", "");
         }
         else {
             this.removeAttribute("constrainviewport");
@@ -255,8 +252,8 @@ export default class Window extends UIComponent {
         else {
             this.removeAttribute("draggable");
             if (this.titlebar) {
-                this.title.removeEventListener("mousedown", this.mousedown);
-                this.title.removeEventListener("mouseup", this.mouseup);
+                this.titlebar.removeEventListener("mousedown", this.mousedown);
+                this.titlebar.removeEventListener("mouseup", this.mouseup);
                 document.removeEventListener("mousemove", this.mousemove);
             }
         }
