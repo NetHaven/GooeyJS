@@ -76,16 +76,32 @@ export default class TreeItem extends UIComponent {
 
     /**
      * Compute the aria-level based on nesting depth
+     * Uses getRootNode().host to traverse through shadow DOM boundaries
      */
     _computeAriaLevel() {
         let level = 1;
-        let parent = this.parentElement;
-        while (parent) {
-            if (parent.tagName === 'GOOEYUI-TREEITEM') {
-                level++;
+        let current = this;
+
+        while (current) {
+            // Get the root node - either document or a shadow root
+            const root = current.getRootNode();
+
+            if (root instanceof ShadowRoot) {
+                // We're inside a shadow DOM - get the host element
+                const host = root.host;
+                if (host && host.tagName === 'GOOEYUI-TREEITEM') {
+                    level++;
+                    current = host;
+                } else {
+                    // Host is not a TreeItem, stop traversing
+                    break;
+                }
+            } else {
+                // We're in the light DOM - no more shadow boundaries to cross
+                break;
             }
-            parent = parent.parentElement;
         }
+
         this.setAttribute('aria-level', level);
     }
 
