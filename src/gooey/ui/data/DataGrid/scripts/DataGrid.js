@@ -288,6 +288,16 @@ export default class DataGrid extends UIComponent {
             this._renderHeaders();
         } else if (name === 'filterable') {
             this._renderFilterRow();
+        } else if (name === 'visible') {
+            // Visibility change requires full re-render
+            this._renderHeaders();
+            this._renderFilterRow();
+            this._renderVisibleRows();
+        } else if (name === 'minwidth') {
+            this._updateColumnMinWidth(this._columns.indexOf(column), parseInt(newValue, 10));
+        } else if (name === 'resizable') {
+            // Resizable change affects header (resize handle)
+            this._renderHeaders();
         }
     }
 
@@ -1218,6 +1228,34 @@ export default class DataGrid extends UIComponent {
             const cell = this._findCellByColumnIndex(row, columnIndex);
             if (cell) {
                 cell.style.width = `${newWidth}px`;
+            }
+        });
+    }
+
+    /**
+     * Update column minimum width
+     */
+    _updateColumnMinWidth(columnIndex, newMinWidth) {
+        const column = this._columns[columnIndex];
+        if (!column) return;
+
+        // Update header
+        const headerCell = this._findCellByColumnIndex(this._headerRow, columnIndex);
+        if (headerCell) {
+            headerCell.style.minWidth = `${newMinWidth}px`;
+        }
+
+        // Update filter cell
+        const filterCell = this._findCellByColumnIndex(this._filterRow, columnIndex);
+        if (filterCell) {
+            filterCell.style.minWidth = `${newMinWidth}px`;
+        }
+
+        // Update all visible row cells
+        this._bodyRows.querySelectorAll('.datagrid-row').forEach(row => {
+            const cell = this._findCellByColumnIndex(row, columnIndex);
+            if (cell) {
+                cell.style.minWidth = `${newMinWidth}px`;
             }
         });
     }
