@@ -54,7 +54,7 @@ export default class Menubar extends UIComponent {
                         menuText = event.currentTarget.innerHTML;
                         menuText = menuText.replace("<u>", "");
                         menuText = menuText.replace("</u>", "");
-                        menu = document.querySelector("gooeyui-menu[text=" + menuText + "]");
+                        menu = menubar._findMenuByText(menuText);
                         if (menu) {
                             // Reposition menu before making it active
                             menubar.positionMenu(menu, event.currentTarget);
@@ -66,12 +66,12 @@ export default class Menubar extends UIComponent {
                 menuHeader.addEventListener(MouseEvent.CLICK, event =>  {
                     var activeMenu, activeMenuHeader, menu, menuText;
 
-                    event.stopPropagation(); // Prevent bubbling to document                    
+                    event.stopPropagation(); // Prevent bubbling to document
                     menuText = event.currentTarget.innerHTML;
                     menuText = menuText.replace("<u>", "");
                     menuText = menuText.replace("</u>", "");
-                    menu = document.querySelector("gooeyui-menu[text=" + menuText + "]");
-                    
+                    menu = menubar._findMenuByText(menuText);
+
                     activeMenu = menubar.getActiveMenu();
                     if (activeMenu) {
                         activeMenu.active = false;
@@ -195,6 +195,18 @@ export default class Menubar extends UIComponent {
     getActiveMenu() {
         const activeMenu = document.querySelector("gooeyui-menu[active]");
         return activeMenu;
+    }
+
+    /**
+     * Find a menu element by its text attribute
+     * Uses CSS.escape to handle spaces and special characters in the selector
+     * @param {string} text - The menu text to search for
+     * @returns {Element|null} The matching menu element or null
+     */
+    _findMenuByText(text) {
+        // CSS.escape handles special characters; wrap in quotes for attribute selector
+        const escapedText = CSS.escape(text);
+        return document.querySelector(`gooeyui-menu[text="${escapedText}"]`);
     }
 
     get active() {
