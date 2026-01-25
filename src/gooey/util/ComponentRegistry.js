@@ -6,6 +6,8 @@ export default class ComponentRegistry {
     static _registry = new Map();
     static _themeCSS = new Map();
     static _componentPaths = new Map();
+    // Maps tagName -> { lowercaseName -> canonicalName }
+    static _attributeAliases = new Map();
 
     /**
      * Register a component's metadata
@@ -13,7 +15,17 @@ export default class ComponentRegistry {
      * @param {Object} meta - Validated META.goo content
      */
     static register(tagName, meta) {
-        this._registry.set(tagName.toLowerCase(), meta);
+        const normalizedTag = tagName.toLowerCase();
+        this._registry.set(normalizedTag, meta);
+
+        // Build attribute alias map (lowercase -> canonical)
+        if (meta.attributes) {
+            const aliasMap = {};
+            for (const attrName of Object.keys(meta.attributes)) {
+                aliasMap[attrName.toLowerCase()] = attrName;
+            }
+            this._attributeAliases.set(normalizedTag, aliasMap);
+        }
     }
 
     /**
@@ -37,22 +49,43 @@ export default class ComponentRegistry {
 
     /**
      * Get the list of observed attribute names for a component
+     * Returns lowercase names since HTML lowercases all attributes
      * @param {string} tagName - Custom element tag name
-     * @returns {string[]} Array of attribute names
+     * @returns {string[]} Array of lowercase attribute names
      */
     static getObservedAttributes(tagName) {
-        return Object.keys(this.getAttributes(tagName));
+        return Object.keys(this.getAttributes(tagName)).map(name => name.toLowerCase());
+    }
+
+    /**
+     * Get the canonical (META.goo) attribute name from a possibly lowercase name
+     * @param {string} tagName - Custom element tag name
+     * @param {string} name - Attribute name (may be lowercase)
+     * @returns {string} Canonical attribute name
+     */
+    static getCanonicalAttributeName(tagName, name) {
+        const aliasMap = this._attributeAliases.get(tagName.toLowerCase());
+        if (aliasMap) {
+            return aliasMap[name.toLowerCase()] || name;
+        }
+        return name;
     }
 
     /**
      * Get the definition for a specific attribute
+     * Accepts both lowercase and canonical attribute names
      * @param {string} tagName - Custom element tag name
-     * @param {string} name - Attribute name
+     * @param {string} name - Attribute name (case-insensitive)
      * @returns {Object|null} Attribute definition or null if not found
      */
     static getAttributeDefinition(tagName, name) {
         const attrs = this.getAttributes(tagName);
-        return attrs[name] || null;
+        // Try exact match first, then canonical name
+        if (attrs[name]) {
+            return attrs[name];
+        }
+        const canonical = this.getCanonicalAttributeName(tagName, name);
+        return attrs[canonical] || null;
     }
 
     /**
@@ -220,6 +253,7 @@ export default class ComponentRegistry {
         this._registry.clear();
         this._themeCSS.clear();
         this._componentPaths.clear();
+        this._attributeAliases.clear();
     }
 
     /**

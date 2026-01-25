@@ -37,8 +37,9 @@ export default class TextElement extends FormElement {
 
     attributeChangedCallback(name, oldValue, newValue) {
         super.attributeChangedCallback?.(name, oldValue, newValue);
-        
+
         if (this.textElement) {
+            // HTML lowercases attribute names, so use lowercase in switch
             switch (name) {
                 case 'placeholder':
                     if (newValue !== null) {
@@ -47,21 +48,21 @@ export default class TextElement extends FormElement {
                         this.textElement.removeAttribute('placeholder');
                     }
                     break;
-                case 'maxLength':
+                case 'maxlength':
                     if (newValue !== null) {
-                        this.textElement.setAttribute('maxLength', newValue);
+                        this.textElement.maxLength = parseInt(newValue, 10);
                     } else {
-                        this.textElement.removeAttribute('maxLength');
+                        this.textElement.removeAttribute('maxlength');
                     }
                     break;
-                case 'minLength':
+                case 'minlength':
                     if (newValue !== null) {
-                        this.textElement.setAttribute('minLength', newValue);
+                        this.textElement.minLength = parseInt(newValue, 10);
                     } else {
-                        this.textElement.removeAttribute('minLength');
+                        this.textElement.removeAttribute('minlength');
                     }
                     break;
-                case 'readOnly':
+                case 'readonly':
                     this.textElement.readOnly = newValue !== null;
                     break;
             }
@@ -69,11 +70,11 @@ export default class TextElement extends FormElement {
     }
 
     get maxLength() {
-        return parseInt(this.textElement.getAttribute("maxLength"));
+        return this.textElement.maxLength;
     }
 
     get minLength() {
-        return parseInt(this.textElement.getAttribute("minLength"));
+        return this.textElement.minLength;
     }
 
     get placeholder() {
@@ -81,20 +82,20 @@ export default class TextElement extends FormElement {
     }
 
     get readOnly() {
-        return this.hasAttribute("readOnly");
+        return this.hasAttribute("readonly");
     }
 
     set maxLength(val) {
         if (val) {
-            this.setAttribute("maxLength", val);
-            this.textElement.setAttribute("maxLength", val);
+            this.setAttribute("maxlength", val);
+            this.textElement.maxLength = parseInt(val, 10);
         }
     }
 
     set minLength(val) {
         if (val) {
-            this.setAttribute("minLength", val);
-            this.textElement.setAttribute("minLength", val);
+            this.setAttribute("minlength", val);
+            this.textElement.minLength = parseInt(val, 10);
         }
     }
 
@@ -112,10 +113,10 @@ export default class TextElement extends FormElement {
     set readOnly(val) {
         this.textElement.readOnly = !!val;
         if (val) {
-            this.setAttribute("readOnly", "");
+            this.setAttribute("readonly", "");
         }
         else {
-            this.removeAttribute("readOnly");
+            this.removeAttribute("readonly");
         }
     }
 

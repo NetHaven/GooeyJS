@@ -83,20 +83,21 @@ export default class TextField extends TextElement {
 
     _initializeAttributes() {
         // Initialize attributes that might have been set in HTML
+        // Note: HTML lowercases all attribute names
         if (this.hasAttribute('placeholder')) {
             this.textElement.setAttribute('placeholder', this.getAttribute('placeholder'));
         }
 
-        if (this.hasAttribute('maxLength')) {
-            this.textElement.setAttribute('maxLength', this.getAttribute('maxLength'));
+        if (this.hasAttribute('maxlength')) {
+            this.textElement.maxLength = parseInt(this.getAttribute('maxlength'), 10);
         }
 
-        if (this.hasAttribute('minLength')) {
-            this.textElement.setAttribute('minLength', this.getAttribute('minLength'));
+        if (this.hasAttribute('minlength')) {
+            this.textElement.minLength = parseInt(this.getAttribute('minlength'), 10);
         }
 
-        if (this.hasAttribute('readOnly')) {
-            this.textElement.setAttribute('readOnly', this.getAttribute('readOnly'));
+        if (this.hasAttribute('readonly')) {
+            this.textElement.readOnly = true;
         }
 
         if (this.hasAttribute('type')) {
