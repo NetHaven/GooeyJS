@@ -191,6 +191,7 @@ export default class DataGrid extends UIComponent {
         this._renderHeaders();
         this._renderFilterRow();
         this._updateSpacerHeight();
+        this._calculateVisibleRange();
         this._renderVisibleRows();
 
         // Update aria-rowcount
@@ -357,6 +358,7 @@ export default class DataGrid extends UIComponent {
 
         // Update display
         this._updateSpacerHeight();
+        this._calculateVisibleRange();
         this._renderVisibleRows();
 
         // Clear selection if selected rows no longer exist
@@ -851,15 +853,17 @@ export default class DataGrid extends UIComponent {
     // =========== Virtual Scrolling ===========
 
     /**
-     * Handle scroll event for virtual scrolling
+     * Calculate the visible row range based on scroll position and viewport size
+     * Updates _visibleStartIndex and _visibleEndIndex
+     * @returns {boolean} True if the range changed
      */
-    _onScroll() {
+    _calculateVisibleRange() {
         const scrollTop = this._bodyViewport.scrollTop;
         this._scrollTop = scrollTop;
 
         const viewportHeight = this._bodyViewport.clientHeight;
         const startIndex = Math.floor(scrollTop / this._rowHeight);
-        const visibleCount = Math.ceil(viewportHeight / this._rowHeight);
+        const visibleCount = Math.ceil(viewportHeight / this._rowHeight) || 10; // Default to 10 if viewport not sized
 
         // Add buffer
         const bufferedStart = Math.max(0, startIndex - this._bufferSize);
@@ -868,10 +872,21 @@ export default class DataGrid extends UIComponent {
             startIndex + visibleCount + this._bufferSize
         );
 
-        // Only re-render if range changed
+        // Check if range changed
         if (bufferedStart !== this._visibleStartIndex || bufferedEnd !== this._visibleEndIndex) {
             this._visibleStartIndex = bufferedStart;
             this._visibleEndIndex = bufferedEnd;
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Handle scroll event for virtual scrolling
+     */
+    _onScroll() {
+        // Recalculate visible range and re-render if changed
+        if (this._calculateVisibleRange()) {
             this._renderVisibleRows();
         }
     }
