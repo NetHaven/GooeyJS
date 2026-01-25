@@ -75,6 +75,6 @@ export default class Button extends UIComponent {
             this.button.appendChild(this.textElement);
         }
 		this.setAttribute("text", val);
-		this.textElement.innerHTML = val;
+		this.textElement.textContent = val;
 	}
 }

@@ -315,7 +315,7 @@ export default class Window extends UIComponent {
 
         titlebar = this.shadowRoot.querySelector(".WindowTitlebar");
         if (titlebar) {
-            titlebar.innerHTML = val;
+            titlebar.textContent = val;
         }
 
         this.setAttribute("wintitle", val);

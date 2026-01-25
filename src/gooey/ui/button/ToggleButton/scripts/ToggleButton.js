@@ -124,7 +124,7 @@ export default class ToggleButton extends UIComponent {
             this.button.appendChild(this.textElement);
         }
         this.setAttribute("text", val);
-        this.textElement.innerHTML = val;
+        this.textElement.textContent = val;
     }
     
     set pressed(val) {

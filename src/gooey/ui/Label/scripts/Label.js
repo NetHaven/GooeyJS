@@ -47,7 +47,7 @@ export default class Label extends UIComponent {
                 break;
             case 'text':
                 if (newValue && this.textElement) {
-                    this.textElement.innerHTML = newValue;
+                    this.textElement.textContent = newValue;
                 }
                 break;
             case 'icon':
@@ -120,7 +120,7 @@ export default class Label extends UIComponent {
             this.container.appendChild(this.textElement);
         }
 		this.setAttribute("text", val);
-		this.textElement.innerHTML = val;
+		this.textElement.textContent = val;
 	}
 
 	set halign(val) {
