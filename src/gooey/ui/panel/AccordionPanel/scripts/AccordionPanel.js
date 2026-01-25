@@ -180,6 +180,7 @@ export default class AccordionPanel extends Container {
 
         this._childObserver = new MutationObserver((mutations) => {
             const addedPanels = [];
+            let hasRemovals = false;
 
             mutations.forEach((mutation) => {
                 if (mutation.type === 'childList') {
@@ -189,8 +190,21 @@ export default class AccordionPanel extends Container {
                             addedPanels.push(node);
                         }
                     });
+
+                    // Check for removed accordion items
+                    mutation.removedNodes.forEach(node => {
+                        if (node.classList && node.classList.contains('accordion-item')) {
+                            hasRemovals = true;
+                        }
+                    });
                 }
             });
+
+            // Handle removals by rebuilding indices
+            if (hasRemovals) {
+                this._rebuildAccordionsFromDOM();
+                this._rebindClickHandlers();
+            }
 
             // Only process newly added panels - append to existing accordions
             if (addedPanels.length > 0) {
@@ -209,6 +223,27 @@ export default class AccordionPanel extends Container {
         this._childObserver.observe(this, {
             childList: true,
             subtree: false
+        });
+    }
+
+    /**
+     * Rebind click handlers with correct indices after removal
+     */
+    _rebindClickHandlers() {
+        this._accordions.forEach((accordion, index) => {
+            // Clone header to remove old listeners
+            const oldHeader = accordion.header;
+            const newHeader = oldHeader.cloneNode(true);
+            oldHeader.parentNode.replaceChild(newHeader, oldHeader);
+
+            // Update reference
+            accordion.header = newHeader;
+            newHeader.setAttribute('data-index', index);
+
+            // Add new click handler with correct index
+            newHeader.addEventListener(MouseEvent.CLICK, () => {
+                this._toggleAccordion(index);
+            });
         });
     }
     
