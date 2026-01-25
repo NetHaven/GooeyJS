@@ -92,7 +92,7 @@ export default class Menubar extends UIComponent {
             }
         });
         
-        document.addEventListener(MouseEvent.CLICK, event => {
+        this._boundDocumentClickHandler = event => {
             var activeMenu, activeMenuHeader;
 
             // Check if click is inside any menu header or menu
@@ -102,7 +102,7 @@ export default class Menubar extends UIComponent {
                 el.classList?.contains('menuHeader') ||
                 el.tagName?.toLowerCase() === 'gooeyui-menu'
             );
-         
+
             if (!isMenuClick) {
                 activeMenu = this.getActiveMenu();
                 activeMenuHeader = this.getActiveMenuHeader();
@@ -115,9 +115,10 @@ export default class Menubar extends UIComponent {
                     activeMenuHeader.removeAttribute("active");
                 }
             }
-        });
+        };
+        document.addEventListener(MouseEvent.CLICK, this._boundDocumentClickHandler);
 
-        document.addEventListener(KeyboardEvent.KEY_DOWN, (event) => {
+        this._boundKeyDownHandler = (event) => {
             let acceleratedItemIndex, activeMenu;
 
             activeMenuIndex = menuList.findIndex((element) => element.active);
@@ -172,7 +173,14 @@ export default class Menubar extends UIComponent {
                     menuHeaderList[activeMenuIndex].removeAttribute("active");
                 }
             }
-        });
+        };
+        document.addEventListener(KeyboardEvent.KEY_DOWN, this._boundKeyDownHandler);
+    }
+
+    disconnectedCallback() {
+        // Remove document-level listeners to prevent leaks
+        document.removeEventListener(MouseEvent.CLICK, this._boundDocumentClickHandler);
+        document.removeEventListener(KeyboardEvent.KEY_DOWN, this._boundKeyDownHandler);
     }
 
     positionMenu(menu, menuHeader) {

@@ -117,14 +117,15 @@ export default class ColorPicker extends UIComponent {
         this._nativeInput.addEventListener(TextElementEvent.INPUT, (e) => {
             this._selectColor(e.target.value);
         });
-        
+
         // Close dropdown when clicking outside
-        document.addEventListener(MouseEvent.CLICK, (e) => {
+        this._boundDocumentClickHandler = (e) => {
             if (!this.contains(e.target)) {
                 this._closeDropdown();
             }
-        });
-        
+        };
+        document.addEventListener(MouseEvent.CLICK, this._boundDocumentClickHandler);
+
         // Keyboard navigation
         this.addEventListener(KeyboardEvent.KEY_DOWN, (e) => {
             if (e.key === Key.ENTER || e.key === ' ') {
@@ -354,9 +355,14 @@ export default class ColorPicker extends UIComponent {
         return { r, g, b };
     }
 
+    disconnectedCallback() {
+        // Remove document-level listener to prevent leaks
+        document.removeEventListener(MouseEvent.CLICK, this._boundDocumentClickHandler);
+    }
+
     attributeChangedCallback(name, oldValue, newValue) {
         if (this._updatingAttribute) return;
-        
+
         switch (name) {
             case 'value':
                 this.value = newValue;

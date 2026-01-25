@@ -88,12 +88,20 @@ export default class SplitPanel extends Container {
     _setupEventListeners() {
         // Mouse events for dragging
         this._divider.addEventListener(MouseEvent.MOUSE_DOWN, this._onMouseDown.bind(this));
-        document.addEventListener(MouseEvent.MOUSE_MOVE, this._onMouseMove.bind(this));
-        document.addEventListener(MouseEvent.MOUSE_UP, this._onMouseUp.bind(this));
-        
+        this._boundMouseMoveHandler = this._onMouseMove.bind(this);
+        this._boundMouseUpHandler = this._onMouseUp.bind(this);
+        document.addEventListener(MouseEvent.MOUSE_MOVE, this._boundMouseMoveHandler);
+        document.addEventListener(MouseEvent.MOUSE_UP, this._boundMouseUpHandler);
+
         // Prevent text selection during drag
         this._divider.addEventListener('selectstart', (e) => e.preventDefault());
         this._divider.addEventListener(DragEvent.START, (e) => e.preventDefault());
+    }
+
+    disconnectedCallback() {
+        // Remove document-level listeners to prevent leaks
+        document.removeEventListener(MouseEvent.MOUSE_MOVE, this._boundMouseMoveHandler);
+        document.removeEventListener(MouseEvent.MOUSE_UP, this._boundMouseUpHandler);
     }
     
     _onMouseDown(e) {

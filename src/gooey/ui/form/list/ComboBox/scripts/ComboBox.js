@@ -109,14 +109,15 @@ export default class ComboBox extends ListBox {
             // Close dropdown when option is clicked
             this._closeDropdown();
         });
-        
+
         // Close dropdown when clicking outside
-        document.addEventListener(MouseEvent.CLICK, (e) => {
+        this._boundDocumentClickHandler = (e) => {
             if (!this.contains(e.target)) {
                 this._closeDropdown();
             }
-        });
-        
+        };
+        document.addEventListener(MouseEvent.CLICK, this._boundDocumentClickHandler);
+
         // Handle focus/blur for proper form behavior
         this._textInput.addEventListener(FormElementEvent.FOCUS, (e) => {
             this.classList.add('focused');
@@ -427,6 +428,11 @@ export default class ComboBox extends ListBox {
         if (selected) {
             this._textInput.value = text;
         }
+    }
+
+    disconnectedCallback() {
+        // Remove document-level listener to prevent leaks
+        document.removeEventListener(MouseEvent.CLICK, this._boundDocumentClickHandler);
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
