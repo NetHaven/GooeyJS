@@ -12,44 +12,36 @@ export default class CheckboxMenuItem extends MenuItem {
             this.checked = true;
         }
 
-        this.addValidEvent(MouseEvent.CLICK);
         this.addValidEvent(CheckboxMenuItemEvent.CHANGE);
-        this.addEventListener(MouseEvent.CLICK, this.click);
+        this.addEventListener(MouseEvent.CLICK, this._handleClick.bind(this));
     }
 
-    click (evt) {
+    _handleClick(eventName, data) {
         const oldChecked = this.checked;
         this.checked = !this.checked;
-        
-        // Dispatch custom click event
-        this.fireEvent(MouseEvent.CLICK, { 
-            checkboxMenuItem: this,
-            checked: this.checked,
-            action: this.action,
-            originalEvent: evt
-        });
-        
+
         // Dispatch change event if state actually changed
         if (this.checked !== oldChecked) {
-            this.fireEvent(CheckboxMenuItemEvent.CHANGE, { 
+            this.fireEvent(CheckboxMenuItemEvent.CHANGE, {
                 checkboxMenuItem: this,
                 checked: this.checked,
-                oldChecked: oldChecked
+                oldChecked: oldChecked,
+                originalEvent: data?.originalEvent
             });
         }
-        
+
         // Dispatch action event if action is set
         if (this.action) {
             // Add the action as a valid event if not already added
             if (!this.hasEvent(this.action)) {
                 this.addValidEvent(this.action);
             }
-            this.fireEvent(this.action, { 
+            this.fireEvent(this.action, {
                 checkboxMenuItem: this,
                 checked: this.checked
             });
         }
-        
+
         // Close all ancestor menus in the hierarchy
         let currentMenu = this.closest('gooeyui-menu');
         while (currentMenu) {
@@ -67,7 +59,7 @@ export default class CheckboxMenuItem extends MenuItem {
                 activeMenuHeader.removeAttribute('active');
             }
         }
-        
+
         // Close any active context menu
         const contextMenu = this.closest('gooeyui-contextmenu');
         if (contextMenu && typeof contextMenu.hide === 'function') {
