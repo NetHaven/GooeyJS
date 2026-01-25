@@ -125,7 +125,7 @@ export default class Window extends UIComponent {
     }
 
     get winTitle() {
-        return this.getAttribute("title");
+        return this.getAttribute("wintitle");
     }
 
     open(position = null) {
@@ -317,6 +317,8 @@ export default class Window extends UIComponent {
         if (titlebar) {
             titlebar.innerHTML = val;
         }
+
+        this.setAttribute("wintitle", val);
     }
 
     // Helper methods for common window components
