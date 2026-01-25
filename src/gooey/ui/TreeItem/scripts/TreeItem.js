@@ -455,6 +455,22 @@ export default class TreeItem extends UIComponent {
     }
 
     /**
+     * Get the parent TreeItem, crossing shadow DOM boundaries.
+     * Uses getRootNode().host to traverse through shadow roots.
+     * @returns {TreeItem|null} The parent TreeItem or null if at root level
+     */
+    _getParentTreeItem() {
+        const root = this.getRootNode();
+        if (root instanceof ShadowRoot) {
+            const host = root.host;
+            if (host && host.tagName === 'GOOEYUI-TREEITEM') {
+                return host;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Focus the first child tree item
      */
     _focusFirstChild() {
@@ -468,13 +484,9 @@ export default class TreeItem extends UIComponent {
      * Focus the parent tree item
      */
     _focusParent() {
-        let parent = this.parentElement;
-        while (parent) {
-            if (parent.tagName === 'GOOEYUI-TREEITEM') {
-                parent._contentElement?.focus();
-                return;
-            }
-            parent = parent.parentElement;
+        const parent = this._getParentTreeItem();
+        if (parent) {
+            parent._contentElement?.focus();
         }
     }
 
@@ -496,12 +508,8 @@ export default class TreeItem extends UIComponent {
                 nextSibling._contentElement?.focus();
                 return;
             }
-            // Move up to parent and try its sibling
-            let parent = current.parentElement;
-            while (parent && parent.tagName !== 'GOOEYUI-TREEITEM') {
-                parent = parent.parentElement;
-            }
-            current = parent;
+            // Move up to parent (crossing shadow boundary) and try its sibling
+            current = current._getParentTreeItem();
         }
     }
 
@@ -525,7 +533,7 @@ export default class TreeItem extends UIComponent {
             return;
         }
 
-        // Otherwise go to parent
+        // Otherwise go to parent (crossing shadow boundary)
         this._focusParent();
     }
 
@@ -533,14 +541,12 @@ export default class TreeItem extends UIComponent {
      * Focus the first tree item in the tree
      */
     _focusFirst() {
-        // Find the root tree container and its first item
+        // Find the root tree item by traversing up through shadow boundaries
         let root = this;
-        while (root.parentElement) {
-            if (root.parentElement.tagName === 'GOOEYUI-TREEITEM') {
-                root = root.parentElement;
-            } else {
-                break;
-            }
+        let parent = root._getParentTreeItem();
+        while (parent) {
+            root = parent;
+            parent = root._getParentTreeItem();
         }
         // Now root is at the top level, find the first sibling
         let first = root;
@@ -554,14 +560,12 @@ export default class TreeItem extends UIComponent {
      * Focus the last visible tree item in the tree
      */
     _focusLast() {
-        // Find the root tree container
+        // Find the root tree item by traversing up through shadow boundaries
         let root = this;
-        while (root.parentElement) {
-            if (root.parentElement.tagName === 'GOOEYUI-TREEITEM') {
-                root = root.parentElement;
-            } else {
-                break;
-            }
+        let parent = root._getParentTreeItem();
+        while (parent) {
+            root = parent;
+            parent = root._getParentTreeItem();
         }
         // Find the last sibling at root level
         let last = root;
