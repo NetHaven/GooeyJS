@@ -6,6 +6,7 @@ export default class Observable extends HTMLElement {
 
         this._watchers = new Map();
         this._computed = new Map();
+        this._props = new Map(); // Reactive property storage
 
         this.eventSuspension = false;
         this.eventListenerList = [];
@@ -31,24 +32,130 @@ export default class Observable extends HTMLElement {
         this.validEventList.push(eventName);
     }
 
-    // Computed properties
-    computed(name, getter) {
+    /**
+     * Define a computed property with optional dependencies
+     * @param {string} name - Property name
+     * @param {Function} getter - Function that computes the value
+     * @param {string[]} [dependencies] - Property names this computed depends on
+     */
+    computed(name, getter, dependencies = []) {
         this._computed.set(name, {
-        getter,
-        cache: null,
-        dirty: true
+            getter,
+            cache: null,
+            dirty: true,
+            dependencies
         });
 
         Object.defineProperty(this, name, {
-        get: () => {
-            const computed = this._computed.get(name);
-            if (computed.dirty) {
-            computed.cache = getter.call(this);
-            computed.dirty = false;
-            }
-            return computed.cache;
-        }
+            get: () => {
+                const computed = this._computed.get(name);
+                if (computed.dirty) {
+                    computed.cache = getter.call(this);
+                    computed.dirty = false;
+                }
+                return computed.cache;
+            },
+            configurable: true
         });
+    }
+
+    /**
+     * Set a reactive property value, triggering watchers and invalidating computed properties
+     * @param {string} name - Property name
+     * @param {*} value - New value
+     * @returns {boolean} True if value changed, false if same
+     */
+    setProp(name, value) {
+        const oldValue = this._props.get(name);
+
+        // Skip if value hasn't changed (shallow comparison)
+        if (oldValue === value) {
+            return false;
+        }
+
+        this._props.set(name, value);
+
+        // Invalidate computed properties that depend on this property
+        this._invalidateDependentComputed(name);
+
+        // Invoke watchers
+        this._invokeWatchers(name, value, oldValue);
+
+        // Fire change event if registered
+        const eventName = `change:${name}`;
+        if (this.hasEvent(eventName)) {
+            this.fireEvent(eventName, {
+                property: name,
+                value,
+                oldValue
+            });
+        }
+
+        return true;
+    }
+
+    /**
+     * Get a reactive property value
+     * @param {string} name - Property name
+     * @returns {*} The property value
+     */
+    getProp(name) {
+        return this._props.get(name);
+    }
+
+    /**
+     * Check if a reactive property exists
+     * @param {string} name - Property name
+     * @returns {boolean}
+     */
+    hasProp(name) {
+        return this._props.has(name);
+    }
+
+    /**
+     * Invalidate computed properties that depend on the given property
+     * @param {string} changedProp - The property that changed
+     */
+    _invalidateDependentComputed(changedProp) {
+        for (const [name, computed] of this._computed) {
+            if (computed.dependencies.includes(changedProp)) {
+                computed.dirty = true;
+            }
+        }
+    }
+
+    /**
+     * Invalidate specific computed properties by name
+     * @param {...string} names - Names of computed properties to invalidate
+     */
+    invalidateComputed(...names) {
+        for (const name of names) {
+            const computed = this._computed.get(name);
+            if (computed) {
+                computed.dirty = true;
+            }
+        }
+    }
+
+    /**
+     * Invoke watchers for a property change
+     * @param {string} property - Property name
+     * @param {*} newValue - New value
+     * @param {*} oldValue - Previous value
+     */
+    _invokeWatchers(property, newValue, oldValue) {
+        if (!this._watchers.has(property)) {
+            return;
+        }
+
+        const watchers = this._watchers.get(property);
+        for (const watcher of watchers) {
+            try {
+                watcher.callback.call(this, newValue, oldValue, property);
+            } catch (error) {
+                console.error(`Watcher error for property '${property}':`, error);
+            }
+        }
     }
 
     fireEvent(eventName, configObj) {
