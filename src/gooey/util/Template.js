@@ -1,11 +1,14 @@
-export default class Template {    
-    static activate(id, element = document.body) {
-        let clone, template;
-
-        template = document.getElementById(id, element);
+export default class Template {
+    /**
+     * Activates a template by cloning its content into a target element
+     * @param {string} id - The template element's ID
+     * @param {Element} [target=document.body] - The element to append the cloned content to
+     */
+    static activate(id, target = document.body) {
+        const template = document.getElementById(id);
         if (template) {
-            clone = document.importNode(template.content, true);
-            element.appendChild(clone);
+            const clone = document.importNode(template.content, true);
+            target.appendChild(clone);
         }
     }
 
