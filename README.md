@@ -111,4 +111,4 @@ Download GooeyJS.v2.0.0.zip and unzip to your codebase. To include GooeyJS, just
     <script type="module" src="GooeyJS/GooeyJS.js"></script>
 
 
-**Copyright 2025 NetHaven Inc.**
+**Copyright 2026 NetHaven Inc.**
