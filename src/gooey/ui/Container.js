@@ -170,6 +170,8 @@ export default class Container extends UIComponent {
             if (layoutElement.wrap) {
                 this.style.flexWrap = layoutElement.wrap;
             }
+
+            this.setAttribute("layout", val);
         }
 
 /*        let columns, rows;
