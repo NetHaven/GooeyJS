@@ -144,8 +144,11 @@ export default class ToggleButton extends UIComponent {
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
+        // Call parent for META.goo validation/parsing
+        super.attributeChangedCallback(name, oldValue, newValue);
+
         if (this._updatingAttribute) return;
-        
+
         switch (name) {
             case 'disabled':
                 this.disabled = newValue !== null;

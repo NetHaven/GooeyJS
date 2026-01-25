@@ -60,6 +60,9 @@ export default class RadioButtonGroup extends UIComponent {
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
+        // Call parent for META.goo validation/parsing
+        super.attributeChangedCallback(name, oldValue, newValue);
+
         if (name === 'label') {
             // Update aria-label if label attribute changes
             if (newValue) {

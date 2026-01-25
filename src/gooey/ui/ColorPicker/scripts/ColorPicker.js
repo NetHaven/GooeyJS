@@ -361,6 +361,9 @@ export default class ColorPicker extends UIComponent {
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
+        // Call parent for META.goo validation/parsing
+        super.attributeChangedCallback(name, oldValue, newValue);
+
         if (this._updatingAttribute) return;
 
         switch (name) {
