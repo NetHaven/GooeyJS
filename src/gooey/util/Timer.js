@@ -1,7 +1,7 @@
-import Observable from '../events/Observable.js';
+import ObservableBase from '../events/ObservableBase.js';
 import TimerEvent from '../events/TimerEvent.js';
 
-export default class Timer extends Observable {
+export default class Timer extends ObservableBase {
     constructor (timerDelay, timerRepeatCount) {
         super();
 

@@ -1,16 +1,13 @@
-import ObservableBase from './ObservableBase.js';
-
 /**
- * Observable - Base class for custom elements with event support
- * Extends HTMLElement for use with custom element registration.
- * For non-DOM classes (Model, Timer, etc.), use ObservableBase instead.
+ * ObservableBase - Base class for non-DOM observable objects
+ * Provides the event system without requiring HTMLElement/custom element registration.
+ * Use this for classes like Model, Timer, and other non-visual components.
+ * For custom elements, use Observable (which extends HTMLElement).
  */
-export default class Observable extends HTMLElement {
-    static INVALID_EVENT_EXCEPTION = ObservableBase.INVALID_EVENT_EXCEPTION;
+export default class ObservableBase {
+    static INVALID_EVENT_EXCEPTION = "InvalidEventError";
 
     constructor() {
-        super();
-
         this._watchers = new Map();
         this._computed = new Map();
         this._props = new Map(); // Reactive property storage
@@ -25,10 +22,10 @@ export default class Observable extends HTMLElement {
 
         if (!(this.hasEvent(eventName))) {
             err = new Error(`Invalid event '${eventName}'`);
-            err.name = Observable.INVALID_EVENT_EXCEPTION;
+            err.name = ObservableBase.INVALID_EVENT_EXCEPTION;
             throw err;
         }
-        
+
         if (!this.eventListenerList[eventName]) {
             this.eventListenerList[eventName] = [];
         }
@@ -178,7 +175,7 @@ export default class Observable extends HTMLElement {
 
         if (!(this.hasEvent(eventName))) {
             err = new Error(`Invalid event '${eventName}'`);
-            err.name = Observable.INVALID_EVENT_EXCEPTION;
+            err.name = ObservableBase.INVALID_EVENT_EXCEPTION;
             throw err;
         }
 
@@ -243,9 +240,9 @@ export default class Observable extends HTMLElement {
         this.validEventList.forEach(function(validEvent) {
             if (validEvent === eventName) {
                 found = true;
-            }		
+            }
         });
-        
+
         return (found);
     }
 
@@ -264,19 +261,19 @@ export default class Observable extends HTMLElement {
 
         if (!(this.hasEvent(eventName))) {
             err = new Error("Invalid event '" + eventName + "'");
-            err.name = Observable.INVALID_EVENT_EXCEPTION;
+            err.name = ObservableBase.INVALID_EVENT_EXCEPTION;
             throw err;
         }
 
         if (!this.eventListenerList[eventName]) {
             return;
         }
-            
+
         this.eventListenerList[eventName].forEach((eventListener, index) => {
             if (eventListener === listener) {
                 this.eventListenerList[eventName].splice(index, 1);
-            }		
-        });		
+            }
+        });
     }
 
     resumeEvents() {

@@ -1,8 +1,8 @@
 import EntityState from "./EntityState.js";
 import ModelEvent from "../events/mvc/ModelEvent.js";
-import Observable from "../events/Observable.js";
+import ObservableBase from "../events/ObservableBase.js";
 
-export default class Model extends Observable {
+export default class Model extends ObservableBase {
   // Subclasses must define their own adapter for save() operations
   static get adapter() {
     throw new Error('Adapter must be defined in subclass or passed to save()');
