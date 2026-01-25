@@ -5,6 +5,7 @@ import Model from '../mvc/Model.js';
 import ModelEvent from '../events/mvc/ModelEvent.js';
 import MouseCursor from '../io/MouseCursor.js';
 import MouseEvent from '../events/MouseEvent.js';
+import KeyboardEvent from '../events/KeyboardEvent.js';
 import DragEvent from '../events/DragEvent.js';
 import MetaLoader from '../util/MetaLoader.js';
 import ComponentRegistry from '../util/ComponentRegistry.js';
@@ -69,6 +70,55 @@ export default class UIComponent extends GooeyElement {
 
         HTMLElement.prototype.addEventListener.call(this, MouseEvent.MOUSE_OVER, ()=> {
             this.fireEvent(MouseEvent.MOUSE_OVER);
+        });
+
+        // Add valid keyboard events
+        this.addValidEvent(KeyboardEvent.KEY_DOWN);
+        this.addValidEvent(KeyboardEvent.KEY_UP);
+        this.addValidEvent(KeyboardEvent.KEY_PRESS);
+
+        /* Translate Native Keyboard Events */
+        HTMLElement.prototype.addEventListener.call(this, KeyboardEvent.KEY_DOWN, (ev) => {
+            this.fireEvent(KeyboardEvent.KEY_DOWN, {
+                key: ev.key,
+                code: ev.code,
+                altKey: ev.altKey,
+                ctrlKey: ev.ctrlKey,
+                shiftKey: ev.shiftKey,
+                metaKey: ev.metaKey,
+                repeat: ev.repeat,
+                preventDefault: () => ev.preventDefault(),
+                stopPropagation: () => ev.stopPropagation(),
+                nativeEvent: ev
+            });
+        });
+
+        HTMLElement.prototype.addEventListener.call(this, KeyboardEvent.KEY_UP, (ev) => {
+            this.fireEvent(KeyboardEvent.KEY_UP, {
+                key: ev.key,
+                code: ev.code,
+                altKey: ev.altKey,
+                ctrlKey: ev.ctrlKey,
+                shiftKey: ev.shiftKey,
+                metaKey: ev.metaKey,
+                preventDefault: () => ev.preventDefault(),
+                stopPropagation: () => ev.stopPropagation(),
+                nativeEvent: ev
+            });
+        });
+
+        HTMLElement.prototype.addEventListener.call(this, KeyboardEvent.KEY_PRESS, (ev) => {
+            this.fireEvent(KeyboardEvent.KEY_PRESS, {
+                key: ev.key,
+                code: ev.code,
+                altKey: ev.altKey,
+                ctrlKey: ev.ctrlKey,
+                shiftKey: ev.shiftKey,
+                metaKey: ev.metaKey,
+                preventDefault: () => ev.preventDefault(),
+                stopPropagation: () => ev.stopPropagation(),
+                nativeEvent: ev
+            });
         });
 
         // Add valid drag and drop events

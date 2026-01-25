@@ -95,7 +95,7 @@ export default class MenuItem extends UIComponent {
         });
 
         // ARIA: Keyboard navigation for menu items
-        this.addEventListener(KeyboardEvent.KEY_DOWN, (event) => {
+        this.addEventListener(KeyboardEvent.KEY_DOWN, (eventName, event) => {
             this._handleKeyDown(event);
         });
     }

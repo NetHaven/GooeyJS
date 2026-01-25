@@ -127,7 +127,7 @@ export default class ColorPicker extends UIComponent {
         document.addEventListener(MouseEvent.CLICK, this._boundDocumentClickHandler);
 
         // Keyboard navigation
-        this.addEventListener(KeyboardEvent.KEY_DOWN, (e) => {
+        this.addEventListener(KeyboardEvent.KEY_DOWN, (eventName, e) => {
             if (e.key === Key.ENTER || e.key === ' ') {
                 e.preventDefault();
                 this._toggleDropdown();

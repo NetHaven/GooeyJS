@@ -135,7 +135,7 @@ export default class DataGrid extends UIComponent {
         this._bodyViewport.addEventListener('scroll', this._onScroll.bind(this));
 
         // Keyboard navigation
-        this.addEventListener('keydown', this._onKeyDown.bind(this));
+        this.addEventListener(KeyboardEvent.KEY_DOWN, (eventName, e) => this._onKeyDown(e));
 
         // Make focusable for keyboard events
         this.setAttribute('tabindex', '0');
