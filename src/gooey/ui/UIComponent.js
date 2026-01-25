@@ -89,46 +89,52 @@ export default class UIComponent extends GooeyElement {
 
         /* Translate Native Keyboard Events */
         HTMLElement.prototype.addEventListener.call(this, KeyboardEvent.KEY_DOWN, (ev) => {
-            this.fireEvent(KeyboardEvent.KEY_DOWN, {
-                key: ev.key,
-                code: ev.code,
-                altKey: ev.altKey,
-                ctrlKey: ev.ctrlKey,
-                shiftKey: ev.shiftKey,
-                metaKey: ev.metaKey,
-                repeat: ev.repeat,
-                preventDefault: () => ev.preventDefault(),
-                stopPropagation: () => ev.stopPropagation(),
-                nativeEvent: ev
-            });
+            if (!this.disabled) {
+                this.fireEvent(KeyboardEvent.KEY_DOWN, {
+                    key: ev.key,
+                    code: ev.code,
+                    altKey: ev.altKey,
+                    ctrlKey: ev.ctrlKey,
+                    shiftKey: ev.shiftKey,
+                    metaKey: ev.metaKey,
+                    repeat: ev.repeat,
+                    preventDefault: () => ev.preventDefault(),
+                    stopPropagation: () => ev.stopPropagation(),
+                    nativeEvent: ev
+                });
+            }
         });
 
         HTMLElement.prototype.addEventListener.call(this, KeyboardEvent.KEY_UP, (ev) => {
-            this.fireEvent(KeyboardEvent.KEY_UP, {
-                key: ev.key,
-                code: ev.code,
-                altKey: ev.altKey,
-                ctrlKey: ev.ctrlKey,
-                shiftKey: ev.shiftKey,
-                metaKey: ev.metaKey,
-                preventDefault: () => ev.preventDefault(),
-                stopPropagation: () => ev.stopPropagation(),
-                nativeEvent: ev
-            });
+            if (!this.disabled) {
+                this.fireEvent(KeyboardEvent.KEY_UP, {
+                    key: ev.key,
+                    code: ev.code,
+                    altKey: ev.altKey,
+                    ctrlKey: ev.ctrlKey,
+                    shiftKey: ev.shiftKey,
+                    metaKey: ev.metaKey,
+                    preventDefault: () => ev.preventDefault(),
+                    stopPropagation: () => ev.stopPropagation(),
+                    nativeEvent: ev
+                });
+            }
         });
 
         HTMLElement.prototype.addEventListener.call(this, KeyboardEvent.KEY_PRESS, (ev) => {
-            this.fireEvent(KeyboardEvent.KEY_PRESS, {
-                key: ev.key,
-                code: ev.code,
-                altKey: ev.altKey,
-                ctrlKey: ev.ctrlKey,
-                shiftKey: ev.shiftKey,
-                metaKey: ev.metaKey,
-                preventDefault: () => ev.preventDefault(),
-                stopPropagation: () => ev.stopPropagation(),
-                nativeEvent: ev
-            });
+            if (!this.disabled) {
+                this.fireEvent(KeyboardEvent.KEY_PRESS, {
+                    key: ev.key,
+                    code: ev.code,
+                    altKey: ev.altKey,
+                    ctrlKey: ev.ctrlKey,
+                    shiftKey: ev.shiftKey,
+                    metaKey: ev.metaKey,
+                    preventDefault: () => ev.preventDefault(),
+                    stopPropagation: () => ev.stopPropagation(),
+                    nativeEvent: ev
+                });
+            }
         });
 
         // Add valid drag and drop events
