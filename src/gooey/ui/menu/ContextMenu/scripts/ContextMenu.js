@@ -104,10 +104,13 @@ export default class ContextMenu extends UIComponent {
         
         // Listen for menu item selections to close the menu
         if (!this._menuItemHandler) {
-            this._menuItemHandler = (event) => {
-                const menuItem = event.target.closest('gooeyui-menuitem, gooeyui-checkboxmenuitem');
-                if (menuItem && !menuItem.disabled) {
-                    this.hide();
+            this._menuItemHandler = (eventName, data) => {
+                const target = data?.originalEvent?.target;
+                if (target) {
+                    const menuItem = target.closest('gooeyui-menuitem, gooeyui-checkboxmenuitem');
+                    if (menuItem && !menuItem.disabled) {
+                        this.hide();
+                    }
                 }
             };
             this.addEventListener(MouseEvent.CLICK, this._menuItemHandler);
