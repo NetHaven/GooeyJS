@@ -198,12 +198,16 @@ export default class Store extends GooeyElement {
     _collectDataFromChildren() {
         const dataElements = this.querySelectorAll('gooeydata-data');
         this._data = Array.from(dataElements).map(el => {
+            let record;
             // Use the element's toRecord method if available
             if (typeof el.toRecord === 'function') {
-                return el.toRecord();
+                record = el.toRecord();
+            } else {
+                // Fallback: manually extract dataset
+                record = this._datasetToRecord(el.dataset);
             }
-            // Fallback: manually extract dataset
-            return this._datasetToRecord(el.dataset);
+            // Apply Model schema (coerce types and apply defaults)
+            return this._applyModelSchema(record, true);
         });
     }
 
@@ -221,7 +225,7 @@ export default class Store extends GooeyElement {
     }
 
     /**
-     * Coerce string value to appropriate type
+     * Coerce string value to appropriate type (generic, no Model awareness)
      * @param {string} value - The string value to coerce
      * @returns {*} - Coerced value (number, boolean, null, or string)
      */
@@ -247,6 +251,63 @@ export default class Store extends GooeyElement {
 
         // Return as string
         return value;
+    }
+
+    /**
+     * Coerce a value using the Model's field type definition
+     * @param {*} value - The value to coerce
+     * @param {string} fieldName - The field name to look up in the Model
+     * @returns {*} - Coerced value based on Model field type, or generic coercion if no Model
+     */
+    _coerceValueWithModel(value, fieldName) {
+        const model = this.getModelElement();
+        if (!model || typeof model.getField !== 'function') {
+            // No model bound, use generic coercion
+            return this._coerceValue(value);
+        }
+
+        const fieldDef = model.getField(fieldName);
+        if (!fieldDef) {
+            // Field not defined in model, use generic coercion
+            return this._coerceValue(value);
+        }
+
+        // Use Model's type coercion
+        if (typeof model._coerceToType === 'function') {
+            return model._coerceToType(value, fieldDef.type);
+        }
+
+        // Fallback to generic coercion
+        return this._coerceValue(value);
+    }
+
+    /**
+     * Apply Model schema to a record: coerce field types and apply defaults
+     * @param {Object} record - The record to process
+     * @param {boolean} [applyDefaults=true] - Whether to apply default values for missing fields
+     * @returns {Object} - Record with schema applied
+     */
+    _applyModelSchema(record, applyDefaults = true) {
+        const model = this.getModelElement();
+        if (!model) {
+            // No model bound, return record as-is
+            return record;
+        }
+
+        const result = {};
+
+        // First, apply defaults for all model fields if requested
+        if (applyDefaults && typeof model.getDefaultRecord === 'function') {
+            const defaults = model.getDefaultRecord();
+            Object.assign(result, defaults);
+        }
+
+        // Then overlay the provided record values with proper type coercion
+        for (const key in record) {
+            result[key] = this._coerceValueWithModel(record[key], key);
+        }
+
+        return result;
     }
 
     /**
@@ -286,9 +347,9 @@ export default class Store extends GooeyElement {
      * @param {Array} data - Array of data records
      */
     setData(data) {
-        // Clone all records to prevent external mutation
+        // Apply Model schema and clone all records to prevent external mutation
         this._data = Array.isArray(data)
-            ? data.map(record => this._cloneRecord(record))
+            ? data.map(record => this._cloneRecord(this._applyModelSchema(record, true)))
             : [];
         this._notifyDataChanged();
     }
@@ -300,20 +361,20 @@ export default class Store extends GooeyElement {
      * @returns {number} - The index where the record was added
      */
     addRecord(record, index) {
-        // Clone the record to prevent external mutation
-        const clonedRecord = this._cloneRecord(record);
+        // Apply Model schema (with defaults) and clone to prevent external mutation
+        const processedRecord = this._cloneRecord(this._applyModelSchema(record, true));
         let insertIndex;
 
         if (typeof index === 'number' && index >= 0 && index <= this._data.length) {
-            this._data.splice(index, 0, clonedRecord);
+            this._data.splice(index, 0, processedRecord);
             insertIndex = index;
         } else {
-            this._data.push(clonedRecord);
+            this._data.push(processedRecord);
             insertIndex = this._data.length - 1;
         }
 
         this.fireEvent(DataStoreEvent.RECORD_ADDED, {
-            record: this._cloneRecord(clonedRecord),
+            record: this._cloneRecord(processedRecord),
             index: insertIndex,
             data: this.getData(),
             count: this._data.length
@@ -369,12 +430,14 @@ export default class Store extends GooeyElement {
         }
 
         const oldRecord = this._cloneRecord(this._data[index]);
-        this._data[index] = { ...this._data[index], ...this._cloneRecord(updates) };
+        // Apply Model schema to updates (no defaults - just type coercion)
+        const coercedUpdates = this._applyModelSchema(updates, false);
+        this._data[index] = { ...this._data[index], ...this._cloneRecord(coercedUpdates) };
 
         this.fireEvent(DataStoreEvent.RECORD_UPDATED, {
             record: this._cloneRecord(this._data[index]),
             oldRecord: oldRecord,
-            updates: this._cloneRecord(updates),
+            updates: this._cloneRecord(coercedUpdates),
             index: index,
             data: this.getData(),
             count: this._data.length
