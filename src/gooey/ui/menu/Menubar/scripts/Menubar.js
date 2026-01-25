@@ -25,12 +25,27 @@ export default class Menubar extends UIComponent {
                 menuHeader = clone.querySelector("div");
                 menuText = menu.getAttribute("text");
                 accelerator = menu.getAttribute("accelerator");
-                if (accelerator) {
-                    if (menuText.indexOf(accelerator) !== -1) {
-                        menuText = menuText.replace(accelerator, "<u>" + accelerator + "</u>");
+
+                // Build header content safely without innerHTML
+                menuHeader.textContent = '';
+                if (accelerator && menuText.indexOf(accelerator) !== -1) {
+                    const accelIndex = menuText.indexOf(accelerator);
+                    const beforeText = menuText.substring(0, accelIndex);
+                    const afterText = menuText.substring(accelIndex + accelerator.length);
+
+                    if (beforeText) {
+                        menuHeader.appendChild(document.createTextNode(beforeText));
                     }
+                    const underline = document.createElement('u');
+                    underline.textContent = accelerator;
+                    menuHeader.appendChild(underline);
+                    if (afterText) {
+                        menuHeader.appendChild(document.createTextNode(afterText));
+                    }
+                } else {
+                    menuHeader.textContent = menuText;
                 }
-                menuHeader.innerHTML = menuText;
+
                 menubar.shadowRoot.appendChild(clone);
                 menuHeaderList.push(menuHeader);
 

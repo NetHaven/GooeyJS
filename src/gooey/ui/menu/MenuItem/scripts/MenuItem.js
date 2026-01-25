@@ -247,12 +247,12 @@ export default class MenuItem extends UIComponent {
 
     set shortcut(val) {
         this.setAttribute("shortcut", val);
-        this.shortcutElement.innerHTML = "Ctrl+" + val.toUpperCase();
+        this.shortcutElement.textContent = "Ctrl+" + val.toUpperCase();
     }
 
     set text(val) {
         this.setAttribute("text", val);
-        this.textElement.innerHTML = val;
+        this.textElement.textContent = val;
     }
 
     set icon(val) {

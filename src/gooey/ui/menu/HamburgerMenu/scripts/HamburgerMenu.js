@@ -219,15 +219,21 @@ export default class HamburgerMenu extends UIComponent {
     set icon(val) {
         if (val) {
             this.setAttribute("icon", val);
-            this.iconElement.innerHTML = `<img src="${val}" alt="" />`;
+            // Build img element safely without innerHTML
+            this.iconElement.textContent = '';
+            const img = document.createElement('img');
+            img.src = val;
+            img.alt = '';
+            this.iconElement.appendChild(img);
         } else {
             this.removeAttribute("icon");
-            // Restore default hamburger bars
-            this.iconElement.innerHTML = `
-                <span class="bar"></span>
-                <span class="bar"></span>
-                <span class="bar"></span>
-            `;
+            // Restore default hamburger bars safely without innerHTML
+            this.iconElement.textContent = '';
+            for (let i = 0; i < 3; i++) {
+                const bar = document.createElement('span');
+                bar.className = 'bar';
+                this.iconElement.appendChild(bar);
+            }
         }
     }
 

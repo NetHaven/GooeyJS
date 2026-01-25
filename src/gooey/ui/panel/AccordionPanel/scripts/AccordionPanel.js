@@ -71,10 +71,18 @@ export default class AccordionPanel extends Container {
         const header = document.createElement('div');
         header.className = 'accordion-header';
         header.setAttribute('data-index', index);
-        header.innerHTML = `
-            <span class="accordion-arrow">▶</span>
-            <span class="accordion-title">${title}</span>
-        `;
+
+        // Build header content safely without innerHTML
+        const arrow = document.createElement('span');
+        arrow.className = 'accordion-arrow';
+        arrow.textContent = '▶';
+
+        const titleSpan = document.createElement('span');
+        titleSpan.className = 'accordion-title';
+        titleSpan.textContent = title;
+
+        header.appendChild(arrow);
+        header.appendChild(titleSpan);
         
         // Create accordion content wrapper
         const content = document.createElement('div');
