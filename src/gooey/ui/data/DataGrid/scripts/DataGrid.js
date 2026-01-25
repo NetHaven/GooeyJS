@@ -215,6 +215,7 @@ export default class DataGrid extends UIComponent {
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
+        super.attributeChangedCallback?.(name, oldValue, newValue);
         switch (name) {
             case 'selectionmode':
                 this._onSelectionModeChanged();

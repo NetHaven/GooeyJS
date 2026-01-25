@@ -40,6 +40,7 @@ export default class GroupBox extends Panel {
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
+        super.attributeChangedCallback?.(name, oldValue, newValue);
         if (name === 'text') {
             this.text = newValue;
         }

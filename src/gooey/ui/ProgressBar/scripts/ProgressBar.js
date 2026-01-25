@@ -35,6 +35,7 @@ export default class ProgressBar extends UIComponent {
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
+        super.attributeChangedCallback?.(name, oldValue, newValue);
         switch (name) {
             case 'value':
                 this._value = parseFloat(newValue) || 0;

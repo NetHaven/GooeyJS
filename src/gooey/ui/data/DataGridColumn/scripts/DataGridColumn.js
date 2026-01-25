@@ -57,6 +57,7 @@ export default class DataGridColumn extends UIComponent {
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
+        super.attributeChangedCallback?.(name, oldValue, newValue);
         // Notify parent DataGrid of attribute changes
         if (this._dataGrid && this._dataGrid._onColumnAttributeChanged) {
             this._dataGrid._onColumnAttributeChanged(this, name, oldValue, newValue);

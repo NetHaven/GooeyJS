@@ -104,6 +104,7 @@ export default class DropDownList extends FormElement {
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
+        super.attributeChangedCallback?.(name, oldValue, newValue);
         if (name === 'disabled') {
             this.disabled = newValue === "true";
         }
