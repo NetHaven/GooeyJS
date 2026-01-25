@@ -55,10 +55,11 @@ export default class Tree extends UIComponent {
         }
 
         // Listen for children added to TreeItems (which go into their shadow DOM)
+        // Use HTMLElement.prototype to bypass Observable's event validation
         this._boundChildAddedHandler = () => {
             this._attachTreeItemListeners();
         };
-        this.addEventListener('treeitem-child-added', this._boundChildAddedHandler);
+        HTMLElement.prototype.addEventListener.call(this, 'treeitem-child-added', this._boundChildAddedHandler);
     }
 
     disconnectedCallback() {
@@ -76,7 +77,7 @@ export default class Tree extends UIComponent {
 
         // Remove child-added listener
         if (this._boundChildAddedHandler) {
-            this.removeEventListener('treeitem-child-added', this._boundChildAddedHandler);
+            HTMLElement.prototype.removeEventListener.call(this, 'treeitem-child-added', this._boundChildAddedHandler);
         }
 
         // Remove listeners from all tree items
