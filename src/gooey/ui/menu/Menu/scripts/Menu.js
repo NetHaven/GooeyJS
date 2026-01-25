@@ -58,7 +58,7 @@ export default class Menu extends UIComponent {
             });
 
             if (shortcutItem) {
-                if (!shortcutItem.disabled) {
+                if (!shortcutItem.disabled && shortcutItem.action) {
                     document.dispatchEvent(new Event(shortcutItem.action));
                 }
             }
@@ -104,7 +104,7 @@ export default class Menu extends UIComponent {
                         return false;
                     });
 
-                    if (acceleratedItem && !acceleratedItem.disabled) {
+                    if (acceleratedItem && !acceleratedItem.disabled && acceleratedItem.action) {
                         this.active = false;
                         document.dispatchEvent(new Event(acceleratedItem.action));
                     }
