@@ -9,6 +9,25 @@ export default class GooeyJS {
     static VERSION = "1.9";
     static _initialized = false;
     static _instance = null;
+    static _readyPromise = null;
+    static _readyResolve = null;
+
+    /**
+     * Promise that resolves when all components are registered and ready.
+     * @type {Promise<GooeyJS>}
+     * @example
+     * await GooeyJS.ready;
+     * // or
+     * GooeyJS.ready.then(() => { ... });
+     */
+    static get ready() {
+        if (!GooeyJS._readyPromise) {
+            GooeyJS._readyPromise = new Promise(resolve => {
+                GooeyJS._readyResolve = resolve;
+            });
+        }
+        return GooeyJS._readyPromise;
+    }
 
     /**
      * Initialize GooeyJS. Safe to call multiple times; only the first call takes effect.
@@ -70,7 +89,23 @@ export default class GooeyJS {
             ]
         }]
 
-        this.createElements();
+        // Ensure the ready promise exists before starting async initialization
+        GooeyJS.ready;
+
+        // Start async component registration and track completion
+        this.createElements().then(() => {
+            // Resolve the ready promise
+            if (GooeyJS._readyResolve) {
+                GooeyJS._readyResolve(this);
+                GooeyJS._readyResolve = null;
+            }
+            // Dispatch ready event for event-based consumers
+            document.dispatchEvent(new CustomEvent('gooeyjs-ready', {
+                detail: { instance: this }
+            }));
+        }).catch(error => {
+            console.error('GooeyJS initialization failed:', error);
+        });
 
         linkEl = document.createElement('link');
         linkEl.setAttribute("rel", "stylesheet");
