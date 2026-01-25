@@ -45,8 +45,9 @@ export default class MenuItem extends UIComponent {
             }
         });
 
-        this.addEventListener(MouseEvent.CLICK, (evt) => {
+        this.addEventListener(MouseEvent.CLICK, (eventName, data) => {
             let subMenu;
+            const originalEvent = data?.originalEvent;
 
             subMenu = this.querySelector("gooeyui-menu");
             if ((!this.disabled) && (!subMenu)) {
@@ -57,7 +58,7 @@ export default class MenuItem extends UIComponent {
                     menuItem: this,
                     text: this.text,
                     action: this.action,
-                    originalEvent: evt
+                    originalEvent: originalEvent
                 });
 
                 // Close all ancestor menus in the hierarchy
@@ -83,14 +84,12 @@ export default class MenuItem extends UIComponent {
                 if (contextMenu && typeof contextMenu.hide === 'function') {
                     contextMenu.hide();
                 }
-                
+
                 // Keep document dispatch for global menu actions
                 document.dispatchEvent(new Event(this.action));
             }
             else {
-                if (evt && typeof evt.stopPropagation === 'function') {
-                    evt.stopPropagation();
-                }
+                originalEvent?.stopPropagation();
             }
         });
 
