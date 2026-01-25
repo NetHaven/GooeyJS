@@ -53,23 +53,33 @@ export default class UIComponent extends GooeyElement {
 
         /* Translate Native Mouse Events */
         HTMLElement.prototype.addEventListener.call(this, MouseEvent.CLICK, ()=> {
-            this.fireEvent(MouseEvent.CLICK);
+            if (!this.disabled) {
+                this.fireEvent(MouseEvent.CLICK);
+            }
         });
 
         HTMLElement.prototype.addEventListener.call(this, MouseEvent.MOUSE_DOWN, ()=> {
-            this.fireEvent(MouseEvent.MOUSE_DOWN);
+            if (!this.disabled) {
+                this.fireEvent(MouseEvent.MOUSE_DOWN);
+            }
         });
 
         HTMLElement.prototype.addEventListener.call(this, MouseEvent.MOUSE_UP, ()=> {
-            this.fireEvent(MouseEvent.MOUSE_UP);
+            if (!this.disabled) {
+                this.fireEvent(MouseEvent.MOUSE_UP);
+            }
         });
 
         HTMLElement.prototype.addEventListener.call(this, MouseEvent.MOUSE_OUT, ()=> {
-            this.fireEvent(MouseEvent.MOUSE_OUT);
+            if (!this.disabled) {
+                this.fireEvent(MouseEvent.MOUSE_OUT);
+            }
         });
 
         HTMLElement.prototype.addEventListener.call(this, MouseEvent.MOUSE_OVER, ()=> {
-            this.fireEvent(MouseEvent.MOUSE_OVER);
+            if (!this.disabled) {
+                this.fireEvent(MouseEvent.MOUSE_OVER);
+            }
         });
 
         // Add valid keyboard events

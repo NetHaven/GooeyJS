@@ -22,20 +22,6 @@ export default class Button extends UIComponent {
             this.action = this.getAttribute("action");
         }
 
-		this.addValidEvent(MouseEvent.CLICK);
-		this.addValidEvent(MouseEvent.MOUSE_DOWN);
-
-		this.button.addEventListener(MouseEvent.CLICK, () => {
-			if (!this.disabled) {
-				this.fireEvent(MouseEvent.CLICK);
-			}
-		});
-
-		this.button.addEventListener(MouseEvent.MOUSE_DOWN, () => {
-			if (!this.disabled) {
-				this.fireEvent(MouseEvent.MOUSE_DOWN);
-			}
-		});
 	}
 	
 	get action() {

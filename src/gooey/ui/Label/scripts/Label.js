@@ -31,13 +31,6 @@ export default class Label extends UIComponent {
             this.valign = this.getAttribute("valign");
         }
 
-		this.addValidEvent(MouseEvent.CLICK);
-
-		this.container.addEventListener(MouseEvent.CLICK, () => {
-			if (!this.disabled) {
-				this.fireEvent(MouseEvent.CLICK);
-			}
-		});
 	}
 
     attributeChangedCallback(name, oldValue, newValue) {
