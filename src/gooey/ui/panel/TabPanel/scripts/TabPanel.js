@@ -232,7 +232,7 @@ export default class TabPanel extends Container {
         // Add content if provided
         if (content) {
             if (typeof content === 'string') {
-                tab.innerHTML = content;
+                tab.textContent = content;
             } else if (content instanceof HTMLElement) {
                 tab.appendChild(content);
             }
