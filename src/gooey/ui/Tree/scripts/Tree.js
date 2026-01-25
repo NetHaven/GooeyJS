@@ -160,7 +160,16 @@ export default class Tree extends UIComponent {
     _detachTreeItemAndDescendants(treeItem) {
         // Collect all descendants including the item itself
         const items = [treeItem];
-        this._collectTreeItems(treeItem, items);
+
+        // _collectTreeItems expects to find gooeyui-treeitem as direct children,
+        // but a treeItem's children are in its shadow DOM. Start from the
+        // children container inside the treeItem's shadow root.
+        if (treeItem.shadowRoot) {
+            const childrenContainer = treeItem.shadowRoot.querySelector('.ui-TreeItem-children');
+            if (childrenContainer) {
+                this._collectTreeItems(childrenContainer, items);
+            }
+        }
 
         items.forEach(item => {
             if (this._attachedTreeItems.has(item)) {
