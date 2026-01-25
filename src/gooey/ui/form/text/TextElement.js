@@ -3,6 +3,15 @@ import KeyboardEvent from '../../../events/KeyboardEvent.js';
 import MouseEvent from '../../../events/MouseEvent.js';
 
 export default class TextElement extends FormElement {
+    // Events that should be bridged from DOM to Observable.
+    // Subclasses handle input/change/focus/blur/invalid with proper payloads.
+    static BRIDGED_EVENTS = new Set([
+        KeyboardEvent.KEY_DOWN,
+        KeyboardEvent.KEY_PRESS,
+        KeyboardEvent.KEY_UP,
+        MouseEvent.CLICK
+    ]);
+
     constructor() {
         super();
         this.formElement = null;
@@ -16,11 +25,14 @@ export default class TextElement extends FormElement {
 
     addEventListener(eventName, listener){
         super.addEventListener(eventName, listener);
-        this.textElement.addEventListener(eventName, () => {
-            if (!this.disabled) {
-                this.fireEvent(eventName);
-            }
-        });
+        // Only bridge keyboard/mouse events; subclasses handle form events with payloads
+        if (TextElement.BRIDGED_EVENTS.has(eventName)) {
+            this.textElement.addEventListener(eventName, (e) => {
+                if (!this.disabled) {
+                    this.fireEvent(eventName, { originalEvent: e });
+                }
+            });
+        }
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
