@@ -91,6 +91,19 @@ export default class Window extends UIComponent {
         }
     }
 
+    disconnectedCallback() {
+        // Clean up document-level listeners to prevent memory leaks
+        if (this.mousemove) {
+            document.removeEventListener("mousemove", this.mousemove);
+        }
+
+        // Clean up modal screen element
+        if (this.modalScreen && this.modalScreen.parentNode) {
+            this.modalScreen.parentNode.removeChild(this.modalScreen);
+            this.modalScreen = null;
+        }
+    }
+
     get constrainViewport() {
         return this.hasAttribute("constrainViewport");
     }
