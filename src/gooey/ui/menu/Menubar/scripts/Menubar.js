@@ -26,6 +26,9 @@ export default class Menubar extends UIComponent {
                 menuText = menu.getAttribute("text");
                 accelerator = menu.getAttribute("accelerator");
 
+                // Store raw menu text for lookup (avoids innerHTML parsing issues)
+                menuHeader.dataset.menuText = menuText;
+
                 // Build header content safely without innerHTML
                 menuHeader.textContent = '';
                 if (accelerator && menuText.indexOf(accelerator) !== -1) {
@@ -66,9 +69,7 @@ export default class Menubar extends UIComponent {
                         activeMenu.active = false;
                         event.currentTarget.setAttribute("active", true);
 
-                        menuText = event.currentTarget.innerHTML;
-                        menuText = menuText.replace("<u>", "");
-                        menuText = menuText.replace("</u>", "");
+                        menuText = event.currentTarget.dataset.menuText;
                         menu = menubar._findMenuByText(menuText);
                         if (menu) {
                             // Reposition menu before making it active
@@ -82,9 +83,7 @@ export default class Menubar extends UIComponent {
                     var activeMenu, activeMenuHeader, menu, menuText;
 
                     event.stopPropagation(); // Prevent bubbling to document
-                    menuText = event.currentTarget.innerHTML;
-                    menuText = menuText.replace("<u>", "");
-                    menuText = menuText.replace("</u>", "");
+                    menuText = event.currentTarget.dataset.menuText;
                     menu = menubar._findMenuByText(menuText);
 
                     activeMenu = menubar.getActiveMenu();
