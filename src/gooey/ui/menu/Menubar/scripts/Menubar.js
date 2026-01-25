@@ -216,20 +216,23 @@ export default class Menubar extends UIComponent {
     }
 
     getActiveMenu() {
-        const activeMenu = document.querySelector("gooeyui-menu[active]");
+        // Scope to this menubar's direct child menus only
+        const activeMenu = this.querySelector(":scope > gooeyui-menu[active]");
         return activeMenu;
     }
 
     /**
      * Find a menu element by its text attribute
      * Uses CSS.escape to handle spaces and special characters in the selector
+     * Scoped to this menubar's direct child menus only
      * @param {string} text - The menu text to search for
      * @returns {Element|null} The matching menu element or null
      */
     _findMenuByText(text) {
         // CSS.escape handles special characters; wrap in quotes for attribute selector
+        // Scope to this menubar's direct child menus only
         const escapedText = CSS.escape(text);
-        return document.querySelector(`gooeyui-menu[text="${escapedText}"]`);
+        return this.querySelector(`:scope > gooeyui-menu[text="${escapedText}"]`);
     }
 
     get active() {
