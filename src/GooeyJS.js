@@ -64,7 +64,9 @@ export default class GooeyJS {
             pkg: "gooey.data",
             elements: [
                 { name: "Store" },
-                { name: "Data" }
+                { name: "Data" },
+                { name: "Model" },
+                { name: "Field" }
             ]
         }]
 

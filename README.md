@@ -64,6 +64,12 @@ GooeyJS is a web component framework that provides a set of UI elements. Built u
 ### Feedback & Status
 - **ProgressBar** - represents a progress indicator that shows the completion progress of a task. It extends the base Component class and provides desktop-style progress bar appearance with support for both determinate and indeterminate states.
 
+### Data Components
+- **DataGrid** - a full-featured data grid component with virtual scrolling, multiple selection modes, column sorting/filtering, column resizing, and inline cell editing. Supports binding to a Store component via the `store` attribute for automatic data synchronization.
+- **DataGridColumn** - defines a column within a DataGrid, specifying the field name, header text, width, and whether the column is sortable, filterable, or editable.
+- **Store** (`gooeydata-store`) - a non-visual data store component that holds data records and provides a reactive data API. Data can be defined declaratively using child Data elements or programmatically via JavaScript. Fires events when data changes, enabling automatic updates to bound DataGrid components.
+- **Data** (`gooeydata-data`) - a non-visual component representing a single data record within a Store. Data is defined using HTML `data-*` attributes, which are automatically converted to JavaScript objects with type coercion (numbers, booleans, null).
+
 ### Styling & Utilities
 - **Border** - is a utility component that defines border properties for other UI elements. It provides a structured way to configure border color, style, and width for consistent border styling across GooeyJS components.
 - **Font** - is a utility component that defines font properties for text styling in GooeyJS applications. It provides a structured way to configure font family, size, and weight for consistent typography across components.

@@ -64,6 +64,51 @@ export default class Store extends GooeyElement {
         this.addValidEvent(DataStoreEvent.RESET);
     }
 
+    // =========== Model Integration ===========
+
+    /**
+     * Get the model attribute
+     * @returns {string|null} - The model id
+     */
+    get model() {
+        return this.getAttribute('model');
+    }
+
+    /**
+     * Set the model attribute
+     * @param {string} val - The model id
+     */
+    set model(val) {
+        if (val) {
+            this.setAttribute('model', val);
+        } else {
+            this.removeAttribute('model');
+        }
+    }
+
+    /**
+     * Get the bound Model element
+     * @returns {HTMLElement|null} - The Model element or null
+     */
+    getModelElement() {
+        const modelId = this.model;
+        if (!modelId) return null;
+        return document.getElementById(modelId);
+    }
+
+    /**
+     * Create a new record with Model defaults
+     * @param {Object} [overrides={}] - Optional field overrides
+     * @returns {Object} - New record with defaults applied
+     */
+    createRecord(overrides = {}) {
+        const model = this.getModelElement();
+        if (model && typeof model.getDefaultRecord === 'function') {
+            return { ...model.getDefaultRecord(), ...overrides };
+        }
+        return { ...overrides };
+    }
+
     // =========== Web Component Lifecycle ===========
 
     connectedCallback() {

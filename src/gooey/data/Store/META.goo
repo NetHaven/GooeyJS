@@ -11,5 +11,9 @@
     "default": "base",
     "available": ["base"]
   },
-  "attributes": {}
+  "attributes": {
+    "model": {
+      "type": "STRING"
+    }
+  }
 }

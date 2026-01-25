@@ -1,0 +1,27 @@
+{
+  "MetaGooVersion": "1.0",
+  "name": "Field",
+  "prefix": "gooeydata",
+  "tagName": "field",
+  "script": "Field.js",
+  "templates": [
+    { "id": "data-Field", "file": "Field.html" }
+  ],
+  "themes": {
+    "default": "base",
+    "available": ["base"]
+  },
+  "attributes": {
+    "name": {
+      "type": "STRING"
+    },
+    "type": {
+      "type": "ENUM",
+      "default": "string",
+      "values": ["boolean", "date", "string", "number"]
+    },
+    "defaultvalue": {
+      "type": "STRING"
+    }
+  }
+}

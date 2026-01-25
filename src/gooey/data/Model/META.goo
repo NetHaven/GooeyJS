@@ -1,0 +1,15 @@
+{
+  "MetaGooVersion": "1.0",
+  "name": "Model",
+  "prefix": "gooeydata",
+  "tagName": "model",
+  "script": "Model.js",
+  "templates": [
+    { "id": "data-Model", "file": "Model.html" }
+  ],
+  "themes": {
+    "default": "base",
+    "available": ["base"]
+  },
+  "attributes": {}
+}
