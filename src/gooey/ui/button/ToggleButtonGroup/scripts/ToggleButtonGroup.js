@@ -6,25 +6,25 @@ import ToggleButtonGroupEvent from '../../../../events/button/ToggleButtonGroupE
 export default class ToggleButtonGroup extends Container {
     constructor() {
         super();
-        
+
         this.classList.add("ui-ToggleButtonGroup");
         Template.activate("ui-ToggleButtonGroup", this.shadowRoot);
 
         // Initialize state
         this._selectedButton = null;
         this._updatingSelection = false;
-        
+
+        // Track toggle buttons and their handlers
+        this._buttonHandlers = new Map();
+
         // Set up mutation observer to watch for added/removed toggle buttons
         this._setupMutationObserver();
-        
+
         // Initial setup for existing children
         this._setupToggleButtons();
-        
+
         this.addValidEvent(ToggleButtonEvent.TOGGLE);
         this.addValidEvent(ToggleButtonGroupEvent.SELECTION_CHANGE);
-
-        // Handle selection behavior
-        this.addEventListener(ToggleButtonEvent.TOGGLE, this._handleToggleEvent.bind(this));
     }
     
     /**
@@ -36,14 +36,15 @@ export default class ToggleButtonGroup extends Container {
                 if (mutation.type === 'childList') {
                     // Handle added nodes
                     mutation.addedNodes.forEach((node) => {
-                        if (node.nodeType === Node.ELEMENT_NODE && node.tagName.toLowerCase() === 'ui-togglebutton') {
+                        if (node.nodeType === Node.ELEMENT_NODE && node.tagName.toLowerCase() === 'gooeyui-togglebutton') {
                             this._setupToggleButton(node);
                         }
                     });
-                    
+
                     // Handle removed nodes
                     mutation.removedNodes.forEach((node) => {
-                        if (node.nodeType === Node.ELEMENT_NODE && node.tagName.toLowerCase() === 'ui-togglebutton') {
+                        if (node.nodeType === Node.ELEMENT_NODE && node.tagName.toLowerCase() === 'gooeyui-togglebutton') {
+                            this._detachToggleButtonListener(node);
                             if (this._selectedButton === node) {
                                 this._selectedButton = null;
                             }
@@ -52,7 +53,7 @@ export default class ToggleButtonGroup extends Container {
                 }
             });
         });
-        
+
         this._observer.observe(this, { childList: true });
     }
     
@@ -73,6 +74,15 @@ export default class ToggleButtonGroup extends Container {
      * Set up a single toggle button
      */
     _setupToggleButton(button) {
+        // Attach listener if not already attached
+        if (!this._buttonHandlers.has(button)) {
+            const handler = (eventName, data) => {
+                this._handleToggleEvent(button, data);
+            };
+            button.addEventListener(ToggleButtonEvent.TOGGLE, handler);
+            this._buttonHandlers.set(button, handler);
+        }
+
         // Ensure the button is properly initialized
         if (button.pressed && !this._selectedButton) {
             this._selectedButton = button;
@@ -81,24 +91,33 @@ export default class ToggleButtonGroup extends Container {
             button.pressed = false;
         }
     }
-    
+
+    /**
+     * Detach listener from a toggle button
+     */
+    _detachToggleButtonListener(button) {
+        const handler = this._buttonHandlers.get(button);
+        if (handler) {
+            button.removeEventListener(ToggleButtonEvent.TOGGLE, handler);
+            this._buttonHandlers.delete(button);
+        }
+    }
+
     /**
      * Handle toggle events from child toggle buttons
      */
-    _handleToggleEvent(event) {
+    _handleToggleEvent(button, data) {
         // Only handle events from direct child toggle buttons
-        if (event.target.parentElement !== this || event.target.tagName.toLowerCase() !== 'ui-togglebutton') {
+        if (button.parentElement !== this) {
             return;
         }
-        
-        const button = event.target;
-        
+
         if (this._updatingSelection) {
             return;
         }
-        
+
         this._updatingSelection = true;
-        
+
         if (button.pressed) {
             // Button was pressed - make it the selected button
             this._selectButton(button);
@@ -109,11 +128,11 @@ export default class ToggleButtonGroup extends Container {
             // Button was unpressed and deselection is allowed
             this._selectedButton = null;
         }
-        
+
         this._updatingSelection = false;
-        
+
         // Dispatch selection change event
-        this.fireEvent(ToggleButtonGroupEvent.SELECTION_CHANGE, { 
+        this.fireEvent(ToggleButtonGroupEvent.SELECTION_CHANGE, {
             selectedButton: this._selectedButton,
             selectedValue: this._selectedButton ? this._selectedButton.getAttribute('value') : null,
             selectedIndex: this._selectedButton ? this.getToggleButtons().indexOf(this._selectedButton) : -1
@@ -145,8 +164,8 @@ export default class ToggleButtonGroup extends Container {
      * Get all direct child toggle buttons
      */
     getToggleButtons() {
-        return Array.from(this.children).filter(child => 
-            child.tagName.toLowerCase() === 'ui-togglebutton'
+        return Array.from(this.children).filter(child =>
+            child.tagName.toLowerCase() === 'gooeyui-togglebutton'
         );
     }
     
@@ -221,6 +240,12 @@ export default class ToggleButtonGroup extends Container {
         if (this._observer) {
             this._observer.disconnect();
         }
+
+        // Clean up all button handlers
+        this._buttonHandlers.forEach((handler, button) => {
+            button.removeEventListener(ToggleButtonEvent.TOGGLE, handler);
+        });
+        this._buttonHandlers.clear();
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
