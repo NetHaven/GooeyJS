@@ -580,11 +580,13 @@ export default class DataGrid extends UIComponent {
      * Update sort indicator display in headers
      */
     _updateSortIndicators() {
-        this._headerRow.querySelectorAll('.datagrid-column-header').forEach((header, index) => {
+        this._headerRow.querySelectorAll('.datagrid-column-header').forEach((header) => {
             const indicator = header.querySelector('.sort-indicator');
             if (!indicator) return;
 
-            const column = this._columns[index];
+            // Use data attribute to get correct column index
+            const columnIndex = parseInt(header.dataset.columnIndex, 10);
+            const column = this._columns[columnIndex];
             if (column === this._sortColumn) {
                 header.classList.add('sorted');
                 indicator.className = 'sort-indicator ' +
@@ -802,7 +804,7 @@ export default class DataGrid extends UIComponent {
         if (previousCell) {
             const prevRow = this._bodyRows.querySelector(`[data-row-index="${previousCell.row}"]`);
             if (prevRow) {
-                const prevCell = prevRow.children[previousCell.column];
+                const prevCell = this._findCellByColumnIndex(prevRow, previousCell.column);
                 if (prevCell) prevCell.classList.remove('selected');
             }
         }
@@ -811,7 +813,7 @@ export default class DataGrid extends UIComponent {
         if (this._selectedCell) {
             const row = this._bodyRows.querySelector(`[data-row-index="${this._selectedCell.row}"]`);
             if (row) {
-                const cell = row.children[this._selectedCell.column];
+                const cell = this._findCellByColumnIndex(row, this._selectedCell.column);
                 if (cell) cell.classList.add('selected');
             }
         }
@@ -971,6 +973,7 @@ export default class DataGrid extends UIComponent {
             filterCell.className = 'datagrid-filter-cell';
             filterCell.style.width = `${column.width}px`;
             filterCell.style.minWidth = `${column.minWidth}px`;
+            filterCell.dataset.columnIndex = index;
 
             if (column.filterable) {
                 const input = document.createElement('input');
@@ -1156,6 +1159,16 @@ export default class DataGrid extends UIComponent {
     }
 
     /**
+     * Find a cell element by column index using data attribute
+     * @param {Element} parent - The parent element to search in
+     * @param {number} columnIndex - The column index to find
+     * @returns {Element|null} - The found element or null
+     */
+    _findCellByColumnIndex(parent, columnIndex) {
+        return parent.querySelector(`[data-column-index="${columnIndex}"]`);
+    }
+
+    /**
      * Update column width
      */
     _updateColumnWidth(columnIndex, newWidth) {
@@ -1164,21 +1177,21 @@ export default class DataGrid extends UIComponent {
 
         column.width = newWidth;
 
-        // Update header
-        const headerCell = this._headerRow.children[columnIndex];
+        // Update header (use data attribute to find correct cell)
+        const headerCell = this._findCellByColumnIndex(this._headerRow, columnIndex);
         if (headerCell) {
             headerCell.style.width = `${newWidth}px`;
         }
 
-        // Update filter cell
-        const filterCell = this._filterRow.children[columnIndex];
+        // Update filter cell (use data attribute to find correct cell)
+        const filterCell = this._findCellByColumnIndex(this._filterRow, columnIndex);
         if (filterCell) {
             filterCell.style.width = `${newWidth}px`;
         }
 
-        // Update all visible row cells
+        // Update all visible row cells (use data attribute to find correct cell)
         this._bodyRows.querySelectorAll('.datagrid-row').forEach(row => {
-            const cell = row.children[columnIndex];
+            const cell = this._findCellByColumnIndex(row, columnIndex);
             if (cell) {
                 cell.style.width = `${newWidth}px`;
             }
@@ -1217,7 +1230,7 @@ export default class DataGrid extends UIComponent {
         const row = this._bodyRows.querySelector(`[data-row-index="${rowIndex}"]`);
         if (!row) return;
 
-        const cell = row.children[columnIndex];
+        const cell = this._findCellByColumnIndex(row, columnIndex);
         if (!cell) return;
 
         const originalValue = rowData[column.field];
@@ -1305,7 +1318,7 @@ export default class DataGrid extends UIComponent {
         // Re-render the cell
         const row = this._bodyRows.querySelector(`[data-row-index="${rowIndex}"]`);
         if (row) {
-            const cell = row.children[columnIndex];
+            const cell = this._findCellByColumnIndex(row, columnIndex);
             if (cell) {
                 cell.textContent = newValue ?? '';
                 cell.title = newValue ?? '';
@@ -1334,7 +1347,7 @@ export default class DataGrid extends UIComponent {
         // Clean up edit UI and restore original content
         const row = this._bodyRows.querySelector(`[data-row-index="${rowIndex}"]`);
         if (row) {
-            const cell = row.children[columnIndex];
+            const cell = this._findCellByColumnIndex(row, columnIndex);
             if (cell && cell.dataset.originalContent !== undefined) {
                 cell.textContent = cell.dataset.originalContent;
                 delete cell.dataset.originalContent;
@@ -1357,7 +1370,7 @@ export default class DataGrid extends UIComponent {
         if (this._editingCell) {
             const row = this._bodyRows.querySelector(`[data-row-index="${this._editingCell.row}"]`);
             if (row) {
-                const cell = row.children[this._editingCell.column];
+                const cell = this._findCellByColumnIndex(row, this._editingCell.column);
                 if (cell) {
                     cell.classList.remove('editing');
                     const input = cell.querySelector('.datagrid-cell-editor');
