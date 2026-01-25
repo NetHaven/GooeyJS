@@ -23,6 +23,9 @@ export default class UIComponent extends GooeyElement {
             MetaLoader.injectCSS(this.shadowRoot, cssResult);
         }
 
+        // Store for type-coerced attribute values from META.goo definitions
+        this._parsedAttributes = new Map();
+
         // MVC additions (optional - only if used)
         this._model = null;
         this._controller = null;
@@ -32,6 +35,9 @@ export default class UIComponent extends GooeyElement {
         // Add MVC events to valid events
         this.addValidEvent(UIComponentEvent.MODEL_CHANGE);
         this.addValidEvent(UIComponentEvent.CONTROLLER_ATTACHED);
+
+        // Add attribute validation error event
+        this.addValidEvent(UIComponentEvent.ATTRIBUTE_ERROR);
 
         // Add valid visibility events
         this.addValidEvent(UIComponentEvent.SHOW);
@@ -186,6 +192,66 @@ export default class UIComponent extends GooeyElement {
         if (this._model && this._bindings.length > 0) {
             this.applyBindings();
         }
+    }
+
+    /**
+     * Web Component lifecycle - called when an observed attribute changes
+     * Validates and parses attribute values based on META.goo definitions
+     * @param {string} name - Attribute name
+     * @param {string|null} oldValue - Previous value
+     * @param {string|null} newValue - New value
+     */
+    attributeChangedCallback(name, oldValue, newValue) {
+        // Skip if value hasn't actually changed
+        if (oldValue === newValue) {
+            return;
+        }
+
+        const tagName = this.tagName.toLowerCase();
+
+        // Check if this attribute has a META.goo definition
+        const attrDef = ComponentRegistry.getAttributeDefinition(tagName, name);
+        if (attrDef) {
+            // Validate the new value
+            const validation = ComponentRegistry.validateAttribute(tagName, name, newValue);
+
+            if (!validation.valid) {
+                // Fire error event for invalid values
+                this.fireEvent(UIComponentEvent.ATTRIBUTE_ERROR, {
+                    attribute: name,
+                    value: newValue,
+                    error: validation.error,
+                    component: this
+                });
+
+                // Log warning for developer visibility
+                console.warn(`[${tagName}] Invalid attribute value:`, validation.error);
+            }
+
+            // Parse and store the typed value (even if validation failed, use best effort)
+            const parsedValue = ComponentRegistry.parseValue(tagName, name, newValue);
+            this._parsedAttributes.set(name, parsedValue);
+        }
+
+        // Call parent class attributeChangedCallback if it exists
+        if (super.attributeChangedCallback) {
+            super.attributeChangedCallback(name, oldValue, newValue);
+        }
+    }
+
+    /**
+     * Get a parsed (type-coerced) attribute value
+     * @param {string} name - Attribute name
+     * @returns {*} Parsed value based on META.goo type definition, or raw value if not defined
+     */
+    getParsedAttribute(name) {
+        if (this._parsedAttributes.has(name)) {
+            return this._parsedAttributes.get(name);
+        }
+        // Fallback: parse current attribute value
+        const tagName = this.tagName.toLowerCase();
+        const rawValue = this.getAttribute(name);
+        return ComponentRegistry.parseValue(tagName, name, rawValue);
     }
 
     /**

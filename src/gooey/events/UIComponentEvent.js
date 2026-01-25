@@ -11,6 +11,9 @@ export default class UIComponentEvent extends Event {
     static MODEL_CHANGE = "modelChange";
     static CONTROLLER_ATTACHED = "controllerAttached";
 
+    /** Fired when an attribute value fails META.goo validation */
+    static ATTRIBUTE_ERROR = "attributeError";
+
     constructor() {
         super();
     }
