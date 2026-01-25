@@ -28,6 +28,7 @@ GooeyJS is a web component framework that provides a set of UI elements. Built u
 - **ToggleButtonGroup** - is a container component that manages a group of toggle buttons with exclusive selection behavior. When one toggle button in the group is pressed, all other buttons in the group are automatically unpressed, similar to radio button behavior.
 
 ### Text & Editing
+- **CodeBlock** - displays code snippets with optional line numbers, a copy-to-clipboard button, and a language label. Supports any programming language and automatically updates line numbers based on content. Ideal for documentation, tutorials, and any interface displaying source code.
 - **Label** - displays static text content with optional icons and comprehensive alignment options. It provides a consistent way to display labels, captions, and informational text throughout GooeyJS applications with support for both horizontal and vertical alignment, clickable actions, and icon integration.
 - **PasswordField** - provides a secure password input control that masks entered text. It extends the TextElement class and inherits all form validation capabilities while providing the security benefits of hidden password input. Text entered into this field is automatically masked with asterisks or dots for privacy.
 - **Spinner** - provides a numeric input control with integrated increment/decrement buttons. It extends the FormElement class and includes keyboard support, value constraints (min/max), and step values for precise numeric input. This component is ideal for quantity selectors, counters, and any scenario requiring controlled numeric input.
@@ -45,6 +46,7 @@ GooeyJS is a web component framework that provides a set of UI elements. Built u
 ### Menus & Navigation
 - **CheckboxMenuItem** - represents a menu item with a checkbox that can be toggled on or off. It extends the basic MenuItem component to provide toggleable state functionality, commonly used for settings, options, or feature toggles in menu systems.
 - **ContextMenu** - creates a popup menu that appears when users right-click on an element. It extends the Menu component to provide contextual actions and options specific to the element being clicked. Context menus automatically position themselves near the cursor and close when clicking outside.
+- **HamburgerMenu** - provides a collapsible navigation menu triggered by a hamburger icon button. Supports slide-out panels from left, right, top, or bottom positions with multiple display modes (slide, overlay, push). Contains menu items and automatically closes on item selection or clicking outside. Ideal for mobile-responsive navigation and compact menu interfaces.
 - **Menubar** - provides a horizontal menu bar container that holds top-level menu items. It's typically positioned at the top of an application window and provides access to application commands and functions.
 - **Menu** - creates a dropdown menu container that holds menu items, separators, and submenus. It provides keyboard navigation, cascading submenus, and integration with menu bars and context menus for comprehensive menu system functionality.
 - **MenuItem** - represents an individual action item within a menu. It provides clickable menu options with support for icons, keyboard shortcuts, and various states (enabled, disabled, checked).
@@ -58,50 +60,53 @@ GooeyJS is a web component framework that provides a set of UI elements. Built u
 - **TimePicker** - provides a time selection control that wraps the native HTML5 time input with GooeyJS styling and functionality. It extends the FormElement class and supports time constraints through min/max attributes and integrates with the GooeyJS form validation system. The component provides a consistent cross-browser experience for time selection. 
 
 ### Windows & Dialogs
-- **Window** - represents a desktop-style window with title bar, close button, and draggable functionality. It provides a container for dialog content and supports modal behavior, viewport constraints, and window management features.
 - **Dialog** - provides static methods for displaying system dialog boxes including alerts, confirmations, prompts, and information messages. It replaces native browser dialogs with styled GooeyJS dialogs that match the application's visual theme and provide better customization options.
+- **FloatingPane** - a lightweight window component that extends Window, providing a simpler floating container with title bar support, modal behavior, and viewport constraints. Ideal for tooltips, popovers, and lightweight dialogs.
+- **Window** - represents a desktop-style window with title bar, close button, and draggable functionality. It provides a container for dialog content and supports modal behavior, viewport constraints, and window management features.
 
 ### Feedback & Status
 - **ProgressBar** - represents a progress indicator that shows the completion progress of a task. It extends the base Component class and provides desktop-style progress bar appearance with support for both determinate and indeterminate states.
 
 ### Data Components
+- **Data** - a non-visual component representing a single data record within a Store. Data is defined using HTML `data-*` attributes, which are automatically converted to JavaScript objects with type coercion (numbers, booleans, strings).
 - **DataGrid** - a full-featured data grid component with virtual scrolling, multiple selection modes, column sorting/filtering, column resizing, and inline cell editing. Supports binding to a Store component via the `store` attribute for automatic data synchronization.
 - **DataGridColumn** - defines a column within a DataGrid, specifying the field name, header text, width, and whether the column is sortable, filterable, or editable.
-- **Store** (`gooeydata-store`) - a non-visual data store component that holds data records and provides a reactive data API. Data can be defined declaratively using child Data elements or programmatically via JavaScript. Fires events when data changes, enabling automatic updates to bound DataGrid components.
-- **Data** (`gooeydata-data`) - a non-visual component representing a single data record within a Store. Data is defined using HTML `data-*` attributes, which are automatically converted to JavaScript objects with type coercion (numbers, booleans, null).
+- **Field** - a non-visual component that defines a single field within a Model schema. Specifies the field's name, data type (string, number, boolean, date), and optional default value for type-safe data handling.
+- **Model** - a non-visual component that defines a data schema for Store components. Contains Field children that describe the structure of data records, enabling type coercion and default values for consistent data management.
+- **Store** - a non-visual data store component that holds data records and provides a reactive data API. Data can be defined declaratively using child Data elements or programmatically via JavaScript. Fires events when data changes, enabling automatic updates to bound DataGrid components.
 
 ### Styling & Utilities
+- **Background** - is a utility component that defines background properties for other UI elements. It supports solid colors, images, and gradient references with configurable size, position, repeat, attachment, opacity, and blend modes. Other components can reference a Background via the `background` attribute for consistent styling.
 - **Border** - is a utility component that defines border properties for other UI elements. It provides a structured way to configure border color, style, and width for consistent border styling across GooeyJS components.
 - **Font** - is a utility component that defines font properties for text styling in GooeyJS applications. It provides a structured way to configure font family, size, and weight for consistent typography across components.
+- **Gradient** - is a utility component that defines CSS gradients (linear, radial, conic) which can be referenced by Background components or applied directly to elements. Supports repeating gradients, configurable angles, shapes, sizes, and color stops via the `stops` attribute or child GradientStop elements.
+- **GradientStop** - defines a single color stop within a Gradient component. Specifies the color, position (percentage or length), and optional color hint for precise gradient control.
 
-## GooeyJS 2.0 Roadmap
+## GooeyJS 3.0 Roadmap
 
 ### Overview
-GooeyJS 2.0 will include:
-- Critical but missing UI components not found in 1.0
-- Improvements to several existing components
-- A small number of mobile-focused UI components
-- Light-weight MVC and data binding capabilities
-- Overall component reorganization
+GooeyJS 3.0 will include:
+- A full suite of mobile UI components
+- Improvements to DataGrid, RichTextEditor
+- Internationalization
+- Filters and Transitions
 
 ### New Components
-GooeyJS 2.0 will at the very least include the following components:
-- AccordionPanel
-- DatePicker
-- FormPanel
-- GroupBox
-- ProgressBar
-- Spinner
+GooeyJS 3.0 will at the very least include the following components:
+- Badge
+- Breadcrumb
+- Carousel
+- Pagination
+- Toast Notifications
+- Video Player
+- Waffle Menu
 
 It will also include components specifically geared for configuring:
-- Background Images
-- Borders
-- Fonts
-
-Currently some components use HTML template files, while others create HTML dynamically. GooeyJS 2.0 will move to a more consistent structure where all necessary HTML is created via template files instead of being created dynamically in JS.
+- Filters
+- Transitions
 
 ## Getting Started
-Download GooeyJS.v1.9.0.zip and unzip to your codebase. To include GooeyJS, just use the following:
+Download GooeyJS.v2.0.0.zip and unzip to your codebase. To include GooeyJS, just use the following:
 
     <script type="module" src="GooeyJS/GooeyJS.js"></script>
 
