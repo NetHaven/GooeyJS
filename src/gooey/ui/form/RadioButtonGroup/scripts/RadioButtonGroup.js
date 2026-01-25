@@ -105,7 +105,7 @@ export default class RadioButtonGroup extends UIComponent {
         this._observer = new MutationObserver((mutations) => {
             mutations.forEach(mutation => {
                 mutation.addedNodes.forEach(node => {
-                    if (node.tagName === 'UI-RADIOBUTTON') {
+                    if (node.matches && node.matches('gooeyui-radiobutton')) {
                         const input = node.querySelector('input[type="radio"]');
                         if (input) {
                             input.name = this._groupName;
