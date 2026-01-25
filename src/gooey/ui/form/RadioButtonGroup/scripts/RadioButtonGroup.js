@@ -74,17 +74,19 @@ export default class RadioButtonGroup extends UIComponent {
     }
     
     _setupSelectionHandling() {
-        // Listen for changes to radio buttons within this group
-        this.addEventListener('change', (e) => {
-            if (e.target.type === 'radio') {
-                const selectionChangeEvent = new CustomEvent(RadioButtonGroupEvent.SELECTION_CHANGE, {
-                    detail: {
-                        selectedValue: e.target.value,
-                        selectedElement: e.target
-                    },
-                    bubbles: true
+        // Register the selection change event for Observable
+        this.addValidEvent(RadioButtonGroupEvent.SELECTION_CHANGE);
+
+        // Listen for native DOM 'change' events bubbling up from child radio inputs
+        // Use HTMLElement.prototype.addEventListener to bypass Observable
+        HTMLElement.prototype.addEventListener.call(this, 'change', (e) => {
+            if (e.target && e.target.type === 'radio') {
+                // Fire via Observable's event system
+                this.fireEvent(RadioButtonGroupEvent.SELECTION_CHANGE, {
+                    selectedValue: e.target.value,
+                    selectedElement: e.target,
+                    originalEvent: e
                 });
-                this.dispatchEvent(selectionChangeEvent);
             }
         });
     }
