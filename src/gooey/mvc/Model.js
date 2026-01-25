@@ -102,6 +102,12 @@ export default class Model extends ObservableBase {
       }
 
       const oldValue = this._attributes[k];
+
+      // Skip if value hasn't changed (strict equality)
+      if (oldValue === v) {
+        return;
+      }
+
       this._attributes[k] = v;
 
       // Track changes
