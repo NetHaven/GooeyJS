@@ -65,6 +65,9 @@ export default class HamburgerMenu extends UIComponent {
         this._boundKeyDownHandler = this._handleKeyDown.bind(this);
         this._boundMenuItemSelectHandler = this._handleMenuItemSelect.bind(this);
 
+        // Track menu items we've attached listeners to
+        this._attachedMenuItems = new Set();
+
         // Setup event handlers
         this._setupEventHandlers();
     }
@@ -75,8 +78,14 @@ export default class HamburgerMenu extends UIComponent {
         // Add document-level keyboard listener
         document.addEventListener(KeyboardEvent.KEY_DOWN, this._boundKeyDownHandler);
 
-        // Listen for MenuItem select events from children
-        this.addEventListener(MenuItemEvent.SELECT, this._boundMenuItemSelectHandler);
+        // Attach listeners to existing menu items
+        this._attachMenuItemListeners();
+
+        // Watch for dynamically added menu items
+        this._menuItemObserver = new MutationObserver(() => {
+            this._attachMenuItemListeners();
+        });
+        this._menuItemObserver.observe(this, { childList: true, subtree: true });
     }
 
     disconnectedCallback() {
@@ -84,7 +93,32 @@ export default class HamburgerMenu extends UIComponent {
 
         // Clean up document-level listeners
         document.removeEventListener(KeyboardEvent.KEY_DOWN, this._boundKeyDownHandler);
-        this.removeEventListener(MenuItemEvent.SELECT, this._boundMenuItemSelectHandler);
+
+        // Clean up mutation observer
+        if (this._menuItemObserver) {
+            this._menuItemObserver.disconnect();
+            this._menuItemObserver = null;
+        }
+
+        // Remove listeners from all menu items
+        this._detachMenuItemListeners();
+    }
+
+    _attachMenuItemListeners() {
+        const menuItems = this.querySelectorAll('gooeyui-menuitem');
+        menuItems.forEach(menuItem => {
+            if (!this._attachedMenuItems.has(menuItem)) {
+                menuItem.addEventListener(MenuItemEvent.SELECT, this._boundMenuItemSelectHandler);
+                this._attachedMenuItems.add(menuItem);
+            }
+        });
+    }
+
+    _detachMenuItemListeners() {
+        this._attachedMenuItems.forEach(menuItem => {
+            menuItem.removeEventListener(MenuItemEvent.SELECT, this._boundMenuItemSelectHandler);
+        });
+        this._attachedMenuItems.clear();
     }
 
     _setupEventHandlers() {
@@ -119,17 +153,13 @@ export default class HamburgerMenu extends UIComponent {
         }
     }
 
-    _handleMenuItemSelect(event) {
+    _handleMenuItemSelect(eventName, data) {
         if (this.closeonselect) {
             this.close();
         }
 
         // Re-fire the event so parent components can listen
-        this.fireEvent(MenuItemEvent.SELECT, event.detail || {
-            menuItem: event.target,
-            text: event.target?.text,
-            action: event.target?.action
-        });
+        this.fireEvent(MenuItemEvent.SELECT, data || {});
     }
 
     // ========== Properties ==========
