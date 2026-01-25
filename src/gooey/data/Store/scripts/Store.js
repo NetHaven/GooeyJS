@@ -43,7 +43,7 @@ export default class Store extends GooeyElement {
         // Internal data storage
         this._data = [];
 
-        // Track Data element → record mapping for surgical DOM updates
+        // Track Data element => record mapping for surgical DOM updates
         this._dataElementMap = new WeakMap();
 
         // Track registered consumers (e.g., DataGrids)

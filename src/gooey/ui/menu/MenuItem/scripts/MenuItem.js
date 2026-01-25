@@ -86,7 +86,9 @@ export default class MenuItem extends UIComponent {
                 }
 
                 // Keep document dispatch for global menu actions
-                document.dispatchEvent(new Event(this.action));
+                if (this.action) {
+                    document.dispatchEvent(new Event(this.action));
+                }
             }
             else {
                 originalEvent?.stopPropagation();
