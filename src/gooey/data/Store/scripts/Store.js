@@ -43,6 +43,9 @@ export default class Store extends GooeyElement {
         // Internal data storage
         this._data = [];
 
+        // Track Data element → record mapping for surgical DOM updates
+        this._dataElementMap = new WeakMap();
+
         // Track registered consumers (e.g., DataGrids)
         this._consumers = new Set();
 
@@ -140,19 +143,37 @@ export default class Store extends GooeyElement {
 
     /**
      * Set up MutationObserver to watch for gooeydata-data elements being added/removed.
-     * Note: Attribute changes on Data elements are handled by Data's own observer,
-     * which calls _notifyParentStore() to update the Store. This avoids double-firing.
+     * Uses surgical updates instead of full rebuilds to preserve programmatic records.
+     * Attribute changes on Data elements are handled by Data's own observer,
+     * which calls _handleDataElementUpdated() to update the specific record.
      */
     _setupObserver() {
         this._observer = new MutationObserver((mutations) => {
+            let hasChanges = false;
+
             for (const mutation of mutations) {
-                // Only react if gooeydata-data elements were added or removed
-                if (this._hasDataElementChange(mutation.addedNodes) ||
-                    this._hasDataElementChange(mutation.removedNodes)) {
-                    this._collectDataFromChildren();
-                    this._notifyDataChanged();
-                    return; // Exit early, one update is sufficient
+                if (mutation.type === 'childList') {
+                    // Handle added Data elements
+                    for (const node of mutation.addedNodes) {
+                        if (node.nodeType === Node.ELEMENT_NODE &&
+                            node.tagName.toLowerCase() === 'gooeydata-data') {
+                            this._handleDataElementAdded(node);
+                            hasChanges = true;
+                        }
+                    }
+                    // Handle removed Data elements
+                    for (const node of mutation.removedNodes) {
+                        if (node.nodeType === Node.ELEMENT_NODE &&
+                            node.tagName.toLowerCase() === 'gooeydata-data') {
+                            this._handleDataElementRemoved(node);
+                            hasChanges = true;
+                        }
+                    }
                 }
+            }
+
+            if (hasChanges) {
+                this._notifyDataChanged();
             }
         });
 
@@ -165,38 +186,116 @@ export default class Store extends GooeyElement {
     }
 
     /**
-     * Check if a NodeList contains any gooeydata-data elements
-     * @param {NodeList} nodes - The nodes to check
-     * @returns {boolean} - True if any node is a gooeydata-data element
+     * Handle a Data element being added to the DOM
+     * @param {HTMLElement} el - The added gooeydata-data element
      */
-    _hasDataElementChange(nodes) {
-        for (const node of nodes) {
-            if (node.nodeType === Node.ELEMENT_NODE) {
-                if (node.tagName.toLowerCase() === 'gooeydata-data') {
-                    return true;
-                }
-            }
+    _handleDataElementAdded(el) {
+        // Skip if already tracked (shouldn't happen, but be safe)
+        if (this._dataElementMap.has(el)) {
+            return;
         }
-        return false;
+
+        const record = this._createRecordFromElement(el);
+        this._data.push(record);
+        this._dataElementMap.set(el, record);
+
+        const insertIndex = this._data.length - 1;
+
+        this.fireEvent(DataStoreEvent.RECORD_ADDED, {
+            record: this._cloneRecord(record),
+            index: insertIndex,
+            data: this.getData(),
+            count: this._data.length
+        });
     }
 
     /**
-     * Collect data from child gooeydata-data elements
+     * Handle a Data element being removed from the DOM
+     * @param {HTMLElement} el - The removed gooeydata-data element
+     */
+    _handleDataElementRemoved(el) {
+        const record = this._dataElementMap.get(el);
+        if (!record) {
+            return; // Element wasn't tracked
+        }
+
+        const index = this._data.indexOf(record);
+        if (index !== -1) {
+            this._data.splice(index, 1);
+
+            this.fireEvent(DataStoreEvent.RECORD_REMOVED, {
+                record: this._cloneRecord(record),
+                index: index,
+                data: this.getData(),
+                count: this._data.length
+            });
+        }
+
+        this._dataElementMap.delete(el);
+    }
+
+    /**
+     * Handle a Data element's attributes being updated
+     * Called by Data element's _notifyParentStore()
+     * @param {HTMLElement} el - The updated gooeydata-data element
+     */
+    _handleDataElementUpdated(el) {
+        const oldRecord = this._dataElementMap.get(el);
+        if (!oldRecord) {
+            // Element wasn't tracked - might be newly connected, treat as add
+            this._handleDataElementAdded(el);
+            return;
+        }
+
+        const index = this._data.indexOf(oldRecord);
+        if (index === -1) {
+            return; // Record not found in _data (shouldn't happen)
+        }
+
+        const newRecord = this._createRecordFromElement(el);
+        this._data[index] = newRecord;
+        this._dataElementMap.set(el, newRecord);
+
+        this.fireEvent(DataStoreEvent.RECORD_UPDATED, {
+            record: this._cloneRecord(newRecord),
+            oldRecord: this._cloneRecord(oldRecord),
+            updates: this._cloneRecord(newRecord),
+            index: index,
+            data: this.getData(),
+            count: this._data.length
+        });
+
+        this._notifyDataChanged();
+    }
+
+    /**
+     * Create a record object from a Data element
+     * @param {HTMLElement} el - The gooeydata-data element
+     * @returns {Object} - The record with schema applied
+     */
+    _createRecordFromElement(el) {
+        let record;
+        if (typeof el.toRecord === 'function') {
+            record = el.toRecord();
+        } else {
+            record = this._datasetToRecord(el.dataset);
+        }
+        return this._applyModelSchema(record, true);
+    }
+
+    /**
+     * Collect data from child gooeydata-data elements (initial load)
+     * Populates both _data and _dataElementMap for tracking
      */
     _collectDataFromChildren() {
-        const dataElements = this.querySelectorAll('gooeydata-data');
-        this._data = Array.from(dataElements).map(el => {
-            let record;
-            // Use the element's toRecord method if available
-            if (typeof el.toRecord === 'function') {
-                record = el.toRecord();
-            } else {
-                // Fallback: manually extract dataset
-                record = this._datasetToRecord(el.dataset);
-            }
-            // Apply Model schema (coerce types and apply defaults)
-            return this._applyModelSchema(record, true);
-        });
+        const dataElements = this.querySelectorAll(':scope > gooeydata-data');
+        this._data = [];
+
+        for (const el of dataElements) {
+            const record = this._createRecordFromElement(el);
+            this._data.push(record);
+            this._dataElementMap.set(el, record);
+        }
     }
 
     /**
@@ -332,9 +431,15 @@ export default class Store extends GooeyElement {
 
     /**
      * Replace all data with new records
+     * Note: This replaces _data entirely with programmatic records.
+     * Existing DOM Data elements become orphaned (not tracked) but remain in DOM.
+     * If a DOM Data element is later modified, it will be re-added to _data.
      * @param {Array} data - Array of data records
      */
     setData(data) {
+        // Clear element map - old DOM mappings are now invalid
+        this._dataElementMap = new WeakMap();
+
         // Apply Model schema and clone all records to prevent external mutation
         this._data = Array.isArray(data)
             ? data.map(record => this._cloneRecord(this._applyModelSchema(record, true)))
@@ -474,8 +579,12 @@ export default class Store extends GooeyElement {
 
     /**
      * Clear all data from the store
+     * Note: DOM Data elements remain but become orphaned (not tracked).
+     * If a DOM Data element is later modified, it will be re-added to _data.
      */
     reset() {
+        // Clear element map - old DOM mappings are now invalid
+        this._dataElementMap = new WeakMap();
         this._data = [];
 
         this.fireEvent(DataStoreEvent.RESET, {

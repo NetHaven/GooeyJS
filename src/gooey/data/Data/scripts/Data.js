@@ -87,10 +87,9 @@ export default class Data extends GooeyElement {
      */
     _notifyParentStore() {
         const parentStore = this.store;
-        if (parentStore && typeof parentStore._collectDataFromChildren === 'function') {
-            // Force the store to recollect data and notify
-            parentStore._collectDataFromChildren();
-            parentStore._notifyDataChanged();
+        if (parentStore && typeof parentStore._handleDataElementUpdated === 'function') {
+            // Notify store to update only this element's record
+            parentStore._handleDataElementUpdated(this);
         }
     }
 
