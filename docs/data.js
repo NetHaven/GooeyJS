@@ -2337,31 +2337,41 @@ const GooeyData = {
       {
         "name": "Component",
         "tagName": "gooey-component",
-        "description": "A component loader that dynamically loads and renders component HTML from an external file.",
+        "description": "Dynamic component loader for on-demand loading of GooeyJS components. Instead of loading all components at startup, use gooey-component to load only the components your application needs. The loader reads the component's META.goo configuration, loads its templates and theme CSS, imports the JavaScript module, and registers the custom element. This is the recommended approach for optimizing application load time and reducing initial bundle size. Fires LOADING, LOADED, and ERROR events to track the loading process.",
         "inherits": [],
         "attributes": [
           {
             "name": "href",
             "type": "STRING",
-            "description": "URL path to the external HTML file containing the component to load",
+            "description": "Path to the component folder containing META.goo. Can be relative to the document or absolute. The folder must contain META.goo plus the scripts/, templates/, and themes/ subdirectories as defined in the component's metadata.",
             "required": true
           }
         ],
         "examples": [
           {
-            "title": "Load External Component",
-            "description": "Dynamically load a component from an external HTML file.",
-            "code": "<gooey-component href=\"components/header.html\"></gooey-component>"
+            "title": "Load a Single Component",
+            "description": "Dynamically load the Button component from the GooeyJS library.",
+            "code": "<!-- Load the Button component -->\n<gooey-component href=\"GooeyJS/src/gooey/ui/button/Button\"></gooey-component>\n\n<!-- Now you can use the button -->\n<gooeyui-button text=\"Click Me\"></gooeyui-button>"
           },
           {
-            "title": "Modular Page Layout",
-            "description": "Building a page from multiple external component files.",
-            "code": "<gooey-application>\n  <gooey-component href=\"components/navigation.html\"></gooey-component>\n  <gooey-component href=\"components/sidebar.html\"></gooey-component>\n  <gooey-component href=\"components/main-content.html\"></gooey-component>\n  <gooey-component href=\"components/footer.html\"></gooey-component>\n</gooey-application>"
+            "title": "Load Multiple Components",
+            "description": "Load several components needed for a form interface.",
+            "code": "<!-- Load form components -->\n<gooey-component href=\"GooeyJS/src/gooey/ui/form/text/TextField\"></gooey-component>\n<gooey-component href=\"GooeyJS/src/gooey/ui/form/text/TextArea\"></gooey-component>\n<gooey-component href=\"GooeyJS/src/gooey/ui/button/Button\"></gooey-component>\n<gooey-component href=\"GooeyJS/src/gooey/ui/panel/FormPanel\"></gooey-component>\n\n<!-- Use the loaded components -->\n<gooeyui-formpanel>\n  <gooeyui-textfield placeholder=\"Name\"></gooeyui-textfield>\n  <gooeyui-textarea placeholder=\"Comments\"></gooeyui-textarea>\n  <gooeyui-button text=\"Submit\"></gooeyui-button>\n</gooeyui-formpanel>"
           },
           {
-            "title": "Lazy Loading",
-            "description": "Load a component only when needed.",
-            "code": "<!-- Component loads when rendered -->\n<gooey-component href=\"views/settings-panel.html\"></gooey-component>"
+            "title": "Handle Loading Events",
+            "description": "Listen for component loading events to show loading states or handle errors.",
+            "code": "<gooey-component id=\"gridLoader\" href=\"GooeyJS/src/gooey/ui/data/DataGrid\"></gooey-component>\n\n<script>\n  const loader = document.getElementById('gridLoader');\n  \n  loader.addEventListener('component-loading', (e, data) => {\n    console.log('Loading component:', data.tagName);\n  });\n  \n  loader.addEventListener('component-loaded', (e, data) => {\n    console.log('Component ready:', data.tagName);\n    // Now safe to create/use the component\n  });\n  \n  loader.addEventListener('component-error', (e, data) => {\n    console.error('Failed to load:', data.error);\n  });\n</script>"
+          },
+          {
+            "title": "Conditional Component Loading",
+            "description": "Load components only when needed based on user actions.",
+            "code": "<gooeyui-button id=\"loadRichEditor\" text=\"Enable Rich Editor\"></gooeyui-button>\n<div id=\"editorContainer\"></div>\n\n<script>\n  document.getElementById('loadRichEditor').addEventListener('click', () => {\n    // Create loader element\n    const loader = document.createElement('gooey-component');\n    loader.setAttribute('href', 'GooeyJS/src/gooey/ui/form/text/RichTextEditor');\n    \n    loader.addEventListener('component-loaded', () => {\n      // Component is now registered, create an instance\n      const editor = document.createElement('gooeyui-richtexteditor');\n      document.getElementById('editorContainer').appendChild(editor);\n    });\n    \n    document.body.appendChild(loader);\n  });\n</script>"
+          },
+          {
+            "title": "Check If Already Loaded",
+            "description": "The loader automatically detects if a component is already registered.",
+            "code": "<!-- If Button was already loaded, this fires LOADED immediately -->\n<gooey-component href=\"GooeyJS/src/gooey/ui/button/Button\"></gooey-component>\n\n<script>\n  // You can also check programmatically\n  if (customElements.get('gooeyui-button')) {\n    console.log('Button is already available');\n  }\n</script>"
           }
         ]
       }

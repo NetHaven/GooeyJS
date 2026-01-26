@@ -45,47 +45,13 @@ export default class GooeyJS {
     constructor() {
         let headEl, htmlEl, linkEl;
 
-        // Component packages to load - META.goo in each component provides the details
+        // Core components loaded by default - only the minimum required for GooeyJS to function
+        // All other components should be loaded dynamically using <gooey-component href="...">
         this.components = [{
             pkg: "gooey",
             elements: [
                 { name: "Application" },
                 { name: "Component" }
-            ]
-        },
-        {
-            pkg: "gooey.ui.data",
-            elements: [
-                { name: "DataGridColumn" },
-                { name: "DataGrid" }
-            ]
-        },
-        {
-            pkg: "gooey.ui.menu",
-            elements: [
-                { name: "HamburgerMenu" }
-            ]
-        },
-        {
-            pkg: "gooey.graphics.gradient",
-            elements: [
-                { name: "Gradient" },
-                { name: "GradientStop" }
-            ]
-        },
-        {
-            pkg: "gooey.ui",
-            elements: [
-                { name: "Background" }
-            ]
-        },
-        {
-            pkg: "gooey.data",
-            elements: [
-                { name: "Store" },
-                { name: "Data" },
-                { name: "Model" },
-                { name: "Field" }
             ]
         }]
 

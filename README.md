@@ -4,13 +4,43 @@ GooeyJS is a web component framework that provides a set of UI elements. Built u
 ## Features
 
 - **Custom Web Components** - All elements are proper custom HTML elements
+- **Dynamic Component Loading** - Load only the components you need with `<gooey-component>`
 - **Graphics System** - Point and Dimension classes for calculations
+
+## Loading Components
+
+GooeyJS uses a dynamic loading architecture to optimize application startup. Only two core components are loaded automatically:
+- **Application** - The root container for GooeyJS applications
+- **Component** - The dynamic component loader
+
+All other components must be loaded on-demand using the `<gooey-component>` element:
+
+```html
+<!-- Load components you need -->
+<gooey-component href="GooeyJS/src/gooey/ui/button/Button"></gooey-component>
+<gooey-component href="GooeyJS/src/gooey/ui/form/text/TextField"></gooey-component>
+
+<!-- Now use them -->
+<gooeyui-button text="Click Me"></gooeyui-button>
+<gooeyui-textfield placeholder="Enter text"></gooeyui-textfield>
+```
+
+The `href` attribute points to the component folder containing META.goo. The loader handles:
+- Loading and validating META.goo configuration
+- Loading theme CSS and templates
+- Importing and registering the component class
+- Firing `component-loading`, `component-loaded`, and `component-error` events
+
+This approach significantly reduces initial load time by loading only the components your application actually uses.
 
 ## Components
 
+### Core (Loaded Automatically)
+- **Application** - the root-level component for GooeyJS applications. It provides the foundational viewport setup and base styling for the entire application hierarchy. This component has no template or wrapped HTML elements - it serves purely as the top-level container that establishes the application's viewport and basic layout properties.
+- **Component** - the dynamic component loader (`<gooey-component>`) for on-demand loading of GooeyJS components. Reads a component's META.goo configuration, loads its templates and theme CSS, imports the JavaScript module, and registers the custom element. Fires LOADING, LOADED, and ERROR events to track the loading process.
+
 ### Layout & Containers
 - **AccordionPanel** - creates a collapsible accordion interface that contains multiple ui-panel elements. Only one accordion section can be open at a time by default, providing an efficient way to organize content in a compact vertical layout.
-- **Application** - the root-level component for GooeyJS applications. It provides the foundational viewport setup and base styling for the entire application hierarchy. This component has no template or wrapped HTML elements - it serves purely as the top-level container that establishes the application's viewport and basic layout properties.
 - **AppPanel** - the top-level container component for GooeyJS applications. It provides the main application layout structure and serves as the root container for all other UI components.
 - **GroupBox** - creates a container with an optional title label that groups related form elements or content together. It extends the Panel component to provide visual organization with classic desktop-style grouping appearance.
 - **FormPanel** - is a specialized container that provides automatic grid-based layout for form elements. It organizes labels, input controls, and required field indicators in a consistent, accessible format.
