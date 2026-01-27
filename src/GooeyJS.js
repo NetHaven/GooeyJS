@@ -1,6 +1,7 @@
 import Template from './gooey/util/Template.js';
 import MetaLoader from './gooey/util/MetaLoader.js';
 import ComponentRegistry from './gooey/util/ComponentRegistry.js';
+import ComponentEvent from './gooey/events/ComponentEvent.js';
 
 const SCRIPT_PATH = new URL(import.meta.url, document.baseURI);
 const PATH = SCRIPT_PATH.href.substring(0, SCRIPT_PATH.href.lastIndexOf('/'));
@@ -149,6 +150,10 @@ export default class GooeyJS {
                     // Inject observedAttributes from registry
                     this._injectObservedAttributes(ComponentClass, meta.fullTagName);
 
+                    // Wrap attributeChangedCallback to ensure META.goo validation always runs
+                    // This prevents validation from breaking when components forget super calls
+                    this._wrapAttributeChangedCallback(ComponentClass, meta.fullTagName);
+
                     // Register the custom element with full tag name from META.goo
                     // (triggers constructor for any existing DOM elements)
                     customElements.define(meta.fullTagName, ComponentClass);
@@ -171,6 +176,60 @@ export default class GooeyJS {
             configurable: true,
             get: () => ComponentRegistry.getObservedAttributes(tagName)
         });
+    }
+
+    /**
+     * Wrap attributeChangedCallback to ensure META.goo validation always runs.
+     * This makes validation independent of whether components call super.attributeChangedCallback().
+     * Handles validation, error events, type parsing, and value storage for ALL components.
+     * @param {Function} ComponentClass - The component class
+     * @param {string} tagName - The custom element tag name
+     */
+    _wrapAttributeChangedCallback(ComponentClass, tagName) {
+        const originalCallback = ComponentClass.prototype.attributeChangedCallback;
+
+        ComponentClass.prototype.attributeChangedCallback = function(name, oldValue, newValue) {
+            // Skip if value hasn't actually changed
+            if (oldValue === newValue) {
+                if (originalCallback) {
+                    originalCallback.call(this, name, oldValue, newValue);
+                }
+                return;
+            }
+
+            // Check if this attribute has a META.goo definition
+            const attrDef = ComponentRegistry.getAttributeDefinition(tagName, name);
+            if (attrDef) {
+                // Validate the new value
+                const validation = ComponentRegistry.validateAttribute(tagName, name, newValue);
+
+                if (!validation.valid) {
+                    // Fire error event for programmatic error handling
+                    if (this.fireEvent) {
+                        this.fireEvent(ComponentEvent.ATTRIBUTE_ERROR, {
+                            attribute: name,
+                            value: newValue,
+                            error: validation.error,
+                            component: this
+                        });
+                    }
+
+                    // Log warning for developer visibility
+                    console.warn(`[${tagName}] Invalid attribute value: ${validation.error}`);
+                }
+
+                // Parse and store the typed value (even if validation failed, use best effort)
+                const parsedValue = ComponentRegistry.parseValue(tagName, name, newValue);
+                if (this._parsedAttributes) {
+                    this._parsedAttributes.set(name, parsedValue);
+                }
+            }
+
+            // Then call the component's original implementation if it exists
+            if (originalCallback) {
+                originalCallback.call(this, name, oldValue, newValue);
+            }
+        };
     }
 
 }
