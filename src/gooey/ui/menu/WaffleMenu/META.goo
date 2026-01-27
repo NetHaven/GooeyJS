@@ -1,0 +1,79 @@
+{
+  "MetaGooVersion": "1.0",
+  "name": "WaffleMenu",
+  "prefix": "gooeyui",
+  "tagName": "wafflemenu",
+  "script": "WaffleMenu.js",
+  "templates": [
+    { "id": "ui-WaffleMenu", "file": "WaffleMenu.html" }
+  ],
+  "themes": {
+    "default": "base",
+    "available": ["base", "dark", "janus"]
+  },
+  "attributes": {
+    "active": {
+      "type": "BOOLEAN",
+      "default": false,
+      "description": "Whether the waffle panel is currently open"
+    },
+    "columns": {
+      "type": "NUMBER",
+      "default": 3,
+      "description": "Number of columns in the grid (1-6)"
+    },
+    "rows": {
+      "type": "NUMBER",
+      "default": null,
+      "description": "Maximum number of visible rows before scrolling (null = auto)"
+    },
+    "icon": {
+      "type": "STRING",
+      "default": null,
+      "description": "Custom icon URL for the trigger button (defaults to built-in waffle icon)"
+    },
+    "position": {
+      "type": "ENUM",
+      "default": "bottom-start",
+      "values": ["top-start", "top-end", "bottom-start", "bottom-end"],
+      "description": "Panel position relative to trigger button"
+    },
+    "panelwidth": {
+      "type": "STRING",
+      "default": "auto",
+      "description": "CSS width for the panel"
+    },
+    "closeonselect": {
+      "type": "BOOLEAN",
+      "default": true,
+      "description": "Close the panel when an item is selected"
+    },
+    "closeonclickoutside": {
+      "type": "BOOLEAN",
+      "default": true,
+      "description": "Close the panel when clicking outside"
+    },
+    "title": {
+      "type": "STRING",
+      "default": null,
+      "description": "Optional header title text for the panel"
+    },
+    "label": {
+      "type": "STRING",
+      "default": null,
+      "description": "Accessible label for the trigger button"
+    },
+    "disabled": {
+      "type": "BOOLEAN",
+      "default": false
+    },
+    "visible": {
+      "type": "BOOLEAN",
+      "default": true
+    },
+    "tooltip": {
+      "type": "STRING",
+      "default": null
+    }
+  }
+}

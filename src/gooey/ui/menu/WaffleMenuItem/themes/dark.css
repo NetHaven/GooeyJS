@@ -1,0 +1,106 @@
+:host {
+    display: flex;
+    --waffle-item-size: 96px;
+    --waffle-item-icon-size: 48px;
+    --waffle-item-bg: transparent;
+    --waffle-item-hover-bg: rgba(255, 255, 255, 0.08);
+    --waffle-item-active-bg: rgba(255, 255, 255, 0.12);
+    --waffle-item-label-color: #e8eaed;
+    --waffle-item-border-radius: 8px;
+    --waffle-badge-bg: #ea4335;
+    --waffle-badge-color: #ffffff;
+}
+
+.waffle-item {
+    width: var(--waffle-item-size);
+    height: var(--waffle-item-size);
+    padding: 12px 8px;
+    border: none;
+    border-radius: var(--waffle-item-border-radius);
+    background: var(--waffle-item-bg);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background-color 0.15s ease;
+}
+
+.waffle-item:hover {
+    background: var(--waffle-item-hover-bg);
+}
+
+.waffle-item:active {
+    background: var(--waffle-item-active-bg);
+}
+
+.waffle-item:focus {
+    outline: 2px solid #8ab4f8;
+    outline-offset: -2px;
+}
+
+.waffle-item-icon {
+    position: relative;
+    width: var(--waffle-item-icon-size);
+    height: var(--waffle-item-icon-size);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.waffle-item-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+.waffle-item-badge {
+    display: none;
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 9px;
+    background: var(--waffle-badge-bg);
+    color: var(--waffle-badge-color);
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 18px;
+    text-align: center;
+}
+
+:host([badge]) .waffle-item-badge {
+    display: block;
+}
+
+.waffle-item-label {
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--waffle-item-label-color);
+    text-align: center;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Disabled state */
+:host([disabled]) .waffle-item {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* No icon state */
+:host(:not([icon])) .waffle-item-icon {
+    display: none;
+}
+
+/* No label state */
+:host(:not([label])) .waffle-item-label {
+    display: none;
+}

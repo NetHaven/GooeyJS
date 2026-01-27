@@ -1,0 +1,55 @@
+{
+  "MetaGooVersion": "1.0",
+  "name": "WaffleMenuItem",
+  "prefix": "gooeyui",
+  "tagName": "wafflemenuitem",
+  "script": "WaffleMenuItem.js",
+  "templates": [
+    { "id": "ui-WaffleMenuItem", "file": "WaffleMenuItem.html" }
+  ],
+  "themes": {
+    "default": "base",
+    "available": ["base", "dark", "janus"]
+  },
+  "attributes": {
+    "icon": {
+      "type": "STRING",
+      "default": null,
+      "description": "Icon URL for the menu item"
+    },
+    "label": {
+      "type": "STRING",
+      "default": null,
+      "description": "Text label displayed below the icon"
+    },
+    "action": {
+      "type": "STRING",
+      "default": null,
+      "description": "Action identifier fired with select event"
+    },
+    "href": {
+      "type": "STRING",
+      "default": null,
+      "description": "URL to navigate to when clicked"
+    },
+    "target": {
+      "type": "ENUM",
+      "default": "_self",
+      "values": ["_self", "_blank", "_parent", "_top"],
+      "description": "Target for href navigation"
+    },
+    "badge": {
+      "type": "STRING",
+      "default": null,
+      "description": "Badge text (e.g., notification count)"
+    },
+    "disabled": {
+      "type": "BOOLEAN",
+      "default": false
+    },
+    "tooltip": {
+      "type": "STRING",
+      "default": null
+    }
+  }
+}

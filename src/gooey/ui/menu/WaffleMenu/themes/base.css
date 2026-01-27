@@ -1,0 +1,186 @@
+:host {
+    display: inline-block;
+    position: relative;
+    --waffle-trigger-size: 40px;
+    --waffle-panel-width: auto;
+    --waffle-panel-max-height: 400px;
+    --waffle-item-size: 96px;
+    --waffle-gap: 8px;
+    --waffle-padding: 16px;
+    --waffle-border-radius: 8px;
+    --waffle-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    --waffle-bg: #ffffff;
+    --waffle-trigger-bg: transparent;
+    --waffle-trigger-hover-bg: rgba(0, 0, 0, 0.08);
+    --waffle-icon-color: #5f6368;
+    --waffle-backdrop-bg: transparent;
+}
+
+/* Trigger Button */
+.waffle-trigger {
+    width: var(--waffle-trigger-size);
+    height: var(--waffle-trigger-size);
+    padding: 8px;
+    border: none;
+    border-radius: 50%;
+    background: var(--waffle-trigger-bg);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease;
+}
+
+.waffle-trigger:hover {
+    background: var(--waffle-trigger-hover-bg);
+}
+
+.waffle-trigger:focus {
+    outline: 2px solid #1a73e8;
+    outline-offset: 2px;
+}
+
+.waffle-icon {
+    fill: var(--waffle-icon-color);
+}
+
+.waffle-custom-icon {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+}
+
+/* Backdrop */
+.waffle-backdrop {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--waffle-backdrop-bg);
+    z-index: 998;
+}
+
+:host([active]) .waffle-backdrop {
+    display: block;
+}
+
+:host([closeonclickoutside="false"]) .waffle-backdrop {
+    pointer-events: none;
+}
+
+/* Panel */
+.waffle-panel {
+    display: none;
+    position: absolute;
+    background: var(--waffle-bg);
+    border-radius: var(--waffle-border-radius);
+    box-shadow: var(--waffle-shadow);
+    z-index: 999;
+    min-width: 200px;
+    width: var(--waffle-panel-width);
+    max-height: var(--waffle-panel-max-height);
+    overflow: hidden;
+}
+
+:host([active]) .waffle-panel {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Position variants */
+:host([position="bottom-start"]) .waffle-panel {
+    top: 100%;
+    left: 0;
+    margin-top: 4px;
+}
+
+:host([position="bottom-end"]) .waffle-panel {
+    top: 100%;
+    right: 0;
+    margin-top: 4px;
+}
+
+:host([position="top-start"]) .waffle-panel {
+    bottom: 100%;
+    left: 0;
+    margin-bottom: 4px;
+}
+
+:host([position="top-end"]) .waffle-panel {
+    bottom: 100%;
+    right: 0;
+    margin-bottom: 4px;
+}
+
+/* Header */
+.waffle-header {
+    display: none;
+    padding: 12px var(--waffle-padding);
+    border-bottom: 1px solid #e0e0e0;
+    align-items: center;
+    justify-content: space-between;
+}
+
+:host([title]) .waffle-header {
+    display: flex;
+}
+
+.waffle-title {
+    font-weight: 500;
+    font-size: 14px;
+    color: #202124;
+}
+
+.waffle-close {
+    width: 28px;
+    height: 28px;
+    border: none;
+    background: transparent;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 20px;
+    line-height: 1;
+    color: #5f6368;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.waffle-close:hover {
+    background: rgba(0, 0, 0, 0.08);
+}
+
+/* Grid */
+.waffle-grid {
+    display: grid;
+    grid-template-columns: repeat(var(--waffle-columns, 3), var(--waffle-item-size));
+    gap: var(--waffle-gap);
+    padding: var(--waffle-padding);
+    overflow-y: auto;
+    max-height: calc(var(--waffle-panel-max-height) - 60px);
+}
+
+/* Footer */
+.waffle-footer {
+    display: none;
+    padding: 12px var(--waffle-padding);
+    border-top: 1px solid #e0e0e0;
+}
+
+.waffle-footer.has-content {
+    display: block;
+}
+
+/* Disabled state */
+:host([disabled]) .waffle-trigger {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* Slotted items */
+::slotted(gooeyui-wafflemenuitem) {
+    display: flex;
+}
