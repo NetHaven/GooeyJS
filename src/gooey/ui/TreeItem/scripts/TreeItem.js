@@ -46,6 +46,7 @@ export default class TreeItem extends UIComponent {
         this.addValidEvent(TreeItemEvent.TREE_ITEM_EXPAND);
         this.addValidEvent(TreeItemEvent.TREE_ITEM_COLLAPSE);
         this.addValidEvent(TreeItemEvent.TREE_ITEM_EDIT);
+        this.addValidEvent(TreeItemEvent.TREE_ITEM_CHILD_ADDED);
         this.addValidEvent(MouseEvent.CLICK);
         this.addValidEvent(MouseEvent.DOUBLE_CLICK);
         this.addValidEvent(DragEvent.START);
@@ -226,12 +227,11 @@ export default class TreeItem extends UIComponent {
             treeItem._updateAriaLevelRecursively();
         }
 
-        // Dispatch composed event so Tree can detect shadow DOM changes
-        this.dispatchEvent(new CustomEvent('treeitem-child-added', {
-            bubbles: true,
-            composed: true,
-            detail: { child: treeItem, parent: this }
-        }));
+        // Fire event so Tree can detect shadow DOM changes
+        this.fireEvent(TreeItemEvent.TREE_ITEM_CHILD_ADDED, {
+            child: treeItem,
+            parent: this
+        });
     }
     
     removeChild(treeItem) {

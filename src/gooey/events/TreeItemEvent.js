@@ -9,6 +9,7 @@ export default class TreeItemEvent extends Event {
     static TREE_ITEM_EDIT = "treeitem-edit";
     static TREE_ITEM_DROP = "treeitem-drop";
     static TREE_ITEM_REORDER = "treeitem-reorder";
+    static TREE_ITEM_CHILD_ADDED = "treeitem-child-added";
 
     constructor() {
         super();

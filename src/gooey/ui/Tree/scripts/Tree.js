@@ -23,6 +23,7 @@ export default class Tree extends UIComponent {
         this._boundExpandHandler = this._handleTreeItemExpand.bind(this);
         this._boundCollapseHandler = this._handleTreeItemCollapse.bind(this);
         this._boundKeyDownHandler = this._handleKeyDown.bind(this);
+        this._boundChildAddedHandler = this._handleChildAdded.bind(this);
 
         this.addValidEvent(KeyboardEvent.KEY_DOWN);
         this.addValidEvent(MouseEvent.CLICK);
@@ -53,13 +54,6 @@ export default class Tree extends UIComponent {
             });
             this._shadowDOMObserver.observe(this._treeElement, { childList: true, subtree: true });
         }
-
-        // Listen for children added to TreeItems (which go into their shadow DOM)
-        // Use HTMLElement.prototype to bypass Observable's event validation
-        this._boundChildAddedHandler = () => {
-            this._attachTreeItemListeners();
-        };
-        HTMLElement.prototype.addEventListener.call(this, 'treeitem-child-added', this._boundChildAddedHandler);
     }
 
     disconnectedCallback() {
@@ -75,11 +69,6 @@ export default class Tree extends UIComponent {
             this._shadowDOMObserver = null;
         }
 
-        // Remove child-added listener
-        if (this._boundChildAddedHandler) {
-            HTMLElement.prototype.removeEventListener.call(this, 'treeitem-child-added', this._boundChildAddedHandler);
-        }
-
         // Remove listeners from all tree items
         this._detachTreeItemListeners();
     }
@@ -91,9 +80,14 @@ export default class Tree extends UIComponent {
                 treeItem.addEventListener(MouseEvent.CLICK, this._boundClickHandler);
                 treeItem.addEventListener(TreeItemEvent.TREE_ITEM_EXPAND, this._boundExpandHandler);
                 treeItem.addEventListener(TreeItemEvent.TREE_ITEM_COLLAPSE, this._boundCollapseHandler);
+                treeItem.addEventListener(TreeItemEvent.TREE_ITEM_CHILD_ADDED, this._boundChildAddedHandler);
                 this._attachedTreeItems.add(treeItem);
             }
         });
+    }
+
+    _handleChildAdded() {
+        this._attachTreeItemListeners();
     }
 
     /**
@@ -150,6 +144,7 @@ export default class Tree extends UIComponent {
         treeItem.removeEventListener(MouseEvent.CLICK, this._boundClickHandler);
         treeItem.removeEventListener(TreeItemEvent.TREE_ITEM_EXPAND, this._boundExpandHandler);
         treeItem.removeEventListener(TreeItemEvent.TREE_ITEM_COLLAPSE, this._boundCollapseHandler);
+        treeItem.removeEventListener(TreeItemEvent.TREE_ITEM_CHILD_ADDED, this._boundChildAddedHandler);
         this._attachedTreeItems.delete(treeItem);
     }
 
