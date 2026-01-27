@@ -15,6 +15,9 @@ export default class Tab extends Container {
         this._active = false;
         this._tabHeader = null;
         this._tabPanel = null;
+
+        // Add valid events
+        this.addValidEvent(TabEvent.TAB_CLOSE);
     }
 
     connectedCallback() {
@@ -190,14 +193,12 @@ export default class Tab extends Container {
     }
 
     _closeTab() {
-        const closeEvent = new CustomEvent(TabEvent.TAB_CLOSE, {
-            detail: { tab: this, name: this.name },
-            cancelable: true
-        });
-        
-        this.dispatchEvent(closeEvent);
-        
-        if (!closeEvent.defaultPrevented) {
+        const proceed = this.fireEvent(TabEvent.TAB_CLOSE, {
+            tab: this,
+            name: this.name
+        }, { cancelable: true });
+
+        if (proceed) {
             this.remove();
         }
     }

@@ -47,6 +47,7 @@ export default class TreeItem extends UIComponent {
         this.addValidEvent(TreeItemEvent.TREE_ITEM_COLLAPSE);
         this.addValidEvent(TreeItemEvent.TREE_ITEM_EDIT);
         this.addValidEvent(TreeItemEvent.TREE_ITEM_CHILD_ADDED);
+        this.addValidEvent(TreeItemEvent.TREE_ITEM_DROP);
         this.addValidEvent(MouseEvent.CLICK);
         this.addValidEvent(MouseEvent.DOUBLE_CLICK);
         this.addValidEvent(DragEvent.START);
@@ -822,23 +823,17 @@ export default class TreeItem extends UIComponent {
             return;
         }
         
-        // Proceed with valid drop
-        const dropEvent = new CustomEvent(TreeItemEvent.TREE_ITEM_DROP, {
-            bubbles: true,
-            cancelable: true,
-            detail: {
-                draggedItem: draggedItem,
-                targetItem: this,
-                dropPosition: this._dragState.dropPosition,
-                dropTreeRestriction: draggedItem.dropTree,
-                originalEvent: event
-            }
-        });
-        
-        this.dispatchEvent(dropEvent);
-        
+        // Proceed with valid drop - fire cancelable event
+        const proceed = this.fireEvent(TreeItemEvent.TREE_ITEM_DROP, {
+            draggedItem: draggedItem,
+            targetItem: this,
+            dropPosition: this._dragState.dropPosition,
+            dropTreeRestriction: draggedItem.dropTree,
+            originalEvent: event
+        }, { cancelable: true });
+
         // If not prevented, perform the default drop behavior
-        if (!dropEvent.defaultPrevented) {
+        if (proceed) {
             this._performDrop(draggedItem, this._dragState.dropPosition);
         }
         

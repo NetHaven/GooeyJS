@@ -69,6 +69,7 @@ export default class ComboBox extends ListBox {
         this.addValidEvent(FormElementEvent.BLUR);
         this.addValidEvent(ComboBoxEvent.DROPDOWN_OPEN);
         this.addValidEvent(ComboBoxEvent.DROPDOWN_CLOSE);
+        this.addValidEvent(ComboBoxEvent.CHANGE);
     }
     
     /**
@@ -218,9 +219,13 @@ export default class ComboBox extends ListBox {
         if (this.listBox.selectedIndex >= 0) {
             const selectedOption = this.listBox.options[this.listBox.selectedIndex];
             this._textInput.value = selectedOption.textContent;
-            
-            // Dispatch change event
-            this.dispatchEvent(new Event('change', { bubbles: true }));
+
+            // Fire change event
+            this.fireEvent(ComboBoxEvent.CHANGE, {
+                value: this.value,
+                text: selectedOption.textContent,
+                selectedIndex: this.listBox.selectedIndex
+            });
         }
     }
     
