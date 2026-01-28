@@ -242,8 +242,8 @@ export default class TabPanel extends Container {
             // Find tab by name
             tab = this._tabs.find(t => t.name === tab);
         }
-        
-        if (tab && tab.parentNode === this._contentPanel) {
+
+        if (tab && this._tabs.includes(tab)) {
             tab.remove();
         }
     }
