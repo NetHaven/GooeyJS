@@ -283,7 +283,8 @@ export default class VideoPlayer extends UIComponent {
     // ========== Keyboard Events ==========
 
     #setupKeyboardEvents() {
-        this.addEventListener('keydown', (e) => this.#handleKeyboard(e));
+        // Use native listener to get the actual DOM event object
+        HTMLElement.prototype.addEventListener.call(this, 'keydown', (e) => this.#handleKeyboard(e));
         this.setAttribute('tabindex', '0');
     }
 
