@@ -1028,7 +1028,7 @@ export default class TreeItem extends UIComponent {
             // Move up the tree structure
             // First try to find the parent TreeItem
             let parent = current.parentElement;
-            while (parent && parent.tagName !== 'UI-TREEITEM') {
+            while (parent && parent.tagName !== 'GOOEYUI-TREEITEM') {
                 parent = parent.parentElement;
             }
             current = parent;
