@@ -215,6 +215,10 @@ export default class MenuItem extends UIComponent {
     
     set accelerator(val) {
         this.setAttribute("accelerator", val);
+        // Re-render text to show/update underline
+        if (this.textElement) {
+            this._renderText();
+        }
     }
 
     set action(val) {
@@ -252,7 +256,37 @@ export default class MenuItem extends UIComponent {
 
     set text(val) {
         this.setAttribute("text", val);
-        this.textElement.textContent = val;
+        this._renderText();
+    }
+
+    /**
+     * Render text with accelerator underline using DOM nodes.
+     * Called when text or accelerator changes.
+     */
+    _renderText() {
+        const text = this.getAttribute("text") || "";
+        const accelerator = this.accelerator;
+
+        // Clear existing content
+        this.textElement.textContent = "";
+
+        if (accelerator && text.indexOf(accelerator) !== -1) {
+            const accelIndex = text.indexOf(accelerator);
+            const beforeText = text.substring(0, accelIndex);
+            const afterText = text.substring(accelIndex + accelerator.length);
+
+            if (beforeText) {
+                this.textElement.appendChild(document.createTextNode(beforeText));
+            }
+            const underline = document.createElement("u");
+            underline.textContent = accelerator;
+            this.textElement.appendChild(underline);
+            if (afterText) {
+                this.textElement.appendChild(document.createTextNode(afterText));
+            }
+        } else {
+            this.textElement.textContent = text;
+        }
     }
 
     set icon(val) {

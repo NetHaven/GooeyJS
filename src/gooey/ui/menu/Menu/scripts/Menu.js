@@ -19,15 +19,14 @@ export default class Menu extends UIComponent {
             this.text = this.getAttribute("text");
         }
 
-        this.menuItems.forEach((menuItem) => {
-            let menuText = menuItem.getAttribute("text");
-            const accelerator = menuItem.getAttribute("accelerator");
-            if (accelerator) {
-                if (menuText.indexOf(accelerator) !== -1) {
-                    menuText = menuText.replace(accelerator, "<u>" + accelerator + "</u>");
-                }
+        // Trigger text re-render for menu items to apply accelerator underlines.
+        // MenuItem._renderText() handles accelerator rendering with DOM nodes.
+        const allMenuItems = this.querySelectorAll("gooeyui-menuitem, gooeyui-checkboxmenuitem");
+        allMenuItems.forEach((menuItem) => {
+            const menuText = menuItem.getAttribute("text");
+            if (menuText) {
+                menuItem.text = menuText;
             }
-            menuItem.setAttribute("text", menuText);
         });
 
         // Bind the handler so it can be removed later
