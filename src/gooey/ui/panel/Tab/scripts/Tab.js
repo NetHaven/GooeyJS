@@ -1,7 +1,6 @@
 import Container from '../../../Container.js';
 import LayoutType from '../../../layout/Layout/scripts/LayoutType.js';
 import TabEvent from '../../../../events/panel/TabEvent.js';
-import TabPanelEvent from '../../../../events/panel/TabPanelEvent.js';
 import MouseEvent from '../../../../events/MouseEvent.js';
 import Template from '../../../../util/Template.js';
 
@@ -175,11 +174,6 @@ export default class Tab extends Container {
             this._tabHeader.classList.toggle('active', isActive);
             this._tabHeader.setAttribute('tabindex', isActive ? '0' : '-1');
             this._tabHeader.setAttribute('aria-selected', isActive.toString());
-        }
-        
-        // Dispatch tab change event
-        if (isActive && this._tabPanel) {
-            this._tabPanel.fireEvent(TabPanelEvent.TAB_CHANGE, { tab: this, name: this.name });
         }
     }
 
