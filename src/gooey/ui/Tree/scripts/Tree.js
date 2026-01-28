@@ -129,6 +129,42 @@ export default class Tree extends UIComponent {
         });
     }
 
+    /**
+     * Get all visible tree items (excludes items hidden inside collapsed parents)
+     * @returns {Array} Array of visible TreeItem elements
+     */
+    _getVisibleTreeItems() {
+        const items = [];
+        // Collect from light DOM (items added via markup)
+        this._collectVisibleTreeItems(this, items);
+        // Collect from shadow DOM _treeElement (items added via addItem())
+        if (this._treeElement) {
+            this._collectVisibleTreeItems(this._treeElement, items);
+        }
+        return items;
+    }
+
+    /**
+     * Recursively collect only visible tree items (skips collapsed children)
+     * @param {Element} root - The root element to search from
+     * @param {Array} items - Array to collect items into
+     */
+    _collectVisibleTreeItems(root, items) {
+        const directItems = root.querySelectorAll(':scope > gooeyui-treeitem');
+        directItems.forEach(item => {
+            if (!items.includes(item)) {
+                items.push(item);
+            }
+            // Only descend into children if the item is expanded
+            if (item.expanded && item.shadowRoot) {
+                const childrenContainer = item.shadowRoot.querySelector('.ui-TreeItem-children');
+                if (childrenContainer) {
+                    this._collectVisibleTreeItems(childrenContainer, items);
+                }
+            }
+        });
+    }
+
     _detachTreeItemListeners() {
         this._attachedTreeItems.forEach(treeItem => {
             this._detachSingleTreeItemListener(treeItem);
@@ -308,7 +344,7 @@ export default class Tree extends UIComponent {
     }
     
     _selectPreviousItem() {
-        const items = this._getAllTreeItems();
+        const items = this._getVisibleTreeItems();
         const currentIndex = items.indexOf(this._selectedItem);
         if (currentIndex > 0) {
             this.selectedItem = items[currentIndex - 1];
@@ -316,7 +352,7 @@ export default class Tree extends UIComponent {
     }
 
     _selectNextItem() {
-        const items = this._getAllTreeItems();
+        const items = this._getVisibleTreeItems();
         const currentIndex = items.indexOf(this._selectedItem);
         if (currentIndex < items.length - 1) {
             this.selectedItem = items[currentIndex + 1];
