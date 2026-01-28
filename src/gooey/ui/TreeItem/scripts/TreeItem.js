@@ -472,6 +472,28 @@ export default class TreeItem extends UIComponent {
     }
 
     /**
+     * Get the parent element of a given element, crossing shadow DOM boundaries.
+     * Uses getRootNode().host to traverse through shadow roots when parentElement is null.
+     * @param {Element} element - The element to get the parent of
+     * @returns {Element|null} The parent element or null if at root level
+     */
+    _getParentAcrossShadow(element) {
+        if (!element) {
+            return null;
+        }
+        // First try the regular parentElement
+        if (element.parentElement) {
+            return element.parentElement;
+        }
+        // If no parentElement, check if we're at a shadow root boundary
+        const root = element.getRootNode();
+        if (root instanceof ShadowRoot && root.host) {
+            return root.host;
+        }
+        return null;
+    }
+
+    /**
      * Focus the first child tree item
      */
     _focusFirstChild() {
@@ -963,10 +985,10 @@ export default class TreeItem extends UIComponent {
         if (!dropTreeSelector) {
             return true;
         }
-        
+
         // Find the drop tree root elements by class or ID
         let dropTreeRoots = [];
-        
+
         if (dropTreeSelector.startsWith('.')) {
             // Class-based selector - find all elements with this class
             const className = dropTreeSelector.substring(1);
@@ -982,12 +1004,12 @@ export default class TreeItem extends UIComponent {
                 dropTreeRoots = [dropTreeRoot];
             }
         }
-        
+
         if (dropTreeRoots.length === 0) {
             console.warn('TREEITEM_DROP_TREE_NOT_FOUND', `Drop tree with selector '${dropTreeSelector}' not found`);
             return false;
         }
-        
+
         // Check if this element is a valid drop target for any of the drop tree roots
         for (const dropTreeRoot of dropTreeRoots) {
             // The drop target must either be:
@@ -997,13 +1019,16 @@ export default class TreeItem extends UIComponent {
                 // Direct drop on the container is always valid
                 return true;
             }
-            
+
             // Check if this is a sibling item for reordering
             // Both items must be direct children of the same dropTree root
-            if (this.parentElement && this.parentElement.classList && 
-                this.parentElement.classList.contains('ui-TreeItem-children')) {
+            // Use shadow-crossing traversal to find the parent container
+            const parentContainer = this._getParentAcrossShadow(this);
+            if (parentContainer && parentContainer.classList &&
+                parentContainer.classList.contains('ui-TreeItem-children')) {
                 // Check if the children container belongs to the dropTree root
-                if (this.parentElement.parentElement === dropTreeRoot) {
+                const grandparent = this._getParentAcrossShadow(parentContainer);
+                if (grandparent === dropTreeRoot) {
                     // This is a sibling, but only allow 'before' and 'after' drops
                     // Prevent 'inside' drops which would create nesting
                     if (dropPosition === 'inside') {
@@ -1013,23 +1038,24 @@ export default class TreeItem extends UIComponent {
                 }
             }
         }
-        
+
         return false;
     }
     
     _isWithinSubtree(rootElement) {
         // Check if this tree item is within the subtree rooted at rootElement
+        // Uses shadow-crossing traversal to handle nested TreeItems in shadow DOM
         let current = this;
         while (current) {
             if (current === rootElement) {
                 return true;
             }
-            
-            // Move up the tree structure
-            // First try to find the parent TreeItem
-            let parent = current.parentElement;
+
+            // Move up the tree structure, crossing shadow boundaries
+            // First try parentElement, then cross shadow boundary if needed
+            let parent = this._getParentAcrossShadow(current);
             while (parent && parent.tagName !== 'GOOEYUI-TREEITEM') {
-                parent = parent.parentElement;
+                parent = this._getParentAcrossShadow(parent);
             }
             current = parent;
         }
