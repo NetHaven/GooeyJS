@@ -49,9 +49,6 @@ export default class Tab extends Container {
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
-        // Call parent for META.goo validation/parsing
-        super.attributeChangedCallback(name, oldValue, newValue);
-
         switch (name) {
             case 'name':
             case 'text':

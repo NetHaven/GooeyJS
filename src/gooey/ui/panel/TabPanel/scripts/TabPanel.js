@@ -43,11 +43,6 @@ export default class TabPanel extends Container {
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
-        // Call parent's attributeChangedCallback if it exists
-        if (super.attributeChangedCallback) {
-            super.attributeChangedCallback(name, oldValue, newValue);
-        }
-        
         if (name === 'orientation') {
             this._updateOrientation();
         } else if (name === 'draggable') {
