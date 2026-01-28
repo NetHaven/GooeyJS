@@ -36,6 +36,11 @@ export default class VideoPlayer extends UIComponent {
     #controlsFadeTimer = null;
     #stopTimeCheckInterval = null;
 
+    // References for cleanup
+    #trackObserver = null;
+    #boundFullscreenChangeHandler = null;
+    #boundWebkitFullscreenChangeHandler = null;
+
     static #CONTROLS_FADE_TIMEOUT = 5000;
     static #SKIP_SECONDS = 10;
 
@@ -341,13 +346,11 @@ export default class VideoPlayer extends UIComponent {
             }
         });
 
-        // Handle fullscreen change
-        document.addEventListener('fullscreenchange', () => {
-            this.#handleFullscreenChange();
-        });
-        document.addEventListener('webkitfullscreenchange', () => {
-            this.#handleFullscreenChange();
-        });
+        // Handle fullscreen change - store bound handlers for cleanup
+        this.#boundFullscreenChangeHandler = () => this.#handleFullscreenChange();
+        this.#boundWebkitFullscreenChangeHandler = () => this.#handleFullscreenChange();
+        document.addEventListener('fullscreenchange', this.#boundFullscreenChangeHandler);
+        document.addEventListener('webkitfullscreenchange', this.#boundWebkitFullscreenChangeHandler);
     }
 
     #handleFullscreenChange() {
@@ -393,7 +396,7 @@ export default class VideoPlayer extends UIComponent {
     // ========== Track Observer ==========
 
     #setupTrackObserver() {
-        const observer = new MutationObserver((mutations) => {
+        this.#trackObserver = new MutationObserver((mutations) => {
             let tracksChanged = false;
             for (const mutation of mutations) {
                 if (mutation.type === 'childList') {
@@ -411,7 +414,7 @@ export default class VideoPlayer extends UIComponent {
             }
         });
 
-        observer.observe(this, { childList: true });
+        this.#trackObserver.observe(this, { childList: true });
 
         // Initial load
         if (!this.playlist) {
@@ -544,6 +547,39 @@ export default class VideoPlayer extends UIComponent {
             case 'controls':
                 // Handled by CSS
                 break;
+        }
+    }
+
+    disconnectedCallback() {
+        // Clean up global event listeners
+        if (this.#boundFullscreenChangeHandler) {
+            document.removeEventListener('fullscreenchange', this.#boundFullscreenChangeHandler);
+            this.#boundFullscreenChangeHandler = null;
+        }
+        if (this.#boundWebkitFullscreenChangeHandler) {
+            document.removeEventListener('webkitfullscreenchange', this.#boundWebkitFullscreenChangeHandler);
+            this.#boundWebkitFullscreenChangeHandler = null;
+        }
+
+        // Disconnect mutation observer
+        if (this.#trackObserver) {
+            this.#trackObserver.disconnect();
+            this.#trackObserver = null;
+        }
+
+        // Clear timers
+        if (this.#controlsFadeTimer) {
+            clearTimeout(this.#controlsFadeTimer);
+            this.#controlsFadeTimer = null;
+        }
+        if (this.#stopTimeCheckInterval) {
+            clearInterval(this.#stopTimeCheckInterval);
+            this.#stopTimeCheckInterval = null;
+        }
+
+        // Call parent disconnectedCallback if it exists
+        if (super.disconnectedCallback) {
+            super.disconnectedCallback();
         }
     }
 
