@@ -81,8 +81,6 @@ This approach significantly reduces initial load time by loading only the compon
 - **Menu** - creates a dropdown menu container that holds menu items, separators, and submenus. It provides keyboard navigation, cascading submenus, and integration with menu bars and context menus for comprehensive menu system functionality.
 - **MenuItem** - represents an individual action item within a menu. It provides clickable menu options with support for icons, keyboard shortcuts, and various states (enabled, disabled, checked).
 - **MenuItemSeparator** - provides a visual separator line between menu items. It helps organize menu items into logical groups and improves menu readability.
-- **WaffleMenu** - provides a grid-based popup menu (also known as Bento Box or App Launcher) triggered by a waffle icon button. Displays WaffleMenuItem children in a configurable grid layout for quick access to applications, features, or navigation items. Supports customizable columns, viewport-aware positioning, keyboard navigation, and notification badges.
-- **WaffleMenuItem** - represents an individual item within a WaffleMenu grid. Displays an icon with a text label and optionally a notification badge. Items can trigger actions via the `action` attribute or navigate to URLs via `href` and `target` attributes.
 
 ### Toolbars & Tools
 - **Toolbar** - provides a horizontal container for organizing buttons, controls, and other UI elements in a toolbar layout. It extends the Container class and supports configurable button sizes, borders, and flexible content arrangement.
@@ -131,7 +129,7 @@ GooeyJS 3.0 will at the very least include the following components:
 - Pagination
 - Toast Notifications
 - Video Player
-- ~~Waffle Menu~~ (Implemented in 2.x)
+- Waffle Menu
 
 It will also include components specifically geared for configuring:
 - Filters

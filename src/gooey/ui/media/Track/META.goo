@@ -1,0 +1,36 @@
+{
+  "MetaGooVersion": "1.0",
+  "name": "Track",
+  "prefix": "gooeyui",
+  "tagName": "track",
+  "script": "Track.js",
+  "templates": [],
+  "themes": {
+    "default": "base",
+    "available": ["base"]
+  },
+  "attributes": {
+    "src": {
+      "type": "STRING",
+      "default": null
+    },
+    "starttime": {
+      "type": "NUMBER",
+      "default": 0
+    },
+    "stoptime": {
+      "type": "NUMBER",
+      "default": null
+    },
+    "speed": {
+      "type": "NUMBER",
+      "default": null,
+      "min": 0.25,
+      "max": 4
+    },
+    "title": {
+      "type": "STRING",
+      "default": null
+    }
+  }
+}

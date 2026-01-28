@@ -1,0 +1,217 @@
+:host {
+    display: inline-block;
+    position: relative;
+    background: #000;
+    overflow: hidden;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+:host([fullscreen]) {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: 9999;
+}
+
+.video-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.video-element {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    flex: 1;
+}
+
+/* Controls Container - Minimal Theme */
+.controls-container {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 6px;
+    background: transparent;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+
+:host([controls="none"]) .controls-container {
+    display: none;
+}
+
+/* Hide extra controls in minimal theme by default */
+.btn-rewind,
+.btn-fastforward,
+.btn-stop,
+.time-display {
+    display: none;
+}
+
+.volume-slider {
+    width: 40px;
+}
+
+/* Fullscreen fade behavior */
+:host([fullscreen]) .controls-container.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+:host([fullscreen]) .controls-container.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.controls-left,
+.controls-right {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    flex-shrink: 0;
+}
+
+/* Progress Bar */
+.progress-container {
+    flex: 1;
+    padding: 0 4px;
+    min-width: 30px;
+}
+
+.progress-bar,
+.volume-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 2px;
+    cursor: pointer;
+    outline: none;
+}
+
+.progress-bar {
+    width: 100%;
+}
+
+.progress-bar::-webkit-slider-thumb,
+.volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 10px;
+    height: 10px;
+    background: #fff;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.progress-bar::-moz-range-thumb,
+.volume-slider::-moz-range-thumb {
+    width: 10px;
+    height: 10px;
+    background: #fff;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.progress-bar::-webkit-slider-runnable-track,
+.volume-slider::-webkit-slider-runnable-track {
+    height: 3px;
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 2px;
+}
+
+.progress-bar::-moz-range-track,
+.volume-slider::-moz-range-track {
+    height: 3px;
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 2px;
+}
+
+/* Buttons - Minimal */
+button {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.8);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    min-height: 24px;
+}
+
+button:hover {
+    color: #fff;
+}
+
+button:focus {
+    outline: 1px solid rgba(255, 255, 255, 0.5);
+    outline-offset: 1px;
+}
+
+button:focus:not(:focus-visible) {
+    outline: none;
+}
+
+button:focus-visible {
+    outline: 1px solid rgba(255, 255, 255, 0.5);
+    outline-offset: 1px;
+}
+
+button:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+button[hidden] {
+    display: none;
+}
+
+/* Screen reader only */
+.sr-only,
+.sr-announcer:empty {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Icon styles - Smaller for minimal */
+.icon-play::before { content: '\25B6'; font-size: 12px; }
+.icon-pause::before { content: '\23F8'; font-size: 12px; }
+.icon-stop::before { content: '\23F9'; font-size: 12px; }
+.icon-rewind::before { content: '\23EA'; font-size: 12px; }
+.icon-fastforward::before { content: '\23E9'; font-size: 12px; }
+.icon-previous::before { content: '\23EE'; font-size: 12px; }
+.icon-next::before { content: '\23ED'; font-size: 12px; }
+.icon-volume::before { content: '\1F50A'; font-size: 12px; }
+.icon-mute::before { content: '\1F507'; font-size: 12px; }
+.icon-fullscreen::before { content: '\26F6'; font-size: 12px; }
+
+/* Muted state icon change */
+:host([muted]) .btn-mute .icon-volume::before {
+    content: '\1F507';
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+    .controls-container {
+        transition: none;
+    }
+}

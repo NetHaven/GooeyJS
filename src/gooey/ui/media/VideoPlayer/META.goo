@@ -1,0 +1,77 @@
+{
+  "MetaGooVersion": "1.0",
+  "name": "VideoPlayer",
+  "prefix": "gooeyui",
+  "tagName": "videoplayer",
+  "script": "VideoPlayer.js",
+  "templates": [
+    { "id": "ui-VideoPlayer", "file": "VideoPlayer.html" }
+  ],
+  "themes": {
+    "default": "base",
+    "available": ["base", "dark", "minimal"]
+  },
+  "attributes": {
+    "width": {
+      "type": "STRING",
+      "default": "640"
+    },
+    "height": {
+      "type": "STRING",
+      "default": "360"
+    },
+    "src": {
+      "type": "STRING",
+      "default": null
+    },
+    "poster": {
+      "type": "STRING",
+      "default": null
+    },
+    "autoplay": {
+      "type": "BOOLEAN",
+      "default": false
+    },
+    "controls": {
+      "type": "ENUM",
+      "default": "full",
+      "values": ["full", "compact", "none"]
+    },
+    "fullscreen": {
+      "type": "BOOLEAN",
+      "default": false
+    },
+    "loop": {
+      "type": "BOOLEAN",
+      "default": false
+    },
+    "muted": {
+      "type": "BOOLEAN",
+      "default": false
+    },
+    "volume": {
+      "type": "NUMBER",
+      "default": 1,
+      "min": 0,
+      "max": 1
+    },
+    "speed": {
+      "type": "NUMBER",
+      "default": 1,
+      "min": 0.25,
+      "max": 4
+    },
+    "playlist": {
+      "type": "STRING",
+      "default": null
+    },
+    "controlbar": {
+      "type": "STRING",
+      "default": null
+    },
+    "disablekb": {
+      "type": "BOOLEAN",
+      "default": false
+    }
+  }
+}
