@@ -1452,6 +1452,164 @@ const GooeyData = {
                     "code": "<gooeyui-menuitem text=\"Copy\"></gooeyui-menuitem>\n<gooeyui-menuitem text=\"Paste\"></gooeyui-menuitem>\n<gooeyui-menuitemseparator></gooeyui-menuitemseparator>\n<gooeyui-menuitem text=\"Select All\"></gooeyui-menuitem>"
                   }
                 ]
+              },
+              {
+                "name": "WaffleMenu",
+                "tagName": "gooeyui-wafflemenu",
+                "description": "A grid-based popup menu (also known as Bento Box or App Launcher) triggered by a waffle icon button. Displays items in a configurable grid layout for quick access to applications, features, or navigation items.",
+                "inherits": ["UIComponent"],
+                "attributes": [
+                  {
+                    "name": "active",
+                    "type": "BOOLEAN",
+                    "description": "When true, the waffle panel is open and visible",
+                    "required": false
+                  },
+                  {
+                    "name": "columns",
+                    "type": "NUMBER",
+                    "description": "Number of columns in the grid layout (1-6, default: 3)",
+                    "required": false
+                  },
+                  {
+                    "name": "rows",
+                    "type": "NUMBER",
+                    "description": "Maximum number of visible rows before scrolling (null for auto)",
+                    "required": false
+                  },
+                  {
+                    "name": "icon",
+                    "type": "STRING",
+                    "description": "URL path to a custom icon image replacing the default waffle (3x3 dots) icon",
+                    "required": false
+                  },
+                  {
+                    "name": "position",
+                    "type": "ENUM",
+                    "values": ["top-start", "top-end", "bottom-start", "bottom-end"],
+                    "description": "Position of the panel relative to the trigger button (default: bottom-start)",
+                    "required": false
+                  },
+                  {
+                    "name": "panelwidth",
+                    "type": "STRING",
+                    "description": "CSS width value for the panel (default: auto)",
+                    "required": false
+                  },
+                  {
+                    "name": "title",
+                    "type": "STRING",
+                    "description": "Optional header title text displayed at the top of the panel",
+                    "required": false
+                  },
+                  {
+                    "name": "label",
+                    "type": "STRING",
+                    "description": "Accessible label for the trigger button (used by screen readers)",
+                    "required": false
+                  },
+                  {
+                    "name": "closeonselect",
+                    "type": "BOOLEAN",
+                    "description": "When true, automatically closes the panel when an item is selected (default: true)",
+                    "required": false
+                  },
+                  {
+                    "name": "closeonclickoutside",
+                    "type": "BOOLEAN",
+                    "description": "When true, closes the panel when clicking outside of it (default: true)",
+                    "required": false
+                  }
+                ],
+                "examples": [
+                  {
+                    "title": "Basic Waffle Menu",
+                    "description": "A simple app launcher with icon and label items.",
+                    "code": "<gooeyui-wafflemenu>\n  <gooeyui-wafflemenuitem icon=\"icons/mail.svg\" label=\"Mail\" action=\"open-mail\"></gooeyui-wafflemenuitem>\n  <gooeyui-wafflemenuitem icon=\"icons/calendar.svg\" label=\"Calendar\" action=\"open-calendar\"></gooeyui-wafflemenuitem>\n  <gooeyui-wafflemenuitem icon=\"icons/drive.svg\" label=\"Drive\" action=\"open-drive\"></gooeyui-wafflemenuitem>\n  <gooeyui-wafflemenuitem icon=\"icons/docs.svg\" label=\"Docs\" action=\"open-docs\"></gooeyui-wafflemenuitem>\n  <gooeyui-wafflemenuitem icon=\"icons/sheets.svg\" label=\"Sheets\" action=\"open-sheets\"></gooeyui-wafflemenuitem>\n  <gooeyui-wafflemenuitem icon=\"icons/slides.svg\" label=\"Slides\" action=\"open-slides\"></gooeyui-wafflemenuitem>\n</gooeyui-wafflemenu>"
+                  },
+                  {
+                    "title": "Four-Column Grid",
+                    "description": "A waffle menu with a 4-column layout positioned at bottom-end.",
+                    "code": "<gooeyui-wafflemenu columns=\"4\" position=\"bottom-end\" label=\"Applications\">\n  <gooeyui-wafflemenuitem icon=\"icons/gmail.png\" label=\"Gmail\" href=\"https://mail.google.com\" target=\"_blank\"></gooeyui-wafflemenuitem>\n  <gooeyui-wafflemenuitem icon=\"icons/drive.png\" label=\"Drive\" href=\"https://drive.google.com\" target=\"_blank\"></gooeyui-wafflemenuitem>\n  <gooeyui-wafflemenuitem icon=\"icons/calendar.png\" label=\"Calendar\" href=\"https://calendar.google.com\" target=\"_blank\"></gooeyui-wafflemenuitem>\n  <gooeyui-wafflemenuitem icon=\"icons/meet.png\" label=\"Meet\" href=\"https://meet.google.com\" target=\"_blank\"></gooeyui-wafflemenuitem>\n</gooeyui-wafflemenu>"
+                  },
+                  {
+                    "title": "With Title and Badges",
+                    "description": "A waffle menu with a header title and notification badges on items.",
+                    "code": "<gooeyui-wafflemenu title=\"Quick Access\" icon=\"custom-waffle.svg\">\n  <gooeyui-wafflemenuitem icon=\"icons/notifications.svg\" label=\"Notifications\" badge=\"12\" action=\"open-notifications\"></gooeyui-wafflemenuitem>\n  <gooeyui-wafflemenuitem icon=\"icons/messages.svg\" label=\"Messages\" badge=\"3\" action=\"open-messages\"></gooeyui-wafflemenuitem>\n  <gooeyui-wafflemenuitem icon=\"icons/tasks.svg\" label=\"Tasks\" action=\"open-tasks\"></gooeyui-wafflemenuitem>\n</gooeyui-wafflemenu>"
+                  },
+                  {
+                    "title": "Persistent Menu",
+                    "description": "A waffle menu that stays open when items are selected.",
+                    "code": "<gooeyui-wafflemenu closeonselect=\"false\" rows=\"2\">\n  <gooeyui-wafflemenuitem icon=\"icons/tool1.svg\" label=\"Tool 1\"></gooeyui-wafflemenuitem>\n  <gooeyui-wafflemenuitem icon=\"icons/tool2.svg\" label=\"Tool 2\"></gooeyui-wafflemenuitem>\n  <gooeyui-wafflemenuitem icon=\"icons/tool3.svg\" label=\"Tool 3\"></gooeyui-wafflemenuitem>\n  <gooeyui-wafflemenuitem icon=\"icons/tool4.svg\" label=\"Tool 4\"></gooeyui-wafflemenuitem>\n  <gooeyui-wafflemenuitem icon=\"icons/tool5.svg\" label=\"Tool 5\"></gooeyui-wafflemenuitem>\n  <gooeyui-wafflemenuitem icon=\"icons/tool6.svg\" label=\"Tool 6\"></gooeyui-wafflemenuitem>\n</gooeyui-wafflemenu>"
+                  }
+                ]
+              },
+              {
+                "name": "WaffleMenuItem",
+                "tagName": "gooeyui-wafflemenuitem",
+                "description": "An individual item within a WaffleMenu grid. Displays an icon with a text label and optionally a notification badge. Items can trigger actions or navigate to URLs.",
+                "inherits": ["UIComponent"],
+                "attributes": [
+                  {
+                    "name": "icon",
+                    "type": "STRING",
+                    "description": "URL path to the icon image displayed in the item",
+                    "required": false
+                  },
+                  {
+                    "name": "label",
+                    "type": "STRING",
+                    "description": "Text label displayed below the icon",
+                    "required": false
+                  },
+                  {
+                    "name": "action",
+                    "type": "STRING",
+                    "description": "Action identifier fired with the select event when the item is clicked",
+                    "required": false
+                  },
+                  {
+                    "name": "href",
+                    "type": "STRING",
+                    "description": "URL to navigate to when the item is clicked",
+                    "required": false
+                  },
+                  {
+                    "name": "target",
+                    "type": "ENUM",
+                    "values": ["_self", "_blank", "_parent", "_top"],
+                    "description": "Target window for href navigation (default: _self)",
+                    "required": false
+                  },
+                  {
+                    "name": "badge",
+                    "type": "STRING",
+                    "description": "Badge text displayed on the icon (e.g., notification count)",
+                    "required": false
+                  }
+                ],
+                "examples": [
+                  {
+                    "title": "Basic Item",
+                    "description": "A simple waffle menu item with icon and label.",
+                    "code": "<gooeyui-wafflemenuitem icon=\"icons/app.svg\" label=\"My App\" action=\"open-app\"></gooeyui-wafflemenuitem>"
+                  },
+                  {
+                    "title": "Item with Badge",
+                    "description": "A waffle menu item showing a notification count.",
+                    "code": "<gooeyui-wafflemenuitem icon=\"icons/inbox.svg\" label=\"Inbox\" badge=\"5\" action=\"open-inbox\"></gooeyui-wafflemenuitem>"
+                  },
+                  {
+                    "title": "Navigation Item",
+                    "description": "A waffle menu item that opens a URL in a new tab.",
+                    "code": "<gooeyui-wafflemenuitem icon=\"icons/external.svg\" label=\"Documentation\" href=\"https://docs.example.com\" target=\"_blank\"></gooeyui-wafflemenuitem>"
+                  },
+                  {
+                    "title": "Disabled Item",
+                    "description": "A waffle menu item that cannot be clicked.",
+                    "code": "<gooeyui-wafflemenuitem icon=\"icons/locked.svg\" label=\"Premium\" disabled></gooeyui-wafflemenuitem>"
+                  }
+                ]
               }
             ]
           },
