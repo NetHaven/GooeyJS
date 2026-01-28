@@ -64,10 +64,12 @@ export default class Layout {
     set type(val) {
         switch (val)  {
             case LayoutType.BORDER:
+            case LayoutType.BOX:
             case LayoutType.CARD:
             case LayoutType.FLOW:
             case LayoutType.GRID:
-            case LayoutType.BOX: this.setAttribute("type", val);    
+            case LayoutType.HBOX:
+            case LayoutType.VBOX: this.setAttribute("type", val);
         }
     }
 

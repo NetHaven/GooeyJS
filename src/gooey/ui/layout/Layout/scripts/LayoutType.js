@@ -1,7 +1,9 @@
 export default class LayoutType {
     static BORDER = "BORDER";
-    static CARD = "CARD";
-    static GRID = "GRID";
     static BOX = "BOX";
+    static CARD = "CARD";
     static FLOW = "FLOW";
+    static GRID = "GRID";
+    static HBOX = "HBOX";
+    static VBOX = "VBOX";
 }

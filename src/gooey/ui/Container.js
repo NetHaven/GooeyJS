@@ -131,13 +131,25 @@ export default class Container extends UIComponent {
     }
 
     set layout(val) {
-        let layoutElement;
+        // Handle LayoutType constants directly
+        switch (val) {
+            case LayoutType.BORDER:
+            case LayoutType.BOX:
+            case LayoutType.CARD:
+            case LayoutType.FLOW:
+            case LayoutType.GRID:
+            case LayoutType.HBOX:
+            case LayoutType.VBOX:
+                this.setAttribute("layout", val);
+                return;
+        }
 
-        layoutElement = document.querySelector(val);
+        // Handle layout element selector (for advanced layout configuration)
+        const layoutElement = document.querySelector(val);
         if (layoutElement) {
             if (layoutElement.align) {
                 if (layoutElement.align === LayoutAlign.END || layoutElement.align === LayoutAlign.START) {
-                    if (layoutElement.type === LayoutType.BOX) {
+                    if (layoutElement.type === LayoutType.BOX || layoutElement.type === LayoutType.HBOX || layoutElement.type === LayoutType.VBOX) {
                        this.style.alignItems = `flex-${layoutElement.align}`;
                     }
                     else {
@@ -155,7 +167,7 @@ export default class Container extends UIComponent {
 
             if (layoutElement.justify) {
                 if (layoutElement.justify === LayoutJustify.END || layoutElement.justify === LayoutJustify.START) {
-                    if (layoutElement.type === LayoutType.BOX) {
+                    if (layoutElement.type === LayoutType.BOX || layoutElement.type === LayoutType.HBOX || layoutElement.type === LayoutType.VBOX) {
                        this.style.justifyContent = `flex-${layoutElement.justify}`;
                     }
                     else {
@@ -171,27 +183,7 @@ export default class Container extends UIComponent {
                 this.style.flexWrap = layoutElement.wrap;
             }
 
-            this.setAttribute("layout", val);
+            this.setAttribute("layout", layoutElement.type || val);
         }
-
-/*        let columns, rows;
-
-        switch (val) {
-            case LayoutType.BORDER:
-            case LayoutType.CARD:
-            case LayoutType.GRID:
-            case LayoutType.HBOX:
-            case LayoutType.FLOW:
-            case LayoutType.VBOX:   this.setAttribute("layout", val);
-        }
-        
-        if (this.layout === LayoutType.GRID) {
-            columns = this.getAttribute("columns");
-            rows = this.getAttribute("rows");
-            if (rows && columns) {
-                this.style.gridTemplateColumns = columns;
-                this.style.gridTemplateRows = rows;
-            }
-        } */
     }
 }

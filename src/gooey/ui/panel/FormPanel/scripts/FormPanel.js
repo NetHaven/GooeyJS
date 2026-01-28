@@ -14,7 +14,6 @@ export default class FormPanel extends Panel {
 
         // Override the default layout to ensure CSS grid works
         this.layout = LayoutType.GRID;
-        this.setAttribute("layout", LayoutType.GRID);
         
         // Set the grid columns explicitly to match the CSS
         this.style.display = 'grid';
