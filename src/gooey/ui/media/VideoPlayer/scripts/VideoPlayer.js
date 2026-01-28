@@ -1257,4 +1257,19 @@ export default class VideoPlayer extends UIComponent {
             this.#video.poster = '';
         }
     }
+
+    // ========== Playlist Property ==========
+
+    get playlist() {
+        return this.getAttribute('playlist');
+    }
+
+    set playlist(val) {
+        if (val) {
+            this.setAttribute('playlist', val);
+            this.loadPlaylist(val);
+        } else {
+            this.removeAttribute('playlist');
+        }
+    }
 }
