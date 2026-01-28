@@ -47,13 +47,17 @@ export default class Window extends UIComponent {
             this.winTitle = "";
         }
 
-        xLocation = (window.innerWidth - parseInt(this.width)) / 2;
-        yLocation = (window.innerHeight - parseInt(this.height)) / 2;
-        if (yLocation < 0) {
-            yLocation = 0;
-        }
-        this.style.left = xLocation + "px";
-        this.style.top =  yLocation + "px";
+        // Defer initial centering until element has layout
+        requestAnimationFrame(() => {
+            const dims = this._getComputedDimensions();
+            xLocation = (window.innerWidth - dims.width) / 2;
+            yLocation = (window.innerHeight - dims.height) / 2;
+            if (yLocation < 0) {
+                yLocation = 0;
+            }
+            this.style.left = xLocation + "px";
+            this.style.top = yLocation + "px";
+        });
 
         if (this.hasAttribute("draggable")) {
             this.draggable = true;
@@ -138,8 +142,9 @@ export default class Window extends UIComponent {
             xLocation = position.x;
             yLocation = position.y;
         } else {
-            xLocation = (window.innerWidth - parseInt(this.width)) / 2;
-            yLocation = (window.innerHeight - parseInt(this.height)) / 2;
+            const dims = this._getComputedDimensions();
+            xLocation = (window.innerWidth - dims.width) / 2;
+            yLocation = (window.innerHeight - dims.height) / 2;
             if (yLocation < 0) {
                 yLocation = 0;
             }
@@ -214,7 +219,7 @@ export default class Window extends UIComponent {
                 }
 
                 this.mousemove = e=> {
-                    let deltaX, deltaY, height, newX, newY, width;
+                    let deltaX, deltaY, newX, newY;
 
                     if (!this.dragging) {
                         return;
@@ -235,14 +240,13 @@ export default class Window extends UIComponent {
                             newY = 0;
                         }
 
-                        height = parseInt(this.height);
-                        width = parseInt(this.width);
-                        if (newX + width > window.innerWidth) {
-                            newX = window.innerWidth - width;
+                        const dims = this._getComputedDimensions();
+                        if (newX + dims.width > window.innerWidth) {
+                            newX = window.innerWidth - dims.width;
                         }
 
-                        if (newY + height > window.innerHeight) {
-                            newY = window.innerHeight - height;
+                        if (newY + dims.height > window.innerHeight) {
+                            newY = window.innerHeight - dims.height;
                         }
                     }
 
@@ -333,5 +337,18 @@ export default class Window extends UIComponent {
 
     get cancelButton() {
         return this.shadowRoot.querySelector(".WindowCancelButton");
+    }
+
+    /**
+     * Get the window's actual dimensions using computed layout.
+     * Falls back to 0 if dimensions cannot be determined.
+     * @returns {{ width: number, height: number }}
+     */
+    _getComputedDimensions() {
+        const rect = this.getBoundingClientRect();
+        return {
+            width: rect.width || 0,
+            height: rect.height || 0
+        };
     }
 }
