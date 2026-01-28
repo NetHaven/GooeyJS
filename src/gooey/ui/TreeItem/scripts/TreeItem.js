@@ -877,12 +877,13 @@ export default class TreeItem extends UIComponent {
     }
     
     _isDescendantOf(potentialAncestor) {
-        let parent = this.parentElement;
-        while (parent) {
-            if (parent === potentialAncestor) {
+        // Use shadow-crossing traversal to handle nested TreeItems in shadow DOM
+        let current = this._getParentAcrossShadow(this);
+        while (current) {
+            if (current === potentialAncestor) {
                 return true;
             }
-            parent = parent.parentElement;
+            current = this._getParentAcrossShadow(current);
         }
         return false;
     }
