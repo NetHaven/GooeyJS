@@ -254,6 +254,16 @@ export default class UIComponent extends GooeyElement {
         }
     }
 
+    // Web Component lifecycle - called when removed from DOM
+    disconnectedCallback() {
+        // Clean up model binding to prevent memory leaks
+        this.unbindModel();
+
+        if (super.disconnectedCallback) {
+            super.disconnectedCallback();
+        }
+    }
+
     /**
      * Get the component's root element for DOM queries
      * Returns shadowRoot for encapsulated styling
