@@ -41,16 +41,16 @@ export default class Tree extends UIComponent {
         // Attach listeners to existing tree items
         this._attachTreeItemListeners();
 
-        // Watch for dynamically added tree items in light DOM
-        this._lightDOMObserver = new MutationObserver(() => {
-            this._attachTreeItemListeners();
+        // Watch for dynamically added/removed tree items in light DOM
+        this._lightDOMObserver = new MutationObserver((mutations) => {
+            this._handleTreeMutations(mutations);
         });
         this._lightDOMObserver.observe(this, { childList: true, subtree: true });
 
-        // Watch for dynamically added tree items in shadow DOM (_treeElement)
+        // Watch for dynamically added/removed tree items in shadow DOM (_treeElement)
         if (this._treeElement) {
-            this._shadowDOMObserver = new MutationObserver(() => {
-                this._attachTreeItemListeners();
+            this._shadowDOMObserver = new MutationObserver((mutations) => {
+                this._handleTreeMutations(mutations);
             });
             this._shadowDOMObserver.observe(this._treeElement, { childList: true, subtree: true });
         }
@@ -84,6 +84,41 @@ export default class Tree extends UIComponent {
                 this._attachedTreeItems.add(treeItem);
             }
         });
+    }
+
+    /**
+     * Handle mutation observer changes - attach listeners to added items, detach from removed
+     * @param {MutationRecord[]} mutations - The mutation records
+     */
+    _handleTreeMutations(mutations) {
+        // Process removals first to clean up detached nodes
+        mutations.forEach(mutation => {
+            mutation.removedNodes.forEach(node => {
+                if (node.nodeType === Node.ELEMENT_NODE) {
+                    // Check if the removed node is a tree item
+                    if (node.tagName && node.tagName.toLowerCase() === 'gooeyui-treeitem') {
+                        this._detachTreeItemAndDescendants(node);
+                        // Clear selection if the removed item was selected
+                        if (this._selectedItem === node) {
+                            this._selectedItem = null;
+                        }
+                    }
+                    // Also check for tree items within the removed node
+                    const nestedItems = node.querySelectorAll?.('gooeyui-treeitem');
+                    if (nestedItems) {
+                        nestedItems.forEach(item => {
+                            this._detachTreeItemAndDescendants(item);
+                            if (this._selectedItem === item) {
+                                this._selectedItem = null;
+                            }
+                        });
+                    }
+                }
+            });
+        });
+
+        // Then attach listeners to any new items
+        this._attachTreeItemListeners();
     }
 
     _handleChildAdded() {
