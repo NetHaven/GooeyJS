@@ -791,28 +791,14 @@ export default class TreeItem extends UIComponent {
         if (!draggedItem || draggedItem === this || this._isDescendantOf(draggedItem)) {
             return;
         }
-        
+
         event.preventDefault();
-        
-        // Check dropTree validation
-        const validationInfo = this._getDropTreeValidationInfo(draggedItem);
-        
-        if (!validationInfo.isValid) {
-            // Show "not allowed" cursor and invalid indicator
-            event.dataTransfer.dropEffect = 'none';
-            this._dragState.dropPosition = 'invalid';
-            this._updateDropIndicators('invalid');
-            return;
-        }
-        
-        // Valid drop target
-        event.dataTransfer.dropEffect = 'move';
-        
-        // Determine drop position based on mouse position
+
+        // Determine drop position based on mouse position first
         const rect = this._contentElement.getBoundingClientRect();
         const y = event.clientY - rect.top;
         const height = rect.height;
-        
+
         let dropPosition;
         if (y < height * 0.25) {
             dropPosition = 'before';
@@ -821,7 +807,18 @@ export default class TreeItem extends UIComponent {
         } else {
             dropPosition = 'inside';
         }
-        
+
+        // Check dropTree validation with the computed drop position
+        if (!this._isValidDropTarget(draggedItem, dropPosition)) {
+            // Show "not allowed" cursor and invalid indicator
+            event.dataTransfer.dropEffect = 'none';
+            this._dragState.dropPosition = 'invalid';
+            this._updateDropIndicators('invalid');
+            return;
+        }
+
+        // Valid drop target
+        event.dataTransfer.dropEffect = 'move';
         this._dragState.dropPosition = dropPosition;
         this._updateDropIndicators(dropPosition);
     }
@@ -831,32 +828,35 @@ export default class TreeItem extends UIComponent {
         if (!draggedItem || draggedItem === this || this._isDescendantOf(draggedItem)) {
             return;
         }
-        
+
         event.preventDefault();
-        
-        // Final validation check
-        const validationInfo = this._getDropTreeValidationInfo(draggedItem);
-        if (!validationInfo.isValid) {
-            console.warn('TREEITEM_DROP_BLOCKED', 'Drop operation blocked', { reason: validationInfo.message });
+
+        const dropPosition = this._dragState.dropPosition;
+
+        // Final validation check with drop position
+        if (!this._isValidDropTarget(draggedItem, dropPosition)) {
+            console.warn('TREEITEM_DROP_BLOCKED', 'Drop operation blocked', {
+                reason: 'Invalid drop target or position'
+            });
             // Clear drag state
             this._dragState.draggedOver = false;
             this._dragState.dropPosition = null;
             this._clearDropIndicators();
             return;
         }
-        
+
         // Proceed with valid drop - fire cancelable event
         const proceed = this.fireEvent(TreeItemEvent.TREE_ITEM_DROP, {
             draggedItem: draggedItem,
             targetItem: this,
-            dropPosition: this._dragState.dropPosition,
+            dropPosition: dropPosition,
             dropTreeRestriction: draggedItem.dropTree,
             originalEvent: event
         }, { cancelable: true });
 
         // If not prevented, perform the default drop behavior
         if (proceed) {
-            this._performDrop(draggedItem, this._dragState.dropPosition);
+            this._performDrop(draggedItem, dropPosition);
         }
         
         // Clear drag state
