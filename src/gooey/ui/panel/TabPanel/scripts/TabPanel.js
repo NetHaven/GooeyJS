@@ -351,10 +351,10 @@ export default class TabPanel extends Container {
         // Remove drop indicators from all tab headers
         this._tabs.forEach(t => {
             if (t._tabHeader) {
-                t._tabHeader.classList.remove('drag-over-left', 'drag-over-right');
+                t._tabHeader.classList.remove('drag-over-left', 'drag-over-right', 'drag-over-top', 'drag-over-bottom');
             }
         });
-        
+
         // Dispatch custom event
         this.fireEvent(DragEvent.END, { tab: tab });
     }
@@ -376,10 +376,10 @@ export default class TabPanel extends Container {
         // Remove existing drop indicators
         this._tabs.forEach(t => {
             if (t._tabHeader) {
-                t._tabHeader.classList.remove('drag-over-left', 'drag-over-right');
+                t._tabHeader.classList.remove('drag-over-left', 'drag-over-right', 'drag-over-top', 'drag-over-bottom');
             }
         });
-        
+
         // Add appropriate drop indicator
         if (mousePos < midpoint) {
             tabHeader.classList.add(this.orientation === 'vertical' ? 'drag-over-top' : 'drag-over-left');
