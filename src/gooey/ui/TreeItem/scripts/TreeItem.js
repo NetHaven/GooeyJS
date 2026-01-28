@@ -898,7 +898,7 @@ export default class TreeItem extends UIComponent {
         // Check if this is a valid drop target
         const validationInfo = this._getDropTreeValidationInfo(draggedItem);
         
-        if (!validationInfo.isValid) {
+        if (!validationInfo.isValid || dropPosition === 'invalid') {
             // Show invalid drop indicator
             this._contentElement.classList.add('drop-invalid');
             // Optionally show tooltip or message
