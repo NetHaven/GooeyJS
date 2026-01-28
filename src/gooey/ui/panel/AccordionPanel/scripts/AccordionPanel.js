@@ -27,6 +27,8 @@ export default class AccordionPanel extends Container {
     }
 
     connectedCallback() {
+        super.connectedCallback();
+
         if (this._initialized) {
             // Already initialized - rebuild _accordions from existing DOM
             this._rebuildAccordionsFromDOM();
@@ -42,6 +44,8 @@ export default class AccordionPanel extends Container {
         if (this._childObserver) {
             this._childObserver.disconnect();
         }
+
+        super.disconnectedCallback();
     }
     
     /**

@@ -25,7 +25,8 @@ export default class TabPanel extends Container {
     }
 
     connectedCallback() {
-        
+        super.connectedCallback();
+
         // Set up initial structure
         this._setupStructure();
         

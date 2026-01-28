@@ -20,7 +20,8 @@ export default class Tab extends Container {
     }
 
     connectedCallback() {
-        
+        super.connectedCallback();
+
         // Find parent TabPanel
         this._tabPanel = this.closest('gooeyui-tabpanel');
         
@@ -45,6 +46,8 @@ export default class Tab extends Container {
         if (this._tabHeader) {
             this._tabHeader.remove();
         }
+
+        super.disconnectedCallback();
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
