@@ -136,7 +136,7 @@ It will also include components specifically geared for configuring:
 - Transitions
 
 ## Getting Started
-Download GooeyJS.v2.0.0.zip and unzip to your codebase. To include GooeyJS, just use the following:
+Download GooeyJS.v2.1.0.zip and unzip to your codebase. To include GooeyJS, just use the following:
 
     <script type="module" src="GooeyJS/GooeyJS.js"></script>
 

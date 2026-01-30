@@ -7,7 +7,7 @@ const SCRIPT_PATH = new URL(import.meta.url, document.baseURI);
 const PATH = SCRIPT_PATH.href.substring(0, SCRIPT_PATH.href.lastIndexOf('/'));
 
 export default class GooeyJS {
-    static VERSION = "2.0";
+    static VERSION = "2.1";
     static _initialized = false;
     static _instance = null;
     static _readyPromise = null;
