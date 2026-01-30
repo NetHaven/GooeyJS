@@ -2195,28 +2195,28 @@ const GooeyData = {
                   {
                     "name": "title",
                     "type": "STRING",
-                    "description": "Track title for accessibility and display purposes.",
+                    "description": "MediaTrack title for accessibility and display purposes.",
                     "required": false
                   }
                 ],
                 "examples": [
                   {
-                    "title": "Basic Track",
+                    "title": "Basic MediaTrack",
                     "description": "A simple track with just a video source.",
                     "code": "<gooeyui-videoplayer width=\"800\" height=\"450\">\n    <gooeyui-mediatrack src=\"video.mp4\"></gooeyui-mediatrack>\n</gooeyui-videoplayer>"
                   },
                   {
-                    "title": "Track with Title",
+                    "title": "MediaTrack with Title",
                     "description": "A track with a descriptive title for accessibility.",
                     "code": "<gooeyui-videoplayer width=\"800\" height=\"450\">\n    <gooeyui-mediatrack src=\"intro.mp4\" title=\"Introduction Video\"></gooeyui-mediatrack>\n    <gooeyui-mediatrack src=\"main.mp4\" title=\"Main Content\"></gooeyui-mediatrack>\n</gooeyui-videoplayer>"
                   },
                   {
-                    "title": "Track with Time Constraints",
+                    "title": "MediaTrack with Time Constraints",
                     "description": "A track that plays only a specific segment of the video.",
                     "code": "<gooeyui-videoplayer width=\"800\" height=\"450\">\n    <!-- Play only from 30 seconds to 2 minutes -->\n    <gooeyui-mediatrack\n        src=\"long-video.mp4\"\n        title=\"Highlight Clip\"\n        starttime=\"30\"\n        stoptime=\"120\">\n    </gooeyui-mediatrack>\n</gooeyui-videoplayer>"
                   },
                   {
-                    "title": "Track with Custom Speed",
+                    "title": "MediaTrack with Custom Speed",
                     "description": "A track that plays at a slower speed for detailed viewing.",
                     "code": "<gooeyui-videoplayer width=\"800\" height=\"450\">\n    <gooeyui-mediatrack src=\"intro.mp4\" title=\"Introduction\"></gooeyui-mediatrack>\n    <!-- Slow motion tutorial at 50% speed -->\n    <gooeyui-mediatrack\n        src=\"tutorial.mp4\"\n        title=\"Detailed Tutorial\"\n        speed=\"0.5\">\n    </gooeyui-mediatrack>\n    <gooeyui-mediatrack src=\"summary.mp4\" title=\"Summary\"></gooeyui-mediatrack>\n</gooeyui-videoplayer>"
                   }
