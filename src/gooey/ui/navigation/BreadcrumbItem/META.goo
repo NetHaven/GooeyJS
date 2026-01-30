@@ -1,0 +1,48 @@
+{
+    "MetaGooVersion": "1.0",
+    "name": "BreadcrumbItem",
+    "prefix": "gooeyui",
+    "tagName": "breadcrumbitem",
+    "script": "BreadcrumbItem.js",
+    "templates": [
+        { "id": "ui-BreadcrumbItem", "file": "BreadcrumbItem.html" }
+    ],
+    "themes": {
+        "default": "base",
+        "available": ["base", "dark", "janus"]
+    },
+    "attributes": {
+        "text": {
+            "type": "STRING",
+            "default": null
+        },
+        "href": {
+            "type": "STRING",
+            "default": null
+        },
+        "icon": {
+            "type": "STRING",
+            "default": null
+        },
+        "value": {
+            "type": "STRING",
+            "default": null
+        },
+        "active": {
+            "type": "BOOLEAN",
+            "default": false
+        },
+        "tooltip": {
+            "type": "STRING",
+            "default": null
+        },
+        "visible": {
+            "type": "BOOLEAN",
+            "default": true
+        },
+        "disabled": {
+            "type": "BOOLEAN",
+            "default": false
+        }
+    }
+}

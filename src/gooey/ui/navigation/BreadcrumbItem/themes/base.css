@@ -1,0 +1,103 @@
+:host {
+    display: inline-flex;
+    align-items: center;
+    position: relative;
+}
+
+:host([hidden]),
+:host([visible="false"]) {
+    display: none;
+}
+
+:host([disabled]) {
+    pointer-events: none;
+}
+
+:host([disabled]) .breadcrumb-link {
+    color: #999999;
+    cursor: not-allowed;
+}
+
+.breadcrumb-item {
+    display: inline-flex;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+}
+
+.breadcrumb-separator {
+    display: inline-flex;
+    align-items: center;
+    margin: 0 var(--breadcrumb-separator-gap, 8px);
+    color: var(--breadcrumb-separator-color, #666666);
+    font-size: 12px;
+}
+
+.breadcrumb-separator img {
+    width: 12px;
+    height: 12px;
+}
+
+/* Hide separator on first item */
+:host(:first-child) .breadcrumb-separator,
+:host([data-first]) .breadcrumb-separator {
+    display: none;
+}
+
+.breadcrumb-icon {
+    display: none;
+    width: 16px;
+    height: 16px;
+    margin-right: 6px;
+    vertical-align: middle;
+}
+
+.breadcrumb-icon[src]:not([src=""]) {
+    display: inline-block;
+}
+
+.breadcrumb-link {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 8px;
+    color: var(--breadcrumb-link-color, #0066cc);
+    text-decoration: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.breadcrumb-link:hover {
+    color: var(--breadcrumb-link-hover-color, #004499);
+    background-color: var(--breadcrumb-link-hover-bg, rgba(0, 102, 204, 0.08));
+    text-decoration: underline;
+}
+
+.breadcrumb-link:focus {
+    outline: var(--breadcrumb-focus-ring, 2px solid #010082);
+    outline-offset: 2px;
+}
+
+.breadcrumb-link:active {
+    background-color: var(--breadcrumb-link-active-bg, rgba(0, 102, 204, 0.15));
+}
+
+/* Active/current item styling */
+:host([active]) .breadcrumb-link {
+    color: var(--breadcrumb-active-color, #333333);
+    font-weight: 600;
+    cursor: default;
+    pointer-events: none;
+}
+
+:host([active]) .breadcrumb-link:hover {
+    background-color: transparent;
+    text-decoration: none;
+}
+
+.breadcrumb-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: var(--breadcrumb-max-text-width, 200px);
+}

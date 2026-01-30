@@ -1,0 +1,56 @@
+{
+    "MetaGooVersion": "1.0",
+    "name": "Breadcrumb",
+    "prefix": "gooeyui",
+    "tagName": "breadcrumb",
+    "script": "Breadcrumb.js",
+    "templates": [
+        { "id": "ui-Breadcrumb", "file": "Breadcrumb.html" }
+    ],
+    "themes": {
+        "default": "base",
+        "available": ["base", "dark", "janus"]
+    },
+    "attributes": {
+        "separator": {
+            "type": "STRING",
+            "default": "/"
+        },
+        "separatoricon": {
+            "type": "STRING",
+            "default": null
+        },
+        "collapsible": {
+            "type": "BOOLEAN",
+            "default": false
+        },
+        "maxvisible": {
+            "type": "NUMBER",
+            "default": 0
+        },
+        "label": {
+            "type": "STRING",
+            "default": null
+        },
+        "height": {
+            "type": "STRING",
+            "default": null
+        },
+        "width": {
+            "type": "STRING",
+            "default": null
+        },
+        "tooltip": {
+            "type": "STRING",
+            "default": null
+        },
+        "visible": {
+            "type": "BOOLEAN",
+            "default": true
+        },
+        "disabled": {
+            "type": "BOOLEAN",
+            "default": false
+        }
+    }
+}
