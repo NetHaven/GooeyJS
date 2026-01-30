@@ -402,7 +402,7 @@ export default class VideoPlayer extends UIComponent {
             for (const mutation of mutations) {
                 if (mutation.type === 'childList') {
                     for (const node of [...mutation.addedNodes, ...mutation.removedNodes]) {
-                        if (node.tagName?.toLowerCase() === 'gooeyui-track') {
+                        if (node.tagName?.toLowerCase() === 'gooeyui-mediatrack') {
                             tracksChanged = true;
                             break;
                         }
@@ -424,7 +424,7 @@ export default class VideoPlayer extends UIComponent {
     }
 
     #loadTracksFromChildren() {
-        const trackElements = this.querySelectorAll('gooeyui-track');
+        const trackElements = this.querySelectorAll('gooeyui-mediatrack');
         this.#tracks = Array.from(trackElements).map(track => ({
             src: track.getAttribute('src'),
             starttime: parseFloat(track.getAttribute('starttime')) || 0,

@@ -1,9 +1,9 @@
 {
   "MetaGooVersion": "1.0",
-  "name": "Track",
+  "name": "MediaTrack",
   "prefix": "gooeyui",
-  "tagName": "track",
-  "script": "Track.js",
+  "tagName": "mediatrack",
+  "script": "MediaTrack.js",
   "templates": [],
   "themes": {
     "default": "base",

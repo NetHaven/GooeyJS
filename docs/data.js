@@ -2133,7 +2133,7 @@ const GooeyData = {
                   {
                     "title": "Multiple Tracks",
                     "description": "A video player with multiple tracks defined as child elements.",
-                    "code": "<gooey-component href=\"GooeyJS/src/gooey/ui/media/VideoPlayer\"></gooey-component>\n<gooey-component href=\"GooeyJS/src/gooey/ui/media/Track\"></gooey-component>\n\n<gooeyui-videoplayer width=\"100%\" height=\"56.25%\" controls=\"full\" loop>\n    <gooeyui-track src=\"intro.mp4\" title=\"Introduction\"></gooeyui-track>\n    <gooeyui-track src=\"chapter1.mp4\" title=\"Chapter 1\" starttime=\"0\" stoptime=\"300\"></gooeyui-track>\n    <gooeyui-track src=\"chapter2.mp4\" title=\"Chapter 2\" speed=\"0.75\"></gooeyui-track>\n</gooeyui-videoplayer>"
+                    "code": "<gooey-component href=\"GooeyJS/src/gooey/ui/media/VideoPlayer\"></gooey-component>\n<gooey-component href=\"GooeyJS/src/gooey/ui/media/MediaTrack\"></gooey-component>\n\n<gooeyui-videoplayer width=\"100%\" height=\"56.25%\" controls=\"full\" loop>\n    <gooeyui-mediatrack src=\"intro.mp4\" title=\"Introduction\"></gooeyui-mediatrack>\n    <gooeyui-mediatrack src=\"chapter1.mp4\" title=\"Chapter 1\" starttime=\"0\" stoptime=\"300\"></gooeyui-mediatrack>\n    <gooeyui-mediatrack src=\"chapter2.mp4\" title=\"Chapter 2\" speed=\"0.75\"></gooeyui-mediatrack>\n</gooeyui-videoplayer>"
                   },
                   {
                     "title": "Playlist Video Player",
@@ -2163,9 +2163,9 @@ const GooeyData = {
                 ]
               },
               {
-                "name": "Track",
-                "tagName": "gooeyui-track",
-                "description": "A non-visual component representing a single video track within a VideoPlayer. Defines the video source URL and optional playback parameters like start time, stop time, and speed. Track elements must be children of a gooeyui-videoplayer element.",
+                "name": "MediaTrack",
+                "tagName": "gooeyui-mediatrack",
+                "description": "A non-visual component representing a single video track within a VideoPlayer. Defines the video source URL and optional playback parameters like start time, stop time, and speed. MediaTrack elements must be children of a gooeyui-videoplayer element.",
                 "inherits": [],
                 "attributes": [
                   {
@@ -2203,22 +2203,22 @@ const GooeyData = {
                   {
                     "title": "Basic Track",
                     "description": "A simple track with just a video source.",
-                    "code": "<gooeyui-videoplayer width=\"800\" height=\"450\">\n    <gooeyui-track src=\"video.mp4\"></gooeyui-track>\n</gooeyui-videoplayer>"
+                    "code": "<gooeyui-videoplayer width=\"800\" height=\"450\">\n    <gooeyui-mediatrack src=\"video.mp4\"></gooeyui-mediatrack>\n</gooeyui-videoplayer>"
                   },
                   {
                     "title": "Track with Title",
                     "description": "A track with a descriptive title for accessibility.",
-                    "code": "<gooeyui-videoplayer width=\"800\" height=\"450\">\n    <gooeyui-track src=\"intro.mp4\" title=\"Introduction Video\"></gooeyui-track>\n    <gooeyui-track src=\"main.mp4\" title=\"Main Content\"></gooeyui-track>\n</gooeyui-videoplayer>"
+                    "code": "<gooeyui-videoplayer width=\"800\" height=\"450\">\n    <gooeyui-mediatrack src=\"intro.mp4\" title=\"Introduction Video\"></gooeyui-mediatrack>\n    <gooeyui-mediatrack src=\"main.mp4\" title=\"Main Content\"></gooeyui-mediatrack>\n</gooeyui-videoplayer>"
                   },
                   {
                     "title": "Track with Time Constraints",
                     "description": "A track that plays only a specific segment of the video.",
-                    "code": "<gooeyui-videoplayer width=\"800\" height=\"450\">\n    <!-- Play only from 30 seconds to 2 minutes -->\n    <gooeyui-track\n        src=\"long-video.mp4\"\n        title=\"Highlight Clip\"\n        starttime=\"30\"\n        stoptime=\"120\">\n    </gooeyui-track>\n</gooeyui-videoplayer>"
+                    "code": "<gooeyui-videoplayer width=\"800\" height=\"450\">\n    <!-- Play only from 30 seconds to 2 minutes -->\n    <gooeyui-mediatrack\n        src=\"long-video.mp4\"\n        title=\"Highlight Clip\"\n        starttime=\"30\"\n        stoptime=\"120\">\n    </gooeyui-mediatrack>\n</gooeyui-videoplayer>"
                   },
                   {
                     "title": "Track with Custom Speed",
                     "description": "A track that plays at a slower speed for detailed viewing.",
-                    "code": "<gooeyui-videoplayer width=\"800\" height=\"450\">\n    <gooeyui-track src=\"intro.mp4\" title=\"Introduction\"></gooeyui-track>\n    <!-- Slow motion tutorial at 50% speed -->\n    <gooeyui-track\n        src=\"tutorial.mp4\"\n        title=\"Detailed Tutorial\"\n        speed=\"0.5\">\n    </gooeyui-track>\n    <gooeyui-track src=\"summary.mp4\" title=\"Summary\"></gooeyui-track>\n</gooeyui-videoplayer>"
+                    "code": "<gooeyui-videoplayer width=\"800\" height=\"450\">\n    <gooeyui-mediatrack src=\"intro.mp4\" title=\"Introduction\"></gooeyui-mediatrack>\n    <!-- Slow motion tutorial at 50% speed -->\n    <gooeyui-mediatrack\n        src=\"tutorial.mp4\"\n        title=\"Detailed Tutorial\"\n        speed=\"0.5\">\n    </gooeyui-mediatrack>\n    <gooeyui-mediatrack src=\"summary.mp4\" title=\"Summary\"></gooeyui-mediatrack>\n</gooeyui-videoplayer>"
                   }
                 ]
               }

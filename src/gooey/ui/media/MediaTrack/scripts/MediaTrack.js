@@ -1,17 +1,17 @@
 import GooeyElement from '../../../../GooeyElement.js';
 
 /**
- * Track component represents a single video track within a VideoPlayer.
+ * MediaTrack component represents a single video track within a VideoPlayer.
  * It is a non-visual element that holds track metadata.
  *
- * @element gooeyui-track
+ * @element gooeyui-mediatrack
  * @attr {string} src - URL to the video file
  * @attr {number} starttime - Start playback at this second (default: 0)
  * @attr {number} stoptime - Stop playback at this second (default: end of video)
  * @attr {number} speed - Playback speed override (0.25 to 4.0)
  * @attr {string} title - Track title for accessibility and display
  */
-export default class Track extends GooeyElement {
+export default class MediaTrack extends GooeyElement {
     constructor() {
         super();
     }
