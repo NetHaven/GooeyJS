@@ -2047,13 +2047,13 @@ const GooeyData = {
               {
                 "name": "VideoPlayer",
                 "tagName": "gooeyui-videoplayer",
-                "description": "A full-featured video player with custom controls, playlist support, keyboard navigation, and WCAG accessibility compliance. Supports multiple video sources via child Track elements or external playlist files (M3U, PLS, XSPF). Features include play/pause, stop, rewind, fast-forward, volume control, mute, fullscreen, and track navigation. Controls automatically fade in fullscreen mode after mouse inactivity.",
+                "description": "A full-featured video player with custom controls, playlist support, keyboard navigation, and WCAG accessibility compliance. Supports multiple video sources via child MediaTrack elements or external playlist files (M3U, PLS, XSPF). Features include play/pause, stop, rewind, fast-forward, volume control, mute, fullscreen, and track navigation. Controls automatically fade in fullscreen mode after mouse inactivity.",
                 "inherits": ["UIComponent"],
                 "attributes": [
                   {
                     "name": "src",
                     "type": "STRING",
-                    "description": "URL to a single video source. Ignored when playlist is set or Track children are present.",
+                    "description": "URL to a single video source. Ignored when playlist is set or MediaTrack children are present.",
                     "required": false
                   },
                   {
@@ -2102,7 +2102,7 @@ const GooeyData = {
                   {
                     "name": "playlist",
                     "type": "STRING",
-                    "description": "URL to a playlist file (M3U, PLS, or XSPF format). When set, Track children are ignored.",
+                    "description": "URL to a playlist file (M3U, PLS, or XSPF format). When set, MediaTrack children are ignored.",
                     "required": false
                   },
                   {
