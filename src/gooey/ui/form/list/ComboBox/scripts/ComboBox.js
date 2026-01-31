@@ -441,6 +441,9 @@ export default class ComboBox extends ListBox {
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
+        // Guard against infinite recursion: setters call setAttribute which re-triggers this callback
+        if (oldValue === newValue) return;
+
         super.attributeChangedCallback(name, oldValue, newValue);
 
         switch (name) {
