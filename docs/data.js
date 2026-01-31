@@ -2430,6 +2430,141 @@ const GooeyData = {
                 ]
               },
               {
+                "name": "Badge",
+                "tagName": "gooeyui-badge",
+                "description": "A small visual indicator for displaying status, counts, notifications, or labels. Supports variants, sizes, dot mode, overlay positioning on other elements, and pulse animation. Content precedence: dot > value > text.",
+                "inherits": ["UIComponent"],
+                "attributes": [
+                  {
+                    "name": "text",
+                    "type": "STRING",
+                    "description": "Text content displayed in the badge (lowest precedence after value)",
+                    "required": false
+                  },
+                  {
+                    "name": "value",
+                    "type": "NUMBER",
+                    "description": "Numeric value to display (takes precedence over text). Shows overflow indicator when exceeding max.",
+                    "required": false
+                  },
+                  {
+                    "name": "max",
+                    "type": "NUMBER",
+                    "description": "Maximum value before showing overflow indicator (e.g., '99+'). Default: 99. Set to 0 for no limit.",
+                    "required": false
+                  },
+                  {
+                    "name": "icon",
+                    "type": "STRING",
+                    "description": "URL path to an icon image displayed in the badge",
+                    "required": false
+                  },
+                  {
+                    "name": "label",
+                    "type": "STRING",
+                    "description": "Accessible label for screen readers (maps to aria-label)",
+                    "required": false
+                  },
+                  {
+                    "name": "variant",
+                    "type": "ENUM",
+                    "values": ["default", "primary", "success", "warning", "error", "info"],
+                    "description": "Visual style variant determining the badge color scheme",
+                    "required": false
+                  },
+                  {
+                    "name": "size",
+                    "type": "ENUM",
+                    "values": ["small", "medium", "large"],
+                    "description": "Size of the badge",
+                    "required": false
+                  },
+                  {
+                    "name": "pill",
+                    "type": "BOOLEAN",
+                    "description": "When true, uses fully rounded pill shape instead of rectangular",
+                    "required": false
+                  },
+                  {
+                    "name": "dot",
+                    "type": "BOOLEAN",
+                    "description": "When true, displays as a small dot indicator ignoring text/value (highest precedence)",
+                    "required": false
+                  },
+                  {
+                    "name": "outline",
+                    "type": "BOOLEAN",
+                    "description": "When true, uses outline style with transparent background instead of filled",
+                    "required": false
+                  },
+                  {
+                    "name": "pulse",
+                    "type": "BOOLEAN",
+                    "description": "When true, enables pulse animation for attention",
+                    "required": false
+                  },
+                  {
+                    "name": "position",
+                    "type": "ENUM",
+                    "values": ["top-right", "top-left", "bottom-right", "bottom-left"],
+                    "description": "Position when used as overlay on slotted content. Badge becomes absolutely positioned.",
+                    "required": false
+                  }
+                ],
+                "examples": [
+                  {
+                    "title": "Basic Text Badge",
+                    "description": "A simple badge displaying text.",
+                    "code": "<gooeyui-badge text=\"New\"></gooeyui-badge>\n<gooeyui-badge text=\"Beta\" variant=\"info\"></gooeyui-badge>"
+                  },
+                  {
+                    "title": "Numeric Badge with Overflow",
+                    "description": "A badge showing a count with automatic overflow handling.",
+                    "code": "<gooeyui-badge value=\"5\"></gooeyui-badge>\n<gooeyui-badge value=\"150\" max=\"99\"></gooeyui-badge>\n<!-- Displays: 5 and 99+ -->"
+                  },
+                  {
+                    "title": "Variant Styles",
+                    "description": "Badges with different color variants.",
+                    "code": "<gooeyui-badge text=\"Default\"></gooeyui-badge>\n<gooeyui-badge text=\"Primary\" variant=\"primary\"></gooeyui-badge>\n<gooeyui-badge text=\"Success\" variant=\"success\"></gooeyui-badge>\n<gooeyui-badge text=\"Warning\" variant=\"warning\"></gooeyui-badge>\n<gooeyui-badge text=\"Error\" variant=\"error\"></gooeyui-badge>\n<gooeyui-badge text=\"Info\" variant=\"info\"></gooeyui-badge>"
+                  },
+                  {
+                    "title": "Outline and Pill Styles",
+                    "description": "Badges with outline and pill shape variations.",
+                    "code": "<gooeyui-badge text=\"Outline\" outline></gooeyui-badge>\n<gooeyui-badge text=\"Pill\" pill></gooeyui-badge>\n<gooeyui-badge text=\"Both\" outline pill variant=\"primary\"></gooeyui-badge>"
+                  },
+                  {
+                    "title": "Dot Indicator",
+                    "description": "A minimal dot badge for status indication.",
+                    "code": "<gooeyui-badge dot variant=\"success\" label=\"Online\"></gooeyui-badge>\n<gooeyui-badge dot variant=\"error\" label=\"Offline\"></gooeyui-badge>\n<gooeyui-badge dot variant=\"warning\" label=\"Away\"></gooeyui-badge>"
+                  },
+                  {
+                    "title": "Badge Sizes",
+                    "description": "Badges in different sizes.",
+                    "code": "<gooeyui-badge text=\"Small\" size=\"small\"></gooeyui-badge>\n<gooeyui-badge text=\"Medium\" size=\"medium\"></gooeyui-badge>\n<gooeyui-badge text=\"Large\" size=\"large\"></gooeyui-badge>"
+                  },
+                  {
+                    "title": "Overlay on Button",
+                    "description": "A badge positioned as an overlay on another element.",
+                    "code": "<gooeyui-badge value=\"3\" position=\"top-right\" variant=\"error\">\n  <gooeyui-button icon=\"icons/bell.png\"></gooeyui-button>\n</gooeyui-badge>"
+                  },
+                  {
+                    "title": "Notification Dot Overlay",
+                    "description": "A dot badge overlay indicating new notifications.",
+                    "code": "<gooeyui-badge dot position=\"top-right\" variant=\"error\" label=\"New notifications\">\n  <gooeyui-button text=\"Inbox\" icon=\"icons/inbox.png\"></gooeyui-button>\n</gooeyui-badge>"
+                  },
+                  {
+                    "title": "Pulsing Attention Badge",
+                    "description": "A badge with pulse animation for urgent attention.",
+                    "code": "<gooeyui-badge text=\"Urgent\" variant=\"error\" pulse></gooeyui-badge>\n<gooeyui-badge dot variant=\"error\" pulse position=\"top-right\">\n  <gooeyui-button text=\"Alerts\"></gooeyui-button>\n</gooeyui-badge>"
+                  },
+                  {
+                    "title": "Programmatic Usage",
+                    "description": "Controlling badge value and appearance via JavaScript.",
+                    "code": "<gooeyui-badge id=\"notifBadge\" value=\"0\" variant=\"primary\"></gooeyui-badge>\n\n<script>\n  const badge = document.getElementById('notifBadge');\n  \n  // Increment/decrement\n  badge.increment();      // value = 1\n  badge.increment(5);     // value = 6\n  badge.decrement(2);     // value = 4\n  \n  // Set directly\n  badge.value = 10;\n  badge.variant = 'error';\n  badge.pulse = true;\n  \n  // Clear content\n  badge.clear();\n</script>"
+                  }
+                ]
+              },
+              {
                 "name": "Border",
                 "tagName": "gooeyui-border",
                 "description": "A border styling component defining edge styles and colors.",

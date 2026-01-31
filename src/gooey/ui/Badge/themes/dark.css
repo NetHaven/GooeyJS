@@ -1,0 +1,330 @@
+/* ========================================
+   Badge Component - Dark Theme
+   ======================================== */
+
+:host {
+    display: inline-flex;
+    position: relative;
+    vertical-align: middle;
+}
+
+:host([hidden]),
+:host([visible="false"]) {
+    display: none;
+}
+
+/* ----------------------------------------
+   Container (for overlay positioning)
+   ---------------------------------------- */
+
+.badge-container {
+    display: inline-flex;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ----------------------------------------
+   Badge Element
+   ---------------------------------------- */
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    box-sizing: border-box;
+    font-family: sans-serif;
+    font-weight: 600;
+    line-height: 1;
+    white-space: nowrap;
+    vertical-align: middle;
+    border-radius: 4px;
+    transition: opacity 0.15s ease;
+}
+
+/* ----------------------------------------
+   Sizes
+   ---------------------------------------- */
+
+/* Small */
+:host([size="small"]) .badge {
+    min-width: 16px;
+    min-height: 16px;
+    padding: 2px 4px;
+    font-size: 10px;
+    gap: 2px;
+}
+
+/* Medium (default) */
+.badge,
+:host([size="medium"]) .badge {
+    min-width: 20px;
+    min-height: 20px;
+    padding: 3px 6px;
+    font-size: 11px;
+    gap: 4px;
+}
+
+/* Large */
+:host([size="large"]) .badge {
+    min-width: 24px;
+    min-height: 24px;
+    padding: 4px 8px;
+    font-size: 12px;
+    gap: 5px;
+}
+
+/* ----------------------------------------
+   Variants (Filled) - Dark Theme Colors
+   ---------------------------------------- */
+
+/* Default - dark gray */
+.badge,
+:host([variant="default"]) .badge {
+    background-color: #4b5563;
+    color: #f3f4f6;
+    border: 1px solid #6b7280;
+}
+
+/* Primary - lighter blue for dark theme */
+:host([variant="primary"]) .badge {
+    background-color: #3b82f6;
+    color: #ffffff;
+    border: 1px solid #60a5fa;
+}
+
+/* Success - lighter green */
+:host([variant="success"]) .badge {
+    background-color: #10b981;
+    color: #ffffff;
+    border: 1px solid #34d399;
+}
+
+/* Warning - amber */
+:host([variant="warning"]) .badge {
+    background-color: #f59e0b;
+    color: #1f2937;
+    border: 1px solid #fbbf24;
+}
+
+/* Error - red */
+:host([variant="error"]) .badge {
+    background-color: #ef4444;
+    color: #ffffff;
+    border: 1px solid #f87171;
+}
+
+/* Info - cyan blue */
+:host([variant="info"]) .badge {
+    background-color: #06b6d4;
+    color: #ffffff;
+    border: 1px solid #22d3ee;
+}
+
+/* ----------------------------------------
+   Outline Variants - Dark Theme
+   ---------------------------------------- */
+
+:host([outline]) .badge,
+:host([outline][variant="default"]) .badge {
+    background-color: transparent;
+    color: #9ca3af;
+    border: 1px solid #6b7280;
+}
+
+:host([outline][variant="primary"]) .badge {
+    background-color: transparent;
+    color: #60a5fa;
+    border: 1px solid #3b82f6;
+}
+
+:host([outline][variant="success"]) .badge {
+    background-color: transparent;
+    color: #34d399;
+    border: 1px solid #10b981;
+}
+
+:host([outline][variant="warning"]) .badge {
+    background-color: transparent;
+    color: #fbbf24;
+    border: 1px solid #f59e0b;
+}
+
+:host([outline][variant="error"]) .badge {
+    background-color: transparent;
+    color: #f87171;
+    border: 1px solid #ef4444;
+}
+
+:host([outline][variant="info"]) .badge {
+    background-color: transparent;
+    color: #22d3ee;
+    border: 1px solid #06b6d4;
+}
+
+/* ----------------------------------------
+   Pill Shape
+   ---------------------------------------- */
+
+:host([pill]) .badge {
+    border-radius: 9999px;
+}
+
+/* ----------------------------------------
+   Dot Mode
+   ---------------------------------------- */
+
+:host([dot]) .badge {
+    min-width: 8px;
+    min-height: 8px;
+    width: 8px;
+    height: 8px;
+    padding: 0;
+    border-radius: 50%;
+    gap: 0;
+}
+
+:host([dot][size="small"]) .badge {
+    min-width: 6px;
+    min-height: 6px;
+    width: 6px;
+    height: 6px;
+}
+
+:host([dot][size="large"]) .badge {
+    min-width: 10px;
+    min-height: 10px;
+    width: 10px;
+    height: 10px;
+}
+
+/* Hide content and icon in dot mode */
+:host([dot]) .badge-icon,
+:host([dot]) .badge-content {
+    display: none;
+}
+
+/* ----------------------------------------
+   Icon
+   ---------------------------------------- */
+
+.badge-icon {
+    display: none;
+    width: 12px;
+    height: 12px;
+    flex-shrink: 0;
+}
+
+.badge-icon[src] {
+    display: inline-block;
+}
+
+:host([size="small"]) .badge-icon {
+    width: 10px;
+    height: 10px;
+}
+
+:host([size="large"]) .badge-icon {
+    width: 14px;
+    height: 14px;
+}
+
+/* ----------------------------------------
+   Content
+   ---------------------------------------- */
+
+.badge-content {
+    display: inline-block;
+}
+
+.badge-content:empty {
+    display: none;
+}
+
+/* ----------------------------------------
+   Overlay Positioning
+   ---------------------------------------- */
+
+:host([position]) .badge {
+    position: absolute;
+    z-index: 1;
+    pointer-events: none;
+}
+
+:host([position="top-right"]) .badge {
+    top: 0;
+    right: 0;
+    transform: translate(50%, -50%);
+}
+
+:host([position="top-left"]) .badge {
+    top: 0;
+    left: 0;
+    transform: translate(-50%, -50%);
+}
+
+:host([position="bottom-right"]) .badge {
+    bottom: 0;
+    right: 0;
+    transform: translate(50%, 50%);
+}
+
+:host([position="bottom-left"]) .badge {
+    bottom: 0;
+    left: 0;
+    transform: translate(-50%, 50%);
+}
+
+/* ----------------------------------------
+   Disabled State
+   ---------------------------------------- */
+
+:host([disabled]) {
+    pointer-events: none;
+}
+
+:host([disabled]) .badge {
+    opacity: 0.5;
+}
+
+/* ----------------------------------------
+   Focus State (when interactive)
+   ---------------------------------------- */
+
+.badge:focus-visible {
+    outline: 2px solid #60a5fa;
+    outline-offset: 2px;
+}
+
+/* ----------------------------------------
+   Pulse Animation
+   ---------------------------------------- */
+
+@keyframes badge-pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.6;
+    }
+}
+
+/* Pulse for non-positioned badges */
+:host([pulse]:not([position])) .badge {
+    animation: badge-pulse 1.5s infinite ease-in-out;
+}
+
+/* Pulse for positioned badges - use opacity animation to preserve transforms */
+@keyframes badge-pulse-positioned {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.6;
+    }
+}
+
+:host([pulse][position]) .badge {
+    animation: badge-pulse-positioned 1.5s infinite ease-in-out;
+}

@@ -1,0 +1,99 @@
+{
+  "MetaGooVersion": "1.0",
+  "name": "Badge",
+  "prefix": "gooeyui",
+  "tagName": "badge",
+  "script": "Badge.js",
+  "templates": [
+    { "id": "ui-Badge", "file": "Badge.html" }
+  ],
+  "themes": {
+    "default": "base",
+    "available": ["base", "dark", "janus"]
+  },
+  "attributes": {
+    "text": {
+      "type": "STRING",
+      "default": null,
+      "description": "Text content displayed in the badge"
+    },
+    "value": {
+      "type": "NUMBER",
+      "default": null,
+      "description": "Numeric value to display (takes precedence over text)"
+    },
+    "max": {
+      "type": "NUMBER",
+      "default": 99,
+      "description": "Maximum value before showing overflow indicator (e.g., '99+')"
+    },
+    "icon": {
+      "type": "STRING",
+      "default": null,
+      "description": "URL to an icon image displayed in the badge"
+    },
+    "label": {
+      "type": "STRING",
+      "default": null,
+      "description": "Accessible label for screen readers (maps to aria-label)"
+    },
+    "variant": {
+      "type": "ENUM",
+      "default": "default",
+      "values": ["default", "primary", "success", "warning", "error", "info"],
+      "description": "Visual style variant"
+    },
+    "size": {
+      "type": "ENUM",
+      "default": "medium",
+      "values": ["small", "medium", "large"],
+      "description": "Size of the badge"
+    },
+    "pill": {
+      "type": "BOOLEAN",
+      "default": false,
+      "description": "Use fully rounded pill shape"
+    },
+    "dot": {
+      "type": "BOOLEAN",
+      "default": false,
+      "description": "Display as a small dot indicator (highest precedence, ignores text/value)"
+    },
+    "outline": {
+      "type": "BOOLEAN",
+      "default": false,
+      "description": "Use outline style instead of filled"
+    },
+    "pulse": {
+      "type": "BOOLEAN",
+      "default": false,
+      "description": "Enable pulse animation for attention"
+    },
+    "position": {
+      "type": "ENUM",
+      "default": null,
+      "values": ["top-right", "top-left", "bottom-right", "bottom-left"],
+      "description": "Position when used as overlay on slotted content"
+    },
+    "disabled": {
+      "type": "BOOLEAN",
+      "default": false
+    },
+    "visible": {
+      "type": "BOOLEAN",
+      "default": true
+    },
+    "height": {
+      "type": "STRING",
+      "default": null
+    },
+    "width": {
+      "type": "STRING",
+      "default": null
+    },
+    "tooltip": {
+      "type": "STRING",
+      "default": null
+    }
+  }
+}

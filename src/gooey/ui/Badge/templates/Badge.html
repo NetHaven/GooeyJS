@@ -1,0 +1,9 @@
+<template id="ui-Badge">
+    <div class="badge-container" part="container">
+        <slot></slot>
+        <span class="badge" part="badge" role="status" aria-live="polite" aria-atomic="true">
+            <img class="badge-icon" alt="" part="icon" />
+            <span class="badge-content" part="content"></span>
+        </span>
+    </div>
+</template>
