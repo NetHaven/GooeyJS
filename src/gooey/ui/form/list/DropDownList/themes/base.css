@@ -1,4 +1,7 @@
 /* DropDownList Styles */
+:host {
+    display: inline-block;
+}
 
 /* Disabled styles for DropDownList */
 :host([disabled]),

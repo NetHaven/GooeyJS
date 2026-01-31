@@ -1,5 +1,6 @@
 /* ListBox Styles */
 :host {
+    display: inline-block;
     width: 100%;
 }
 

@@ -1,6 +1,7 @@
 /* ListBox Dark Theme */
 
 :host {
+    display: inline-block;
     width: 100%;
 }
 
