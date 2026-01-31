@@ -17,21 +17,65 @@ export default class TextElement extends FormElement {
         this.formElement = null;
         this.textElement = null;
 
+        // Track bridged native listeners: eventName -> bound handler function
+        this._bridgedHandlers = new Map();
+
         this.addValidEvent(KeyboardEvent.KEY_DOWN);
         this.addValidEvent(KeyboardEvent.KEY_PRESS);
         this.addValidEvent(KeyboardEvent.KEY_UP);
         this.addValidEvent(MouseEvent.CLICK);
     }
 
-    addEventListener(eventName, listener){
+    addEventListener(eventName, listener) {
         super.addEventListener(eventName, listener);
+
         // Only bridge keyboard/mouse events; subclasses handle form events with payloads
-        if (TextElement.BRIDGED_EVENTS.has(eventName)) {
-            this.textElement.addEventListener(eventName, (e) => {
+        // Attach native listener only once per event type
+        if (TextElement.BRIDGED_EVENTS.has(eventName) && !this._bridgedHandlers.has(eventName)) {
+            const handler = (e) => {
                 if (!this.disabled) {
                     this.fireEvent(eventName, { originalEvent: e });
                 }
-            });
+            };
+            this._bridgedHandlers.set(eventName, handler);
+            this.textElement.addEventListener(eventName, handler);
+        }
+    }
+
+    removeEventListener(eventName, listener) {
+        super.removeEventListener(eventName, listener);
+
+        // Clean up native listener if no Observable listeners remain for this event
+        if (TextElement.BRIDGED_EVENTS.has(eventName)) {
+            const listeners = this.eventListenerList[eventName];
+            if (!listeners || listeners.length === 0) {
+                this._removeBridgedHandler(eventName);
+            }
+        }
+    }
+
+    removeAllEventListeners(eventName) {
+        super.removeAllEventListeners(eventName);
+
+        if (!eventName) {
+            // All events removed - clean up all bridged handlers
+            for (const bridgedEvent of this._bridgedHandlers.keys()) {
+                this._removeBridgedHandler(bridgedEvent);
+            }
+        } else if (TextElement.BRIDGED_EVENTS.has(eventName)) {
+            this._removeBridgedHandler(eventName);
+        }
+    }
+
+    /**
+     * Remove a bridged native listener and clean up tracking
+     * @param {string} eventName - Event name to unbind
+     */
+    _removeBridgedHandler(eventName) {
+        const handler = this._bridgedHandlers.get(eventName);
+        if (handler && this.textElement) {
+            this.textElement.removeEventListener(eventName, handler);
+            this._bridgedHandlers.delete(eventName);
         }
     }
 
