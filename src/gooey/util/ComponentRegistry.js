@@ -162,8 +162,11 @@ export default class ComponentRegistry {
                     value = String(value);
                 }
                 // Enum validation using 'values' array from META.goo
+                // Case-insensitive comparison since components may normalize values
                 if (attrDef.values && attrDef.values.length > 0) {
-                    if (!attrDef.values.includes(value)) {
+                    const upperValue = value.toUpperCase();
+                    const validValues = attrDef.values.map(v => v.toUpperCase());
+                    if (!validValues.includes(upperValue)) {
                         return { valid: false, error: `${name} must be one of: ${attrDef.values.join(', ')}` };
                     }
                 }
@@ -186,8 +189,11 @@ export default class ComponentRegistry {
                     value = String(value);
                 }
                 // ENUM type requires values array in META.goo
+                // Case-insensitive comparison since components normalize values
                 if (attrDef.values && attrDef.values.length > 0) {
-                    if (!attrDef.values.includes(value)) {
+                    const upperValue = value.toUpperCase();
+                    const validValues = attrDef.values.map(v => v.toUpperCase());
+                    if (!validValues.includes(upperValue)) {
                         return { valid: false, error: `${name} must be one of: ${attrDef.values.join(', ')}` };
                     }
                 }
