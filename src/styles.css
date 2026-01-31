@@ -25,10 +25,8 @@ html, body, gooeyui-apppanel {
     display: none;
 }
 
-.ui-Component[visible='true'] {
-    background-color: #c1c0c1;
-    display: block;
-}
+/* Note: visible='true' intentionally has no rule - components define their own
+   display mode in :host styles. Forcing display:block would break inline components. */
 
 .ui-Component[disabled] {
     opacity: 0.5;
