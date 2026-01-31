@@ -86,12 +86,10 @@ export default class SplitPanel extends Container {
     }
     
     _setupEventListeners() {
-        // Mouse events for dragging
+        // Mouse down on divider starts drag - bind handlers once for reuse
         this._divider.addEventListener(MouseEvent.MOUSE_DOWN, this._onMouseDown.bind(this));
         this._boundMouseMoveHandler = this._onMouseMove.bind(this);
         this._boundMouseUpHandler = this._onMouseUp.bind(this);
-        document.addEventListener(MouseEvent.MOUSE_MOVE, this._boundMouseMoveHandler);
-        document.addEventListener(MouseEvent.MOUSE_UP, this._boundMouseUpHandler);
 
         // Prevent text selection during drag
         this._divider.addEventListener('selectstart', (e) => e.preventDefault());
@@ -99,26 +97,30 @@ export default class SplitPanel extends Container {
     }
 
     disconnectedCallback() {
-        // Remove document-level listeners to prevent leaks
-        document.removeEventListener(MouseEvent.MOUSE_MOVE, this._boundMouseMoveHandler);
-        document.removeEventListener(MouseEvent.MOUSE_UP, this._boundMouseUpHandler);
+        // Clean up document listeners if removed while dragging
+        if (this._isDragging) {
+            document.removeEventListener(MouseEvent.MOUSE_MOVE, this._boundMouseMoveHandler);
+            document.removeEventListener(MouseEvent.MOUSE_UP, this._boundMouseUpHandler);
+        }
     }
-    
+
     _onMouseDown(e) {
         e.preventDefault();
         this._isDragging = true;
         this._dragStartPos = this._orientation === 'horizontal' ? e.clientX : e.clientY;
         this._dragStartLocation = this._dividerLocation;
-        
+
+        // Attach document listeners only during drag
+        document.addEventListener(MouseEvent.MOUSE_MOVE, this._boundMouseMoveHandler);
+        document.addEventListener(MouseEvent.MOUSE_UP, this._boundMouseUpHandler);
+
         // Add dragging class for styling
         this.classList.add('splitpanel-dragging');
         document.body.style.cursor = this._orientation === 'horizontal' ? 'col-resize' : 'row-resize';
         document.body.style.userSelect = 'none';
     }
-    
+
     _onMouseMove(e) {
-        if (!this._isDragging) return;
-        
         e.preventDefault();
         
         const currentPos = this._orientation === 'horizontal' ? e.clientX : e.clientY;
@@ -143,14 +145,18 @@ export default class SplitPanel extends Container {
     
     _onMouseUp() {
         if (!this._isDragging) return;
-        
+
         this._isDragging = false;
-        
+
+        // Remove document listeners - only needed during drag
+        document.removeEventListener(MouseEvent.MOUSE_MOVE, this._boundMouseMoveHandler);
+        document.removeEventListener(MouseEvent.MOUSE_UP, this._boundMouseUpHandler);
+
         // Remove dragging styles
         this.classList.remove('splitpanel-dragging');
         document.body.style.cursor = '';
         document.body.style.userSelect = '';
-        
+
         // Dispatch change event
         this.fireEvent(SplitPanelEvent.DIVIDER_LOCATION_CHANGED, { location: this._dividerLocation });
     }
