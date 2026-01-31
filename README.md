@@ -5,7 +5,44 @@ GooeyJS is a web component framework that provides a set of UI elements. Built u
 
 - **Custom Web Components** - All elements are proper custom HTML elements
 - **Dynamic Component Loading** - Load only the components you need with `<gooey-component>`
-- **Graphics System** - Point and Dimension classes for calculations
+
+## What's New in 2.0
+
+GooeyJS 2.0 represents a major evolution of the framework with architectural improvements, new components, and enhanced theming capabilities.
+
+### Architecture Enhancements
+- **Dynamic Component Loading** - The framework now uses a lazy-loading architecture for optimal performance. Components are self-contained and loaded on-demand via the `<gooey-component>` element, significantly reducing initial load times.
+- **Template Management** - HTML template management class for efficient template loading and reuse
+
+### Data Management System
+A complete data layer with reactive components:
+- **Store** - Reactive data container with change events
+- **Data** - Declarative data records using `data-*` attributes
+- **Model** - Schema definitions for type-safe data handling
+- **Field** - Field definitions with type coercion and defaults
+
+### New Components
+- **CodeBlock** - Code display with line numbers, copy button, and language labels
+- **TimePicker** - Time selection with HTML5 integration
+- **DatePicker** - Date selection with min/max constraints
+- **Spinner** - Numeric input with increment/decrement controls
+- **ProgressBar** - Determinate and indeterminate progress indicators
+- **AccordionPanel** - Collapsible content sections
+- **GroupBox** - Container with title label for grouping related elements
+- **FormPanel** - Automatic grid-based layout for form elements
+- **Font** - Utility component for consistent typography configuration
+- **Border** - Utility component for consistent border styling
+- **Gradient** - Utility component for defining CSS gradients (linear, radial, conic)
+- **GradientStop** - Defines color stops within a Gradient component
+
+### New Themes
+- **Dark** - A dark mode theme for low-light environments
+- **Janus** - An alternative visual style
+
+### RichTextEditor Enhancements
+- Text alignment controls: Left, Center, and Right Align
+- Subscript and Superscript formatting
+- Strikethrough text support
 
 ## Loading Components
 
