@@ -16,24 +16,25 @@ GooeyJS 2.0 represents a major evolution of the framework with architectural imp
 
 ### Data Management System
 A complete data layer with reactive components:
-- **Store** - Reactive data container with change events
 - **Data** - Declarative data records using `data-*` attributes
-- **Model** - Schema definitions for type-safe data handling
 - **Field** - Field definitions with type coercion and defaults
+- **Model** - Schema definitions for type-safe data handling
+- **Store** - Reactive data container with change events
 
 ### New Components
-- **CodeBlock** - Code display with line numbers, copy button, and language labels
-- **TimePicker** - Time selection with HTML5 integration
-- **DatePicker** - Date selection with min/max constraints
-- **Spinner** - Numeric input with increment/decrement controls
-- **ProgressBar** - Determinate and indeterminate progress indicators
 - **AccordionPanel** - Collapsible content sections
-- **GroupBox** - Container with title label for grouping related elements
-- **FormPanel** - Automatic grid-based layout for form elements
-- **Font** - Utility component for consistent typography configuration
 - **Border** - Utility component for consistent border styling
+- **CodeBlock** - Code display with line numbers, copy button, and language labels
+- **DataGrid** - Full-featured data grid with virtual scrolling, sorting, filtering, and inline editing
+- **DatePicker** - Date selection with min/max constraints
+- **Font** - Utility component for consistent typography configuration
+- **FormPanel** - Automatic grid-based layout for form elements
 - **Gradient** - Utility component for defining CSS gradients (linear, radial, conic)
 - **GradientStop** - Defines color stops within a Gradient component
+- **GroupBox** - Container with title label for grouping related elements
+- **ProgressBar** - Determinate and indeterminate progress indicators
+- **Spinner** - Numeric input with increment/decrement controls
+- **TimePicker** - Time selection with HTML5 integration
 
 ### New Themes
 - **Dark** - A dark mode theme for low-light environments
