@@ -2,7 +2,9 @@
     <li class="ui-TreeItem">
         <div class="ui-TreeItem-content">
             <span class="ui-TreeItem-expander">▶</span>
-            <img class="ui-TreeItem-icon" src="" alt="">
+            <slot name="icon">
+                <img class="ui-TreeItem-icon" src="" alt="">
+            </slot>
             <span class="ui-TreeItem-text"></span>
         </div>
         <ul class="ui-TreeItem-children"></ul>

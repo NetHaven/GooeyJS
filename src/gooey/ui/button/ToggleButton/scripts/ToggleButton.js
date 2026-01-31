@@ -104,6 +104,16 @@ export default class ToggleButton extends UIComponent {
     }
 
     set icon(val) {
+        const slottedIcon = this.querySelector('[slot="icon"]');
+        if (slottedIcon) {
+            // Slotted icon takes precedence - don't create/show img
+            if (this.image) {
+                this.image.style.display = 'none';
+            }
+            this.setAttribute("icon", val);
+            return;
+        }
+
         if (!this.image) {
             this.image = document.createElement("img");
             this.button.appendChild(this.image);
@@ -114,6 +124,7 @@ export default class ToggleButton extends UIComponent {
                 }
             });
         }
+        this.image.style.display = '';
         this.setAttribute("icon", val);
         this.image.src = val;
     }

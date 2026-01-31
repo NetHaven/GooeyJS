@@ -212,7 +212,10 @@ export default class BreadcrumbItem extends UIComponent {
     }
 
     _applyIcon(val) {
-        if (val) {
+        const slottedIcon = this.querySelector('[slot="icon"]');
+        if (slottedIcon) {
+            this._icon.style.display = "none";
+        } else if (val) {
             this._icon.src = val;
             this._icon.style.display = "inline-block";
         } else {

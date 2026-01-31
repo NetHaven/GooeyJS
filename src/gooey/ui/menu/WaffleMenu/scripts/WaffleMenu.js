@@ -187,6 +187,19 @@ export default class WaffleMenu extends UIComponent {
     }
 
     set icon(val) {
+        const slottedIcon = this.querySelector('[slot="icon"]');
+        if (slottedIcon) {
+            // Hide both default icons when slot is used
+            this.defaultIcon.style.display = "none";
+            this.customIcon.style.display = "none";
+            if (val) {
+                this.setAttribute("icon", val);
+            } else {
+                this.removeAttribute("icon");
+            }
+            return;
+        }
+
         if (val) {
             this.setAttribute("icon", val);
             this.customIcon.src = val;

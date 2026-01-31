@@ -405,11 +405,18 @@ export default class Badge extends UIComponent {
      * @private
      */
     _applyIcon(val) {
-        if (this._iconElement) {
+        const slottedIcon = this.querySelector('[slot="icon"]');
+        if (slottedIcon) {
+            if (this._iconElement) {
+                this._iconElement.style.display = 'none';
+            }
+        } else if (this._iconElement) {
             if (val) {
                 this._iconElement.src = val;
+                this._iconElement.style.display = '';
             } else {
                 this._iconElement.removeAttribute("src");
+                this._iconElement.style.display = 'none';
             }
         }
     }

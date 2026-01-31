@@ -217,6 +217,19 @@ export default class HamburgerMenu extends UIComponent {
     }
 
     set icon(val) {
+        const slottedIcon = this.querySelector('[slot="icon"]');
+        if (slottedIcon) {
+            // Hide default icon when slot is used
+            this.iconElement.style.display = "none";
+            if (val) {
+                this.setAttribute("icon", val);
+            } else {
+                this.removeAttribute("icon");
+            }
+            return;
+        }
+
+        this.iconElement.style.display = "";
         if (val) {
             this.setAttribute("icon", val);
             // Build img element safely without innerHTML

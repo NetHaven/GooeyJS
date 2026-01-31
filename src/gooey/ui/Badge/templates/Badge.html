@@ -2,7 +2,9 @@
     <div class="badge-container" part="container">
         <slot></slot>
         <span class="badge" part="badge" role="status" aria-live="polite" aria-atomic="true">
-            <img class="badge-icon" alt="" part="icon" />
+            <slot name="icon">
+                <img class="badge-icon" alt="" part="icon" />
+            </slot>
             <span class="badge-content" part="content"></span>
         </span>
     </div>

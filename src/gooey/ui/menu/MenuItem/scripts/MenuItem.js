@@ -30,6 +30,7 @@ export default class MenuItem extends UIComponent {
         if (this.hasAttribute("icon")) {
             this.icon = this.getAttribute("icon");
         }
+        this._updateIcon();
 
         this.addValidEvent(MenuItemEvent.SELECT);
         
@@ -291,12 +292,22 @@ export default class MenuItem extends UIComponent {
 
     set icon(val) {
         this.setAttribute("icon", val);
-        if (val) {
-            this.iconElement.src = val;
-            this.iconElement.style.display = 'block';
-        } else {
-            this.iconElement.src = '';
+        this._updateIcon();
+    }
+
+    _updateIcon() {
+        const slottedIcon = this.querySelector('[slot="icon"]');
+        if (slottedIcon) {
             this.iconElement.style.display = 'none';
+        } else {
+            const val = this.icon;
+            if (val) {
+                this.iconElement.src = val;
+                this.iconElement.style.display = 'block';
+            } else {
+                this.iconElement.src = '';
+                this.iconElement.style.display = 'none';
+            }
         }
     }
 }

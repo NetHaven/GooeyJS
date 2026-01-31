@@ -1,10 +1,12 @@
 <template id="ui-HamburgerMenu">
     <button class="hamburger-button" type="button" aria-label="Menu" aria-expanded="false">
-        <span class="hamburger-icon">
-            <span class="bar"></span>
-            <span class="bar"></span>
-            <span class="bar"></span>
-        </span>
+        <slot name="icon">
+            <span class="hamburger-icon">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </span>
+        </slot>
         <span class="hamburger-text"></span>
     </button>
     <div class="hamburger-backdrop"></div>

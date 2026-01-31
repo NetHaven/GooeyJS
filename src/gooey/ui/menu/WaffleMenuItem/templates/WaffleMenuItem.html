@@ -1,7 +1,9 @@
 <template id="ui-WaffleMenuItem">
     <button class="waffle-item" type="button" role="menuitem" tabindex="-1">
         <div class="waffle-item-icon">
-            <img class="waffle-item-image" alt="" />
+            <slot name="icon">
+                <img class="waffle-item-image" alt="" />
+            </slot>
             <span class="waffle-item-badge"></span>
         </div>
         <span class="waffle-item-label"></span>

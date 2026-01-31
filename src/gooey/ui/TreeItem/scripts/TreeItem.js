@@ -620,7 +620,10 @@ export default class TreeItem extends UIComponent {
     }
     
     _updateIcon() {
-        if (this.icon) {
+        const slottedIcon = this.querySelector('[slot="icon"]');
+        if (slottedIcon) {
+            this._iconElement.style.display = 'none';
+        } else if (this.icon) {
             this._iconElement.src = this.icon;
             this._iconElement.style.display = 'inline-block';
         } else {

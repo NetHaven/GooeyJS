@@ -1,6 +1,8 @@
 <template id="ui-MenuItem">
     <div class="MenuItemIcon">
-        <img class="MenuItemIconImage" src="" alt="">
+        <slot name="icon">
+            <img class="MenuItemIconImage" src="" alt="">
+        </slot>
     </div>
     <div class="MenuItemText">
     </div>

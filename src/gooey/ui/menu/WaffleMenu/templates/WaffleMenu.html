@@ -1,17 +1,19 @@
 <template id="ui-WaffleMenu">
     <button class="waffle-trigger" type="button" aria-haspopup="menu" aria-expanded="false">
-        <svg class="waffle-icon" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
-            <circle cx="5" cy="5" r="2"/>
-            <circle cx="12" cy="5" r="2"/>
-            <circle cx="19" cy="5" r="2"/>
-            <circle cx="5" cy="12" r="2"/>
-            <circle cx="12" cy="12" r="2"/>
-            <circle cx="19" cy="12" r="2"/>
-            <circle cx="5" cy="19" r="2"/>
-            <circle cx="12" cy="19" r="2"/>
-            <circle cx="19" cy="19" r="2"/>
-        </svg>
-        <img class="waffle-custom-icon" style="display: none;" alt="" />
+        <slot name="icon">
+            <svg class="waffle-icon" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+                <circle cx="5" cy="5" r="2"/>
+                <circle cx="12" cy="5" r="2"/>
+                <circle cx="19" cy="5" r="2"/>
+                <circle cx="5" cy="12" r="2"/>
+                <circle cx="12" cy="12" r="2"/>
+                <circle cx="19" cy="12" r="2"/>
+                <circle cx="5" cy="19" r="2"/>
+                <circle cx="12" cy="19" r="2"/>
+                <circle cx="19" cy="19" r="2"/>
+            </svg>
+            <img class="waffle-custom-icon" style="display: none;" alt="" />
+        </slot>
     </button>
     <div class="waffle-backdrop"></div>
     <div class="waffle-panel" role="menu" aria-label="Applications" aria-hidden="true">

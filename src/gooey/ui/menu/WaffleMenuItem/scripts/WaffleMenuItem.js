@@ -48,6 +48,7 @@ export default class WaffleMenuItem extends UIComponent {
         if (this.hasAttribute("icon")) {
             this.icon = this.getAttribute("icon");
         }
+        this._updateIcon();
         if (this.hasAttribute("label")) {
             this.label = this.getAttribute("label");
         }
@@ -79,10 +80,25 @@ export default class WaffleMenuItem extends UIComponent {
     set icon(val) {
         if (val) {
             this.setAttribute("icon", val);
-            this.image.src = val;
         } else {
             this.removeAttribute("icon");
-            this.image.src = "";
+        }
+        this._updateIcon();
+    }
+
+    _updateIcon() {
+        const slottedIcon = this.querySelector('[slot="icon"]');
+        if (slottedIcon) {
+            this.image.style.display = 'none';
+        } else {
+            const val = this.icon;
+            if (val) {
+                this.image.src = val;
+                this.image.style.display = '';
+            } else {
+                this.image.src = "";
+                this.image.style.display = '';
+            }
         }
     }
 
