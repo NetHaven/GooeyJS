@@ -1777,38 +1777,48 @@ const GooeyData = {
                   },
                   {
                     "name": "dividerlocation",
-                    "type": "NUMBER",
-                    "description": "Initial position of the divider as a percentage (0-100) of the panel size",
+                    "type": "STRING",
+                    "description": "Initial position of the divider. Plain numbers are interpreted as pixels (e.g., '200'), numbers with '%' suffix are percentages (e.g., '30%'). Default: '50%'",
                     "required": false
                   },
                   {
                     "name": "minimumlocation",
-                    "type": "NUMBER",
-                    "description": "Minimum divider position as a percentage to prevent panes from becoming too small",
+                    "type": "STRING",
+                    "description": "Minimum divider position to prevent panes from becoming too small. Plain numbers are pixels, '%' suffix for percentages. Default: '10%'",
                     "required": false
                   },
                   {
                     "name": "maximumlocation",
-                    "type": "NUMBER",
-                    "description": "Maximum divider position as a percentage to prevent panes from becoming too large",
+                    "type": "STRING",
+                    "description": "Maximum divider position to prevent panes from becoming too large. Plain numbers are pixels, '%' suffix for percentages. Default: '90%'",
                     "required": false
                   }
                 ],
                 "examples": [
                   {
-                    "title": "Horizontal Split",
-                    "description": "A panel split horizontally with left and right panes.",
-                    "code": "<gooeyui-splitpanel orientation=\"horizontal\" dividerlocation=\"30\">\n  <gooeyui-panel>Left pane</gooeyui-panel>\n  <gooeyui-panel>Right pane</gooeyui-panel>\n</gooeyui-splitpanel>"
+                    "title": "Horizontal Split (Percentage)",
+                    "description": "A panel split horizontally at 30% using percentage positioning.",
+                    "code": "<gooeyui-splitpanel orientation=\"horizontal\" dividerlocation=\"30%\">\n  <gooeyui-panel>Left pane</gooeyui-panel>\n  <gooeyui-panel>Right pane</gooeyui-panel>\n</gooeyui-splitpanel>"
+                  },
+                  {
+                    "title": "Horizontal Split (Pixels)",
+                    "description": "A panel split horizontally with a fixed 250-pixel left pane.",
+                    "code": "<gooeyui-splitpanel orientation=\"horizontal\" dividerlocation=\"250\">\n  <gooeyui-panel>Left pane (250px)</gooeyui-panel>\n  <gooeyui-panel>Right pane (fills remaining space)</gooeyui-panel>\n</gooeyui-splitpanel>"
                   },
                   {
                     "title": "Vertical Split",
                     "description": "A panel split vertically with top and bottom panes.",
-                    "code": "<gooeyui-splitpanel orientation=\"vertical\" dividerlocation=\"50\">\n  <gooeyui-panel>Top pane</gooeyui-panel>\n  <gooeyui-panel>Bottom pane</gooeyui-panel>\n</gooeyui-splitpanel>"
+                    "code": "<gooeyui-splitpanel orientation=\"vertical\" dividerlocation=\"50%\">\n  <gooeyui-panel>Top pane</gooeyui-panel>\n  <gooeyui-panel>Bottom pane</gooeyui-panel>\n</gooeyui-splitpanel>"
                   },
                   {
-                    "title": "Constrained Split",
-                    "description": "A split panel with minimum and maximum divider positions.",
-                    "code": "<gooeyui-splitpanel orientation=\"horizontal\" dividerlocation=\"25\" minimumlocation=\"20\" maximumlocation=\"40\">\n  <gooeyui-panel>Navigation</gooeyui-panel>\n  <gooeyui-panel>Content</gooeyui-panel>\n</gooeyui-splitpanel>"
+                    "title": "Fixed Sidebar with Constraints",
+                    "description": "A split panel with a pixel-based sidebar and percentage-based min/max constraints.",
+                    "code": "<gooeyui-splitpanel orientation=\"horizontal\" dividerlocation=\"200\" minimumlocation=\"10%\" maximumlocation=\"50%\">\n  <gooeyui-panel>Navigation</gooeyui-panel>\n  <gooeyui-panel>Content</gooeyui-panel>\n</gooeyui-splitpanel>"
+                  },
+                  {
+                    "title": "Pixel Constraints",
+                    "description": "A split panel with pixel-based minimum and maximum divider positions.",
+                    "code": "<gooeyui-splitpanel orientation=\"horizontal\" dividerlocation=\"300\" minimumlocation=\"150\" maximumlocation=\"500\">\n  <gooeyui-panel>Sidebar (150-500px range)</gooeyui-panel>\n  <gooeyui-panel>Main content</gooeyui-panel>\n</gooeyui-splitpanel>"
                   }
                 ]
               },

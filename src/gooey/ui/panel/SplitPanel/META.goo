@@ -14,9 +14,9 @@
   "attributes": {
     "dividersize": { "type": "NUMBER", "default": 5 },
     "orientation": { "type": "STRING", "default": "horizontal" },
-    "dividerlocation": { "type": "NUMBER", "default": 50 },
-    "minimumlocation": { "type": "NUMBER", "default": 10 },
-    "maximumlocation": { "type": "NUMBER", "default": 90 },
+    "dividerlocation": { "type": "STRING", "default": "50%" },
+    "minimumlocation": { "type": "STRING", "default": "10%" },
+    "maximumlocation": { "type": "STRING", "default": "90%" },
     "draggable": { "type": "BOOLEAN", "default": false },
     "droppable": { "type": "BOOLEAN", "default": false },
     "dropzone": { "type": "STRING", "default": null },
