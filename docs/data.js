@@ -1729,7 +1729,7 @@ const GooeyData = {
               {
                 "name": "Panel",
                 "tagName": "gooeyui-panel",
-                "description": "A basic container panel for organizing and grouping UI content.",
+                "description": "A basic container panel for organizing and grouping UI content. Supports both slotted children and dynamic HTML content injection.",
                 "inherits": ["UIComponent", "Container"],
                 "attributes": [
                   {
@@ -1737,6 +1737,31 @@ const GooeyData = {
                     "type": "STRING",
                     "description": "Header text displayed at the top of the panel",
                     "required": false
+                  }
+                ],
+                "methods": [
+                  {
+                    "name": "setContent",
+                    "signature": "setContent(html)",
+                    "description": "Set HTML content in the panel. Creates a dynamic content container and replaces its content with the provided HTML string.",
+                    "parameters": [
+                      {
+                        "name": "html",
+                        "type": "string",
+                        "description": "HTML string to inject into the panel"
+                      }
+                    ]
+                  },
+                  {
+                    "name": "clearContent",
+                    "signature": "clearContent()",
+                    "description": "Clear dynamic content from the panel, removing any HTML previously set via setContent()."
+                  },
+                  {
+                    "name": "getContentElement",
+                    "signature": "getContentElement()",
+                    "description": "Get the dynamic content container element.",
+                    "returns": "HTMLElement|null - The dynamic content container, or null if not created"
                   }
                 ],
                 "examples": [
@@ -1754,6 +1779,16 @@ const GooeyData = {
                     "title": "Sized Panel",
                     "description": "A panel with specific dimensions.",
                     "code": "<gooeyui-panel width=\"400\" height=\"300\">\n  Panel content\n</gooeyui-panel>"
+                  },
+                  {
+                    "title": "Dynamic HTML Content",
+                    "description": "Using setContent() to inject dynamic HTML into the panel.",
+                    "code": "const panel = document.querySelector('gooeyui-panel');\npanel.setContent('<h2>Dynamic Title</h2><p>This content was added programmatically.</p>');"
+                  },
+                  {
+                    "title": "Updating Content",
+                    "description": "Clearing and replacing dynamic content.",
+                    "code": "const panel = document.querySelector('gooeyui-panel');\npanel.setContent('<p>Loading...</p>');\n// Later...\npanel.clearContent();\npanel.setContent('<p>Data loaded successfully!</p>');"
                   }
                 ]
               },
