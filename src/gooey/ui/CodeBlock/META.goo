@@ -13,6 +13,7 @@
   },
   "attributes": {
     "language": { "type": "STRING", "default": null },
+    "syntaxhighlight": { "type": "BOOLEAN", "default": false },
     "linenumbers": { "type": "BOOLEAN", "default": true },
     "copybutton": { "type": "BOOLEAN", "default": true },
     "draggable": { "type": "BOOLEAN", "default": false },

@@ -100,3 +100,33 @@
 :host([disabled]) .copy-button {
     pointer-events: none;
 }
+
+/* Highlighted code container (hidden by default) */
+.code-highlighted {
+    display: none;
+    flex: 1;
+    margin: 0;
+    padding: 12px;
+    overflow-x: auto;
+    background-color: #1e1e1e;
+    color: #d4d4d4;
+}
+
+.code-highlighted code {
+    display: block;
+    white-space: pre;
+    font-family: inherit;
+}
+
+/* Syntax Highlighting Token Colors */
+.code-highlighted .syntax-tag-name    { color: #569cd6; }
+.code-highlighted .syntax-attr-name   { color: #9cdcfe; }
+.code-highlighted .syntax-attr-value  { color: #ce9178; }
+.code-highlighted .syntax-comment     { color: #6a9955; font-style: italic; }
+.code-highlighted .syntax-doctype     { color: #6a9955; }
+.code-highlighted .syntax-punctuation { color: #808080; }
+.code-highlighted .syntax-entity      { color: #d7ba7d; }
+.code-highlighted .syntax-keyword     { color: #569cd6; }
+.code-highlighted .syntax-string      { color: #ce9178; }
+.code-highlighted .syntax-number      { color: #b5cea8; }
+.code-highlighted .syntax-operator    { color: #d4d4d4; }

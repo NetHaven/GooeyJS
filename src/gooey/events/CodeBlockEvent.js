@@ -6,6 +6,7 @@ import Event from "./Event.js";
  */
 export default class CodeBlockEvent extends Event {
     static COPY = "copy";
+    static HIGHLIGHT_ERROR = "highlight-error";
 
     constructor() {
         super();

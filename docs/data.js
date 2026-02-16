@@ -2656,14 +2656,21 @@ const GooeyData = {
               {
                 "name": "CodeBlock",
                 "tagName": "gooeyui-codeblock",
-                "description": "A code display component for showing code snippets with line numbers, copy button, and language label.",
+                "description": "A code display component for showing code snippets with line numbers, copy button, language label, and optional syntax highlighting. Supports a pluggable tokenizer system with built-in tokenizers for HTML/XML, JavaScript/TypeScript, and CSS. When syntax highlighting is enabled, the component lazy-loads the appropriate tokenizer based on the language attribute and renders color-coded tokens. The copy button always copies the raw source text regardless of highlighting state.",
                 "inherits": ["UIComponent"],
                 "attributes": [
                   {
                     "name": "language",
                     "type": "STRING",
-                    "description": "Language name displayed in the header badge (e.g., 'javascript', 'python')",
+                    "description": "Language identifier displayed in the header and used to select the syntax highlighting tokenizer. Built-in tokenizers: html, htm, xml, svg, javascript, js, jsx, typescript, ts, tsx, css, scss, less.",
                     "required": false
+                  },
+                  {
+                    "name": "syntaxhighlight",
+                    "type": "BOOLEAN",
+                    "description": "When present, enables syntax highlighting. Requires the language attribute to be set to a supported language. The tokenizer is lazy-loaded on first use.",
+                    "required": false,
+                    "default": "false"
                   },
                   {
                     "name": "linenumbers",
@@ -2692,6 +2699,21 @@ const GooeyData = {
                     "code": "<gooeyui-codeblock language=\"javascript\">\nconst greeting = \"Hello\";\nconsole.log(greeting);\n</gooeyui-codeblock>"
                   },
                   {
+                    "title": "HTML Syntax Highlighting",
+                    "description": "A code block with syntax highlighting enabled for HTML. Tag names, attribute names, attribute values, and comments are color-coded.",
+                    "code": "<gooeyui-codeblock language=\"html\" syntaxhighlight>\n<!-- Navigation -->\n<nav class=\"main-nav\">\n    <a href=\"/home\">Home</a>\n    <a href=\"/about\">About</a>\n</nav>\n</gooeyui-codeblock>"
+                  },
+                  {
+                    "title": "JavaScript Syntax Highlighting",
+                    "description": "A code block with syntax highlighting enabled for JavaScript. Keywords, strings, numbers, comments, and operators are color-coded.",
+                    "code": "<gooeyui-codeblock language=\"javascript\" syntaxhighlight>\n// Fetch user data\nasync function getUser(id) {\n    const response = await fetch(`/api/users/${id}`);\n    if (!response.ok) {\n        throw new Error(\"Not found\");\n    }\n    return response.json();\n}\n</gooeyui-codeblock>"
+                  },
+                  {
+                    "title": "CSS Syntax Highlighting",
+                    "description": "A code block with syntax highlighting enabled for CSS. Selectors, properties, values, and at-rules are color-coded.",
+                    "code": "<gooeyui-codeblock language=\"css\" syntaxhighlight>\n/* Card component styles */\n@media (min-width: 768px) {\n    .card {\n        display: flex;\n        padding: 16px;\n        border-radius: 8px;\n        background-color: #ffffff;\n        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);\n    }\n}\n</gooeyui-codeblock>"
+                  },
+                  {
                     "title": "Code Block without Line Numbers",
                     "description": "A minimal code block without line numbers.",
                     "code": "<gooeyui-codeblock linenumbers=\"false\">\nnpm install gooeyjs\n</gooeyui-codeblock>"
@@ -2700,11 +2722,6 @@ const GooeyData = {
                     "title": "Minimal Code Block",
                     "description": "A code block with no header elements.",
                     "code": "<gooeyui-codeblock linenumbers=\"false\" copybutton=\"false\">\nSimple text display\n</gooeyui-codeblock>"
-                  },
-                  {
-                    "title": "Multi-language Examples",
-                    "description": "Code blocks for different programming languages.",
-                    "code": "<gooeyui-codeblock language=\"python\">\ndef greet(name):\n    print(f\"Hello, {name}!\")\n</gooeyui-codeblock>\n\n<gooeyui-codeblock language=\"html\">\n<div class=\"container\">\n    <h1>Title</h1>\n</div>\n</gooeyui-codeblock>"
                   }
                 ]
               },

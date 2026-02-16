@@ -1,16 +1,15 @@
 import UIComponent from '../../UIComponent.js';
 import CodeBlockEvent from '../../../events/CodeBlockEvent.js';
 import Template from '../../../util/Template.js';
+import TokenizerRegistry from '../../../util/syntax/TokenizerRegistry.js';
 
 /**
  * CodeBlock component for displaying code snippets with line numbers,
- * copy button, and language label.
+ * copy button, language label, and optional syntax highlighting.
  *
  * Usage:
- * <gooeyui-codeblock language="javascript">
- * function hello() {
- *     console.log("Hello, World!");
- * }
+ * <gooeyui-codeblock language="html" syntaxhighlight>
+ * <div class="main">Hello</div>
  * </gooeyui-codeblock>
  */
 export default class CodeBlock extends UIComponent {
@@ -26,7 +25,14 @@ export default class CodeBlock extends UIComponent {
         this.copyButton = this.shadowRoot.querySelector(".copy-button");
         this.lineNumbers = this.shadowRoot.querySelector(".line-numbers");
         this.codeContent = this.shadowRoot.querySelector(".code-content");
+        this.codeHighlighted = this.shadowRoot.querySelector(".code-highlighted");
+        this.highlightedCode = this.codeHighlighted.querySelector("code");
         this.slot = this.shadowRoot.querySelector("slot");
+
+        // Syntax highlighting state
+        this._highlightPending = false;
+        this._tokenizer = null;
+        this._tokenizerLanguage = null;
 
         // Initialize attributes
         if (this.hasAttribute("language")) {
@@ -47,6 +53,7 @@ export default class CodeBlock extends UIComponent {
 
         // Register events
         this.addValidEvent(CodeBlockEvent.COPY);
+        this.addValidEvent(CodeBlockEvent.HIGHLIGHT_ERROR);
 
         // Set up copy button click handler
         this.copyButton.addEventListener("click", () => {
@@ -55,9 +62,10 @@ export default class CodeBlock extends UIComponent {
             }
         });
 
-        // Listen for slot content changes to update line numbers
+        // Listen for slot content changes to update line numbers and highlighting
         this.slot.addEventListener("slotchange", () => {
             this._updateLineNumbers();
+            this._requestHighlight();
         });
 
         // Initial line number update
@@ -65,6 +73,9 @@ export default class CodeBlock extends UIComponent {
 
         // Update header visibility based on language and copybutton
         this._updateHeaderVisibility();
+
+        // Initial syntax highlighting if attributes are already set
+        this._requestHighlight();
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -75,6 +86,11 @@ export default class CodeBlock extends UIComponent {
             case 'language':
                 this._updateLanguageLabel();
                 this._updateHeaderVisibility();
+                this._requestHighlight();
+                break;
+            case 'syntaxhighlight':
+                this._updateHighlightVisibility();
+                this._requestHighlight();
                 break;
             case 'linenumbers':
                 this._updateLineNumbersVisibility();
@@ -102,6 +118,8 @@ export default class CodeBlock extends UIComponent {
      */
     set code(val) {
         // Clear existing light DOM content and set new content
+        // Setting textContent triggers slotchange, which calls
+        // _updateLineNumbers() and _requestHighlight() automatically
         this.textContent = val;
     }
 
@@ -139,7 +157,125 @@ export default class CodeBlock extends UIComponent {
     }
 
     /**
-     * Copy the code content to clipboard
+     * Whether syntax highlighting is enabled.
+     * @returns {boolean}
+     */
+    get syntaxhighlight() {
+        return this.hasAttribute("syntaxhighlight");
+    }
+
+    /**
+     * Enable or disable syntax highlighting.
+     * @param {boolean} val
+     */
+    set syntaxhighlight(val) {
+        if (val) {
+            this.setAttribute("syntaxhighlight", "");
+        } else {
+            this.removeAttribute("syntaxhighlight");
+        }
+    }
+
+    // ---- Syntax Highlighting ----
+
+    /**
+     * Request a syntax highlight update. Debounces rapid calls via microtask.
+     * @private
+     */
+    _requestHighlight() {
+        if (this._highlightPending) return;
+        this._highlightPending = true;
+
+        queueMicrotask(() => {
+            this._highlightPending = false;
+            this._performHighlight();
+        });
+    }
+
+    /**
+     * Perform the actual syntax highlighting.
+     * If syntaxhighlight is off or language is not set, shows plain slot content.
+     * Otherwise, loads the tokenizer (lazy), tokenizes, and renders.
+     * @private
+     */
+    async _performHighlight() {
+        if (!this.syntaxhighlight || !this.language) {
+            this._showPlainCode();
+            return;
+        }
+
+        const language = this.language.toLowerCase();
+
+        if (!TokenizerRegistry.hasTokenizer(language)) {
+            this._showPlainCode();
+            return;
+        }
+
+        try {
+            if (!this._tokenizer || this._tokenizerLanguage !== language) {
+                this._tokenizer = await TokenizerRegistry.getTokenizer(language);
+                this._tokenizerLanguage = language;
+            }
+
+            if (!this._tokenizer) {
+                this._showPlainCode();
+                return;
+            }
+
+            const code = this.code;
+            const tokens = this._tokenizer.tokenize(code);
+            const highlightedHTML = this._tokenizer.render(tokens);
+
+            this.highlightedCode.innerHTML = highlightedHTML;
+            this._showHighlightedCode();
+            this._updateLineNumbers();
+
+        } catch (error) {
+            console.error(`Syntax highlighting failed for language "${language}":`, error);
+            this.fireEvent(CodeBlockEvent.HIGHLIGHT_ERROR, {
+                language: language,
+                error: error.message
+            });
+            this._showPlainCode();
+        }
+    }
+
+    /**
+     * Show the plain slot-based code view, hide the highlighted view.
+     * @private
+     */
+    _showPlainCode() {
+        this.codeContent.style.display = '';
+        this.codeHighlighted.style.display = 'none';
+    }
+
+    /**
+     * Show the highlighted code view, hide the plain slot view.
+     * @private
+     */
+    _showHighlightedCode() {
+        this.codeContent.style.display = 'none';
+        this.codeHighlighted.style.display = '';
+    }
+
+    /**
+     * Update visibility when syntaxhighlight attribute changes.
+     * Clears highlighted content when disabled to free memory.
+     * @private
+     */
+    _updateHighlightVisibility() {
+        if (!this.syntaxhighlight) {
+            this._showPlainCode();
+            this.highlightedCode.innerHTML = '';
+            this._tokenizer = null;
+            this._tokenizerLanguage = null;
+        }
+    }
+
+    // ---- Existing Private Methods ----
+
+    /**
+     * Copy the code content to clipboard (always copies raw text)
      */
     async _copyToClipboard() {
         const code = this.code;
