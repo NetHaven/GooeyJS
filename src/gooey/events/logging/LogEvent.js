@@ -21,6 +21,9 @@ export default class LogEvent extends Event {
     /** Fired when a flush operation is requested */
     static FLUSH = "log-flush";
 
+    /** Fired when an uncaught exception or unhandled rejection is captured */
+    static EXCEPTION = "log-exception";
+
     constructor() {
         super();
     }

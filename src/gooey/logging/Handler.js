@@ -53,6 +53,8 @@ export default class Handler {
         this._formatter = options.formatter ?? null;
         this._enabled = options.enabled !== false;
         this._emitter = options.emitter ?? null;
+        this._handleExceptions = options.handleExceptions === true;
+        this._handleRejections = options.handleRejections === true;
     }
 
     // ---- Getters / Setters ----
@@ -139,6 +141,44 @@ export default class Handler {
      */
     set emitter(value) {
         this._emitter = value;
+    }
+
+    /**
+     * Whether this handler receives uncaught exception records.
+     *
+     * When `true`, the {@link ExceptionHandler} will route global uncaught
+     * exception records to this handler. Defaults to `false`.
+     *
+     * @type {boolean}
+     */
+    get handleExceptions() {
+        return this._handleExceptions;
+    }
+
+    /**
+     * @param {boolean} value - True to opt in to exception records
+     */
+    set handleExceptions(value) {
+        this._handleExceptions = !!value;
+    }
+
+    /**
+     * Whether this handler receives unhandled promise rejection records.
+     *
+     * When `true`, the {@link ExceptionHandler} will route global unhandled
+     * rejection records to this handler. Defaults to `false`.
+     *
+     * @type {boolean}
+     */
+    get handleRejections() {
+        return this._handleRejections;
+    }
+
+    /**
+     * @param {boolean} value - True to opt in to rejection records
+     */
+    set handleRejections(value) {
+        this._handleRejections = !!value;
     }
 
     // ---- Core contract ----
