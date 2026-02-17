@@ -57,6 +57,7 @@ import MillisecondFormatter from "./formatters/MillisecondFormatter.js";
 import FilterFormatter from "./formatters/FilterFormatter.js";
 import Redactor from "./Redactor.js";
 import ExceptionHandler from "./ExceptionHandler.js";
+import CallSiteCapture from "./CallSiteCapture.js";
 
 // ---- Module-level constants ----
 
@@ -164,6 +165,9 @@ export default class Logger {
     /** @type {Map<string, number>} Active profile timers: id -> start time (performance.now()) */
     #profilers;
 
+    /** @type {boolean} Whether call-site capture (file/line/func) is enabled */
+    #src;
+
     // ---- Constructor ----
 
     /**
@@ -225,6 +229,12 @@ export default class Logger {
 
         // Phase 9 fields: profiling
         this.#profilers = new Map();
+
+        // Phase 9 fields: call-site capture
+        this.#src = options.src === true;
+        if (this.#src) {
+            CallSiteCapture.warnOnce();
+        }
 
         // Compose subsystems (has-a, not is-a)
         // Child loggers share the parent's HandlerManager for handler inheritance
@@ -473,6 +483,7 @@ export default class Logger {
             mixinMergeStrategy: options.mixinMergeStrategy ?? this.#mixinMergeStrategy,
             hooks: options.hooks ?? this.#hooks,
             onError: this.#onError,
+            src: this.#src,
             // Internal fields for child tracking
             _parent: this,
             _bindings: formattedBindings,
@@ -926,6 +937,12 @@ export default class Logger {
         if ("onError" in options) {
             this.#onError = options.onError || null;
         }
+        if ("src" in options) {
+            this.#src = options.src === true;
+            if (this.#src) {
+                CallSiteCapture.warnOnce();
+            }
+        }
         if ("handleExceptions" in options || "handleRejections" in options) {
             // Tear down existing exception handler if present
             if (this.#exceptionHandler) {
@@ -1196,18 +1213,19 @@ export default class Logger {
     /**
      * Core write pipeline -- creates a record and dispatches it to handlers.
      *
-     * Full 11-step pipeline sequence:
+     * Full 12-step pipeline sequence:
      * 1. **Silent check** -- if `#silent` is true, return immediately
-     * 2. **Mixin** -- call `#mixin(fields, levelNum)` for dynamic per-call fields
-     * 3. **Field merge** -- combine logger-level `#fields` with mixin-enriched call fields
-     * 4. **Create record** -- via `LogRecord.create()` with all configuration
-     * 5. **formatters.log** -- transform the entire record after creation
-     * 6. **formatters.level** -- transform level representation in the record
-     * 7. **Custom level patch** -- fix levelName for custom levels (skipped if formatters.level active)
-     * 8. **Redaction** -- redact sensitive fields via `#redactor`
-     * 9. **Serialization** -- apply `Serializers.apply()` if serializers configured
-     * 10. **Fire RECORD event** -- notify listeners (errors swallowed)
-     * 11. **hooks.write** -- intercept before handler dispatch, then dispatch
+     * 2. **Call-site capture** -- if `#src`, capture file/line/func via CallSiteCapture
+     * 3. **Mixin** -- call `#mixin(fields, levelNum)` for dynamic per-call fields
+     * 4. **Field merge** -- combine logger-level `#fields` with mixin-enriched call fields
+     * 5. **Create record** -- via `LogRecord.create()` with all configuration
+     * 6. **formatters.log** -- transform the entire record after creation
+     * 7. **formatters.level** -- transform level representation in the record
+     * 8. **Custom level patch** -- fix levelName for custom levels (skipped if formatters.level active)
+     * 9. **Redaction** -- redact sensitive fields via `#redactor`
+     * 10. **Serialization** -- apply `Serializers.apply()` if serializers configured
+     * 11. **Fire RECORD event** -- notify listeners (errors swallowed)
+     * 12. **hooks.write** -- intercept before handler dispatch, then dispatch
      *
      * @param {number} levelNum  - Numeric level value
      * @param {string} levelName - Level name (for potential custom level use)
@@ -1219,7 +1237,17 @@ export default class Logger {
         // 1. Silent check
         if (this.#silent) return;
 
-        // 2. Mixin application (try-catch wrapped -- mixin errors must not break logging)
+        // 2. Call-site capture (if src: true)
+        // Must happen at the start of _write while the call stack still
+        // reflects the user's call site. The skipFrames value accounts for:
+        // capture() -> _write() -> _processLogArgs() -> closure -> [user code]
+        // That's 3 internal frames to skip past _write, _processLogArgs, and the closure.
+        let srcInfo = null;
+        if (this.#src) {
+            srcInfo = CallSiteCapture.capture(3);
+        }
+
+        // 3. Mixin application (try-catch wrapped -- mixin errors must not break logging)
         let callFields = fields;
         if (this.#mixin) {
             try {
@@ -1239,12 +1267,17 @@ export default class Logger {
             }
         }
 
-        // 3. Field merge (logger #fields + mixin-enriched call fields)
+        // Inject src info into call fields (if captured)
+        if (srcInfo) {
+            callFields = callFields ? { ...callFields, src: srcInfo } : { src: srcInfo };
+        }
+
+        // 4. Field merge (logger #fields + mixin-enriched call fields)
         const mergedFields = this.#fields
             ? (callFields ? { ...this.#fields, ...callFields } : this.#fields)
             : callFields;
 
-        // 4. Record creation
+        // 5. Record creation
         const record = LogRecord.create({
             level: levelNum,
             name: this.#name,
@@ -1257,7 +1290,7 @@ export default class Logger {
             nestedKey: this.#nestedKey
         });
 
-        // 5. formatters.log (shape the record)
+        // 6. formatters.log (shape the record)
         let shaped = record;
         if (this.#formatters && this.#formatters.log) {
             try {
@@ -1268,7 +1301,7 @@ export default class Logger {
             }
         }
 
-        // 6. formatters.level (transform level representation)
+        // 7. formatters.level (transform level representation)
         if (this.#formatters && this.#formatters.level) {
             try {
                 const levelObj = this.#formatters.level(levelNum);
@@ -1280,30 +1313,30 @@ export default class Logger {
             }
         }
 
-        // 7. Custom level patch (fix levelName for custom levels)
+        // 8. Custom level patch (fix levelName for custom levels)
         //    Only apply if formatters.level did NOT already handle level representation
         const afterLevelPatch = (!(this.#formatters && this.#formatters.level) && !shaped.levelName && levelName)
             ? Object.freeze({ ...shaped, levelName })
             : shaped;
 
-        // 8. Redaction
+        // 9. Redaction
         const redacted = (this.#redactor && this.#redactor.hasPaths)
             ? this.#redactor.redact(afterLevelPatch)
             : afterLevelPatch;
 
-        // 9. Serialization
+        // 10. Serialization
         const serialized = this.#serializers
             ? Serializers.apply(redacted, this.#serializers)
             : redacted;
 
-        // 10. Fire RECORD event (listener errors must not crash the pipeline)
+        // 11. Fire RECORD event (listener errors must not crash the pipeline)
         try {
             this._emitter.fireEvent(LogEvent.RECORD, { record: serialized });
         } catch (e) {
             // Swallow -- listener errors must not prevent handler dispatch
         }
 
-        // 11. hooks.write then handler dispatch
+        // 12. hooks.write then handler dispatch
         if (this.#hooks && this.#hooks.write) {
             try {
                 this.#hooks.write(serialized, (record) => {
@@ -1543,3 +1576,6 @@ Logger.FilterFormatter = FilterFormatter;
 
 // Exception handling
 Logger.ExceptionHandler = ExceptionHandler;
+
+// Call-site capture
+Logger.CallSiteCapture = CallSiteCapture;
