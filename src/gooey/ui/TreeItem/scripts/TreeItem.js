@@ -5,6 +5,7 @@ import DragEvent from '../../../events/DragEvent.js';
 import KeyboardEvent from '../../../events/KeyboardEvent.js';
 import Key from '../../../io/Key.js';
 import Template from '../../../util/Template.js';
+import Logger from '../../../logging/Logger.js';
 
 export default class TreeItem extends UIComponent {
     constructor() {
@@ -26,11 +27,7 @@ export default class TreeItem extends UIComponent {
 
         // Validate that essential elements were found
         if (!this._contentElement || !this._childrenElement) {
-            console.error('TREEITEM_INIT_FAILED', 'TreeItem initialization failed - missing essential DOM elements', {
-                contentElement: !!this._contentElement,
-                childrenElement: !!this._childrenElement,
-                innerHTML: this.innerHTML
-            });
+            Logger.error({ code: "TREEITEM_INIT_FAILED", contentElement: !!this._contentElement, childrenElement: !!this._childrenElement, innerHTML: this.innerHTML }, "TreeItem initialization failed - missing essential DOM elements");
         }
 
         // ARIA: Set treeitem role and make focusable
@@ -215,7 +212,7 @@ export default class TreeItem extends UIComponent {
     
     addChild(treeItem) {
         if (!this._childrenElement) {
-            console.error('TREEITEM_ADD_CHILD_FAILED', 'Cannot add child - _childrenElement not found');
+            Logger.error({ code: "TREEITEM_ADD_CHILD_FAILED" }, "Cannot add child - _childrenElement not found");
             return;
         }
         this._childrenElement.appendChild(treeItem);
@@ -237,7 +234,7 @@ export default class TreeItem extends UIComponent {
     
     removeChild(treeItem) {
         if (!this._childrenElement) {
-            console.error('TREEITEM_REMOVE_CHILD_FAILED', 'Cannot remove child - _childrenElement not found');
+            Logger.error({ code: "TREEITEM_REMOVE_CHILD_FAILED" }, "Cannot remove child - _childrenElement not found");
             return;
         }
         this._childrenElement.removeChild(treeItem);
@@ -838,9 +835,7 @@ export default class TreeItem extends UIComponent {
 
         // Final validation check with drop position
         if (!this._isValidDropTarget(draggedItem, dropPosition)) {
-            console.warn('TREEITEM_DROP_BLOCKED', 'Drop operation blocked', {
-                reason: 'Invalid drop target or position'
-            });
+            Logger.warn({ code: "TREEITEM_DROP_BLOCKED", reason: "Invalid drop target or position" }, "Drop operation blocked");
             // Clear drag state
             this._dragState.draggedOver = false;
             this._dragState.dropPosition = null;
@@ -967,7 +962,7 @@ export default class TreeItem extends UIComponent {
                     draggedParent._hasChildren = draggedParent._childrenElement.children.length > 0;
                     draggedParent._updateExpanderVisibility();
                 } else {
-                    console.warn('TREEITEM_DRAG_PARENT_MISSING_CHILDREN', 'TreeItem drag parent missing _childrenElement - parent may not be properly initialized');
+                    Logger.warn({ code: "TREEITEM_DRAG_PARENT_MISSING_CHILDREN" }, "TreeItem drag parent missing _childrenElement - parent may not be properly initialized");
                 }
             }
 
@@ -979,7 +974,7 @@ export default class TreeItem extends UIComponent {
             });
 
         } catch (error) {
-            console.error('TREEITEM_DROP_ERROR', 'Error performing tree item drop', { error: error.message });
+            Logger.error({ code: "TREEITEM_DROP_ERROR", error: error.message }, "Error performing tree item drop");
         }
     }
     
@@ -1010,7 +1005,7 @@ export default class TreeItem extends UIComponent {
         }
 
         if (dropTreeRoots.length === 0) {
-            console.warn('TREEITEM_DROP_TREE_NOT_FOUND', `Drop tree with selector '${dropTreeSelector}' not found`);
+            Logger.warn({ code: "TREEITEM_DROP_TREE_NOT_FOUND", selector: dropTreeSelector }, "Drop tree with selector '%s' not found", dropTreeSelector);
             return false;
         }
 

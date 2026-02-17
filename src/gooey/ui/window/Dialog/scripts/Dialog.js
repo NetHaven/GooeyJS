@@ -2,6 +2,7 @@ import Key from '../../../../io/Key.js';
 import KeyboardEvent from '../../../../events/KeyboardEvent.js';
 import MouseEvent from '../../../../events/MouseEvent.js';
 import Template from '../../../../util/Template.js';
+import Logger from '../../../../logging/Logger.js';
 
 export default class Dialog {
     static alert(message, callback, options = {}) {
@@ -28,7 +29,7 @@ export default class Dialog {
                     try {
                         callback();
                     } catch (error) {
-                        console.error('DIALOG_CALLBACK_ERROR', 'Dialog callback error', { error: error.message });
+                        Logger.error({ code: "DIALOG_CALLBACK_ERROR", error: error.message }, "Dialog callback error");
                     }
                 }
                 
@@ -48,7 +49,7 @@ export default class Dialog {
                     try {
                         alertDialog.visible = false;
                     } catch (closeError) {
-                        console.error('DIALOG_TIMEOUT_CLOSE_ERROR', 'Error closing timed-out dialog', { error: closeError.message });
+                        Logger.error({ code: "DIALOG_TIMEOUT_CLOSE_ERROR", error: closeError.message }, "Error closing timed-out dialog");
                     }
                 }
                 
@@ -63,7 +64,7 @@ export default class Dialog {
                 if (messageElement) {
                     messageElement.textContent = message;
                 } else {
-                    console.error('DIALOG_MESSAGE_ELEMENT_NOT_FOUND', 'Message element not found');
+                    Logger.error({ code: "DIALOG_MESSAGE_ELEMENT_NOT_FOUND" }, "Message element not found");
                     cleanupAndReject(new Error('Dialog template missing message element'));
                     return;
                 }
@@ -91,7 +92,7 @@ export default class Dialog {
                     // Use capture phase to handle Enter before it can bubble
                     alertDialog.addEventListener(KeyboardEvent.KEY_DOWN, keyHandler, true);
                 } else {
-                    console.error('DIALOG_OK_BUTTON_NOT_FOUND', 'OK button not found');
+                    Logger.error({ code: "DIALOG_OK_BUTTON_NOT_FOUND" }, "OK button not found");
                     cleanupAndReject(new Error('Dialog template missing OK button'));
                     return;
                 }
@@ -99,13 +100,13 @@ export default class Dialog {
                 // Set up timeout if enabled
                 if (enableTimeout && timeoutMs > 0) {
                     timeoutId = setTimeout(() => {
-                        console.warn('DIALOG_ALERT_TIMEOUT', `Dialog alert timed out after ${timeoutMs}ms`);
+                        Logger.warn({ code: "DIALOG_ALERT_TIMEOUT", timeoutMs }, "Dialog alert timed out after %dms", timeoutMs);
                         cleanupAndReject(new Error(`Dialog alert timed out after ${timeoutMs}ms`));
                     }, timeoutMs);
                 }
                 
             } catch (error) {
-                console.error('DIALOG_ALERT_CREATE_ERROR', 'Error creating alert dialog', { error: error.message });
+                Logger.error({ code: "DIALOG_ALERT_CREATE_ERROR", error: error.message }, "Error creating alert dialog");
                 cleanupAndReject(new Error(`Failed to create alert dialog: ${error.message}`));
             }            
         });
@@ -122,7 +123,7 @@ export default class Dialog {
             if (messageElement) {
                 messageElement.textContent = message;
             } else {
-                console.error('DIALOG_MESSAGE_ELEMENT_NOT_FOUND', 'Message element not found');
+                Logger.error({ code: "DIALOG_MESSAGE_ELEMENT_NOT_FOUND" }, "Message element not found");
             }
                         
             // Setup OK button handler (returns true)
@@ -135,7 +136,7 @@ export default class Dialog {
                     resolve(true);
                 });
             } else {
-                console.error('DIALOG_OK_BUTTON_NOT_FOUND', 'OK button not found');
+                Logger.error({ code: "DIALOG_OK_BUTTON_NOT_FOUND" }, "OK button not found");
             }
 
             // Setup Cancel button handler (returns false)
@@ -148,7 +149,7 @@ export default class Dialog {
                     resolve(false);
                 });
             } else {
-                console.error('DIALOG_CANCEL_BUTTON_NOT_FOUND', 'Cancel button not found');
+                Logger.error({ code: "DIALOG_CANCEL_BUTTON_NOT_FOUND" }, "Cancel button not found");
             }
         });
     }
@@ -182,7 +183,7 @@ export default class Dialog {
             if (messageElement) {
                 messageElement.textContent = message;
             } else {
-                console.error('DIALOG_MESSAGE_ELEMENT_NOT_FOUND', 'Message element not found');
+                Logger.error({ code: "DIALOG_MESSAGE_ELEMENT_NOT_FOUND" }, "Message element not found");
             }
 
             // Set up the input field
@@ -216,7 +217,7 @@ export default class Dialog {
                     resolve(value);
                 });
             } else {
-                console.error('DIALOG_OK_BUTTON_NOT_FOUND', 'OK button not found');
+                Logger.error({ code: "DIALOG_OK_BUTTON_NOT_FOUND" }, "OK button not found");
             }
 
             // Setup Cancel button handler (returns null)
@@ -229,7 +230,7 @@ export default class Dialog {
                     resolve(null);
                 });
             } else {
-                console.error('DIALOG_CANCEL_BUTTON_NOT_FOUND', 'Cancel button not found');
+                Logger.error({ code: "DIALOG_CANCEL_BUTTON_NOT_FOUND" }, "Cancel button not found");
             }
 
             // Handle Enter key to submit
@@ -258,7 +259,7 @@ export default class Dialog {
             if (messageElement) {
                 messageElement.textContent = message;
             } else {
-                console.error('DIALOG_MESSAGE_ELEMENT_NOT_FOUND', 'Message element not found');
+                Logger.error({ code: "DIALOG_MESSAGE_ELEMENT_NOT_FOUND" }, "Message element not found");
             }
                         
             // Setup OK button handler
@@ -271,8 +272,8 @@ export default class Dialog {
                     resolve();
                 });
             } else {
-                console.error('DIALOG_OK_BUTTON_NOT_FOUND', 'OK button not found');
-            }            
+                Logger.error({ code: "DIALOG_OK_BUTTON_NOT_FOUND" }, "OK button not found");
+            }
         });
     }
 }
