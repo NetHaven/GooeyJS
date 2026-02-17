@@ -39,6 +39,7 @@ import Serializers from "./Serializers.js";
 import HandlerManager from "./HandlerManager.js";
 import ObservableBase from "../events/ObservableBase.js";
 import LogEvent from "../events/logging/LogEvent.js";
+import ColorizeFormatter from "./formatters/ColorizeFormatter.js";
 
 // ---- Module-level constants ----
 
