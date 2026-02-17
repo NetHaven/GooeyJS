@@ -2,12 +2,14 @@ import Template from './gooey/util/Template.js';
 import MetaLoader from './gooey/util/MetaLoader.js';
 import ComponentRegistry from './gooey/util/ComponentRegistry.js';
 import ComponentEvent from './gooey/events/ComponentEvent.js';
+import Logger from './gooey/logging/Logger.js';
 
 const SCRIPT_PATH = new URL(import.meta.url, document.baseURI);
 const PATH = SCRIPT_PATH.href.substring(0, SCRIPT_PATH.href.lastIndexOf('/'));
 
 export default class GooeyJS {
     static VERSION = "2.1";
+    static Logger = Logger;
     static _initialized = false;
     static _instance = null;
     static _readyPromise = null;
@@ -55,6 +57,12 @@ export default class GooeyJS {
                 { name: "Component" }
             ]
         }]
+
+        // Initialize logging system before component loading
+        Logger.configure({
+            level: "info",
+            handlers: [new Logger.ConsoleHandler({ colors: true })]
+        });
 
         // Ensure the ready promise exists before starting async initialization
         GooeyJS.ready;
