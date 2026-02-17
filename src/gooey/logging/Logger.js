@@ -33,6 +33,8 @@
  */
 
 import LogLevel from "./LogLevel.js";
+import LogRecord from "./LogRecord.js";
+import Serializers from "./Serializers.js";
 import HandlerManager from "./HandlerManager.js";
 import ObservableBase from "../events/ObservableBase.js";
 import LogEvent from "../events/logging/LogEvent.js";
