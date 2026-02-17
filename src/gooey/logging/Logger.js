@@ -40,6 +40,21 @@ import HandlerManager from "./HandlerManager.js";
 import ObservableBase from "../events/ObservableBase.js";
 import LogEvent from "../events/logging/LogEvent.js";
 import ColorizeFormatter from "./formatters/ColorizeFormatter.js";
+import Formatter, { CombinedFormatter } from "./Formatter.js";
+import Handler from "./Handler.js";
+import ConsoleHandler from "./ConsoleHandler.js";
+import RingBuffer from "./RingBuffer.js";
+import HttpHandler from "./HttpHandler.js";
+import JsonFormatter from "./formatters/JsonFormatter.js";
+import SimpleFormatter from "./formatters/SimpleFormatter.js";
+import PrintfFormatter from "./formatters/PrintfFormatter.js";
+import TimestampFormatter from "./formatters/TimestampFormatter.js";
+import LabelFormatter from "./formatters/LabelFormatter.js";
+import ErrorFormatter from "./formatters/ErrorFormatter.js";
+import MetadataFormatter from "./formatters/MetadataFormatter.js";
+import AlignFormatter from "./formatters/AlignFormatter.js";
+import MillisecondFormatter from "./formatters/MillisecondFormatter.js";
+import FilterFormatter from "./formatters/FilterFormatter.js";
 
 // ---- Module-level constants ----
 
@@ -949,3 +964,37 @@ export default class Logger {
      */
     static fatal(...args) { Logger.#getDefault().fatal(...args); }
 }
+
+// ---- Class namespace exposure (CORE-06) ----
+// Assign all supporting classes as static properties so downstream code
+// can access everything via a single import: import Logger from "./Logger.js"
+// then use Logger.LogLevel, Logger.ConsoleHandler, etc.
+//
+// These assignments happen at module evaluation time, synchronously after
+// the class definition. There are no circular dependency issues because
+// Logger imports subsystems (not the other way around).
+
+Logger.LogLevel = LogLevel;
+Logger.LogRecord = LogRecord;
+Logger.Serializers = Serializers;
+Logger.Formatter = Formatter;
+Logger.CombinedFormatter = CombinedFormatter;
+Logger.Handler = Handler;
+Logger.HandlerManager = HandlerManager;
+Logger.ConsoleHandler = ConsoleHandler;
+Logger.RingBuffer = RingBuffer;
+Logger.HttpHandler = HttpHandler;
+Logger.LogEvent = LogEvent;
+
+// Formatters
+Logger.JsonFormatter = JsonFormatter;
+Logger.SimpleFormatter = SimpleFormatter;
+Logger.PrintfFormatter = PrintfFormatter;
+Logger.TimestampFormatter = TimestampFormatter;
+Logger.LabelFormatter = LabelFormatter;
+Logger.ErrorFormatter = ErrorFormatter;
+Logger.MetadataFormatter = MetadataFormatter;
+Logger.AlignFormatter = AlignFormatter;
+Logger.ColorizeFormatter = ColorizeFormatter;
+Logger.MillisecondFormatter = MillisecondFormatter;
+Logger.FilterFormatter = FilterFormatter;
