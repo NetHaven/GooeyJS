@@ -7,6 +7,7 @@ import KeyboardEvent from '../../../../events/KeyboardEvent.js';
 import Key from '../../../../io/Key.js';
 import SelectionMode from './SelectionMode.js';
 import SortDirection from './SortDirection.js';
+import Logger from '../../../../logging/Logger.js';
 
 /**
  * DataGrid - A full-featured data grid component
@@ -1651,7 +1652,7 @@ export default class DataGrid extends UIComponent {
         this._storeWaitObserver = new MutationObserver((mutations, observer) => {
             // Check if timeout exceeded
             if (Date.now() - startTime > TIMEOUT_MS) {
-                console.warn(`DataGrid: Timeout waiting for store '${storeId}'`);
+                Logger.warn({ code: "DATAGRID_STORE_TIMEOUT", storeId }, "DataGrid: Timeout waiting for store '%s'", storeId);
                 observer.disconnect();
                 this._storeWaitObserver = null;
                 return;
@@ -1675,7 +1676,7 @@ export default class DataGrid extends UIComponent {
         // Also set a timeout to clean up if store never appears
         setTimeout(() => {
             if (this._storeWaitObserver) {
-                console.warn(`DataGrid: Timeout waiting for store '${storeId}'`);
+                Logger.warn({ code: "DATAGRID_STORE_TIMEOUT", storeId }, "DataGrid: Timeout waiting for store '%s'", storeId);
                 this._storeWaitObserver.disconnect();
                 this._storeWaitObserver = null;
             }

@@ -2,6 +2,7 @@ import Container from '../../../Container.js';
 import LayoutType from '../../../layout/Layout/scripts/LayoutType.js';
 import FormFactor from '../../../FormFactor.js';
 import Template from '../../../../util/Template.js';
+import Logger from '../../../../logging/Logger.js';
 
 export default class AppPanel extends Container {
     constructor () {
@@ -25,7 +26,7 @@ export default class AppPanel extends Container {
         const validFormFactors = [FormFactor.DESKTOP, FormFactor.MOBILE, FormFactor.TABLET];
         
         if (value && !validFormFactors.includes(value.toUpperCase())) {
-            console.warn(`Invalid formfactor value: ${value}. Valid values are: ${validFormFactors.join(', ')}`);
+            Logger.warn({ code: "APPPANEL_INVALID_FORMFACTOR", value, validValues: validFormFactors }, "Invalid formfactor value: %s. Valid values are: %s", value, validFormFactors.join(", "));
             return;
         }
         

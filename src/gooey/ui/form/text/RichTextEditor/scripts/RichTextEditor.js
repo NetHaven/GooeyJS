@@ -6,6 +6,7 @@ import MouseEvent from '../../../../../events/MouseEvent.js';
 import KeyboardEvent from '../../../../../events/KeyboardEvent.js';
 import Template from '../../../../../util/Template.js';
 import GooeyJS from '../../../../../../GooeyJS.js';
+import Logger from '../../../../../logging/Logger.js';
 
 export default class RichTextEditor extends TextElement {
     constructor() {
@@ -192,7 +193,7 @@ export default class RichTextEditor extends TextElement {
         try {
             document.execCommand(command, false, null);
         } catch (error) {
-            console.warn('RICH_TEXT_COMMAND_ERROR', command, error);
+            Logger.warn({ code: "RICH_TEXT_COMMAND_ERROR", command, err: error }, "Rich text command error: %s", command);
         }
 
         this._updateButtonStates();

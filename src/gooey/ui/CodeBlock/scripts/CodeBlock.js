@@ -2,6 +2,7 @@ import UIComponent from '../../UIComponent.js';
 import CodeBlockEvent from '../../../events/CodeBlockEvent.js';
 import Template from '../../../util/Template.js';
 import TokenizerRegistry from '../../../util/syntax/TokenizerRegistry.js';
+import Logger from '../../../logging/Logger.js';
 
 /**
  * CodeBlock component for displaying code snippets with line numbers,
@@ -231,7 +232,7 @@ export default class CodeBlock extends UIComponent {
             this._updateLineNumbers();
 
         } catch (error) {
-            console.error(`Syntax highlighting failed for language "${language}":`, error);
+            Logger.error({ code: "CODEBLOCK_HIGHLIGHT_FAILED", language, err: error }, "Syntax highlighting failed for language '%s'", language);
             this.fireEvent(CodeBlockEvent.HIGHLIGHT_ERROR, {
                 language: language,
                 error: error.message
@@ -292,7 +293,7 @@ export default class CodeBlock extends UIComponent {
 
             this.fireEvent(CodeBlockEvent.COPY, { code });
         } catch (err) {
-            console.error("Failed to copy code to clipboard:", err);
+            Logger.error({ code: "CODEBLOCK_CLIPBOARD_FAILED", err }, "Failed to copy code to clipboard");
         }
     }
 

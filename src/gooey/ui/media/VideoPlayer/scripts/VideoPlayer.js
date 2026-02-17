@@ -2,6 +2,7 @@ import UIComponent from '../../../UIComponent.js';
 import Template from '../../../../util/Template.js';
 import PlaylistParser from '../../../../util/PlaylistParser.js';
 import VideoPlayerEvent from '../../../../events/media/VideoPlayerEvent.js';
+import Logger from '../../../../logging/Logger.js';
 
 /**
  * VideoPlayer component provides a full-featured video player with custom controls,
@@ -604,7 +605,7 @@ export default class VideoPlayer extends UIComponent {
         try {
             await this.#video.play();
         } catch (error) {
-            console.error('VideoPlayer: Play failed', error);
+            Logger.error({ code: "VIDEO_PLAY_FAILED", err: error }, "VideoPlayer: Play failed");
             this.fireEvent(VideoPlayerEvent.ERROR, { error });
         }
     }
@@ -1003,7 +1004,7 @@ export default class VideoPlayer extends UIComponent {
                 await this.#videoContainer.webkitRequestFullscreen();
             }
         } catch (error) {
-            console.error('VideoPlayer: Fullscreen request failed', error);
+            Logger.error({ code: "VIDEO_FULLSCREEN_REQUEST_FAILED", err: error }, "VideoPlayer: Fullscreen request failed");
         }
     }
 
@@ -1019,7 +1020,7 @@ export default class VideoPlayer extends UIComponent {
                 await document.webkitExitFullscreen();
             }
         } catch (error) {
-            console.error('VideoPlayer: Exit fullscreen failed', error);
+            Logger.error({ code: "VIDEO_EXIT_FULLSCREEN_FAILED", err: error }, "VideoPlayer: Exit fullscreen failed");
         }
     }
 
@@ -1073,7 +1074,7 @@ export default class VideoPlayer extends UIComponent {
                 this.#loadTrack(0);
             }
         } catch (error) {
-            console.error('VideoPlayer: Failed to load playlist', error);
+            Logger.error({ code: "VIDEO_PLAYLIST_LOAD_FAILED", err: error }, "VideoPlayer: Failed to load playlist");
             this.fireEvent(VideoPlayerEvent.ERROR, { error });
         }
     }
