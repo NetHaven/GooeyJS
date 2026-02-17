@@ -502,6 +502,51 @@ export default class Logger {
     }
 
     /**
+     * Register an event listener on this logger.
+     *
+     * Valid events:
+     * - {@link LogEvent.RECORD} -- fired on each log record dispatch
+     * - {@link LogEvent.LEVEL_CHANGE} -- fired when level is changed
+     * - {@link LogEvent.HANDLER_ERROR} -- fired when a handler throws during emit
+     * - {@link LogEvent.FLUSH} -- fired when flush() is called
+     *
+     * @param {string} eventName - Event name (must be a registered valid event)
+     * @param {function} listener - Callback function: (eventName, eventObject) => void
+     * @throws {Error} If eventName is not a valid registered event
+     */
+    addEventListener(eventName, listener) {
+        this._emitter.addEventListener(eventName, listener);
+    }
+
+    /**
+     * Remove a previously registered event listener.
+     *
+     * @param {string} eventName - Event name
+     * @param {function} listener - Callback function to remove
+     * @throws {Error} If eventName is not a valid registered event
+     */
+    removeEventListener(eventName, listener) {
+        this._emitter.removeEventListener(eventName, listener);
+    }
+
+    /**
+     * Suspend all event firing on this logger.
+     *
+     * While suspended, log records are still created and dispatched to handlers,
+     * but no events (RECORD, LEVEL_CHANGE, etc.) are fired to listeners.
+     */
+    suspendEvents() {
+        this._emitter.suspendEvents();
+    }
+
+    /**
+     * Resume event firing after suspension.
+     */
+    resumeEvents() {
+        this._emitter.resumeEvents();
+    }
+
+    /**
      * Look up a custom level name by its numeric value.
      *
      * Iterates the instance-level method map to find a name that maps to
