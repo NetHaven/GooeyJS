@@ -55,6 +55,7 @@ import MetadataFormatter from "./formatters/MetadataFormatter.js";
 import AlignFormatter from "./formatters/AlignFormatter.js";
 import MillisecondFormatter from "./formatters/MillisecondFormatter.js";
 import FilterFormatter from "./formatters/FilterFormatter.js";
+import Redactor from "./Redactor.js";
 
 // ---- Module-level constants ----
 
@@ -138,6 +139,12 @@ export default class Logger {
     /** @type {object|null} Formatters option: { level, bindings, log } functions */
     #formatters;
 
+    /** @type {object|Array|null} Raw redaction config (for child merging) */
+    #redact;
+
+    /** @type {Redactor|null} Instantiated redactor (null if no redaction configured) */
+    #redactor;
+
     // ---- Constructor ----
 
     /**
@@ -187,6 +194,8 @@ export default class Logger {
         this.#parentFields = options._parentFields || null;
         this.#onChild = options.onChild || null;
         this.#formatters = options.formatters || null;
+        this.#redact = options.redact || null;
+        this.#redactor = this.#redact ? new Redactor(this.#redact) : null;
 
         // Compose subsystems (has-a, not is-a)
         // Child loggers share the parent's HandlerManager for handler inheritance
@@ -391,6 +400,9 @@ export default class Logger {
         // Message prefix: cumulative (parent prefix + child prefix)
         const mergedMsgPrefix = (this.#msgPrefix || "") + (options.msgPrefix || "");
 
+        // Merge redaction config: union paths, child object-form overrides censor/remove
+        const mergedRedact = this._mergeRedact(this.#redact, options.redact);
+
         // Construct child logger with merged options
         const child = new Logger({
             name: this.#name,
@@ -406,6 +418,7 @@ export default class Logger {
             enabled: this.#enabled,
             formatters: options.formatters ?? this.#formatters,
             onChild: options.onChild ?? this.#onChild,
+            redact: mergedRedact,
             // Internal fields for child tracking
             _parent: this,
             _bindings: formattedBindings,
@@ -458,6 +471,49 @@ export default class Logger {
         this.#fields = this.#parentFields
             ? { ...this.#parentFields, ...this.#bindings }
             : (Object.keys(this.#bindings).length > 0 ? { ...this.#bindings } : null);
+    }
+
+    /**
+     * Merge parent and child redaction configurations.
+     *
+     * Paths are unioned (deduplicated). When the child provides an
+     * object-form config, its `censor` and `remove` settings override
+     * the parent's. When the child provides an array-form config,
+     * the parent's censor/remove settings are preserved (if any).
+     *
+     * @param {Array|object|null} parentRedact - Parent redaction config
+     * @param {Array|object|null|undefined} childRedact - Child redaction config
+     * @returns {Array|object|null} Merged redaction config
+     */
+    _mergeRedact(parentRedact, childRedact) {
+        if (!parentRedact && !childRedact) return null;
+        if (!parentRedact) return childRedact;
+        if (!childRedact) return parentRedact;
+
+        const parentPaths = Array.isArray(parentRedact) ? parentRedact : (parentRedact.paths || []);
+        const childPaths = Array.isArray(childRedact) ? childRedact : (childRedact.paths || []);
+        const mergedPaths = [...new Set([...parentPaths, ...childPaths])];
+
+        // Child object-form overrides parent censor/remove settings
+        if (!Array.isArray(childRedact) && typeof childRedact === "object") {
+            return {
+                paths: mergedPaths,
+                censor: childRedact.censor !== undefined ? childRedact.censor : (Array.isArray(parentRedact) ? "[REDACTED]" : parentRedact.censor),
+                remove: childRedact.remove !== undefined ? childRedact.remove : (Array.isArray(parentRedact) ? false : parentRedact.remove)
+            };
+        }
+
+        // Child is array-form -- preserve parent's censor/remove if parent is object-form
+        if (!Array.isArray(parentRedact) && typeof parentRedact === "object") {
+            return {
+                paths: mergedPaths,
+                censor: parentRedact.censor,
+                remove: parentRedact.remove
+            };
+        }
+
+        // Both are array-form
+        return mergedPaths;
     }
 
     /**
@@ -694,6 +750,10 @@ export default class Logger {
         }
         if ("formatters" in options) {
             this.#formatters = options.formatters;
+        }
+        if ("redact" in options) {
+            this.#redact = options.redact || null;
+            this.#redactor = this.#redact ? new Redactor(this.#redact) : null;
         }
     }
 
@@ -969,10 +1029,15 @@ export default class Logger {
             ? Object.freeze({ ...record, levelName })
             : record;
 
+        // Apply redaction if configured (before serialization)
+        const redacted = (this.#redactor && this.#redactor.hasPaths)
+            ? this.#redactor.redact(finalRecord)
+            : finalRecord;
+
         // Apply serializers (returns original if no serializers match)
         const serialized = this.#serializers
-            ? Serializers.apply(finalRecord, this.#serializers)
-            : finalRecord;
+            ? Serializers.apply(redacted, this.#serializers)
+            : redacted;
 
         // Fire RECORD event (listener errors must not crash the pipeline)
         try {
@@ -1155,6 +1220,7 @@ export default class Logger {
 // the class definition. There are no circular dependency issues because
 // Logger imports subsystems (not the other way around).
 
+Logger.Redactor = Redactor;
 Logger.LogLevel = LogLevel;
 Logger.LogRecord = LogRecord;
 Logger.Serializers = Serializers;
