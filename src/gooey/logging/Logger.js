@@ -161,6 +161,9 @@ export default class Logger {
     /** @type {ExceptionHandler|null} Global exception handler (root loggers only) */
     #exceptionHandler;
 
+    /** @type {Map<string, number>} Active profile timers: id -> start time (performance.now()) */
+    #profilers;
+
     // ---- Constructor ----
 
     /**
@@ -219,6 +222,9 @@ export default class Logger {
         // Phase 9 fields: exception handling
         this.#onError = options.onError || null;
         this.#exceptionHandler = null;
+
+        // Phase 9 fields: profiling
+        this.#profilers = new Map();
 
         // Compose subsystems (has-a, not is-a)
         // Child loggers share the parent's HandlerManager for handler inheritance
@@ -519,6 +525,111 @@ export default class Logger {
         this.#fields = this.#parentFields
             ? { ...this.#parentFields, ...this.#bindings }
             : (Object.keys(this.#bindings).length > 0 ? { ...this.#bindings } : null);
+    }
+
+    /**
+     * Start or stop a profiling timer.
+     *
+     * First call with a given id starts the timer (records performance.now()).
+     * Second call with the same id stops the timer and logs the elapsed
+     * duration as a structured field `{ durationMs: <number> }`.
+     *
+     * The stop call logs at `info` level by default. Pass `{ level: "debug" }`
+     * (or any valid level name) in the meta parameter to override. The `level`
+     * key is extracted from meta and used to select the log method -- it is
+     * NOT included in the logged record fields.
+     *
+     * Profile IDs must be unique per concurrent operation. For concurrent
+     * timing, use {@link Logger#startTimer} instead.
+     *
+     * @param {string} id - Profile identifier (used as the log message on stop)
+     * @param {object} [meta] - Additional fields to merge on stop. May include
+     *        `level` (string) to override the default INFO log level.
+     */
+    profile(id, meta) {
+        const now = performance.now();
+
+        if (this.#profilers.has(id)) {
+            const start = this.#profilers.get(id);
+            this.#profilers.delete(id);
+            const durationMs = Math.round(now - start);
+
+            // Extract level from meta (default to "info")
+            let levelName = "info";
+            const fields = { durationMs };
+            if (meta && typeof meta === "object") {
+                for (const [key, val] of Object.entries(meta)) {
+                    if (key === "level") {
+                        levelName = String(val);
+                    } else {
+                        fields[key] = val;
+                    }
+                }
+            }
+
+            // Log via the appropriate level method
+            const method = this[levelName];
+            if (typeof method === "function") {
+                method.call(this, fields, id);
+            } else {
+                // Fallback to info if the requested level method doesn't exist
+                this.info(fields, id);
+            }
+        } else {
+            this.#profilers.set(id, now);
+        }
+    }
+
+    /**
+     * Start an explicit timer.
+     *
+     * Returns a lightweight object with a `done()` method. Calling `done()`
+     * computes the elapsed time since `startTimer()` was called and logs it
+     * with optional metadata.
+     *
+     * The returned object is a plain object (not a class instance). The
+     * timer does not auto-stop or expire -- the caller is responsible for
+     * calling `done()`.
+     *
+     * @returns {{ done: function(object=): void }} Timer object with a done() method
+     *
+     * @example
+     * const timer = logger.startTimer();
+     * await loadData();
+     * timer.done({ msg: "data loaded", recordCount: 42 });
+     * // Logs: { msg: "data loaded", durationMs: 512, recordCount: 42, ... }
+     */
+    startTimer() {
+        const start = performance.now();
+        const logger = this;
+
+        return {
+            done(meta = {}) {
+                const durationMs = Math.round(performance.now() - start);
+                const msg = meta.msg || meta.message || "timer";
+
+                // Extract level from meta (default to "info")
+                let levelName = "info";
+                const fields = { durationMs };
+                for (const [key, val] of Object.entries(meta)) {
+                    if (key === "msg" || key === "message") {
+                        // Already extracted as msg
+                    } else if (key === "level") {
+                        levelName = String(val);
+                    } else {
+                        fields[key] = val;
+                    }
+                }
+
+                // Log via the appropriate level method
+                const method = logger[levelName];
+                if (typeof method === "function") {
+                    method.call(logger, fields, msg);
+                } else {
+                    logger.info(fields, msg);
+                }
+            }
+        };
     }
 
     /**
@@ -1326,6 +1437,33 @@ export default class Logger {
      */
     static flush() {
         Logger.#getDefault().flush();
+    }
+
+    /**
+     * Start or stop a profiling timer on the default logger.
+     *
+     * Convenience static method that delegates to the default logger's
+     * {@link Logger#profile} instance method.
+     *
+     * @param {string} id - Profile identifier
+     * @param {object} [meta] - Additional fields on stop
+     * @static
+     */
+    static profile(id, meta) {
+        Logger.#getDefault().profile(id, meta);
+    }
+
+    /**
+     * Start an explicit timer on the default logger.
+     *
+     * Convenience static method that delegates to the default logger's
+     * {@link Logger#startTimer} instance method.
+     *
+     * @returns {{ done: function(object=): void }} Timer object
+     * @static
+     */
+    static startTimer() {
+        return Logger.#getDefault().startTimer();
     }
 
     // ---- Static facade methods ----
