@@ -318,6 +318,55 @@ export default class Serializers {
         return { ...existing, ...additions };
     }
 
+    /**
+     * JSON.stringify with circular reference detection.
+     *
+     * Uses the MDN-recommended ancestors-array approach to detect true
+     * circular references (ancestor cycles) without false-flagging
+     * non-circular duplicate references (the same object appearing in
+     * two sibling properties).
+     *
+     * If a user-provided `replacer` function is given, it is chained:
+     * circular detection runs first, then the user replacer is called
+     * on non-circular values. This ensures circular references are
+     * always caught regardless of user replacer logic.
+     *
+     * Circular references are replaced with the string `"[Circular]"`.
+     *
+     * @param {*} obj             - Value to stringify
+     * @param {function} [replacer] - Optional replacer function (same signature as JSON.stringify replacer)
+     * @param {number|string} [space] - Optional indentation (same as JSON.stringify space)
+     * @returns {string} JSON string with circular references replaced
+     */
+    static safeStringify(obj, replacer, space) {
+        const ancestors = [];
+
+        const effectiveReplacer = function (key, value) {
+            // Primitives and null cannot be circular
+            if (typeof value !== "object" || value === null) {
+                return replacer ? replacer.call(this, key, value) : value;
+            }
+
+            // Trim ancestors: pop until we find `this` (the parent object)
+            // This maintains the correct position in the object tree as
+            // JSON.stringify traverses sibling properties
+            while (ancestors.length > 0 && ancestors.at(-1) !== this) {
+                ancestors.pop();
+            }
+
+            // Check for circular reference in the ancestor chain
+            if (ancestors.includes(value)) {
+                return "[Circular]";
+            }
+
+            ancestors.push(value);
+
+            return replacer ? replacer.call(this, key, value) : value;
+        };
+
+        return JSON.stringify(obj, effectiveReplacer, space);
+    }
+
     // ---- Private helpers ----
 
     /**
