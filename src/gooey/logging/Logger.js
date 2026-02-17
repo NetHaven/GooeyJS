@@ -240,6 +240,63 @@ export default class Logger {
     }
 
     /**
+     * Flush all buffered handlers.
+     *
+     * Iterates every handler in the collection and calls `flush()` on each.
+     * Errors thrown by individual handlers are swallowed to ensure that a
+     * failing handler does not prevent subsequent handlers from flushing.
+     *
+     * After all handlers have been flushed, fires a {@link LogEvent.FLUSH}
+     * event. Listener errors on the event are also swallowed.
+     *
+     * @see Handler#flush
+     */
+    flush() {
+        const handlers = this._handlers.handlers;
+        for (const handler of handlers) {
+            try {
+                handler.flush();
+            } catch (e) {
+                // Swallow -- flush errors must not crash the caller
+            }
+        }
+        try {
+            this._emitter.fireEvent(LogEvent.FLUSH, {});
+        } catch (e) {
+            // Swallow -- listener errors must not crash flush
+        }
+    }
+
+    /**
+     * Close this logger and release all resources.
+     *
+     * Performs the following steps in order:
+     * 1. Flushes all handlers via {@link Logger#flush}
+     * 2. Calls `close()` on each handler (errors swallowed)
+     * 3. Clears the handler collection
+     * 4. Removes all event listeners from the emitter
+     *
+     * **This is a one-way operation.** The logger should not be reused
+     * after `close()` is called. Adding new handlers or logging after
+     * close will not restore previous state.
+     *
+     * @see Handler#close
+     */
+    close() {
+        this.flush();
+        const handlers = this._handlers.handlers;
+        for (const handler of handlers) {
+            try {
+                handler.close();
+            } catch (e) {
+                // Swallow -- close errors must not crash the caller
+            }
+        }
+        this._handlers.clearHandlers();
+        this._emitter.removeAllEventListeners();
+    }
+
+    /**
      * Get the name of this logger.
      *
      * @type {string}
@@ -312,6 +369,136 @@ export default class Logger {
      */
     get levelVal() {
         return this.#level;
+    }
+
+    /**
+     * Whether this logger suppresses all output.
+     *
+     * When `true`, {@link Logger#_write} returns immediately without
+     * creating records, dispatching to handlers, or firing events.
+     * However, unlike {@link Logger#enabled}, the level methods remain
+     * as active closures -- arguments are still evaluated and the method
+     * body executes up to the `_write()` call.
+     *
+     * Use `silent` when you want to temporarily suppress output but
+     * retain the ability to inspect method references (e.g., for testing).
+     * Use `enabled = false` when you need true zero-overhead suppression.
+     *
+     * @type {boolean}
+     */
+    get silent() {
+        return this.#silent;
+    }
+
+    /**
+     * Set the silent mode flag.
+     *
+     * @param {boolean} value - True to suppress output, false to resume
+     */
+    set silent(value) {
+        this.#silent = !!value;
+    }
+
+    /**
+     * Whether this logger is enabled.
+     *
+     * When `false`, ALL level methods (trace, debug, info, warn, error,
+     * fatal, plus any custom levels) are replaced with the shared
+     * {@link NOOP} function -- providing true zero-overhead suppression.
+     * No arguments are evaluated, no closures execute, no records are
+     * created.
+     *
+     * When set back to `true`, methods are rebuilt based on the current
+     * level threshold via {@link Logger#_rebuildMethods}.
+     *
+     * @type {boolean}
+     */
+    get enabled() {
+        return this.#enabled;
+    }
+
+    /**
+     * Set the enabled state.
+     *
+     * Triggers {@link Logger#_rebuildMethods} when the value actually
+     * changes, so the cost of the setter is proportional to the number
+     * of level methods. No-op if the new value matches the current state.
+     *
+     * @param {boolean} value - True to enable, false to disable
+     */
+    set enabled(value) {
+        const newEnabled = !!value;
+        if (this.#enabled === newEnabled) return;
+        this.#enabled = newEnabled;
+        this._rebuildMethods();
+    }
+
+    /**
+     * Reconfigure this logger at runtime via shallow merge.
+     *
+     * Only the keys present in `options` are updated; all other settings
+     * retain their current values. This allows callers to tweak a single
+     * setting without needing to reconstruct the logger.
+     *
+     * **Setter-backed keys** (`level`, `enabled`) use their respective
+     * setters, which trigger side-effects (method rebuilds, events).
+     *
+     * **`handlers`** is a replacement operation -- the existing handler
+     * collection is cleared and the new handlers are added. This avoids
+     * the ambiguity of merging handler arrays.
+     *
+     * @param {object} [options={}] - Configuration options (same keys as constructor)
+     * @param {number|string} [options.level] - New level threshold
+     * @param {object|null} [options.serializers] - New serializer map
+     * @param {object|null} [options.fields] - New static fields
+     * @param {object|undefined|null} [options.base] - New base record fields
+     * @param {Function|boolean} [options.timestamp] - New timestamp function or flag
+     * @param {string} [options.messageKey] - New message key
+     * @param {string} [options.errorKey] - New error key
+     * @param {string} [options.nestedKey] - New nested key
+     * @param {string} [options.msgPrefix] - New message prefix
+     * @param {boolean} [options.enabled] - New enabled state
+     * @param {Handler[]} [options.handlers] - New handler set (replaces all)
+     */
+    configure(options = {}) {
+        if ("level" in options) {
+            this.level = options.level;
+        }
+        if ("serializers" in options) {
+            this.#serializers = options.serializers;
+        }
+        if ("fields" in options) {
+            this.#fields = options.fields;
+        }
+        if ("base" in options) {
+            this.#base = options.base;
+        }
+        if ("timestamp" in options) {
+            this.#timestamp = options.timestamp;
+        }
+        if ("messageKey" in options) {
+            this.#messageKey = options.messageKey;
+        }
+        if ("errorKey" in options) {
+            this.#errorKey = options.errorKey;
+        }
+        if ("nestedKey" in options) {
+            this.#nestedKey = options.nestedKey;
+        }
+        if ("msgPrefix" in options) {
+            this.#msgPrefix = options.msgPrefix;
+        }
+        if ("enabled" in options) {
+            this.enabled = options.enabled;
+        }
+        if ("handlers" in options) {
+            this._handlers.clearHandlers();
+            if (options.handlers) {
+                for (const handler of options.handlers) {
+                    this.addHandler(handler);
+                }
+            }
+        }
     }
 
     /**
@@ -646,6 +833,36 @@ export default class Logger {
             Logger.#defaultLogger.#levelMethods[lowerName] = value;
             Logger.#defaultLogger._rebuildMethods();
         }
+    }
+
+    /**
+     * Reconfigure the default logger at runtime.
+     *
+     * Convenience static method that delegates to the default logger's
+     * {@link Logger#configure} instance method. This enables concise
+     * reconfiguration without obtaining a logger reference:
+     *
+     * ```js
+     * Logger.configure({ level: "debug" });
+     * ```
+     *
+     * @param {object} [options={}] - Configuration options (see {@link Logger#configure})
+     * @static
+     */
+    static configure(options = {}) {
+        Logger.#getDefault().configure(options);
+    }
+
+    /**
+     * Flush all handlers on the default logger.
+     *
+     * Convenience static method that delegates to the default logger's
+     * {@link Logger#flush} instance method.
+     *
+     * @static
+     */
+    static flush() {
+        Logger.#getDefault().flush();
     }
 
     // ---- Static facade methods ----
