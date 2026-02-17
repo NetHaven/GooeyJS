@@ -431,6 +431,9 @@ export default class Logger {
             formatters: options.formatters ?? this.#formatters,
             onChild: options.onChild ?? this.#onChild,
             redact: mergedRedact,
+            mixin: options.mixin ?? this.#mixin,
+            mixinMergeStrategy: options.mixinMergeStrategy ?? this.#mixinMergeStrategy,
+            hooks: options.hooks ?? this.#hooks,
             // Internal fields for child tracking
             _parent: this,
             _bindings: formattedBindings,
@@ -767,6 +770,15 @@ export default class Logger {
             this.#redact = options.redact || null;
             this.#redactor = this.#redact ? new Redactor(this.#redact) : null;
         }
+        if ("mixin" in options) {
+            this.#mixin = options.mixin || null;
+        }
+        if ("mixinMergeStrategy" in options) {
+            this.#mixinMergeStrategy = options.mixinMergeStrategy || null;
+        }
+        if ("hooks" in options) {
+            this.#hooks = options.hooks || null;
+        }
     }
 
     /**
@@ -918,30 +930,78 @@ export default class Logger {
     }
 
     /**
+     * Process log arguments: parse error/object/string patterns, interpolate,
+     * prepend prefix, and delegate to {@link _write}.
+     *
+     * Extracted from _createLogMethod to allow hooks.logMethod to wrap argument
+     * processing. Three argument patterns are supported:
+     *
+     * 1. **Error-first** -- wraps error in `#errorKey` field, uses error.message
+     *    as msg or the provided string message.
+     * 2. **Object-first** -- merges object as additional fields, second arg is msg.
+     * 3. **String-first** -- first arg is msg, remaining are printf args.
+     *
+     * @param {string} levelName - Level name (e.g. "info", "error")
+     * @param {number} levelNum  - Numeric level value
+     * @param {Array}  args      - Raw arguments from the level method call
+     * @private
+     */
+    _processLogArgs(levelName, levelNum, args) {
+        if (args.length === 0) return;
+
+        let fields = null;
+        let msg = "";
+        let msgArgs = null;
+        const first = args[0];
+
+        if (this._isError(first)) {
+            // Error-first: logger.error(new Error("fail"))
+            //           or logger.error(err, "context message", ...args)
+            fields = { [this.#errorKey || "err"]: first };
+            if (args.length > 1 && typeof args[1] === "string") {
+                msg = args[1];
+                if (args.length > 2) msgArgs = args.slice(2);
+            } else {
+                msg = first.message;
+            }
+        } else if (typeof first === "object" && first !== null) {
+            // Object-first: logger.info({ userId: 42 }, "loaded user")
+            fields = first;
+            if (args.length > 1) {
+                msg = String(args[1]);
+                if (args.length > 2) msgArgs = args.slice(2);
+            }
+        } else {
+            // String-first: logger.info("hello")
+            //            or logger.info("loaded %d items", 5)
+            msg = String(first);
+            if (args.length > 1) msgArgs = args.slice(1);
+        }
+
+        // Printf interpolation
+        if (msgArgs) {
+            msg = this._interpolate(msg, msgArgs);
+        }
+
+        // Message prefix
+        if (this.#msgPrefix) {
+            msg = this.#msgPrefix + msg;
+        }
+
+        this._write(levelNum, levelName, msg, fields);
+    }
+
+    /**
      * Create a bound logging method for a specific severity level.
      *
      * Returns a closure that captures `this` (the logger instance) and
-     * performs flexible argument parsing before delegating to {@link _write}.
+     * delegates to {@link _processLogArgs} for argument parsing and writing.
      *
-     * **Three argument patterns are supported:**
-     *
-     * 1. **Error-first** -- `logger.error(new Error("fail"))` or
-     *    `logger.error(err, "context message", ...args)`
-     *    - Wraps the error in the `#errorKey` field
-     *    - Uses `error.message` as msg if no string follows
-     *    - Uses the string as msg if provided (with optional printf args)
-     *
-     * 2. **Object-first** -- `logger.info({ userId: 42 }, "loaded user")`
-     *    - Merges the object as additional fields into the record
-     *    - Second argument is the message (with optional printf args)
-     *
-     * 3. **String-first** -- `logger.info("hello")` or
-     *    `logger.info("loaded %d items", 5)`
-     *    - First argument is the message
-     *    - Remaining arguments are printf substitution values
-     *
-     * After argument parsing, applies printf interpolation (if args exist),
-     * prepends `#msgPrefix`, and calls {@link _write}.
+     * If `hooks.logMethod` is configured, the hook receives the raw arguments,
+     * an inner method function, and the numeric level. The hook MUST call
+     * `method(...args)` to proceed with logging. If the hook does not call
+     * method, the log call is silently dropped (intentional). If the hook
+     * throws, processing falls through to normal _processLogArgs.
      *
      * @param {string} levelName - Level name (e.g. "info", "error")
      * @param {number} levelNum  - Numeric level value
@@ -953,46 +1013,19 @@ export default class Logger {
         return function (...args) {
             if (args.length === 0) return;
 
-            let fields = null;
-            let msg = "";
-            let msgArgs = null;
-            const first = args[0];
-
-            if (logger._isError(first)) {
-                // Error-first: logger.error(new Error("fail"))
-                //           or logger.error(err, "context message", ...args)
-                fields = { [logger.#errorKey || "err"]: first };
-                if (args.length > 1 && typeof args[1] === "string") {
-                    msg = args[1];
-                    if (args.length > 2) msgArgs = args.slice(2);
-                } else {
-                    msg = first.message;
-                }
-            } else if (typeof first === "object" && first !== null) {
-                // Object-first: logger.info({ userId: 42 }, "loaded user")
-                fields = first;
-                if (args.length > 1) {
-                    msg = String(args[1]);
-                    if (args.length > 2) msgArgs = args.slice(2);
+            if (logger.#hooks && logger.#hooks.logMethod) {
+                try {
+                    const innerMethod = function (...innerArgs) {
+                        logger._processLogArgs(levelName, levelNum, innerArgs);
+                    };
+                    logger.#hooks.logMethod(args, innerMethod, levelNum);
+                } catch (e) {
+                    // Swallow -- hook errors fall through to normal processing
+                    logger._processLogArgs(levelName, levelNum, args);
                 }
             } else {
-                // String-first: logger.info("hello")
-                //            or logger.info("loaded %d items", 5)
-                msg = String(first);
-                if (args.length > 1) msgArgs = args.slice(1);
+                logger._processLogArgs(levelName, levelNum, args);
             }
-
-            // Printf interpolation
-            if (msgArgs) {
-                msg = logger._interpolate(msg, msgArgs);
-            }
-
-            // Message prefix
-            if (logger.#msgPrefix) {
-                msg = logger.#msgPrefix + msg;
-            }
-
-            logger._write(levelNum, levelName, msg, fields);
         };
     }
 
