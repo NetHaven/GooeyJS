@@ -2,6 +2,7 @@ import UIComponent from "./UIComponent.js";
 import LayoutAlign from "./layout/Layout/scripts/LayoutAlign.js";
 import LayoutJustify from "./layout/Layout/scripts/LayoutJustify.js";
 import LayoutType from "./layout/Layout/scripts/LayoutType.js";
+import Logger from '../logging/Logger.js';
 
 export default class Container extends UIComponent {
     constructor () {
@@ -81,7 +82,7 @@ export default class Container extends UIComponent {
             }
             this.setAttribute("background", val);
         } else {
-            console.log(`Background ${val} not found.`);
+            Logger.warn({ code: "CONTAINER_BACKGROUND_NOT_FOUND", value: val }, "Background %s not found", val);
         }
     }
 
@@ -126,7 +127,7 @@ export default class Container extends UIComponent {
             this.setAttribute("font", val);
         }
         else {
-            console.log(`Font ${val} not found.`);
+            Logger.warn({ code: "CONTAINER_FONT_NOT_FOUND", value: val }, "Font %s not found", val);
         }
     }
 

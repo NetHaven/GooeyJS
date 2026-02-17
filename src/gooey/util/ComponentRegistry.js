@@ -1,3 +1,5 @@
+import Logger from '../logging/Logger.js';
+
 /**
  * ComponentRegistry - Global registry for component metadata and attribute definitions
  * Provides attribute validation, default value access, and theme CSS storage
@@ -179,7 +181,7 @@ export default class ComponentRegistry {
                         }
                     } catch (e) {
                         // Invalid regex in definition - log but don't fail
-                        console.warn(`Invalid pattern for attribute ${name}:`, attrDef.pattern);
+                        Logger.warn({ code: "REGISTRY_INVALID_PATTERN", attribute: name, pattern: attrDef.pattern }, "Invalid pattern for attribute %s", name);
                     }
                 }
                 return { valid: true };

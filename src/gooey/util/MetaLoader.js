@@ -1,3 +1,5 @@
+import Logger from '../logging/Logger.js';
+
 /**
  * MetaLoader - Loads and validates META.goo component configuration files
  * Also handles theme CSS loading and injection for Shadow DOM components
@@ -38,24 +40,14 @@ export default class MetaLoader {
         const fileVersion = meta.MetaGooVersion;
 
         if (!fileVersion) {
-            console.warn(
-                `META.goo version missing: ${metaPath}\n` +
-                `  Consider adding "MetaGooVersion": "${this.SUPPORTED_META_VERSION}" to ensure future compatibility.`
-            );
+            Logger.warn({ code: "META_VERSION_MISSING", path: metaPath }, "META.goo version missing: %s -- consider adding MetaGooVersion", metaPath);
             return;
         }
 
         const comparison = this._compareVersions(fileVersion, this.SUPPORTED_META_VERSION);
 
         if (comparison > 0) {
-            console.warn(
-                `META.goo version mismatch: ${metaPath}\n` +
-                `  File version: ${fileVersion}\n` +
-                `  Supported version: ${this.SUPPORTED_META_VERSION}\n` +
-                `  This META.goo file uses a newer format than this version of GooeyJS supports.\n` +
-                `  Please upgrade GooeyJS to the latest release to ensure full compatibility.\n` +
-                `  Attempting to parse anyway...`
-            );
+            Logger.warn({ code: "META_VERSION_MISMATCH", path: metaPath, fileVersion, supportedVersion: this.SUPPORTED_META_VERSION }, "META.goo version mismatch: %s (file: %s, supported: %s)", metaPath, fileVersion, this.SUPPORTED_META_VERSION);
         }
     }
     /**
@@ -266,7 +258,7 @@ export default class MetaLoader {
             return result;
 
         } catch (error) {
-            console.error(`Failed to load theme CSS: ${cssPath}`, error);
+            Logger.error(error, { code: "THEME_CSS_LOAD_FAILED", path: cssPath }, "Failed to load theme CSS: %s", cssPath);
             throw error;
         }
     }

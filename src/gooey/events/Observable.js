@@ -1,4 +1,5 @@
 import ObservableBase from './ObservableBase.js';
+import Logger from '../logging/Logger.js';
 
 /**
  * Observable - Base class for custom elements with event support
@@ -160,7 +161,7 @@ export default class Observable extends HTMLElement {
             try {
                 watcher.callback.call(this, newValue, oldValue, property);
             } catch (error) {
-                console.error(`Watcher error for property '${property}':`, error);
+                Logger.error(error, { code: "OBSERVABLE_WATCHER_ERROR", property }, "Watcher error for property '%s'", property);
             }
         }
     }

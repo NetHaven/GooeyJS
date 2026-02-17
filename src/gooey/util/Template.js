@@ -1,3 +1,5 @@
+import Logger from '../logging/Logger.js';
+
 export default class Template {
     /**
      * Activates a template by cloning its content into a target element
@@ -85,7 +87,7 @@ export default class Template {
                             document.body.appendChild(document.adoptNode(template));
                         }
                     }
-                    console.info('TEMPLATE_LOADED', `Template loaded successfully: ${templateId}`);
+                    Logger.info({ code: "TEMPLATE_LOADED", templateId }, "Template loaded successfully: %s", templateId);
                 }
             })
             .catch(error => {
@@ -97,7 +99,7 @@ export default class Template {
                     ? `Template loading timeout for ${templateName} (exceeded ${timeoutMs}ms)`
                     : error.message;
 
-                console.error('TEMPLATE_LOAD_ERROR', `Template loading error for ${templateId}`, { error: errorMessage, templateId });
+                Logger.error({ code: "TEMPLATE_LOAD_ERROR", error: errorMessage, templateId }, "Template loading error for %s", templateId);
 
                 // Retry logic for network errors and timeouts
                 const isRetryable = error.name === 'TypeError' ||
@@ -105,7 +107,7 @@ export default class Template {
                     isTimeout;
 
                 if (retryCount < maxRetries && isRetryable) {
-                    console.warn('TEMPLATE_RETRY', `Retrying template load for ${templateId} (attempt ${retryCount + 1}/${maxRetries})`);
+                    Logger.warn({ code: "TEMPLATE_RETRY", templateId, attempt: retryCount + 1, maxRetries }, "Retrying template load for %s (attempt %d/%d)", templateId, retryCount + 1, maxRetries);
                     return new Promise(resolve => {
                         setTimeout(() => {
                             resolve(Template.load(templateName, templateId, retryCount + 1));

@@ -1,3 +1,5 @@
+import Logger from '../logging/Logger.js';
+
 /**
  * ObservableBase - Base class for non-DOM observable objects
  * Provides the event system without requiring HTMLElement/custom element registration.
@@ -157,7 +159,7 @@ export default class ObservableBase {
             try {
                 watcher.callback.call(this, newValue, oldValue, property);
             } catch (error) {
-                console.error(`Watcher error for property '${property}':`, error);
+                Logger.error(error, { code: "OBSERVABLE_WATCHER_ERROR", property }, "Watcher error for property '%s'", property);
             }
         }
     }
