@@ -123,6 +123,21 @@ export default class Logger {
     /** @type {object} Merged map of level name -> numeric value */
     #levelMethods;
 
+    /** @type {Logger|null} Parent logger reference for handler delegation */
+    #parent;
+
+    /** @type {object} This logger's own bindings (not inherited). Empty object for root loggers. */
+    #bindings;
+
+    /** @type {object|null} Parent's merged fields, stored for setBindings() recalculation */
+    #parentFields;
+
+    /** @type {function|null} Callback invoked when child() creates a new child logger */
+    #onChild;
+
+    /** @type {object|null} Formatters option: { level, bindings, log } functions */
+    #formatters;
+
     // ---- Constructor ----
 
     /**
@@ -166,9 +181,21 @@ export default class Logger {
         this.#silent = false;
         this.#levelMethods = { ...LogLevel.DEFAULT, ...Logger.#customLevels };
 
+        // Phase 8 fields: child logger support
+        this.#parent = options._parent || null;
+        this.#bindings = options._bindings || {};
+        this.#parentFields = options._parentFields || null;
+        this.#onChild = options.onChild || null;
+        this.#formatters = options.formatters || null;
+
         // Compose subsystems (has-a, not is-a)
+        // Child loggers share the parent's HandlerManager for handler inheritance
         /** @type {HandlerManager} Handler collection and dispatch */
-        this._handlers = new HandlerManager();
+        if (this.#parent) {
+            this._handlers = this.#parent._handlers;
+        } else {
+            this._handlers = new HandlerManager();
+        }
 
         /** @type {ObservableBase} Event emitter for log system events */
         this._emitter = new ObservableBase();
@@ -309,6 +336,92 @@ export default class Logger {
         }
         this._handlers.clearHandlers();
         this._emitter.removeAllEventListeners();
+    }
+
+    /**
+     * Create a child logger with bound context fields.
+     *
+     * The child logger inherits the parent's handler collection by sharing
+     * the same {@link HandlerManager} reference. This means handlers added
+     * to the parent after child creation are automatically visible to the
+     * child.
+     *
+     * Bindings are accumulated: a grandchild merges its own bindings on
+     * top of the parent's merged fields. The `msgPrefix` is concatenated
+     * (parent prefix + child prefix).
+     *
+     * Child-level overrides (level, serializers, msgPrefix, formatters,
+     * onChild) take effect independently of the parent.
+     *
+     * If `formatters.bindings` is configured, it transforms the bindings
+     * object before merging with parent fields.
+     *
+     * @param {object} [bindings={}] - Context fields bound to every record
+     * @param {object} [options={}] - Child-level configuration overrides
+     * @param {number|string} [options.level] - Override threshold level
+     * @param {object|null} [options.serializers] - Override serializers (merged with parent)
+     * @param {string} [options.msgPrefix] - Additional prefix (concatenated with parent)
+     * @param {object|null} [options.formatters] - Override formatters
+     * @param {function|null} [options.onChild] - Override onChild callback
+     * @returns {Logger} New child logger instance
+     * @throws {Error} If bindings is not a plain object
+     */
+    child(bindings = {}, options = {}) {
+        if (typeof bindings !== "object" || bindings === null || Array.isArray(bindings)) {
+            throw new Error("child: bindings must be a plain object");
+        }
+
+        // Apply formatters.bindings if configured (transforms bindings before merge)
+        const formattedBindings = (this.#formatters && this.#formatters.bindings)
+            ? this.#formatters.bindings(bindings)
+            : bindings;
+
+        // Merge parent fields with child bindings
+        const mergedFields = this.#fields
+            ? { ...this.#fields, ...formattedBindings }
+            : (Object.keys(formattedBindings).length > 0 ? { ...formattedBindings } : null);
+
+        // Merge serializers: parent base, child overrides
+        const mergedSerializers = options.serializers
+            ? (this.#serializers
+                ? { ...this.#serializers, ...options.serializers }
+                : options.serializers)
+            : this.#serializers;
+
+        // Message prefix: cumulative (parent prefix + child prefix)
+        const mergedMsgPrefix = (this.#msgPrefix || "") + (options.msgPrefix || "");
+
+        // Construct child logger with merged options
+        const child = new Logger({
+            name: this.#name,
+            level: options.level ?? this.#level,
+            serializers: mergedSerializers,
+            fields: mergedFields,
+            base: this.#base,
+            timestamp: this.#timestamp,
+            messageKey: this.#messageKey,
+            errorKey: this.#errorKey,
+            nestedKey: this.#nestedKey,
+            msgPrefix: mergedMsgPrefix || "",
+            enabled: this.#enabled,
+            formatters: options.formatters ?? this.#formatters,
+            onChild: options.onChild ?? this.#onChild,
+            // Internal fields for child tracking
+            _parent: this,
+            _bindings: formattedBindings,
+            _parentFields: this.#fields
+        });
+
+        // Fire onChild callback if configured
+        if (this.#onChild) {
+            try {
+                this.#onChild(child);
+            } catch (e) {
+                // Swallow -- onChild errors must not break child creation
+            }
+        }
+
+        return child;
     }
 
     /**
