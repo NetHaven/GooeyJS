@@ -145,6 +145,15 @@ export default class Logger {
     /** @type {Redactor|null} Instantiated redactor (null if no redaction configured) */
     #redactor;
 
+    /** @type {function|null} Mixin function called per log invocation, returns fields to merge */
+    #mixin;
+
+    /** @type {function|null} Custom merge strategy for mixin fields vs call fields */
+    #mixinMergeStrategy;
+
+    /** @type {object|null} Hooks: { logMethod, write } synchronous interceptors */
+    #hooks;
+
     // ---- Constructor ----
 
     /**
@@ -196,6 +205,9 @@ export default class Logger {
         this.#formatters = options.formatters || null;
         this.#redact = options.redact || null;
         this.#redactor = this.#redact ? new Redactor(this.#redact) : null;
+        this.#mixin = options.mixin || null;
+        this.#mixinMergeStrategy = options.mixinMergeStrategy || null;
+        this.#hooks = options.hooks || null;
 
         // Compose subsystems (has-a, not is-a)
         // Child loggers share the parent's HandlerManager for handler inheritance
@@ -987,13 +999,18 @@ export default class Logger {
     /**
      * Core write pipeline -- creates a record and dispatches it to handlers.
      *
-     * Pipeline sequence:
+     * Full 11-step pipeline sequence:
      * 1. **Silent check** -- if `#silent` is true, return immediately
-     * 2. **Merge fields** -- combine logger-level `#fields` with call-level fields
-     * 3. **Create record** -- via `LogRecord.create()` with all configuration
-     * 4. **Apply serializers** -- via `Serializers.apply()` if serializers are configured
-     * 5. **Fire RECORD event** -- notify listeners (errors swallowed)
-     * 6. **Dispatch to handlers** -- via `HandlerManager.dispatch()`
+     * 2. **Mixin** -- call `#mixin(fields, levelNum)` for dynamic per-call fields
+     * 3. **Field merge** -- combine logger-level `#fields` with mixin-enriched call fields
+     * 4. **Create record** -- via `LogRecord.create()` with all configuration
+     * 5. **formatters.log** -- transform the entire record after creation
+     * 6. **formatters.level** -- transform level representation in the record
+     * 7. **Custom level patch** -- fix levelName for custom levels (skipped if formatters.level active)
+     * 8. **Redaction** -- redact sensitive fields via `#redactor`
+     * 9. **Serialization** -- apply `Serializers.apply()` if serializers configured
+     * 10. **Fire RECORD event** -- notify listeners (errors swallowed)
+     * 11. **hooks.write** -- intercept before handler dispatch, then dispatch
      *
      * @param {number} levelNum  - Numeric level value
      * @param {string} levelName - Level name (for potential custom level use)
@@ -1002,15 +1019,35 @@ export default class Logger {
      * @private
      */
     _write(levelNum, levelName, msg, fields) {
-        // Silent mode -- suppress all output
+        // 1. Silent check
         if (this.#silent) return;
 
-        // Merge logger-level bound fields with call-level fields
-        const mergedFields = this.#fields
-            ? (fields ? { ...this.#fields, ...fields } : this.#fields)
-            : fields;
+        // 2. Mixin application (try-catch wrapped -- mixin errors must not break logging)
+        let callFields = fields;
+        if (this.#mixin) {
+            try {
+                const mixinFields = this.#mixin(callFields || {}, levelNum);
+                if (mixinFields && typeof mixinFields === "object") {
+                    if (this.#mixinMergeStrategy) {
+                        callFields = this.#mixinMergeStrategy(callFields || {}, mixinFields);
+                    } else {
+                        // Default: call-level fields override mixin (Pino default)
+                        callFields = callFields
+                            ? { ...mixinFields, ...callFields }
+                            : mixinFields;
+                    }
+                }
+            } catch (e) {
+                // Swallow -- mixin errors must not break logging
+            }
+        }
 
-        // Create record via LogRecord.create
+        // 3. Field merge (logger #fields + mixin-enriched call fields)
+        const mergedFields = this.#fields
+            ? (callFields ? { ...this.#fields, ...callFields } : this.#fields)
+            : callFields;
+
+        // 4. Record creation
         const record = LogRecord.create({
             level: levelNum,
             name: this.#name,
@@ -1023,31 +1060,65 @@ export default class Logger {
             nestedKey: this.#nestedKey
         });
 
-        // Patch levelName for custom levels -- LogRecord.create only knows
-        // built-in LogLevel names, so custom levels get no levelName.
-        const finalRecord = (!record.levelName && levelName)
-            ? Object.freeze({ ...record, levelName })
-            : record;
+        // 5. formatters.log (shape the record)
+        let shaped = record;
+        if (this.#formatters && this.#formatters.log) {
+            try {
+                shaped = this.#formatters.log(record);
+            } catch (e) {
+                // Swallow -- formatter errors must not break logging
+                shaped = record;
+            }
+        }
 
-        // Apply redaction if configured (before serialization)
+        // 6. formatters.level (transform level representation)
+        if (this.#formatters && this.#formatters.level) {
+            try {
+                const levelObj = this.#formatters.level(levelNum);
+                if (levelObj && typeof levelObj === "object") {
+                    shaped = Object.freeze({ ...shaped, ...levelObj });
+                }
+            } catch (e) {
+                // Swallow -- formatter errors must not break logging
+            }
+        }
+
+        // 7. Custom level patch (fix levelName for custom levels)
+        //    Only apply if formatters.level did NOT already handle level representation
+        const afterLevelPatch = (!(this.#formatters && this.#formatters.level) && !shaped.levelName && levelName)
+            ? Object.freeze({ ...shaped, levelName })
+            : shaped;
+
+        // 8. Redaction
         const redacted = (this.#redactor && this.#redactor.hasPaths)
-            ? this.#redactor.redact(finalRecord)
-            : finalRecord;
+            ? this.#redactor.redact(afterLevelPatch)
+            : afterLevelPatch;
 
-        // Apply serializers (returns original if no serializers match)
+        // 9. Serialization
         const serialized = this.#serializers
             ? Serializers.apply(redacted, this.#serializers)
             : redacted;
 
-        // Fire RECORD event (listener errors must not crash the pipeline)
+        // 10. Fire RECORD event (listener errors must not crash the pipeline)
         try {
             this._emitter.fireEvent(LogEvent.RECORD, { record: serialized });
         } catch (e) {
             // Swallow -- listener errors must not prevent handler dispatch
         }
 
-        // Dispatch to all handlers
-        this._handlers.dispatch(serialized);
+        // 11. hooks.write then handler dispatch
+        if (this.#hooks && this.#hooks.write) {
+            try {
+                this.#hooks.write(serialized, (record) => {
+                    this._handlers.dispatch(record);
+                });
+            } catch (e) {
+                // Swallow -- hook errors fall through to normal dispatch
+                this._handlers.dispatch(serialized);
+            }
+        } else {
+            this._handlers.dispatch(serialized);
+        }
     }
 
     // ---- Static private methods ----
