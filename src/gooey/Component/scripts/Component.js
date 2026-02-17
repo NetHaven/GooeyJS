@@ -3,6 +3,7 @@ import ComponentEvent from '../../events/ComponentEvent.js';
 import Template from '../../util/Template.js';
 import MetaLoader from '../../util/MetaLoader.js';
 import ComponentRegistry from '../../util/ComponentRegistry.js';
+import Logger from '../../logging/Logger.js';
 
 // Store ComponentEvent reference for use in wrapped callbacks
 const _ComponentEvent = ComponentEvent;
@@ -36,7 +37,7 @@ export default class Component extends Observable {
     async loadComponent() {
         // Validate required attributes
         if (!this.hasAttribute('href')) {
-            console.error('Component loading error: "href" attribute is required');
+            Logger.error({ code: "COMPONENT_HREF_MISSING" }, 'Component loading error: "href" attribute is required');
             this.fireEvent(ComponentEvent.ERROR, {
                 error: 'Missing required attribute: href',
                 component: this
@@ -53,7 +54,7 @@ export default class Component extends Observable {
             meta = await MetaLoader.loadAndValidate(this._href);
             this._meta = meta;
         } catch (metaError) {
-            console.error(`Failed to load META.goo from ${this._href}:`, metaError);
+            Logger.error(metaError, { code: "META_LOAD_FAILED", href: this._href }, "Failed to load META.goo from %s", this._href);
             this.fireEvent(ComponentEvent.ERROR, {
                 error: metaError.message,
                 href: this._href,
@@ -66,7 +67,7 @@ export default class Component extends Observable {
 
         // Check if component is already registered
         if (customElements.get(fullTagName)) {
-            console.log(`Component ${fullTagName} is already registered`);
+            Logger.debug({ code: "COMPONENT_ALREADY_REGISTERED", tagName: fullTagName }, "Component %s is already registered", fullTagName);
             this._loaded = true;
             this.fireEvent(ComponentEvent.LOADED, {
                 tagName: fullTagName,
@@ -99,9 +100,9 @@ export default class Component extends Observable {
                 try {
                     const cssResult = await MetaLoader.loadThemeCSS(this._href, meta.themes.default);
                     ComponentRegistry.setThemeCSS(fullTagName, cssResult);
-                    console.log(`Loaded theme CSS for ${fullTagName}: ${meta.themes.default}`);
+                    Logger.debug({ code: "THEME_LOADED", tagName: fullTagName, theme: meta.themes.default }, "Loaded theme CSS for %s: %s", fullTagName, meta.themes.default);
                 } catch (themeError) {
-                    console.warn(`Failed to load theme CSS for ${fullTagName}:`, themeError);
+                    Logger.warn(themeError, { code: "THEME_LOAD_FAILED", tagName: fullTagName }, "Failed to load theme CSS for %s", fullTagName);
                 }
             }
 
@@ -117,9 +118,9 @@ export default class Component extends Observable {
                     const templatePath = `${this._href}/templates/${template.file}`;
                     try {
                         await Template.load(templatePath, template.id);
-                        console.log(`Loaded template ${template.id} from ${templatePath}`);
+                        Logger.debug({ code: "TEMPLATE_LOADED", templateId: template.id, file: templatePath }, "Loaded template %s from %s", template.id, templatePath);
                     } catch {
-                        console.debug(`Failed to load template ${template.id} from ${templatePath}`);
+                        Logger.debug({ code: "TEMPLATE_LOAD_FAILED", templateId: template.id, file: templatePath }, "Failed to load template %s from %s", template.id, templatePath);
                     }
                 }
             }
@@ -141,7 +142,7 @@ export default class Component extends Observable {
             // Register the custom element (triggers constructor for existing DOM elements)
             customElements.define(fullTagName, ComponentClass);
 
-            console.log(`Successfully registered ${fullTagName} from ${modulePath}`);
+            Logger.debug({ code: "COMPONENT_REGISTERED", tagName: fullTagName, module: modulePath }, "Successfully registered %s from %s", fullTagName, modulePath);
 
             this._loaded = true;
 
@@ -155,7 +156,7 @@ export default class Component extends Observable {
             });
 
         } catch (error) {
-            console.error(`Failed to load component ${meta.name}:`, error);
+            Logger.error(error, { code: "COMPONENT_LOAD_FAILED", name: meta.name }, "Failed to load component %s", meta.name);
 
             // Fire ERROR event
             this.fireEvent(ComponentEvent.ERROR, {
@@ -225,7 +226,7 @@ export default class Component extends Observable {
                     }
 
                     // Log warning for developer visibility
-                    console.warn(`[${tagName}] Invalid attribute value: ${validation.error}`);
+                    Logger.warn({ code: "ATTRIBUTE_VALIDATION_FAILED", tagName, error: validation.error }, "[%s] Invalid attribute value: %s", tagName, validation.error);
                 }
 
                 // Parse and store the typed value (even if validation failed, use best effort)
