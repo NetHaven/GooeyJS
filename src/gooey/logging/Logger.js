@@ -186,19 +186,15 @@ export default class Logger {
      * @private
      */
     #resolveLevel(value) {
+        if (typeof value === "number") return value;
         if (typeof value === "string") {
             const num = LogLevel.toNumber(value);
-            if (num === undefined) {
-                throw new Error("Unknown log level: " + value);
-            }
-            return num;
+            if (num !== undefined) return num;
+            const custom = Logger.#customLevels[value.toLowerCase()];
+            if (custom !== undefined) return custom;
+            throw new Error("Unknown log level: " + value);
         }
-        if (typeof value === "number") {
-            return value;
-        }
-        if (value === null || value === undefined) {
-            return LogLevel.INFO;
-        }
+        if (value == null) return LogLevel.INFO;
         throw new Error("Invalid log level: " + value);
     }
 
@@ -250,6 +246,90 @@ export default class Logger {
      */
     get name() {
         return this.#name;
+    }
+
+    /**
+     * Get the current log level as a human-readable string name.
+     *
+     * Returns the standard level name (from {@link LogLevel.toName}) if
+     * the current threshold maps to a built-in level, otherwise checks
+     * custom levels registered via {@link Logger.addLevel}. Falls back
+     * to the numeric value as a string if no name is found.
+     *
+     * @type {string}
+     */
+    get level() {
+        return LogLevel.toName(this.#level)
+            || this._customLevelName(this.#level)
+            || String(this.#level);
+    }
+
+    /**
+     * Set the log level threshold at runtime.
+     *
+     * Accepts a string level name (built-in or custom) or a numeric value.
+     * After resolving the new threshold, rebuilds all level methods so that
+     * methods below the new threshold become {@link NOOP} and methods at or
+     * above become active logging closures.
+     *
+     * Fires a {@link LogEvent.LEVEL_CHANGE} event with `oldLevel`,
+     * `newLevel`, `oldLevelName`, and `newLevelName` properties. Event
+     * listener errors are swallowed to prevent level changes from failing.
+     *
+     * No-op if the resolved new level equals the current level.
+     *
+     * @param {number|string} value - New level threshold (name or number)
+     * @throws {Error} If the level name is unknown or the value type is invalid
+     */
+    set level(value) {
+        const oldLevel = this.#level;
+        const newLevel = this.#resolveLevel(value);
+        if (oldLevel === newLevel) return;
+
+        this.#level = newLevel;
+        this._rebuildMethods();
+
+        // Fire level change event
+        try {
+            this._emitter.fireEvent(LogEvent.LEVEL_CHANGE, {
+                oldLevel,
+                newLevel,
+                oldLevelName: LogLevel.toName(oldLevel) || this._customLevelName(oldLevel) || String(oldLevel),
+                newLevelName: LogLevel.toName(newLevel) || this._customLevelName(newLevel) || String(newLevel)
+            });
+        } catch (e) {
+            // Swallow -- event listener errors must not break level changes
+        }
+    }
+
+    /**
+     * Get the current numeric log level threshold.
+     *
+     * Useful when comparing levels numerically or when the caller needs
+     * the raw threshold value rather than the human-readable name.
+     *
+     * @type {number}
+     */
+    get levelVal() {
+        return this.#level;
+    }
+
+    /**
+     * Look up a custom level name by its numeric value.
+     *
+     * Iterates the instance-level method map to find a name that maps to
+     * the given numeric value. Returns `undefined` if no custom level
+     * matches.
+     *
+     * @param {number} num - Numeric level value to look up
+     * @returns {string|undefined} Custom level name or undefined
+     * @private
+     */
+    _customLevelName(num) {
+        for (const [name, val] of Object.entries(this.#levelMethods)) {
+            if (val === num) return name;
+        }
+        return undefined;
     }
 
     /**
@@ -455,10 +535,16 @@ export default class Logger {
             nestedKey: this.#nestedKey
         });
 
+        // Patch levelName for custom levels -- LogRecord.create only knows
+        // built-in LogLevel names, so custom levels get no levelName.
+        const finalRecord = (!record.levelName && levelName)
+            ? Object.freeze({ ...record, levelName })
+            : record;
+
         // Apply serializers (returns original if no serializers match)
         const serialized = this.#serializers
-            ? Serializers.apply(record, this.#serializers)
-            : record;
+            ? Serializers.apply(finalRecord, this.#serializers)
+            : finalRecord;
 
         // Fire RECORD event (listener errors must not crash the pipeline)
         try {
@@ -524,6 +610,42 @@ export default class Logger {
      */
     static getLoggers() {
         return new Map(Logger.#registry);
+    }
+
+    /**
+     * Register a custom log level globally.
+     *
+     * Custom levels are available to all existing and future Logger instances.
+     * Each existing logger's level method map is updated and its methods are
+     * rebuilt so that the new level method is immediately callable.
+     *
+     * If `color` is provided, it is registered with {@link ColorizeFormatter}
+     * so that the custom level receives CSS styling in console output.
+     *
+     * @param {string} name  - Level name (case-insensitive, stored lowercase)
+     * @param {number} value - Numeric level value (lower = more severe)
+     * @param {string} [color] - Optional CSS color string for
+     *        {@link ColorizeFormatter} (e.g., `"color: teal; font-weight: bold"`)
+     */
+    static addLevel(name, value, color) {
+        const lowerName = name.toLowerCase();
+        Logger.#customLevels[lowerName] = value;
+
+        if (color) {
+            ColorizeFormatter.addColors({ [lowerName]: color });
+        }
+
+        // Update all existing registered loggers
+        for (const [, logger] of Logger.#registry) {
+            logger.#levelMethods[lowerName] = value;
+            logger._rebuildMethods();
+        }
+
+        // Update default logger if it exists but is not in the registry
+        if (Logger.#defaultLogger && !Logger.#registry.has("default")) {
+            Logger.#defaultLogger.#levelMethods[lowerName] = value;
+            Logger.#defaultLogger._rebuildMethods();
+        }
     }
 
     // ---- Static facade methods ----
