@@ -56,6 +56,7 @@ import AlignFormatter from "./formatters/AlignFormatter.js";
 import MillisecondFormatter from "./formatters/MillisecondFormatter.js";
 import FilterFormatter from "./formatters/FilterFormatter.js";
 import Redactor from "./Redactor.js";
+import ExceptionHandler from "./ExceptionHandler.js";
 
 // ---- Module-level constants ----
 
@@ -154,6 +155,12 @@ export default class Logger {
     /** @type {object|null} Hooks: { logMethod, write } synchronous interceptors */
     #hooks;
 
+    /** @type {function|null} Error suppression callback for exception handler */
+    #onError;
+
+    /** @type {ExceptionHandler|null} Global exception handler (root loggers only) */
+    #exceptionHandler;
+
     // ---- Constructor ----
 
     /**
@@ -209,6 +216,10 @@ export default class Logger {
         this.#mixinMergeStrategy = options.mixinMergeStrategy || null;
         this.#hooks = options.hooks || null;
 
+        // Phase 9 fields: exception handling
+        this.#onError = options.onError || null;
+        this.#exceptionHandler = null;
+
         // Compose subsystems (has-a, not is-a)
         // Child loggers share the parent's HandlerManager for handler inheritance
         /** @type {HandlerManager} Handler collection and dispatch */
@@ -226,6 +237,7 @@ export default class Logger {
         this._emitter.addValidEvent(LogEvent.LEVEL_CHANGE);
         this._emitter.addValidEvent(LogEvent.HANDLER_ERROR);
         this._emitter.addValidEvent(LogEvent.FLUSH);
+        this._emitter.addValidEvent(LogEvent.EXCEPTION);
 
         // Add initial handlers if provided
         if (options.handlers) {
@@ -236,6 +248,20 @@ export default class Logger {
 
         // Build level methods (active closures or NOOP based on level gate)
         this._rebuildMethods();
+
+        // Exception handling setup (only for root loggers, not children)
+        if (!this.#parent) {
+            const needsExceptionHandler =
+                options.handleExceptions === true ||
+                options.handleRejections === true;
+
+            if (needsExceptionHandler) {
+                this.#exceptionHandler = new ExceptionHandler(this, {
+                    onError: this.#onError
+                });
+                this.#exceptionHandler.register();
+            }
+        }
     }
 
     // ---- Private instance methods ----
@@ -357,6 +383,12 @@ export default class Logger {
         }
         this._handlers.clearHandlers();
         this._emitter.removeAllEventListeners();
+
+        // Deregister global exception/rejection listeners
+        if (this.#exceptionHandler) {
+            this.#exceptionHandler.deregister();
+            this.#exceptionHandler = null;
+        }
     }
 
     /**
@@ -434,6 +466,7 @@ export default class Logger {
             mixin: options.mixin ?? this.#mixin,
             mixinMergeStrategy: options.mixinMergeStrategy ?? this.#mixinMergeStrategy,
             hooks: options.hooks ?? this.#hooks,
+            onError: this.#onError,
             // Internal fields for child tracking
             _parent: this,
             _bindings: formattedBindings,
@@ -778,6 +811,26 @@ export default class Logger {
         }
         if ("hooks" in options) {
             this.#hooks = options.hooks || null;
+        }
+        if ("onError" in options) {
+            this.#onError = options.onError || null;
+        }
+        if ("handleExceptions" in options || "handleRejections" in options) {
+            // Tear down existing exception handler if present
+            if (this.#exceptionHandler) {
+                this.#exceptionHandler.deregister();
+                this.#exceptionHandler = null;
+            }
+            // Determine if a new handler is needed
+            const needsExceptionHandler =
+                options.handleExceptions === true ||
+                options.handleRejections === true;
+            if (needsExceptionHandler && !this.#parent) {
+                this.#exceptionHandler = new ExceptionHandler(this, {
+                    onError: this.#onError
+                });
+                this.#exceptionHandler.register();
+            }
         }
     }
 
@@ -1349,3 +1402,6 @@ Logger.AlignFormatter = AlignFormatter;
 Logger.ColorizeFormatter = ColorizeFormatter;
 Logger.MillisecondFormatter = MillisecondFormatter;
 Logger.FilterFormatter = FilterFormatter;
+
+// Exception handling
+Logger.ExceptionHandler = ExceptionHandler;
