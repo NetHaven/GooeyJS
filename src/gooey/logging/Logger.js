@@ -18,11 +18,12 @@
  * 3. **Direct construction** -- `new Logger({ name, level, handlers })`
  *    creates a standalone instance. Useful for testing or isolated contexts.
  *
- * **Phase 7 Plan 01:** This file establishes the class shell with constructor,
- * private fields, static registry, static facade, addHandler (with emitter
- * wiring), and stub level methods (all NOOP). Subsequent plans add:
- * - Plan 02: Argument parsing and _write() method (level methods produce output)
- * - Plan 03: Level control (_rebuildMethods with active/NOOP swap)
+ * **Phase 7 build-up:**
+ * - Plan 01: Class shell, constructor, static registry, static facade, stubs
+ * - Plan 02: Argument parsing (_createLogMethod), printf interpolation
+ *   (_interpolate), error detection (_isError), write pipeline (_write),
+ *   and active _rebuildMethods with level gating
+ * - Plan 03: Level control (setLevel, level getter, enabled toggle)
  * - Plan 04: Lifecycle (flush, close, child loggers)
  * - Plan 05: Namespace exposure and public API surface
  *
@@ -169,7 +170,7 @@ export default class Logger {
             }
         }
 
-        // Build level methods (NOOP stubs for Plan 01)
+        // Build level methods (active closures or NOOP based on level gate)
         this._rebuildMethods();
     }
 
@@ -251,17 +252,222 @@ export default class Logger {
     }
 
     /**
-     * Build level methods on this logger instance.
+     * Build (or rebuild) level methods on this logger instance.
      *
-     * **Plan 01 stub:** Assigns NOOP to all 6 default level methods
-     * (trace, debug, info, warn, error, fatal) plus any custom levels.
-     * Plans 02 and 03 replace this with the full active/NOOP swap logic
-     * based on the current level threshold.
+     * For each level in the merged level map ({@link LogLevel.DEFAULT} plus
+     * custom levels), assigns either an active logging closure (from
+     * {@link _createLogMethod}) or the shared {@link NOOP} function based on:
+     *
+     * 1. Whether this logger is enabled (`#enabled`)
+     * 2. Whether the level passes the threshold gate
+     *    (`LogLevel.isLevelEnabled(#level, levelNum)`)
+     *
+     * Called once in the constructor and again whenever the level threshold
+     * or enabled state changes at runtime.
      */
     _rebuildMethods() {
-        for (const [name] of Object.entries(this.#levelMethods)) {
-            this[name] = NOOP;
+        for (const [name, num] of Object.entries(this.#levelMethods)) {
+            if (this.#enabled && LogLevel.isLevelEnabled(this.#level, num)) {
+                this[name] = this._createLogMethod(name, num);
+            } else {
+                this[name] = NOOP;
+            }
         }
+    }
+
+    /**
+     * Detect whether a value is an Error or Error-like object.
+     *
+     * Returns `true` for native Error instances. For cross-realm error
+     * detection (iframes, Workers), duck-types by requiring BOTH `message`
+     * (string) AND `stack` (string). Requiring both properties avoids false
+     * positives on plain objects that happen to have a `message` property
+     * (e.g., `{ message: "hello" }`).
+     *
+     * @param {*} val - Value to test
+     * @returns {boolean} True if val is an Error or Error-like object
+     * @private
+     */
+    _isError(val) {
+        return val instanceof Error || (
+            val !== null &&
+            typeof val === "object" &&
+            typeof val.message === "string" &&
+            typeof val.stack === "string"
+        );
+    }
+
+    /**
+     * Printf-style string interpolation.
+     *
+     * Replaces format specifiers in `fmt` with values from `args`:
+     *
+     * | Specifier | Conversion                                    |
+     * |-----------|-----------------------------------------------|
+     * | `%s`      | String coercion (`String(val)`)                |
+     * | `%d`      | Number coercion (`Number(val).toString()`)     |
+     * | `%j`      | JSON via `Serializers.safeStringify(val)`       |
+     * | `%o`      | JSON via `Serializers.safeStringify(val)`       |
+     * | `%O`      | Pretty JSON via `safeStringify(val, null, 2)`   |
+     * | `%%`      | Literal `%` (does not consume an argument)      |
+     *
+     * Extra arguments beyond the number of specifiers are ignored.
+     * Missing arguments leave the specifier intact in the output.
+     *
+     * @param {string} fmt  - Format string containing specifiers
+     * @param {Array}  args - Substitution values
+     * @returns {string} Interpolated string
+     * @private
+     */
+    _interpolate(fmt, args) {
+        let i = 0;
+        return String(fmt).replace(/%([sdjoO%])/g, (match, spec) => {
+            if (spec === "%") return "%";
+            if (i >= args.length) return match;
+            const val = args[i++];
+            switch (spec) {
+                case "s": return String(val);
+                case "d": return Number(val).toString();
+                case "j": return Serializers.safeStringify(val);
+                case "o": return Serializers.safeStringify(val);
+                case "O": return Serializers.safeStringify(val, null, 2);
+                default:  return match;
+            }
+        });
+    }
+
+    /**
+     * Create a bound logging method for a specific severity level.
+     *
+     * Returns a closure that captures `this` (the logger instance) and
+     * performs flexible argument parsing before delegating to {@link _write}.
+     *
+     * **Three argument patterns are supported:**
+     *
+     * 1. **Error-first** -- `logger.error(new Error("fail"))` or
+     *    `logger.error(err, "context message", ...args)`
+     *    - Wraps the error in the `#errorKey` field
+     *    - Uses `error.message` as msg if no string follows
+     *    - Uses the string as msg if provided (with optional printf args)
+     *
+     * 2. **Object-first** -- `logger.info({ userId: 42 }, "loaded user")`
+     *    - Merges the object as additional fields into the record
+     *    - Second argument is the message (with optional printf args)
+     *
+     * 3. **String-first** -- `logger.info("hello")` or
+     *    `logger.info("loaded %d items", 5)`
+     *    - First argument is the message
+     *    - Remaining arguments are printf substitution values
+     *
+     * After argument parsing, applies printf interpolation (if args exist),
+     * prepends `#msgPrefix`, and calls {@link _write}.
+     *
+     * @param {string} levelName - Level name (e.g. "info", "error")
+     * @param {number} levelNum  - Numeric level value
+     * @returns {function(...*): void} Bound logging method
+     * @private
+     */
+    _createLogMethod(levelName, levelNum) {
+        const logger = this;
+        return function (...args) {
+            if (args.length === 0) return;
+
+            let fields = null;
+            let msg = "";
+            let msgArgs = null;
+            const first = args[0];
+
+            if (logger._isError(first)) {
+                // Error-first: logger.error(new Error("fail"))
+                //           or logger.error(err, "context message", ...args)
+                fields = { [logger.#errorKey || "err"]: first };
+                if (args.length > 1 && typeof args[1] === "string") {
+                    msg = args[1];
+                    if (args.length > 2) msgArgs = args.slice(2);
+                } else {
+                    msg = first.message;
+                }
+            } else if (typeof first === "object" && first !== null) {
+                // Object-first: logger.info({ userId: 42 }, "loaded user")
+                fields = first;
+                if (args.length > 1) {
+                    msg = String(args[1]);
+                    if (args.length > 2) msgArgs = args.slice(2);
+                }
+            } else {
+                // String-first: logger.info("hello")
+                //            or logger.info("loaded %d items", 5)
+                msg = String(first);
+                if (args.length > 1) msgArgs = args.slice(1);
+            }
+
+            // Printf interpolation
+            if (msgArgs) {
+                msg = logger._interpolate(msg, msgArgs);
+            }
+
+            // Message prefix
+            if (logger.#msgPrefix) {
+                msg = logger.#msgPrefix + msg;
+            }
+
+            logger._write(levelNum, levelName, msg, fields);
+        };
+    }
+
+    /**
+     * Core write pipeline -- creates a record and dispatches it to handlers.
+     *
+     * Pipeline sequence:
+     * 1. **Silent check** -- if `#silent` is true, return immediately
+     * 2. **Merge fields** -- combine logger-level `#fields` with call-level fields
+     * 3. **Create record** -- via `LogRecord.create()` with all configuration
+     * 4. **Apply serializers** -- via `Serializers.apply()` if serializers are configured
+     * 5. **Fire RECORD event** -- notify listeners (errors swallowed)
+     * 6. **Dispatch to handlers** -- via `HandlerManager.dispatch()`
+     *
+     * @param {number} levelNum  - Numeric level value
+     * @param {string} levelName - Level name (for potential custom level use)
+     * @param {string} msg       - Formatted log message
+     * @param {object|null} fields - Call-level fields to merge into the record
+     * @private
+     */
+    _write(levelNum, levelName, msg, fields) {
+        // Silent mode -- suppress all output
+        if (this.#silent) return;
+
+        // Merge logger-level bound fields with call-level fields
+        const mergedFields = this.#fields
+            ? (fields ? { ...this.#fields, ...fields } : this.#fields)
+            : fields;
+
+        // Create record via LogRecord.create
+        const record = LogRecord.create({
+            level: levelNum,
+            name: this.#name,
+            msg,
+            fields: mergedFields,
+            base: this.#base,
+            timestamp: this.#timestamp,
+            messageKey: this.#messageKey,
+            errorKey: this.#errorKey,
+            nestedKey: this.#nestedKey
+        });
+
+        // Apply serializers (returns original if no serializers match)
+        const serialized = this.#serializers
+            ? Serializers.apply(record, this.#serializers)
+            : record;
+
+        // Fire RECORD event (listener errors must not crash the pipeline)
+        try {
+            this._emitter.fireEvent(LogEvent.RECORD, { record: serialized });
+        } catch (e) {
+            // Swallow -- listener errors must not prevent handler dispatch
+        }
+
+        // Dispatch to all handlers
+        this._handlers.dispatch(serialized);
     }
 
     // ---- Static private methods ----
@@ -321,8 +527,6 @@ export default class Logger {
 
     // ---- Static facade methods ----
     // These delegate to the lazily-created default logger instance.
-    // In Plan 01, the instance methods are NOOP stubs -- the facade will
-    // execute silently without producing output until Plan 02 activates them.
 
     /**
      * Log a trace-level message via the default logger.
