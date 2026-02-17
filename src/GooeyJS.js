@@ -79,7 +79,7 @@ export default class GooeyJS {
                 detail: { instance: this }
             }));
         }).catch(error => {
-            console.error('GooeyJS initialization failed:', error);
+            Logger.fatal(error, { code: "GOOEY_INIT_FAILED" }, "GooeyJS initialization failed");
         });
 
         linkEl = document.createElement('link');
@@ -126,9 +126,9 @@ export default class GooeyJS {
                         try {
                             const cssResult = await MetaLoader.loadThemeCSS(fullComponentPath, meta.themes.default);
                             ComponentRegistry.setThemeCSS(meta.fullTagName, cssResult);
-                            console.log(`Loaded theme CSS for ${meta.fullTagName}: ${meta.themes.default}`);
+                            Logger.debug({ code: "THEME_LOADED", tagName: meta.fullTagName, theme: meta.themes.default }, "Loaded theme CSS for %s: %s", meta.fullTagName, meta.themes.default);
                         } catch (themeError) {
-                            console.warn(`Failed to load theme CSS for ${meta.fullTagName}:`, themeError);
+                            Logger.warn(themeError, { code: "THEME_LOAD_FAILED", tagName: meta.fullTagName }, "Failed to load theme CSS for %s", meta.fullTagName);
                         }
                     }
 
@@ -144,9 +144,9 @@ export default class GooeyJS {
                                     `${fullComponentPath}/templates/${template.file}`,
                                     template.id
                                 );
-                                console.log(`Loaded template ${template.id} from ${template.file}`);
+                                Logger.debug({ code: "TEMPLATE_LOADED", templateId: template.id, file: template.file }, "Loaded template %s from %s", template.id, template.file);
                             } catch (templateError) {
-                                console.warn(`Failed to load template ${template.id}:`, templateError);
+                                Logger.warn(templateError, { code: "TEMPLATE_LOAD_FAILED", templateId: template.id }, "Failed to load template %s", template.id);
                             }
                         }
                     }
@@ -166,9 +166,9 @@ export default class GooeyJS {
                     // (triggers constructor for any existing DOM elements)
                     customElements.define(meta.fullTagName, ComponentClass);
 
-                    console.log(`Registered ${meta.fullTagName} from ${modulePath}`);
+                    Logger.debug({ code: "COMPONENT_REGISTERED", tagName: meta.fullTagName, module: modulePath }, "Registered %s from %s", meta.fullTagName, modulePath);
                 } catch (error) {
-                    console.error(`Failed to load component ${component.pkg}.${element.name}:`, error);
+                    Logger.error(error, { code: "COMPONENT_LOAD_FAILED", pkg: component.pkg, name: element.name }, "Failed to load component %s.%s", component.pkg, element.name);
                 }
             }
         }
@@ -223,7 +223,7 @@ export default class GooeyJS {
                     }
 
                     // Log warning for developer visibility
-                    console.warn(`[${tagName}] Invalid attribute value: ${validation.error}`);
+                    Logger.warn({ code: "ATTRIBUTE_VALIDATION_FAILED", tagName, error: validation.error }, "[%s] Invalid attribute value: %s", tagName, validation.error);
                 }
 
                 // Parse and store the typed value (even if validation failed, use best effort)
