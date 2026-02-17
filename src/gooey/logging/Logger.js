@@ -425,6 +425,66 @@ export default class Logger {
     }
 
     /**
+     * Get a defensive copy of this logger's own bindings.
+     *
+     * Returns only the bindings that were passed to this logger's
+     * {@link Logger#child} call (or set via {@link Logger#setBindings}).
+     * Does NOT include inherited parent fields. For root loggers,
+     * returns an empty object.
+     *
+     * @returns {object} Shallow copy of this logger's own bindings
+     */
+    bindings() {
+        return { ...this.#bindings };
+    }
+
+    /**
+     * Replace this logger's bindings and rebuild merged fields.
+     *
+     * After replacement, the internal `#fields` are recalculated by
+     * merging `#parentFields` (if this is a child logger) with the new
+     * bindings. This ensures that the full ancestor field chain is
+     * preserved while allowing the child's own bindings to change.
+     *
+     * @param {object} newBindings - New bindings object (replaces, does not merge)
+     * @throws {Error} If newBindings is not a plain object
+     */
+    setBindings(newBindings) {
+        if (typeof newBindings !== "object" || newBindings === null || Array.isArray(newBindings)) {
+            throw new Error("setBindings: argument must be a plain object");
+        }
+        this.#bindings = { ...newBindings };
+        // Rebuild merged fields from parent fields + current bindings
+        this.#fields = this.#parentFields
+            ? { ...this.#parentFields, ...this.#bindings }
+            : (Object.keys(this.#bindings).length > 0 ? { ...this.#bindings } : null);
+    }
+
+    /**
+     * Get the parent logger reference (read-only).
+     *
+     * Returns `null` for root loggers. Useful for debugging and
+     * inspecting the logger hierarchy.
+     *
+     * @type {Logger|null}
+     */
+    get parent() {
+        return this.#parent;
+    }
+
+    /**
+     * Whether this logger is a child of another logger.
+     *
+     * Convenience getter that returns `true` if this logger was created
+     * via {@link Logger#child}, `false` for root loggers.
+     *
+     * @type {boolean}
+     */
+    get isChild() {
+        return this.#parent !== null;
+    }
+
+    /**
      * Get the name of this logger.
      *
      * @type {string}
@@ -587,6 +647,8 @@ export default class Logger {
      * @param {string} [options.msgPrefix] - New message prefix
      * @param {boolean} [options.enabled] - New enabled state
      * @param {Handler[]} [options.handlers] - New handler set (replaces all)
+     * @param {function|null} [options.onChild] - New onChild callback
+     * @param {object|null} [options.formatters] - New formatters configuration
      */
     configure(options = {}) {
         if ("level" in options) {
@@ -626,6 +688,12 @@ export default class Logger {
                     this.addHandler(handler);
                 }
             }
+        }
+        if ("onChild" in options) {
+            this.#onChild = options.onChild;
+        }
+        if ("formatters" in options) {
+            this.#formatters = options.formatters;
         }
     }
 
