@@ -448,9 +448,28 @@ export default class Toast extends UIComponent {
      * Show the toast with entrance animation.
      * Adds 'toast-showing' CSS class to trigger the toast-show keyframe animation.
      * Resolves immediately if prefers-reduced-motion is enabled.
+     * Fires ToastEvent.SHOW after positioning and before animation begins.
+     *
+     * @param {Object} [options] - Configuration overrides applied before displaying
+     * @param {number} [options.duration] - Auto-dismiss duration in ms (0 = no auto-dismiss)
+     * @param {string} [options.position] - Screen position (e.g., 'top-right')
+     * @param {boolean} [options.closable] - Whether close button is shown
+     * @param {string} [options.actionText] - Action button label
+     * @param {boolean} [options.progressBar] - Whether progress bar is shown
+     * @param {boolean} [options.showIcon] - Whether type icon is shown
      * @returns {Promise<void>}
      */
-    show() {
+    show(options) {
+        // Apply config overrides before showing (API-06)
+        if (options) {
+            if (options.duration !== undefined) this.duration = options.duration;
+            if (options.position !== undefined) this.position = options.position;
+            if (options.closable !== undefined) this.closable = options.closable;
+            if (options.actionText !== undefined) this.actionText = options.actionText;
+            if (options.progressBar !== undefined) this.progressBar = options.progressBar;
+            if (options.showIcon !== undefined) this.showIcon = options.showIcon;
+        }
+
         return new Promise((resolve) => {
             // Place toast in the correct position container
             this._applyPosition(this.position);
@@ -461,6 +480,9 @@ export default class Toast extends UIComponent {
 
             this.classList.remove('toast-hiding');
             this.classList.add('toast-showing');
+
+            // API-08: Fire SHOW event when toast is positioned and visible
+            this.fireEvent(ToastEvent.SHOW, { toast: this });
 
             const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
             if (reducedMotion) {
@@ -481,6 +503,7 @@ export default class Toast extends UIComponent {
      * Adds 'toast-hiding' CSS class to trigger the toast-hide keyframe animation.
      * Resolves immediately if prefers-reduced-motion is enabled.
      * Removes the 'toast-hiding' class when animation completes.
+     * Fires ToastEvent.HIDE after the hide animation completes (API-09).
      * @returns {Promise<void>}
      */
     hide() {
@@ -492,12 +515,14 @@ export default class Toast extends UIComponent {
             const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
             if (reducedMotion) {
                 this.classList.remove('toast-hiding');
+                this.fireEvent(ToastEvent.HIDE, { toast: this });
                 resolve();
                 return;
             }
 
             this.addEventListener('animationend', () => {
                 this.classList.remove('toast-hiding');
+                this.fireEvent(ToastEvent.HIDE, { toast: this });
                 resolve();
             }, { once: true });
         });
