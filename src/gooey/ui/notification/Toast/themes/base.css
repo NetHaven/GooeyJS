@@ -115,7 +115,11 @@
     height: 100%;
     width: 100%;
     background: #005fcc;
-    transition: width linear;
+}
+
+/* Show progress bar when attribute is set */
+:host([progressbar="true"]) .toast-progress {
+    display: block;
 }
 
 /* ======== Type-Specific Color Schemes ======== */

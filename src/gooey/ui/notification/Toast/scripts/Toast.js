@@ -80,6 +80,9 @@ export default class Toast extends UIComponent {
         this._timerStartedAt = 0;
         this._timerRemaining = 0;
 
+        // Progress bar animation state
+        this._progressAnimation = null;
+
         // Make toast focusable for keyboard-triggered timer pause
         this.setAttribute('tabindex', '0');
 
@@ -145,7 +148,14 @@ export default class Toast extends UIComponent {
                 this._applyActionText(newValue);
                 break;
             case 'progressbar':
-                // Progress bar visibility handled by later phases
+                if (this._progressEl) {
+                    this._progressEl.style.display = this.progressBar ? '' : 'none';
+                }
+                // Cancel running animation if progressbar toggled off while animating
+                if (!this.progressBar && this._progressAnimation) {
+                    this._progressAnimation.cancel();
+                    this._progressAnimation = null;
+                }
                 break;
         }
     }
@@ -510,6 +520,33 @@ export default class Toast extends UIComponent {
         if (duration <= 0) return;
         this._timerRemaining = duration;
         this._resumeTimer();
+        this._startProgressBar();
+    }
+
+    /**
+     * Start the progress bar animation using the Web Animations API.
+     * Animates width from 100% to 0% over the toast duration.
+     * No-op if progressBar is false or duration is 0.
+     * @private
+     */
+    _startProgressBar() {
+        if (!this.progressBar || this.duration <= 0) return;
+        if (!this._progressBar) return;
+
+        // Ensure progress container is visible
+        this._progressEl.style.display = '';
+
+        this._progressAnimation = this._progressBar.animate(
+            [
+                { width: '100%' },
+                { width: '0%' }
+            ],
+            {
+                duration: this.duration,
+                easing: 'linear',
+                fill: 'forwards'
+            }
+        );
     }
 
     /**
@@ -525,6 +562,9 @@ export default class Toast extends UIComponent {
             this._timerRemaining = 0;
             this.hide();
         }, this._timerRemaining);
+        if (this._progressAnimation) {
+            this._progressAnimation.play();
+        }
     }
 
     /**
@@ -538,6 +578,9 @@ export default class Toast extends UIComponent {
         this._timerId = null;
         const elapsed = Date.now() - this._timerStartedAt;
         this._timerRemaining = Math.max(0, this._timerRemaining - elapsed);
+        if (this._progressAnimation) {
+            this._progressAnimation.pause();
+        }
     }
 
     /**
@@ -548,6 +591,10 @@ export default class Toast extends UIComponent {
         if (this._timerId !== null) {
             clearTimeout(this._timerId);
             this._timerId = null;
+        }
+        if (this._progressAnimation) {
+            this._progressAnimation.cancel();
+            this._progressAnimation = null;
         }
         this._timerRemaining = 0;
         this._timerStartedAt = 0;
