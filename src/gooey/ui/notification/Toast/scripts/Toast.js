@@ -283,6 +283,119 @@ export default class Toast extends UIComponent {
     }
 
     // ========================================
+    // Static Factory Methods
+    // ========================================
+
+    /**
+     * Internal factory: create, configure, and show a toast.
+     *
+     * Requires that the Toast custom element has been registered via
+     * `<gooey-component href="gooey/ui/notification/Toast">` before calling.
+     *
+     * @param {string} message - The toast message
+     * @param {string} type - ToastType constant (info, success, warning, error)
+     * @param {Object} options - Configuration overrides
+     * @returns {Toast} The created Toast instance
+     * @private
+     */
+    static _create(message, type, options) {
+        const toast = document.createElement('gooeyui-toast');
+        toast.message = message;
+        toast.type = type;
+
+        // Apply optional config overrides (type and message are NOT overridable)
+        if (options.duration !== undefined) toast.duration = options.duration;
+        if (options.position !== undefined) toast.position = options.position;
+        if (options.closable !== undefined) toast.closable = options.closable;
+        if (options.actionText !== undefined) toast.actionText = options.actionText;
+        if (options.progressBar !== undefined) toast.progressBar = options.progressBar;
+        if (options.showIcon !== undefined) toast.showIcon = options.showIcon;
+
+        toast.show();
+        return toast;
+    }
+
+    /**
+     * Create and show an INFO toast.
+     *
+     * Requires that the Toast custom element has been registered via
+     * `<gooey-component href="gooey/ui/notification/Toast">` before calling.
+     *
+     * @param {string} message - The toast message
+     * @param {Object} [options] - Configuration overrides
+     * @param {number} [options.duration] - Auto-dismiss duration in ms (0 = no auto-dismiss)
+     * @param {string} [options.position] - Screen position (e.g., 'top-right')
+     * @param {boolean} [options.closable] - Whether close button is shown
+     * @param {string} [options.actionText] - Action button label
+     * @param {boolean} [options.progressBar] - Whether progress bar is shown
+     * @param {boolean} [options.showIcon] - Whether type icon is shown
+     * @returns {Toast} The created Toast instance
+     */
+    static info(message, options = {}) {
+        return Toast._create(message, ToastType.INFO, options);
+    }
+
+    /**
+     * Create and show a SUCCESS toast.
+     *
+     * Requires that the Toast custom element has been registered via
+     * `<gooey-component href="gooey/ui/notification/Toast">` before calling.
+     *
+     * @param {string} message - The toast message
+     * @param {Object} [options] - Configuration overrides
+     * @param {number} [options.duration] - Auto-dismiss duration in ms (0 = no auto-dismiss)
+     * @param {string} [options.position] - Screen position (e.g., 'top-right')
+     * @param {boolean} [options.closable] - Whether close button is shown
+     * @param {string} [options.actionText] - Action button label
+     * @param {boolean} [options.progressBar] - Whether progress bar is shown
+     * @param {boolean} [options.showIcon] - Whether type icon is shown
+     * @returns {Toast} The created Toast instance
+     */
+    static success(message, options = {}) {
+        return Toast._create(message, ToastType.SUCCESS, options);
+    }
+
+    /**
+     * Create and show a WARNING toast.
+     *
+     * Requires that the Toast custom element has been registered via
+     * `<gooey-component href="gooey/ui/notification/Toast">` before calling.
+     *
+     * @param {string} message - The toast message
+     * @param {Object} [options] - Configuration overrides
+     * @param {number} [options.duration] - Auto-dismiss duration in ms (0 = no auto-dismiss)
+     * @param {string} [options.position] - Screen position (e.g., 'top-right')
+     * @param {boolean} [options.closable] - Whether close button is shown
+     * @param {string} [options.actionText] - Action button label
+     * @param {boolean} [options.progressBar] - Whether progress bar is shown
+     * @param {boolean} [options.showIcon] - Whether type icon is shown
+     * @returns {Toast} The created Toast instance
+     */
+    static warning(message, options = {}) {
+        return Toast._create(message, ToastType.WARNING, options);
+    }
+
+    /**
+     * Create and show an ERROR toast.
+     *
+     * Requires that the Toast custom element has been registered via
+     * `<gooey-component href="gooey/ui/notification/Toast">` before calling.
+     *
+     * @param {string} message - The toast message
+     * @param {Object} [options] - Configuration overrides
+     * @param {number} [options.duration] - Auto-dismiss duration in ms (0 = no auto-dismiss)
+     * @param {string} [options.position] - Screen position (e.g., 'top-right')
+     * @param {boolean} [options.closable] - Whether close button is shown
+     * @param {string} [options.actionText] - Action button label
+     * @param {boolean} [options.progressBar] - Whether progress bar is shown
+     * @param {boolean} [options.showIcon] - Whether type icon is shown
+     * @returns {Toast} The created Toast instance
+     */
+    static error(message, options = {}) {
+        return Toast._create(message, ToastType.ERROR, options);
+    }
+
+    // ========================================
     // Type Handling
     // ========================================
 
