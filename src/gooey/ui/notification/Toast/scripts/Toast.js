@@ -605,31 +605,13 @@ export default class Toast extends UIComponent {
     // ========================================
 
     /**
-     * Show the toast with entrance animation.
-     * Adds 'toast-showing' CSS class to trigger the toast-show keyframe animation.
-     * Resolves immediately if prefers-reduced-motion is enabled.
-     * Fires ToastEvent.SHOW after positioning and before animation begins.
-     *
-     * @param {Object} [options] - Configuration overrides applied before displaying
-     * @param {number} [options.duration] - Auto-dismiss duration in ms (0 = no auto-dismiss)
-     * @param {string} [options.position] - Screen position (e.g., 'top-right')
-     * @param {boolean} [options.closable] - Whether close button is shown
-     * @param {string} [options.actionText] - Action button label
-     * @param {boolean} [options.progressBar] - Whether progress bar is shown
-     * @param {boolean} [options.showIcon] - Whether type icon is shown
+     * Internal: perform the actual show animation and timer start.
+     * Separated from show() to allow ToastContainer dequeue to call it directly,
+     * bypassing duplicate/queue checks.
      * @returns {Promise<void>}
+     * @private
      */
-    show(options) {
-        // Apply config overrides before showing (API-06)
-        if (options) {
-            if (options.duration !== undefined) this.duration = options.duration;
-            if (options.position !== undefined) this.position = options.position;
-            if (options.closable !== undefined) this.closable = options.closable;
-            if (options.actionText !== undefined) this.actionText = options.actionText;
-            if (options.progressBar !== undefined) this.progressBar = options.progressBar;
-            if (options.showIcon !== undefined) this.showIcon = options.showIcon;
-        }
-
+    _performShow() {
         return new Promise((resolve) => {
             // Place toast in the correct position container
             this._applyPosition(this.position);
@@ -656,6 +638,45 @@ export default class Toast extends UIComponent {
                 resolve();
             }, { once: true });
         });
+    }
+
+    /**
+     * Show the toast with entrance animation.
+     * Applies optional config overrides, checks for duplicate suppression,
+     * requests queue permission, then delegates to _performShow().
+     *
+     * @param {Object} [options] - Configuration overrides applied before displaying
+     * @param {number} [options.duration] - Auto-dismiss duration in ms (0 = no auto-dismiss)
+     * @param {string} [options.position] - Screen position (e.g., 'top-right')
+     * @param {boolean} [options.closable] - Whether close button is shown
+     * @param {string} [options.actionText] - Action button label
+     * @param {boolean} [options.progressBar] - Whether progress bar is shown
+     * @param {boolean} [options.showIcon] - Whether type icon is shown
+     * @returns {Promise<void>}
+     */
+    show(options) {
+        // Apply config overrides before showing (API-06)
+        if (options) {
+            if (options.duration !== undefined) this.duration = options.duration;
+            if (options.position !== undefined) this.position = options.position;
+            if (options.closable !== undefined) this.closable = options.closable;
+            if (options.actionText !== undefined) this.actionText = options.actionText;
+            if (options.progressBar !== undefined) this.progressBar = options.progressBar;
+            if (options.showIcon !== undefined) this.showIcon = options.showIcon;
+        }
+
+        // Duplicate prevention: suppress if same message+type within window
+        if (ToastContainer._isDuplicate(this.message, this.type)) {
+            return Promise.resolve();
+        }
+
+        // Queue management: check if we can show now or must wait
+        if (!ToastContainer._requestShow(this)) {
+            // Queued -- will be shown later via _notifyHide -> _performShow
+            return Promise.resolve();
+        }
+
+        return this._performShow();
     }
 
     /**
