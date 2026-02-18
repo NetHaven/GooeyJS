@@ -4,6 +4,7 @@ import ToastEvent from '../../../../events/notification/ToastEvent.js';
 import ToastType from './ToastType.js';
 import ToastPosition from './ToastPosition.js';
 import ToastContainer from './ToastContainer.js';
+import Key from '../../../../io/Key.js';
 
 /**
  * Toast notification component.
@@ -49,6 +50,31 @@ export default class Toast extends UIComponent {
         this.addValidEvent(ToastEvent.ACTION);
         this.addValidEvent(ToastEvent.DISMISS);
 
+        // Close button click (INT-03): fire DISMISS then hide
+        this._closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (!this.disabled) {
+                this.fireEvent(ToastEvent.DISMISS, { source: 'close-button' });
+                this.hide();
+            }
+        });
+
+        // Action button click (INT-06): fire ACTION, let consumer decide dismissal
+        this._actionBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (!this.disabled) {
+                this.fireEvent(ToastEvent.ACTION, { actionText: this.actionText });
+            }
+        });
+
+        // Escape key (INT-07): dismiss focused, visible toast
+        HTMLElement.prototype.addEventListener.call(this, 'keydown', (e) => {
+            if (e.key === Key.ESCAPE && !this.disabled && this.classList.contains('toast-showing')) {
+                this.fireEvent(ToastEvent.DISMISS, { source: 'keyboard' });
+                this.hide();
+            }
+        });
+
         // Auto-hide timer state
         this._timerId = null;
         this._timerStartedAt = 0;
@@ -56,6 +82,13 @@ export default class Toast extends UIComponent {
 
         // Make toast focusable for keyboard-triggered timer pause
         this.setAttribute('tabindex', '0');
+
+        // Apply initial interactive state (prevents flash-of-incorrect-state)
+        this._applyClosable(this.closable);
+        this._applyShowIcon(this.showIcon);
+        if (this.hasAttribute('actiontext')) {
+            this._applyActionText(this.getAttribute('actiontext'));
+        }
 
         // Hover pause/resume (TIME-04, TIME-05)
         HTMLElement.prototype.addEventListener.call(this, 'mouseenter', () => {
@@ -97,7 +130,7 @@ export default class Toast extends UIComponent {
                 // Auto-dismiss timer handled by later phases
                 break;
             case 'closable':
-                // Close button visibility handled by later phases
+                this._applyClosable(this.closable);
                 break;
             case 'position':
                 // Only reposition if already in a toast container (i.e., currently shown)
@@ -106,10 +139,10 @@ export default class Toast extends UIComponent {
                 }
                 break;
             case 'showicon':
-                // Icon rendering handled by later phases
+                this._applyShowIcon(this.showIcon);
                 break;
             case 'actiontext':
-                // Action button text handled by later phases
+                this._applyActionText(newValue);
                 break;
             case 'progressbar':
                 // Progress bar visibility handled by later phases
@@ -291,6 +324,55 @@ export default class Toast extends UIComponent {
 
         // Append to the new position container
         container.appendChild(this);
+    }
+
+    // ========================================
+    // Interactive State
+    // ========================================
+
+    /**
+     * Show or hide the close button based on the closable attribute.
+     * When closable is true (default), the close button is visible.
+     * When closable is false, the close button is hidden.
+     * @param {boolean} closable - Whether the close button should be visible
+     * @private
+     */
+    _applyClosable(closable) {
+        if (this._closeBtn) {
+            this._closeBtn.style.display = closable ? '' : 'none';
+        }
+    }
+
+    /**
+     * Show or hide the action button and update its label text.
+     * When text is truthy, the button is shown with the given label.
+     * When text is falsy, the button is hidden and its label cleared.
+     * @param {string|null} text - The action button label, or null to hide
+     * @private
+     */
+    _applyActionText(text) {
+        if (this._actionBtn) {
+            if (text) {
+                this._actionBtn.textContent = text;
+                this._actionBtn.style.display = '';
+            } else {
+                this._actionBtn.textContent = '';
+                this._actionBtn.style.display = 'none';
+            }
+        }
+    }
+
+    /**
+     * Show or hide the type icon based on the showIcon attribute.
+     * When show is true (default), the icon is visible.
+     * When show is false, the icon is hidden.
+     * @param {boolean} show - Whether the icon should be visible
+     * @private
+     */
+    _applyShowIcon(show) {
+        if (this._iconEl) {
+            this._iconEl.style.display = show ? '' : 'none';
+        }
     }
 
     // ========================================
