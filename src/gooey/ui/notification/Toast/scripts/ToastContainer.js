@@ -38,6 +38,15 @@ export default class ToastContainer {
     /** @type {Array<HTMLElement>} FIFO queue of toasts waiting to be shown */
     static #queue = [];
 
+    /** @type {boolean} Whether duplicate prevention is enabled */
+    static #preventDuplicates = true;
+
+    /** @type {number} Duplicate suppression window in milliseconds */
+    static #duplicateWindow = 500;
+
+    /** @type {Map<string, number>} Duplicate tracking: "message|type" -> timestamp */
+    static #recentToasts = new Map();
+
     /**
      * Get or create a position-specific container div on document.body.
      * Returns the same div for repeated calls with the same position (singleton).
@@ -90,6 +99,7 @@ export default class ToastContainer {
         // Clear queue and tracking state
         ToastContainer.#activeToasts.clear();
         ToastContainer.#queue.length = 0;
+        ToastContainer.#recentToasts.clear();
 
         for (const [position, container] of ToastContainer.#containers) {
             if (container.parentNode) {
@@ -162,6 +172,79 @@ export default class ToastContainer {
             ToastContainer.#activeToasts.add(next);
             next._performShow();
         }
+    }
+
+    // ========================================
+    // Duplicate Prevention API
+    // ========================================
+
+    /**
+     * Enable or disable duplicate toast prevention.
+     * When enabled, toasts with the same message+type within the duplicate
+     * window are suppressed.
+     * @param {boolean} enabled
+     */
+    static setPreventDuplicates(enabled) {
+        ToastContainer.#preventDuplicates = !!enabled;
+    }
+
+    /**
+     * Set the duplicate suppression window in milliseconds.
+     * Toasts with the same message+type within this window are suppressed.
+     * @param {number} ms - Window in milliseconds (must be >= 0)
+     */
+    static setDuplicateWindow(ms) {
+        ToastContainer.#duplicateWindow = Math.max(0, ms);
+    }
+
+    /**
+     * Check whether a toast with the given message and type is a duplicate
+     * of one recently shown. Uses a time-window approach: if the same
+     * message+type key was shown within the duplicate window, returns true.
+     *
+     * Also records the current toast for future duplicate checks.
+     * Stale entries are cleaned lazily during this check.
+     *
+     * @param {string} message - The toast message
+     * @param {string} type - The toast type
+     * @returns {boolean} true if this is a duplicate that should be suppressed
+     */
+    static _isDuplicate(message, type) {
+        if (!ToastContainer.#preventDuplicates) return false;
+
+        const key = `${message}|${type}`;
+        const lastShown = ToastContainer.#recentToasts.get(key);
+        const now = Date.now();
+
+        if (lastShown && (now - lastShown) < ToastContainer.#duplicateWindow) {
+            return true;
+        }
+
+        ToastContainer.#recentToasts.set(key, now);
+        return false;
+    }
+
+    // ========================================
+    // Bulk Operations
+    // ========================================
+
+    /**
+     * Remove all visible and queued toasts immediately.
+     * Calls hide() on each active toast (which triggers animation and cleanup).
+     * Clears the queue, active set, and duplicate tracking.
+     */
+    static clear() {
+        // Hide all visible toasts (triggers cleanup via hide())
+        for (const toast of ToastContainer.#activeToasts) {
+            toast.hide();
+        }
+        ToastContainer.#activeToasts.clear();
+
+        // Clear queued toasts (never shown, no cleanup needed)
+        ToastContainer.#queue.length = 0;
+
+        // Clear duplicate tracking
+        ToastContainer.#recentToasts.clear();
     }
 
     /**
