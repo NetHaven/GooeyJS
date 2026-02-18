@@ -66,7 +66,7 @@ export default class Toast extends UIComponent {
                 }
                 break;
             case 'type':
-                // Type-specific styling handled by later phases
+                this._applyType(newValue);
                 break;
             case 'duration':
                 // Auto-dismiss timer handled by later phases
@@ -204,5 +204,74 @@ export default class Toast extends UIComponent {
 
     set progressBar(val) {
         this.setAttribute("progressbar", val ? "true" : "false");
+    }
+
+    // ========================================
+    // Type Handling
+    // ========================================
+
+    /**
+     * Apply type-specific side effects.
+     * CSS :host([type="..."]) handles colors, borders, and icon content automatically.
+     * This method exists for JS-side effects (future phases: ARIA role changes, etc.).
+     * @param {string} type - The toast type value
+     * @private
+     */
+    _applyType(type) {
+        // CSS attribute selectors handle all visual styling automatically.
+        // This method is a hook for future phases (e.g., Phase 18 ARIA role updates).
+    }
+
+    // ========================================
+    // Show / Hide Animations
+    // ========================================
+
+    /**
+     * Show the toast with entrance animation.
+     * Adds 'toast-showing' CSS class to trigger the toast-show keyframe animation.
+     * Resolves immediately if prefers-reduced-motion is enabled.
+     * @returns {Promise<void>}
+     */
+    show() {
+        return new Promise((resolve) => {
+            this.classList.remove('toast-hiding');
+            this.classList.add('toast-showing');
+
+            const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            if (reducedMotion) {
+                resolve();
+                return;
+            }
+
+            this.addEventListener('animationend', () => {
+                resolve();
+            }, { once: true });
+        });
+    }
+
+    /**
+     * Hide the toast with exit animation.
+     * Adds 'toast-hiding' CSS class to trigger the toast-hide keyframe animation.
+     * Resolves immediately if prefers-reduced-motion is enabled.
+     * Removes the 'toast-hiding' class when animation completes.
+     * @returns {Promise<void>}
+     */
+    hide() {
+        return new Promise((resolve) => {
+            this.classList.remove('toast-showing');
+            this.classList.add('toast-hiding');
+
+            const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            if (reducedMotion) {
+                this.classList.remove('toast-hiding');
+                resolve();
+                return;
+            }
+
+            this.addEventListener('animationend', () => {
+                this.classList.remove('toast-hiding');
+                resolve();
+            }, { once: true });
+        });
     }
 }
