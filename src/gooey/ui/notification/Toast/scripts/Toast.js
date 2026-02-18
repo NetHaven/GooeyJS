@@ -3,6 +3,7 @@ import Template from '../../../../util/Template.js';
 import ToastEvent from '../../../../events/notification/ToastEvent.js';
 import ToastType from './ToastType.js';
 import ToastPosition from './ToastPosition.js';
+import ToastContainer from './ToastContainer.js';
 
 /**
  * Toast notification component.
@@ -75,7 +76,10 @@ export default class Toast extends UIComponent {
                 // Close button visibility handled by later phases
                 break;
             case 'position':
-                // Positioning handled by later phases
+                // Only reposition if already in a toast container (i.e., currently shown)
+                if (this.parentNode && this.parentNode.classList.contains('gooey-toast-container')) {
+                    this._applyPosition(newValue);
+                }
                 break;
             case 'showicon':
                 // Icon rendering handled by later phases
@@ -223,6 +227,34 @@ export default class Toast extends UIComponent {
     }
 
     // ========================================
+    // Positioning
+    // ========================================
+
+    /**
+     * Place this toast element into the correct viewport-positioned container.
+     * If already in a different container (position change), removes from old first.
+     * Idempotent: no-op if already in the correct container.
+     * @param {string} position - A ToastPosition value (e.g., "top-right")
+     * @private
+     */
+    _applyPosition(position) {
+        const container = ToastContainer.getContainer(position);
+
+        // Already in the correct container -- no-op
+        if (this.parentNode === container) {
+            return;
+        }
+
+        // Remove from current parent if present
+        if (this.parentNode) {
+            this.parentNode.removeChild(this);
+        }
+
+        // Append to the new position container
+        container.appendChild(this);
+    }
+
+    // ========================================
     // Show / Hide Animations
     // ========================================
 
@@ -234,6 +266,9 @@ export default class Toast extends UIComponent {
      */
     show() {
         return new Promise((resolve) => {
+            // Place toast in the correct position container
+            this._applyPosition(this.position);
+
             this.classList.remove('toast-hiding');
             this.classList.add('toast-showing');
 
