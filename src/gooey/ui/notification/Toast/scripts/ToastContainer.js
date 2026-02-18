@@ -29,6 +29,15 @@ export default class ToastContainer {
         ToastPosition.BOTTOM_LEFT, ToastPosition.BOTTOM_CENTER, ToastPosition.BOTTOM_RIGHT
     ]);
 
+    /** @type {number} Maximum simultaneously visible toasts */
+    static #maxVisible = 5;
+
+    /** @type {Set<HTMLElement>} Currently visible toast instances */
+    static #activeToasts = new Set();
+
+    /** @type {Array<HTMLElement>} FIFO queue of toasts waiting to be shown */
+    static #queue = [];
+
     /**
      * Get or create a position-specific container div on document.body.
      * Returns the same div for repeated calls with the same position (singleton).
@@ -78,6 +87,10 @@ export default class ToastContainer {
      * Clears internal state. Primarily for testing and full application teardown.
      */
     static destroy() {
+        // Clear queue and tracking state
+        ToastContainer.#activeToasts.clear();
+        ToastContainer.#queue.length = 0;
+
         for (const [position, container] of ToastContainer.#containers) {
             if (container.parentNode) {
                 container.parentNode.removeChild(container);
@@ -88,6 +101,66 @@ export default class ToastContainer {
         if (ToastContainer.#liveRegion && ToastContainer.#liveRegion.parentNode) {
             ToastContainer.#liveRegion.parentNode.removeChild(ToastContainer.#liveRegion);
             ToastContainer.#liveRegion = null;
+        }
+    }
+
+    // ========================================
+    // Queue Management API
+    // ========================================
+
+    /**
+     * Set the maximum number of simultaneously visible toasts.
+     * Toasts beyond this limit are queued and shown as visible ones hide.
+     * @param {number} max - Maximum visible toasts (must be >= 1)
+     */
+    static setMaxVisible(max) {
+        ToastContainer.#maxVisible = Math.max(1, max);
+    }
+
+    /**
+     * Get the current maximum visible toast limit.
+     * @returns {number}
+     */
+    static getMaxVisible() {
+        return ToastContainer.#maxVisible;
+    }
+
+    /**
+     * Request permission to show a toast. If under the max visible limit,
+     * the toast is registered as active and allowed to show. If at the limit,
+     * the toast is queued for later display (FIFO).
+     *
+     * Called by Toast.show() before positioning.
+     *
+     * @param {HTMLElement} toast - The toast instance requesting to show
+     * @returns {boolean} true if the toast can show now; false if queued
+     */
+    static _requestShow(toast) {
+        if (ToastContainer.#activeToasts.size < ToastContainer.#maxVisible) {
+            ToastContainer.#activeToasts.add(toast);
+            return true;
+        }
+        ToastContainer.#queue.push(toast);
+        return false;
+    }
+
+    /**
+     * Notify that a toast has hidden. Removes it from the active set and
+     * dequeues the next waiting toast if any (FIFO order).
+     *
+     * Dequeued toasts are added to the active set here and shown via
+     * _performShow() directly, bypassing duplicate/queue re-checks.
+     *
+     * Called by Toast after hide event fires and before DOM removal.
+     *
+     * @param {HTMLElement} toast - The toast instance that just hid
+     */
+    static _notifyHide(toast) {
+        ToastContainer.#activeToasts.delete(toast);
+        if (ToastContainer.#queue.length > 0) {
+            const next = ToastContainer.#queue.shift();
+            ToastContainer.#activeToasts.add(next);
+            next._performShow();
         }
     }
 
