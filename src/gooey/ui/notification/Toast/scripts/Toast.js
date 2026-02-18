@@ -118,6 +118,21 @@ export default class Toast extends UIComponent {
     }
 
     // ========================================
+    // Lifecycle
+    // ========================================
+
+    /**
+     * Clean up timer when element is removed from the DOM.
+     * Prevents memory leaks from pending setTimeout callbacks.
+     */
+    disconnectedCallback() {
+        this._clearTimer();
+        if (super.disconnectedCallback) {
+            super.disconnectedCallback();
+        }
+    }
+
+    // ========================================
     // Getter / Setter pairs
     // ========================================
 
@@ -357,11 +372,13 @@ export default class Toast extends UIComponent {
 
             const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
             if (reducedMotion) {
+                this._startTimer();
                 resolve();
                 return;
             }
 
             this.addEventListener('animationend', () => {
+                this._startTimer();
                 resolve();
             }, { once: true });
         });
@@ -376,6 +393,7 @@ export default class Toast extends UIComponent {
      */
     hide() {
         return new Promise((resolve) => {
+            this._clearTimer();
             this.classList.remove('toast-showing');
             this.classList.add('toast-hiding');
 
