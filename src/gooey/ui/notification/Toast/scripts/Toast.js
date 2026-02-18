@@ -685,6 +685,7 @@ export default class Toast extends UIComponent {
      * Resolves immediately if prefers-reduced-motion is enabled.
      * Removes the 'toast-hiding' class when animation completes.
      * Fires ToastEvent.HIDE after the hide animation completes (API-09).
+     * Notifies ToastContainer for queue dequeue, then removes from DOM.
      * @returns {Promise<void>}
      */
     hide() {
@@ -697,6 +698,11 @@ export default class Toast extends UIComponent {
             if (reducedMotion) {
                 this.classList.remove('toast-hiding');
                 this.fireEvent(ToastEvent.HIDE, { toast: this });
+                // Notify container for queue dequeue, then remove from DOM
+                ToastContainer._notifyHide(this);
+                if (this.parentNode) {
+                    this.parentNode.removeChild(this);
+                }
                 resolve();
                 return;
             }
@@ -704,6 +710,11 @@ export default class Toast extends UIComponent {
             this.addEventListener('animationend', () => {
                 this.classList.remove('toast-hiding');
                 this.fireEvent(ToastEvent.HIDE, { toast: this });
+                // Notify container for queue dequeue, then remove from DOM
+                ToastContainer._notifyHide(this);
+                if (this.parentNode) {
+                    this.parentNode.removeChild(this);
+                }
                 resolve();
             }, { once: true });
         });
