@@ -109,4 +109,5 @@ html, body, gooeyui-apppanel {
     --gooey-z-modal-backdrop: 1400;
     --gooey-z-window: 1500;
     --gooey-z-modal-window: 1600;
+    --gooey-z-toast: 1700;
 }
