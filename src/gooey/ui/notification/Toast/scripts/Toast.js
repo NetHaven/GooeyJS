@@ -295,7 +295,13 @@ export default class Toast extends UIComponent {
      */
     _applyType(type) {
         // CSS attribute selectors handle all visual styling automatically.
-        // This method is a hook for future phases (e.g., Phase 18 ARIA role updates).
+        // Set ARIA role based on type: role="alert" for ERROR (assertive),
+        // role="status" for all others (polite). Implicit aria-live values
+        // are carried by the roles (no explicit aria-live/aria-atomic needed).
+        if (this._containerEl) {
+            const role = (type === ToastType.ERROR) ? 'alert' : 'status';
+            this._containerEl.setAttribute('role', role);
+        }
     }
 
     // ========================================
@@ -448,6 +454,10 @@ export default class Toast extends UIComponent {
         return new Promise((resolve) => {
             // Place toast in the correct position container
             this._applyPosition(this.position);
+
+            // Screen reader announcement via light DOM live region (A11Y-08, INTG-02)
+            const priority = this.type === ToastType.ERROR ? 'assertive' : 'polite';
+            UIComponent.announce(this.message, priority);
 
             this.classList.remove('toast-hiding');
             this.classList.add('toast-showing');
