@@ -1,0 +1,32 @@
+{
+  "MetaGooVersion": "1.0",
+  "name": "Toast",
+  "prefix": "gooeyui",
+  "tagName": "toast",
+  "script": "Toast.js",
+  "templates": [
+    { "id": "ui-Toast", "file": "Toast.html" }
+  ],
+  "themes": {
+    "default": "base",
+    "available": ["base"]
+  },
+  "attributes": {
+    "message": { "type": "STRING", "default": "" },
+    "type": { "type": "ENUM", "default": "info", "values": ["info", "success", "warning", "error"] },
+    "duration": { "type": "NUMBER", "default": 5000 },
+    "closable": { "type": "BOOLEAN", "default": true },
+    "position": { "type": "ENUM", "default": "top-right", "values": ["top-left", "top-center", "top-right", "bottom-left", "bottom-center", "bottom-right"] },
+    "showicon": { "type": "BOOLEAN", "default": true },
+    "actiontext": { "type": "STRING", "default": null },
+    "progressbar": { "type": "BOOLEAN", "default": false },
+    "draggable": { "type": "BOOLEAN", "default": false },
+    "droppable": { "type": "BOOLEAN", "default": false },
+    "dropzone": { "type": "STRING", "default": null },
+    "height": { "type": "STRING", "default": null },
+    "width": { "type": "STRING", "default": null },
+    "tooltip": { "type": "STRING", "default": null },
+    "visible": { "type": "BOOLEAN", "default": true },
+    "disabled": { "type": "BOOLEAN", "default": false }
+  }
+}
