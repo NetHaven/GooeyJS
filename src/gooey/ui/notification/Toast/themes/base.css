@@ -117,3 +117,147 @@
     background: #0078d7;
     transition: width linear;
 }
+
+/* ======== Type-Specific Color Schemes ======== */
+
+/* INFO (default): applied both when type="info" is set and when no type attribute is present */
+:host([type="info"]) .toast-container,
+.toast-container {
+    border-left-color: #0078d7;
+}
+
+:host([type="info"]) .toast-icon,
+.toast-icon {
+    color: #0078d7;
+}
+
+:host([type="info"]) .toast-progress-bar,
+.toast-progress-bar {
+    background-color: #0078d7;
+}
+
+:host([type="info"]) .toast-action-btn,
+.toast-action-btn {
+    color: #0078d7;
+}
+
+/* SUCCESS */
+:host([type="success"]) .toast-container {
+    border-left-color: #107c10;
+}
+
+:host([type="success"]) .toast-icon {
+    color: #107c10;
+}
+
+:host([type="success"]) .toast-progress-bar {
+    background-color: #107c10;
+}
+
+:host([type="success"]) .toast-action-btn {
+    color: #107c10;
+}
+
+/* WARNING */
+:host([type="warning"]) .toast-container {
+    border-left-color: #ff8c00;
+}
+
+:host([type="warning"]) .toast-icon {
+    color: #ff8c00;
+}
+
+:host([type="warning"]) .toast-progress-bar {
+    background-color: #ff8c00;
+}
+
+:host([type="warning"]) .toast-action-btn {
+    color: #ff8c00;
+}
+
+/* ERROR */
+:host([type="error"]) .toast-container {
+    border-left-color: #d13438;
+}
+
+:host([type="error"]) .toast-icon {
+    color: #d13438;
+}
+
+:host([type="error"]) .toast-progress-bar {
+    background-color: #d13438;
+}
+
+:host([type="error"]) .toast-action-btn {
+    color: #d13438;
+}
+
+/* ======== Type-Specific Icons ======== */
+
+/* INFO (default): applied both when type="info" is set and when no type attribute is present */
+:host([type="info"]) .toast-icon::before,
+.toast-icon::before {
+    content: '\2139';
+    font-style: normal;
+}
+
+/* SUCCESS */
+:host([type="success"]) .toast-icon::before {
+    content: '\2714';
+}
+
+/* WARNING */
+:host([type="warning"]) .toast-icon::before {
+    content: '\26A0';
+}
+
+/* ERROR */
+:host([type="error"]) .toast-icon::before {
+    content: '\2716';
+}
+
+/* ======== Show / Hide Animations ======== */
+
+@keyframes toast-show {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes toast-hide {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+}
+
+:host(.toast-showing) {
+    animation: toast-show 0.3s ease-out forwards;
+}
+
+:host(.toast-hiding) {
+    animation: toast-hide 0.3s ease-in forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    :host(.toast-showing) {
+        animation: none;
+        opacity: 1;
+        transform: none;
+    }
+
+    :host(.toast-hiding) {
+        animation: none;
+        opacity: 0;
+        transform: none;
+    }
+}
