@@ -48,6 +48,30 @@ export default class Toast extends UIComponent {
         this.addValidEvent(ToastEvent.HIDE);
         this.addValidEvent(ToastEvent.ACTION);
         this.addValidEvent(ToastEvent.DISMISS);
+
+        // Auto-hide timer state
+        this._timerId = null;
+        this._timerStartedAt = 0;
+        this._timerRemaining = 0;
+
+        // Make toast focusable for keyboard-triggered timer pause
+        this.setAttribute('tabindex', '0');
+
+        // Hover pause/resume (TIME-04, TIME-05)
+        HTMLElement.prototype.addEventListener.call(this, 'mouseenter', () => {
+            this._pauseTimer();
+        });
+        HTMLElement.prototype.addEventListener.call(this, 'mouseleave', () => {
+            this._resumeTimer();
+        });
+
+        // Focus pause/resume (TIME-06, TIME-07)
+        HTMLElement.prototype.addEventListener.call(this, 'focus', () => {
+            this._pauseTimer();
+        });
+        HTMLElement.prototype.addEventListener.call(this, 'blur', () => {
+            this._resumeTimer();
+        });
     }
 
     // ========================================
@@ -252,6 +276,65 @@ export default class Toast extends UIComponent {
 
         // Append to the new position container
         container.appendChild(this);
+    }
+
+    // ========================================
+    // Auto-Hide Timer
+    // ========================================
+
+    /**
+     * Start the auto-hide timer. Called after show() animation completes.
+     * Clears any existing timer first to prevent stacking.
+     * Skipped entirely if duration is 0 (manual close only).
+     * @private
+     */
+    _startTimer() {
+        this._clearTimer();
+        const duration = this.duration;
+        if (duration <= 0) return;
+        this._timerRemaining = duration;
+        this._resumeTimer();
+    }
+
+    /**
+     * Resume the auto-hide timer with the remaining time.
+     * No-op if remaining time is 0 or less.
+     * @private
+     */
+    _resumeTimer() {
+        if (this._timerRemaining <= 0) return;
+        this._timerStartedAt = Date.now();
+        this._timerId = setTimeout(() => {
+            this._timerId = null;
+            this._timerRemaining = 0;
+            this.hide();
+        }, this._timerRemaining);
+    }
+
+    /**
+     * Pause the auto-hide timer, tracking remaining time.
+     * No-op if no timer is running.
+     * @private
+     */
+    _pauseTimer() {
+        if (this._timerId === null) return;
+        clearTimeout(this._timerId);
+        this._timerId = null;
+        const elapsed = Date.now() - this._timerStartedAt;
+        this._timerRemaining = Math.max(0, this._timerRemaining - elapsed);
+    }
+
+    /**
+     * Clear the auto-hide timer completely. Used during hide() and cleanup.
+     * @private
+     */
+    _clearTimer() {
+        if (this._timerId !== null) {
+            clearTimeout(this._timerId);
+            this._timerId = null;
+        }
+        this._timerRemaining = 0;
+        this._timerStartedAt = 0;
     }
 
     // ========================================
