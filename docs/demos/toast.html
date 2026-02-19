@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Toast Demo - GooeyJS</title>
+  <script type="module" src="../../src/GooeyJS.js"></script>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem;
+      background: #fafafa;
+      color: #222;
+      line-height: 1.5;
+    }
+
+    h1 {
+      margin: 0 0 0.25rem 0;
+      font-size: 1.75rem;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      margin: 0 0 2rem 0;
+      color: #666;
+      font-size: 0.95rem;
+    }
+
+    h2 {
+      margin-top: 0;
+      margin-bottom: 1rem;
+      font-size: 1.15rem;
+      font-weight: 600;
+    }
+
+    .demo-section {
+      margin-bottom: 2rem;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 1.5rem;
+      background: #fff;
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    button {
+      padding: 8px 16px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      cursor: pointer;
+      font-size: 14px;
+      font-family: inherit;
+      background: #fff;
+      transition: opacity 0.15s;
+    }
+
+    button:hover {
+      opacity: 0.85;
+    }
+
+    button:active {
+      opacity: 0.7;
+    }
+
+    .btn-info {
+      background: #005fcc;
+      color: #fff;
+      border-color: #005fcc;
+    }
+
+    .btn-success {
+      background: #1a7f37;
+      color: #fff;
+      border-color: #1a7f37;
+    }
+
+    .btn-warning {
+      background: #d08700;
+      color: #fff;
+      border-color: #d08700;
+    }
+
+    .btn-error {
+      background: #cf222e;
+      color: #fff;
+      border-color: #cf222e;
+    }
+
+    .btn-dark {
+      background: #2d2d2d;
+      color: #fff;
+      border-color: #2d2d2d;
+    }
+
+    .btn-active {
+      outline: 3px solid #005fcc;
+      outline-offset: 2px;
+    }
+
+    select, input[type="number"], input[type="text"] {
+      padding: 6px 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+      font-family: inherit;
+    }
+
+    select {
+      min-width: 160px;
+    }
+
+    input[type="number"] {
+      width: 120px;
+    }
+
+    input[type="text"] {
+      width: 180px;
+    }
+
+    label {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 14px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .option-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .option-label {
+      font-size: 12px;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    #event-log {
+      background: #f5f5f5;
+      padding: 12px;
+      border-radius: 4px;
+      font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+      font-size: 12px;
+      max-height: 200px;
+      overflow-y: auto;
+      margin-top: 12px;
+      white-space: pre-wrap;
+      word-break: break-all;
+      min-height: 60px;
+      color: #444;
+    }
+
+    #event-log:empty::before {
+      content: "Event log will appear here...";
+      color: #999;
+      font-style: italic;
+    }
+
+    .event-entry {
+      margin-bottom: 2px;
+    }
+
+    .event-show { color: #005fcc; }
+    .event-hide { color: #666; }
+    .event-action { color: #1a7f37; }
+    .event-dismiss { color: #cf222e; }
+
+    .section-description {
+      margin: 0 0 12px 0;
+      font-size: 13px;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <gooey-component href="../../src/gooey/ui/notification/Toast"></gooey-component>
+
+  <h1>Toast Component Demo</h1>
+  <p class="subtitle">Interactive demo for GooeyJS Toast notifications</p>
+
+  <!-- Section 1: Toast Types -->
+  <div class="demo-section">
+    <h2>Toast Types</h2>
+    <p class="section-description">Click a button to show a toast with the corresponding severity type.</p>
+    <div class="button-row">
+      <button class="btn-info" id="btn-type-info">INFO</button>
+      <button class="btn-success" id="btn-type-success">SUCCESS</button>
+      <button class="btn-warning" id="btn-type-warning">WARNING</button>
+      <button class="btn-error" id="btn-type-error">ERROR</button>
+    </div>
+  </div>
+
+  <!-- Section 2: Positions -->
+  <div class="demo-section">
+    <h2>Positions</h2>
+    <p class="section-description">Select a viewport position and show a toast at that location.</p>
+    <div class="button-row">
+      <select id="position-select">
+        <option value="top-left">top-left</option>
+        <option value="top-center">top-center</option>
+        <option value="top-right" selected>top-right</option>
+        <option value="bottom-left">bottom-left</option>
+        <option value="bottom-center">bottom-center</option>
+        <option value="bottom-right">bottom-right</option>
+      </select>
+      <button id="btn-position">Show at Position</button>
+    </div>
+  </div>
+
+  <!-- Section 3: Options -->
+  <div class="demo-section">
+    <h2>Options</h2>
+    <p class="section-description">Configure toast options and click "Show Custom Toast" to see the result.</p>
+    <div class="options-grid">
+      <div class="option-group">
+        <span class="option-label">Duration (ms)</span>
+        <input type="number" id="opt-duration" value="5000" min="0" step="500" placeholder="Duration (ms)">
+      </div>
+      <div class="option-group">
+        <span class="option-label">Action Text</span>
+        <input type="text" id="opt-actiontext" placeholder="Action text (optional)">
+      </div>
+      <div class="option-group">
+        <span class="option-label">Checkboxes</span>
+        <label><input type="checkbox" id="opt-closable" checked> Closable</label>
+        <label><input type="checkbox" id="opt-progressbar"> Progress Bar</label>
+        <label><input type="checkbox" id="opt-showicon" checked> Show Icon</label>
+      </div>
+    </div>
+    <div class="button-row">
+      <button class="btn-info" id="btn-custom">Show Custom Toast</button>
+    </div>
+  </div>
+
+  <!-- Section 4: Theme Switching -->
+  <div class="demo-section">
+    <h2>Theme Switching</h2>
+    <p class="section-description">Select a theme. New toasts created by any button above will use the selected theme.</p>
+    <div class="button-row">
+      <button id="btn-theme-base" class="btn-active">Base Theme</button>
+      <button id="btn-theme-dark" class="btn-dark">Dark Theme</button>
+    </div>
+  </div>
+
+  <!-- Section 5: Queue & Clear -->
+  <div class="demo-section">
+    <h2>Queue &amp; Clear</h2>
+    <p class="section-description">Test queue management by firing many toasts at once, or clear all active toasts.</p>
+    <div class="button-row">
+      <button id="btn-rapid">Rapid Fire (10 toasts)</button>
+      <button id="btn-clear">Clear All</button>
+    </div>
+  </div>
+
+  <!-- Section 6: Events -->
+  <div class="demo-section">
+    <h2>Events</h2>
+    <p class="section-description">Create a toast with an action button and observe the events it fires.</p>
+    <div class="button-row">
+      <button id="btn-events">Show with Events</button>
+      <button id="btn-clear-log" style="font-size:12px;">Clear Log</button>
+    </div>
+    <div id="event-log"></div>
+  </div>
+
+  <script type="module">
+    import Toast from '../../src/gooey/ui/notification/Toast/scripts/Toast.js';
+    import ToastType from '../../src/gooey/ui/notification/Toast/scripts/ToastType.js';
+    import ToastPosition from '../../src/gooey/ui/notification/Toast/scripts/ToastPosition.js';
+    import ToastEvent from '../../src/gooey/events/notification/ToastEvent.js';
+    import ToastContainer from '../../src/gooey/ui/notification/Toast/scripts/ToastContainer.js';
+
+    // Current theme selection
+    let selectedTheme = 'base';
+
+    // Helper: apply theme to a toast instance
+    function applyTheme(toast) {
+      if (selectedTheme !== 'base' && toast && typeof toast.switchTheme === 'function') {
+        toast.switchTheme(selectedTheme);
+      }
+      return toast;
+    }
+
+    // ---- Section 1: Toast Types ----
+    document.getElementById('btn-type-info').addEventListener('click', () => {
+      applyTheme(Toast.info('This is an info notification'));
+    });
+
+    document.getElementById('btn-type-success').addEventListener('click', () => {
+      applyTheme(Toast.success('Operation completed successfully'));
+    });
+
+    document.getElementById('btn-type-warning').addEventListener('click', () => {
+      applyTheme(Toast.warning('Please check your connection'));
+    });
+
+    document.getElementById('btn-type-error').addEventListener('click', () => {
+      applyTheme(Toast.error('Something went wrong'));
+    });
+
+    // ---- Section 2: Positions ----
+    document.getElementById('btn-position').addEventListener('click', () => {
+      const position = document.getElementById('position-select').value;
+      applyTheme(Toast.info('Toast at ' + position, { position }));
+    });
+
+    // ---- Section 3: Options ----
+    document.getElementById('btn-custom').addEventListener('click', () => {
+      const duration = parseInt(document.getElementById('opt-duration').value, 10) || 0;
+      const closable = document.getElementById('opt-closable').checked;
+      const progressBar = document.getElementById('opt-progressbar').checked;
+      const showIcon = document.getElementById('opt-showicon').checked;
+      const actionText = document.getElementById('opt-actiontext').value || undefined;
+      const position = document.getElementById('position-select').value;
+
+      const options = { duration, closable, progressBar, showIcon, position };
+      if (actionText) options.actionText = actionText;
+
+      const toast = Toast.info('Custom configured toast', options);
+      applyTheme(toast);
+    });
+
+    // ---- Section 4: Theme Switching ----
+    const btnBase = document.getElementById('btn-theme-base');
+    const btnDark = document.getElementById('btn-theme-dark');
+
+    btnBase.addEventListener('click', () => {
+      selectedTheme = 'base';
+      btnBase.classList.add('btn-active');
+      btnDark.classList.remove('btn-active');
+    });
+
+    btnDark.addEventListener('click', () => {
+      selectedTheme = 'dark';
+      btnDark.classList.add('btn-active');
+      btnBase.classList.remove('btn-active');
+    });
+
+    // ---- Section 5: Queue & Clear ----
+    const rapidMessages = [
+      'Message 1 of 10', 'Message 2 of 10', 'Message 3 of 10',
+      'Message 4 of 10', 'Message 5 of 10', 'Message 6 of 10',
+      'Message 7 of 10', 'Message 8 of 10', 'Message 9 of 10',
+      'Message 10 of 10'
+    ];
+    const rapidTypes = [Toast.info, Toast.success, Toast.warning, Toast.error];
+
+    document.getElementById('btn-rapid').addEventListener('click', () => {
+      rapidMessages.forEach((msg, i) => {
+        const method = rapidTypes[i % rapidTypes.length].bind(Toast);
+        applyTheme(method(msg, { duration: 3000 }));
+      });
+    });
+
+    document.getElementById('btn-clear').addEventListener('click', () => {
+      ToastContainer.clear();
+    });
+
+    // ---- Section 6: Events ----
+    const eventLog = document.getElementById('event-log');
+
+    function logEvent(eventName, message) {
+      const time = new Date().toLocaleTimeString('en-US', { hour12: false, fractionalSecondDigits: 3 });
+      const entry = document.createElement('div');
+      entry.className = 'event-entry event-' + eventName;
+      entry.textContent = '[' + time + '] ' + eventName.toUpperCase() + ': ' + message;
+      eventLog.appendChild(entry);
+      eventLog.scrollTop = eventLog.scrollHeight;
+    }
+
+    document.getElementById('btn-events').addEventListener('click', () => {
+      const toast = Toast.info('Click the action button or close me', {
+        actionText: 'Action',
+        closable: true,
+        duration: 0
+      });
+      applyTheme(toast);
+
+      toast.addEventListener(ToastEvent.SHOW, () => {
+        logEvent('show', 'Toast appeared');
+      });
+
+      toast.addEventListener(ToastEvent.HIDE, () => {
+        logEvent('hide', 'Toast hidden');
+      });
+
+      toast.addEventListener(ToastEvent.ACTION, () => {
+        logEvent('action', 'Action button clicked');
+      });
+
+      toast.addEventListener(ToastEvent.DISMISS, () => {
+        logEvent('dismiss', 'Toast dismissed via close button');
+      });
+    });
+
+    document.getElementById('btn-clear-log').addEventListener('click', () => {
+      eventLog.innerHTML = '';
+    });
+  </script>
+</body>
+</html>
