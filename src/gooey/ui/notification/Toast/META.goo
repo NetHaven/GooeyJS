@@ -9,7 +9,7 @@
   ],
   "themes": {
     "default": "base",
-    "available": ["base"]
+    "available": ["base", "dark"]
   },
   "attributes": {
     "message": { "type": "STRING", "default": "" },
