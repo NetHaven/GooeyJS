@@ -1,0 +1,298 @@
+/* Toast dark theme */
+
+:host {
+    display: block;
+    position: relative;
+    pointer-events: auto;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 14px;
+    max-width: 400px;
+    min-width: 280px;
+    box-sizing: border-box;
+}
+
+:host([visible="false"]) {
+    display: none;
+}
+
+:host([disabled]) {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.toast-container {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    padding: 12px 16px;
+    background: #2d2d2d;
+    border: 1px solid #505050;
+    border-left: 4px solid #4a90e2;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    gap: 12px;
+    position: relative;
+}
+
+.toast-icon {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+}
+
+.toast-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.toast-message {
+    color: #e0e0e0;
+    line-height: 1.4;
+    word-wrap: break-word;
+}
+
+.toast-actions {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.toast-action-btn {
+    background: none;
+    border: none;
+    color: #4a90e2;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 13px;
+    padding: 4px 8px;
+}
+
+.toast-action-btn:hover {
+    text-decoration: underline;
+}
+
+.toast-action-btn:focus-visible {
+    outline: 2px solid #4a90e2;
+    outline-offset: 2px;
+}
+
+.toast-close-btn {
+    background: none;
+    border: none;
+    color: #b0b0b0;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 4px;
+    line-height: 1;
+}
+
+.toast-close-btn:hover {
+    color: #e0e0e0;
+}
+
+.toast-close-btn:focus-visible {
+    outline: 2px solid #4a90e2;
+    outline-offset: 2px;
+}
+
+.toast-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+}
+
+.toast-progress-bar {
+    height: 100%;
+    width: 100%;
+    background: #4a90e2;
+}
+
+/* Show progress bar when attribute is set */
+:host([progressbar="true"]) .toast-progress {
+    display: block;
+}
+
+/* ======== Type-Specific Color Schemes ======== */
+
+/* INFO (default): applied both when type="info" is set and when no type attribute is present */
+:host([type="info"]) .toast-container,
+.toast-container {
+    border-left-color: #4a90e2;
+}
+
+:host([type="info"]) .toast-icon,
+.toast-icon {
+    color: #4a90e2;
+}
+
+:host([type="info"]) .toast-progress-bar,
+.toast-progress-bar {
+    background-color: #4a90e2;
+}
+
+:host([type="info"]) .toast-action-btn,
+.toast-action-btn {
+    color: #4a90e2;
+}
+
+/* SUCCESS */
+:host([type="success"]) .toast-container {
+    border-left-color: #3cb043;
+}
+
+:host([type="success"]) .toast-icon {
+    color: #3cb043;
+}
+
+:host([type="success"]) .toast-progress-bar {
+    background-color: #3cb043;
+}
+
+:host([type="success"]) .toast-action-btn {
+    color: #3cb043;
+}
+
+/* WARNING */
+:host([type="warning"]) .toast-container {
+    border-left-color: #f0883e;
+}
+
+:host([type="warning"]) .toast-icon {
+    color: #f0883e;
+}
+
+:host([type="warning"]) .toast-progress-bar {
+    background-color: #f0883e;
+}
+
+:host([type="warning"]) .toast-action-btn {
+    color: #f0883e;
+}
+
+/* ERROR */
+:host([type="error"]) .toast-container {
+    border-left-color: #f25c5c;
+}
+
+:host([type="error"]) .toast-icon {
+    color: #f25c5c;
+}
+
+:host([type="error"]) .toast-progress-bar {
+    background-color: #f25c5c;
+}
+
+:host([type="error"]) .toast-action-btn {
+    color: #f25c5c;
+}
+
+/* ======== Type-Specific Icons ======== */
+
+/* INFO (default): applied both when type="info" is set and when no type attribute is present */
+:host([type="info"]) .toast-icon::before,
+.toast-icon::before {
+    content: '\2139';
+    font-style: normal;
+}
+
+/* SUCCESS */
+:host([type="success"]) .toast-icon::before {
+    content: '\2714';
+}
+
+/* WARNING */
+:host([type="warning"]) .toast-icon::before {
+    content: '\26A0';
+}
+
+/* ERROR */
+:host([type="error"]) .toast-icon::before {
+    content: '\2716';
+}
+
+/* ======== Show / Hide Animations ======== */
+
+@keyframes toast-show {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes toast-hide {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+}
+
+/* Bottom positions: slide UP (from below) instead of down (from above) */
+@keyframes toast-show-bottom {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes toast-hide-bottom {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+}
+
+:host(.toast-showing) {
+    animation: toast-show 0.3s ease-out forwards;
+}
+
+:host(.toast-hiding) {
+    animation: toast-hide 0.3s ease-in forwards;
+}
+
+:host([position^="bottom"].toast-showing) {
+    animation-name: toast-show-bottom;
+}
+
+:host([position^="bottom"].toast-hiding) {
+    animation-name: toast-hide-bottom;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    :host(.toast-showing) {
+        animation: none;
+        opacity: 1;
+        transform: none;
+    }
+
+    :host(.toast-hiding) {
+        animation: none;
+        opacity: 0;
+        transform: none;
+    }
+}
