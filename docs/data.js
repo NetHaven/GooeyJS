@@ -2398,6 +2398,91 @@ const GooeyData = {
                 ]
               }
             ]
+          },
+          {
+            "name": "notification",
+            "elements": [
+              {
+                "name": "Toast",
+                "tagName": "gooeyui-toast",
+                "description": "A notification toast component with four severity types (INFO, SUCCESS, WARNING, ERROR), six viewport positions, auto-hide with configurable duration, optional close and action buttons, progress bar, and queue management. Supports static convenience methods (Toast.info, Toast.success, Toast.warning, Toast.error) following the Dialog pattern. Includes base and dark themes.",
+                "inherits": ["UIComponent"],
+                "attributes": [
+                  {
+                    "name": "message",
+                    "type": "STRING",
+                    "description": "The notification message text displayed in the toast body",
+                    "required": false
+                  },
+                  {
+                    "name": "type",
+                    "type": "ENUM",
+                    "values": ["info", "success", "warning", "error"],
+                    "description": "Severity type controlling color scheme, icon, and ARIA role (default: info)",
+                    "required": false
+                  },
+                  {
+                    "name": "duration",
+                    "type": "NUMBER",
+                    "description": "Auto-hide delay in milliseconds. Set to 0 for manual-close only (default: 5000)",
+                    "required": false
+                  },
+                  {
+                    "name": "position",
+                    "type": "ENUM",
+                    "values": ["top-left", "top-center", "top-right", "bottom-left", "bottom-center", "bottom-right"],
+                    "description": "Viewport position where the toast appears (default: top-right)",
+                    "required": false
+                  },
+                  {
+                    "name": "closable",
+                    "type": "BOOLEAN",
+                    "description": "When true, shows a close button that fires DISMISS event on click (default: true)",
+                    "required": false
+                  },
+                  {
+                    "name": "showicon",
+                    "type": "BOOLEAN",
+                    "description": "When true, displays the type-specific icon (default: true)",
+                    "required": false
+                  },
+                  {
+                    "name": "actiontext",
+                    "type": "STRING",
+                    "description": "Text for an optional action button. When set, the button is visible and fires ACTION event on click",
+                    "required": false
+                  },
+                  {
+                    "name": "progressbar",
+                    "type": "BOOLEAN",
+                    "description": "When true, shows an animated countdown bar synced to the auto-hide timer (default: false)",
+                    "required": false
+                  }
+                ],
+                "examples": [
+                  {
+                    "title": "Static Convenience Methods",
+                    "description": "Create toasts using the static API (recommended approach).",
+                    "code": "<gooey-component href=\"GooeyJS/src/gooey/ui/notification/Toast\"></gooey-component>\n\n<script type=\"module\">\n  import Toast from './src/gooey/ui/notification/Toast/scripts/Toast.js';\n\n  Toast.info('File uploaded successfully');\n  Toast.success('Changes saved');\n  Toast.warning('Connection unstable');\n  Toast.error('Failed to save changes');\n</script>"
+                  },
+                  {
+                    "title": "With Options",
+                    "description": "Configure toast behavior with an options object.",
+                    "code": "<script type=\"module\">\n  import Toast from './src/gooey/ui/notification/Toast/scripts/Toast.js';\n\n  Toast.info('Processing complete', {\n    position: 'bottom-center',\n    duration: 3000,\n    closable: true,\n    progressBar: true\n  });\n</script>"
+                  },
+                  {
+                    "title": "Action Button and Events",
+                    "description": "Add an action button and listen to toast events.",
+                    "code": "<script type=\"module\">\n  import Toast from './src/gooey/ui/notification/Toast/scripts/Toast.js';\n  import ToastEvent from './src/gooey/events/notification/ToastEvent.js';\n\n  const toast = Toast.error('Upload failed', {\n    actionText: 'Retry',\n    duration: 0\n  });\n\n  toast.addEventListener(ToastEvent.ACTION, () => {\n    console.log('Retry clicked');\n    toast.hide();\n  });\n</script>"
+                  },
+                  {
+                    "title": "Declarative Usage",
+                    "description": "Create a toast element declaratively in HTML.",
+                    "code": "<gooey-component href=\"GooeyJS/src/gooey/ui/notification/Toast\"></gooey-component>\n\n<gooeyui-toast\n  message=\"Welcome back!\"\n  type=\"success\"\n  duration=\"3000\"\n  position=\"top-center\"\n  closable=\"true\"\n  progressbar=\"true\">\n</gooeyui-toast>"
+                  }
+                ]
+              }
+            ]
           }
         ],
         "elements": [
