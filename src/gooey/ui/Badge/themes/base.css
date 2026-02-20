@@ -34,12 +34,12 @@
     justify-content: center;
     gap: 4px;
     box-sizing: border-box;
-    font-family: sans-serif;
+    font-family: var(--gooey-badge-font-family, var(--gooey-font-family, sans-serif));
     font-weight: 600;
     line-height: 1;
     white-space: nowrap;
     vertical-align: middle;
-    border-radius: 4px;
+    border-radius: var(--gooey-badge-border-radius, var(--gooey-border-radius, 4px));
     transition: opacity 0.15s ease;
 }
 
@@ -82,44 +82,44 @@
 /* Default - gray */
 .badge,
 :host([variant="default"]) .badge {
-    background-color: #6b7280;
-    color: #ffffff;
-    border: 1px solid #6b7280;
+    background-color: var(--gooey-badge-default-bg, #6b7280);
+    color: var(--gooey-badge-default-color, #ffffff);
+    border: 1px solid var(--gooey-badge-default-bg, #6b7280);
 }
 
 /* Primary - blue */
 :host([variant="primary"]) .badge {
-    background-color: #010082;
-    color: #ffffff;
-    border: 1px solid #010082;
+    background-color: var(--gooey-badge-primary-bg, var(--gooey-color-primary, #010082));
+    color: var(--gooey-badge-primary-color, var(--gooey-color-primary-text, #ffffff));
+    border: 1px solid var(--gooey-badge-primary-bg, var(--gooey-color-primary, #010082));
 }
 
 /* Success - green */
 :host([variant="success"]) .badge {
-    background-color: #059669;
-    color: #ffffff;
-    border: 1px solid #059669;
+    background-color: var(--gooey-badge-success-bg, var(--gooey-color-success, #059669));
+    color: var(--gooey-badge-success-color, #ffffff);
+    border: 1px solid var(--gooey-badge-success-bg, var(--gooey-color-success, #059669));
 }
 
 /* Warning - amber/orange */
 :host([variant="warning"]) .badge {
-    background-color: #d97706;
-    color: #ffffff;
-    border: 1px solid #d97706;
+    background-color: var(--gooey-badge-warning-bg, var(--gooey-color-warning, #d97706));
+    color: var(--gooey-badge-warning-color, #ffffff);
+    border: 1px solid var(--gooey-badge-warning-bg, var(--gooey-color-warning, #d97706));
 }
 
 /* Error - red */
 :host([variant="error"]) .badge {
-    background-color: #dc2626;
-    color: #ffffff;
-    border: 1px solid #dc2626;
+    background-color: var(--gooey-badge-error-bg, var(--gooey-color-error, #dc2626));
+    color: var(--gooey-badge-error-color, #ffffff);
+    border: 1px solid var(--gooey-badge-error-bg, var(--gooey-color-error, #dc2626));
 }
 
 /* Info - light blue */
 :host([variant="info"]) .badge {
-    background-color: #0284c7;
-    color: #ffffff;
-    border: 1px solid #0284c7;
+    background-color: var(--gooey-badge-info-bg, var(--gooey-color-info, #0284c7));
+    color: var(--gooey-badge-info-color, #ffffff);
+    border: 1px solid var(--gooey-badge-info-bg, var(--gooey-color-info, #0284c7));
 }
 
 /* ----------------------------------------
@@ -129,38 +129,38 @@
 :host([outline]) .badge,
 :host([outline][variant="default"]) .badge {
     background-color: transparent;
-    color: #6b7280;
-    border: 1px solid #6b7280;
+    color: var(--gooey-badge-default-bg, #6b7280);
+    border: 1px solid var(--gooey-badge-default-bg, #6b7280);
 }
 
 :host([outline][variant="primary"]) .badge {
     background-color: transparent;
-    color: #010082;
-    border: 1px solid #010082;
+    color: var(--gooey-badge-primary-bg, var(--gooey-color-primary, #010082));
+    border: 1px solid var(--gooey-badge-primary-bg, var(--gooey-color-primary, #010082));
 }
 
 :host([outline][variant="success"]) .badge {
     background-color: transparent;
-    color: #059669;
-    border: 1px solid #059669;
+    color: var(--gooey-badge-success-bg, var(--gooey-color-success, #059669));
+    border: 1px solid var(--gooey-badge-success-bg, var(--gooey-color-success, #059669));
 }
 
 :host([outline][variant="warning"]) .badge {
     background-color: transparent;
-    color: #d97706;
-    border: 1px solid #d97706;
+    color: var(--gooey-badge-warning-bg, var(--gooey-color-warning, #d97706));
+    border: 1px solid var(--gooey-badge-warning-bg, var(--gooey-color-warning, #d97706));
 }
 
 :host([outline][variant="error"]) .badge {
     background-color: transparent;
-    color: #dc2626;
-    border: 1px solid #dc2626;
+    color: var(--gooey-badge-error-bg, var(--gooey-color-error, #dc2626));
+    border: 1px solid var(--gooey-badge-error-bg, var(--gooey-color-error, #dc2626));
 }
 
 :host([outline][variant="info"]) .badge {
     background-color: transparent;
-    color: #0284c7;
-    border: 1px solid #0284c7;
+    color: var(--gooey-badge-info-bg, var(--gooey-color-info, #0284c7));
+    border: 1px solid var(--gooey-badge-info-bg, var(--gooey-color-info, #0284c7));
 }
 
 /* ----------------------------------------
@@ -285,7 +285,7 @@
 }
 
 :host([disabled]) .badge {
-    opacity: 0.5;
+    opacity: var(--gooey-badge-opacity-disabled, var(--gooey-opacity-disabled, 0.5));
 }
 
 /* ----------------------------------------
@@ -293,7 +293,7 @@
    ---------------------------------------- */
 
 .badge:focus-visible {
-    outline: 2px solid #005fcc;
+    outline: 2px solid var(--gooey-badge-focus-ring-color, var(--gooey-color-focus, #005fcc));
     outline-offset: 2px;
 }
 
