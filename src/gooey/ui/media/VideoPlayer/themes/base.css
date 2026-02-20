@@ -1,9 +1,9 @@
 :host {
     display: inline-block;
     position: relative;
-    background: #000;
+    background: var(--gooey-videoplayer-bg, #000);
     overflow: hidden;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family: var(--gooey-videoplayer-font-family, var(--gooey-font-family, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif));
 }
 
 :host([fullscreen]) {
@@ -12,7 +12,7 @@
     left: 0;
     width: 100vw !important;
     height: 100vh !important;
-    z-index: 9999;
+    z-index: var(--gooey-videoplayer-z-index-fullscreen, 9999);
 }
 
 .video-container {
@@ -36,7 +36,7 @@
     align-items: center;
     gap: 8px;
     padding: 8px 12px;
-    background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+    background: var(--gooey-videoplayer-controls-bg, linear-gradient(transparent, rgba(0, 0, 0, 0.8)));
     position: absolute;
     bottom: 0;
     left: 0;
@@ -95,7 +95,7 @@
     -webkit-appearance: none;
     appearance: none;
     height: 4px;
-    background: rgba(255, 255, 255, 0.3);
+    background: var(--gooey-videoplayer-slider-track-bg, rgba(255, 255, 255, 0.3));
     border-radius: 2px;
     cursor: pointer;
     outline: none;
@@ -115,7 +115,7 @@
     appearance: none;
     width: 12px;
     height: 12px;
-    background: #fff;
+    background: var(--gooey-videoplayer-slider-thumb-bg, #fff);
     border-radius: 50%;
     cursor: pointer;
     transition: transform 0.1s ease;
@@ -130,7 +130,7 @@
 .volume-slider::-moz-range-thumb {
     width: 12px;
     height: 12px;
-    background: #fff;
+    background: var(--gooey-videoplayer-slider-thumb-bg, #fff);
     border: none;
     border-radius: 50%;
     cursor: pointer;
@@ -139,14 +139,14 @@
 .progress-bar::-webkit-slider-runnable-track,
 .volume-slider::-webkit-slider-runnable-track {
     height: 4px;
-    background: rgba(255, 255, 255, 0.3);
+    background: var(--gooey-videoplayer-slider-track-bg, rgba(255, 255, 255, 0.3));
     border-radius: 2px;
 }
 
 .progress-bar::-moz-range-track,
 .volume-slider::-moz-range-track {
     height: 4px;
-    background: rgba(255, 255, 255, 0.3);
+    background: var(--gooey-videoplayer-slider-track-bg, rgba(255, 255, 255, 0.3));
     border-radius: 2px;
 }
 
@@ -154,7 +154,7 @@
 button {
     background: transparent;
     border: none;
-    color: #fff;
+    color: var(--gooey-videoplayer-button-color, #fff);
     cursor: pointer;
     padding: 8px;
     border-radius: 4px;
@@ -167,11 +167,11 @@ button {
 }
 
 button:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--gooey-videoplayer-button-bg-hover, rgba(255, 255, 255, 0.1));
 }
 
 button:focus {
-    outline: 2px solid #4a9eff;
+    outline: 2px solid var(--gooey-videoplayer-button-focus-color, #4a9eff);
     outline-offset: 2px;
 }
 
@@ -180,12 +180,12 @@ button:focus:not(:focus-visible) {
 }
 
 button:focus-visible {
-    outline: 2px solid #4a9eff;
+    outline: 2px solid var(--gooey-videoplayer-button-focus-color, #4a9eff);
     outline-offset: 2px;
 }
 
 button:disabled {
-    opacity: 0.5;
+    opacity: var(--gooey-videoplayer-opacity-disabled, var(--gooey-opacity-disabled, 0.5));
     cursor: not-allowed;
 }
 
@@ -199,9 +199,9 @@ button[hidden] {
 
 /* Time Display */
 .time-display {
-    font-family: 'SF Mono', 'Consolas', 'Monaco', monospace;
+    font-family: var(--gooey-videoplayer-time-font-family, var(--gooey-font-family-mono, 'SF Mono', 'Consolas', 'Monaco', monospace));
     font-size: 13px;
-    color: #fff;
+    color: var(--gooey-videoplayer-time-color, #fff);
     white-space: nowrap;
     user-select: none;
 }

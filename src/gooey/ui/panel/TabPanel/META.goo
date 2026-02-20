@@ -11,6 +11,108 @@
     "default": "base",
     "available": ["base", "dark", "janus"]
   },
+  "tokens": {
+    "gooey-tabpanel-strip-bg": {
+      "description": "TabPanel tab strip background color",
+      "fallback": "gooey-color-surface",
+      "category": "color"
+    },
+    "gooey-tabpanel-strip-border-color": {
+      "description": "TabPanel tab strip border color (vertical mode)",
+      "fallback": "gooey-color-border",
+      "category": "color"
+    },
+    "gooey-tabpanel-content-bg": {
+      "description": "TabPanel content area background color",
+      "fallback": "gooey-color-surface",
+      "category": "color"
+    },
+    "gooey-tabpanel-content-border-color": {
+      "description": "TabPanel content area border color",
+      "fallback": "gooey-color-text",
+      "category": "color"
+    },
+    "gooey-tabpanel-header-bg": {
+      "description": "TabPanel inactive tab header background",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-tabpanel-header-color": {
+      "description": "TabPanel inactive tab header text color",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-tabpanel-header-border-color": {
+      "description": "TabPanel tab header border color",
+      "fallback": "gooey-color-border",
+      "category": "color"
+    },
+    "gooey-tabpanel-header-font-family": {
+      "description": "TabPanel tab header font family",
+      "fallback": "gooey-font-family",
+      "category": "typography"
+    },
+    "gooey-tabpanel-header-font-size": {
+      "description": "TabPanel tab header font size",
+      "fallback": null,
+      "category": "typography"
+    },
+    "gooey-tabpanel-header-bg-hover": {
+      "description": "TabPanel tab header hover background",
+      "fallback": "gooey-color-surface-hover",
+      "category": "color"
+    },
+    "gooey-tabpanel-header-color-hover": {
+      "description": "TabPanel tab header hover text color",
+      "fallback": "gooey-color-text-muted",
+      "category": "color"
+    },
+    "gooey-tabpanel-header-active-bg": {
+      "description": "TabPanel active tab header background",
+      "fallback": "gooey-color-surface-raised",
+      "category": "color"
+    },
+    "gooey-tabpanel-header-active-border-color": {
+      "description": "TabPanel active tab header accent border color",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-tabpanel-header-active-color": {
+      "description": "TabPanel active tab header text color",
+      "fallback": "gooey-color-text",
+      "category": "color"
+    },
+    "gooey-tabpanel-header-active-shadow": {
+      "description": "TabPanel active tab header box shadow (horizontal)",
+      "fallback": null,
+      "category": "shadow"
+    },
+    "gooey-tabpanel-header-focus-color": {
+      "description": "TabPanel tab header focus outline color",
+      "fallback": "gooey-color-primary",
+      "category": "color"
+    },
+    "gooey-tabpanel-close-color": {
+      "description": "TabPanel close button color",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-tabpanel-close-bg-hover": {
+      "description": "TabPanel close button hover background",
+      "fallback": "gooey-color-error",
+      "category": "color"
+    },
+    "gooey-tabpanel-close-color-hover": {
+      "description": "TabPanel close button hover text color",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-tabpanel-drag-indicator-color": {
+      "description": "TabPanel drag-and-drop indicator border color",
+      "fallback": "gooey-color-primary",
+      "category": "color"
+    }
+  },
   "attributes": {
     "orientation": { "type": "STRING", "default": "horizontal" },
     "draggable": { "type": "BOOLEAN", "default": false },

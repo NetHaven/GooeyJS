@@ -11,6 +11,68 @@
     "default": "base",
     "available": ["base", "dark", "minimal"]
   },
+  "tokens": {
+    "gooey-videoplayer-bg": {
+      "description": "VideoPlayer background color",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-videoplayer-font-family": {
+      "description": "VideoPlayer font family",
+      "fallback": "gooey-font-family",
+      "category": "typography"
+    },
+    "gooey-videoplayer-controls-bg": {
+      "description": "VideoPlayer controls container background (gradient)",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-videoplayer-button-color": {
+      "description": "VideoPlayer button icon color",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-videoplayer-button-bg-hover": {
+      "description": "VideoPlayer button hover background",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-videoplayer-button-focus-color": {
+      "description": "VideoPlayer button focus outline color",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-videoplayer-opacity-disabled": {
+      "description": "VideoPlayer disabled button opacity",
+      "fallback": "gooey-opacity-disabled",
+      "category": "opacity"
+    },
+    "gooey-videoplayer-slider-track-bg": {
+      "description": "VideoPlayer progress/volume slider track background",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-videoplayer-slider-thumb-bg": {
+      "description": "VideoPlayer slider thumb background (cross-browser)",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-videoplayer-time-color": {
+      "description": "VideoPlayer time display text color",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-videoplayer-time-font-family": {
+      "description": "VideoPlayer time display monospace font",
+      "fallback": "gooey-font-family-mono",
+      "category": "typography"
+    },
+    "gooey-videoplayer-z-index-fullscreen": {
+      "description": "VideoPlayer fullscreen z-index",
+      "fallback": null,
+      "category": "z-index"
+    }
+  },
   "attributes": {
     "width": {
       "type": "STRING",
