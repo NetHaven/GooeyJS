@@ -9,6 +9,7 @@
     "default": "base",
     "available": ["base", "dark", "janus"]
   },
+  "tokens": {},
   "attributes": {
     "wintitle": { "type": "STRING", "default": null },
     "constrainviewport": { "type": "BOOLEAN", "default": false },

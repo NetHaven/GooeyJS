@@ -9,6 +9,7 @@
     "default": "base",
     "available": ["base", "dark", "janus"]
   },
+  "tokens": {},
   "attributes": {
     "href": { "type": "STRING", "default": null, "required": true }
   }

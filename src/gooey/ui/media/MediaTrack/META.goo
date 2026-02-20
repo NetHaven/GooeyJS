@@ -9,6 +9,7 @@
     "default": "base",
     "available": ["base"]
   },
+  "tokens": {},
   "attributes": {
     "src": {
       "type": "STRING",
