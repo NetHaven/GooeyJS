@@ -6,7 +6,7 @@
     flex: 1;
     overflow: auto;
     padding: 8px;
-    background-color: #c1c0c1;
+    background-color: var(--gooey-tab-bg, var(--gooey-color-surface, #c1c0c1));
     box-sizing: border-box;
     min-height: 0;
 }

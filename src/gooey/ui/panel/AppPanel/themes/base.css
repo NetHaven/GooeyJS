@@ -1,7 +1,7 @@
 /* AppPanel Base Theme */
 
 :host {
-    background-color: #c1c0c1;
+    background-color: var(--gooey-apppanel-bg, var(--gooey-color-surface, #c1c0c1));
     height: 100%;
     width: 100%;
     display: grid !important;
