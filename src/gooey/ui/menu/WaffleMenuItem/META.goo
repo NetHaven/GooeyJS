@@ -51,5 +51,52 @@
       "type": "STRING",
       "default": null
     }
+  },
+  "tokens": {
+    "gooey-wafflemenuitem-bg": {
+      "description": "WaffleMenuItem background color",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-wafflemenuitem-bg-hover": {
+      "description": "WaffleMenuItem hover background",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-wafflemenuitem-bg-active": {
+      "description": "WaffleMenuItem active/pressed background",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-wafflemenuitem-focus-color": {
+      "description": "WaffleMenuItem focus ring color",
+      "fallback": "gooey-color-focus",
+      "category": "color"
+    },
+    "gooey-wafflemenuitem-label-color": {
+      "description": "WaffleMenuItem label text color",
+      "fallback": "gooey-color-text",
+      "category": "color"
+    },
+    "gooey-wafflemenuitem-border-radius": {
+      "description": "WaffleMenuItem border radius",
+      "fallback": null,
+      "category": "border"
+    },
+    "gooey-wafflemenuitem-badge-bg": {
+      "description": "WaffleMenuItem badge background color",
+      "fallback": "gooey-color-error",
+      "category": "color"
+    },
+    "gooey-wafflemenuitem-badge-color": {
+      "description": "WaffleMenuItem badge text color",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-wafflemenuitem-opacity-disabled": {
+      "description": "WaffleMenuItem disabled opacity",
+      "fallback": "gooey-opacity-disabled",
+      "category": "opacity"
+    }
   }
 }

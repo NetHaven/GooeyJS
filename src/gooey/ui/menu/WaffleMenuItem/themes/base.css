@@ -1,23 +1,14 @@
 :host {
     display: flex;
-    --waffle-item-size: 96px;
-    --waffle-item-icon-size: 48px;
-    --waffle-item-bg: transparent;
-    --waffle-item-hover-bg: rgba(0, 0, 0, 0.06);
-    --waffle-item-active-bg: rgba(0, 0, 0, 0.1);
-    --waffle-item-label-color: #202124;
-    --waffle-item-border-radius: 8px;
-    --waffle-badge-bg: #ea4335;
-    --waffle-badge-color: #ffffff;
 }
 
 .waffle-item {
-    width: var(--waffle-item-size);
-    height: var(--waffle-item-size);
+    width: var(--waffle-item-size, 96px);
+    height: var(--waffle-item-size, 96px);
     padding: 12px 8px;
     border: none;
-    border-radius: var(--waffle-item-border-radius);
-    background: var(--waffle-item-bg);
+    border-radius: var(--gooey-wafflemenuitem-border-radius, var(--waffle-item-border-radius, 8px));
+    background: var(--gooey-wafflemenuitem-bg, var(--waffle-item-bg, transparent));
     cursor: pointer;
     display: flex;
     flex-direction: column;
@@ -28,22 +19,22 @@
 }
 
 .waffle-item:hover {
-    background: var(--waffle-item-hover-bg);
+    background: var(--gooey-wafflemenuitem-bg-hover, var(--waffle-item-hover-bg, rgba(0, 0, 0, 0.06)));
 }
 
 .waffle-item:active {
-    background: var(--waffle-item-active-bg);
+    background: var(--gooey-wafflemenuitem-bg-active, var(--waffle-item-active-bg, rgba(0, 0, 0, 0.1)));
 }
 
 .waffle-item:focus {
-    outline: 2px solid #1a73e8;
+    outline: var(--gooey-focus-width, 2px) var(--gooey-focus-style, solid) var(--gooey-wafflemenuitem-focus-color, var(--gooey-color-focus, #1a73e8));
     outline-offset: -2px;
 }
 
 .waffle-item-icon {
     position: relative;
-    width: var(--waffle-item-icon-size);
-    height: var(--waffle-item-icon-size);
+    width: var(--waffle-item-icon-size, 48px);
+    height: var(--waffle-item-icon-size, 48px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -65,8 +56,8 @@
     height: 18px;
     padding: 0 5px;
     border-radius: 9px;
-    background: var(--waffle-badge-bg);
-    color: var(--waffle-badge-color);
+    background: var(--gooey-wafflemenuitem-badge-bg, var(--gooey-color-error, #ea4335));
+    color: var(--gooey-wafflemenuitem-badge-color, var(--waffle-badge-color, #ffffff));
     font-size: 11px;
     font-weight: 500;
     line-height: 18px;
@@ -80,7 +71,7 @@
 .waffle-item-label {
     font-size: 12px;
     font-weight: 400;
-    color: var(--waffle-item-label-color);
+    color: var(--gooey-wafflemenuitem-label-color, var(--gooey-color-text, #202124));
     text-align: center;
     max-width: 100%;
     overflow: hidden;
@@ -90,7 +81,7 @@
 
 /* Disabled state */
 :host([disabled]) .waffle-item {
-    opacity: 0.5;
+    opacity: var(--gooey-wafflemenuitem-opacity-disabled, var(--gooey-opacity-disabled, 0.5));
     cursor: not-allowed;
     pointer-events: none;
 }
