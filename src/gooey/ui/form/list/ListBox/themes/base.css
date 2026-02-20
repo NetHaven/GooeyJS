@@ -7,3 +7,8 @@
 select {
     width: 100%;
 }
+
+:host([disabled]) select {
+    cursor: not-allowed;
+    opacity: var(--gooey-listbox-opacity-disabled, var(--gooey-opacity-disabled, 0.5));
+}
