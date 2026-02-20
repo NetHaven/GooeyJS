@@ -11,6 +11,68 @@
     "default": "base",
     "available": ["base", "dark", "janus"]
   },
+  "tokens": {
+    "gooey-window-bg": {
+      "description": "Window background color",
+      "fallback": "gooey-color-surface",
+      "category": "color"
+    },
+    "gooey-window-border-width": {
+      "description": "Window border width",
+      "fallback": "gooey-border-width",
+      "category": "border"
+    },
+    "gooey-window-titlebar-bg": {
+      "description": "Window titlebar background color",
+      "fallback": "gooey-color-primary",
+      "category": "color"
+    },
+    "gooey-window-titlebar-color": {
+      "description": "Window titlebar text color",
+      "fallback": "gooey-color-primary-text",
+      "category": "color"
+    },
+    "gooey-window-titlebar-height": {
+      "description": "Window titlebar height",
+      "fallback": null,
+      "category": "sizing"
+    },
+    "gooey-window-titlebar-font-weight": {
+      "description": "Window titlebar font weight",
+      "fallback": "gooey-font-weight-bold",
+      "category": "typography"
+    },
+    "gooey-window-content-margin": {
+      "description": "Window content area margin",
+      "fallback": "gooey-spacing-md",
+      "category": "spacing"
+    },
+    "gooey-window-buttonbar-margin": {
+      "description": "Window button bar margin",
+      "fallback": "gooey-spacing-lg",
+      "category": "spacing"
+    },
+    "gooey-window-font-family": {
+      "description": "Window dialog message font family",
+      "fallback": "gooey-font-family",
+      "category": "typography"
+    },
+    "gooey-window-font-size": {
+      "description": "Window dialog message font size",
+      "fallback": "gooey-font-size-md",
+      "category": "typography"
+    },
+    "gooey-window-z-index": {
+      "description": "Window base z-index",
+      "fallback": "gooey-z-window",
+      "category": "z-index"
+    },
+    "gooey-window-modal-z-index": {
+      "description": "Window modal z-index",
+      "fallback": "gooey-z-modal-window",
+      "category": "z-index"
+    }
+  },
   "attributes": {
     "wintitle": { "type": "STRING", "default": null },
     "constrainviewport": { "type": "BOOLEAN", "default": false },
