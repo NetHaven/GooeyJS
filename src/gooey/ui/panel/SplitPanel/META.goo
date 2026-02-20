@@ -11,6 +11,43 @@
     "default": "base",
     "available": ["base", "dark", "janus"]
   },
+  "tokens": {
+    "gooey-splitpanel-bg": {
+      "description": "SplitPanel background color",
+      "fallback": "gooey-color-surface",
+      "category": "color"
+    },
+    "gooey-splitpanel-pane-bg": {
+      "description": "SplitPanel pane background color",
+      "fallback": "gooey-color-surface",
+      "category": "color"
+    },
+    "gooey-splitpanel-pane-border-color": {
+      "description": "SplitPanel pane border color",
+      "fallback": "gooey-color-surface",
+      "category": "color"
+    },
+    "gooey-splitpanel-divider-bg": {
+      "description": "SplitPanel divider background color",
+      "fallback": "gooey-color-surface",
+      "category": "color"
+    },
+    "gooey-splitpanel-divider-border-color": {
+      "description": "SplitPanel divider border color",
+      "fallback": "gooey-color-surface",
+      "category": "color"
+    },
+    "gooey-splitpanel-divider-bg-hover": {
+      "description": "SplitPanel divider hover background color",
+      "fallback": "gooey-color-surface-hover",
+      "category": "color"
+    },
+    "gooey-splitpanel-divider-bg-active": {
+      "description": "SplitPanel divider active/dragging background color",
+      "fallback": null,
+      "category": "color"
+    }
+  },
   "attributes": {
     "dividersize": { "type": "NUMBER", "default": 5 },
     "orientation": { "type": "STRING", "default": "horizontal" },
