@@ -3,8 +3,8 @@
     display: inline-block;
     position: relative;
     min-width: 40px;
-    font-family: sans-serif;
-    font-size: 11px;
+    font-family: var(--gooey-colorpicker-font-family, var(--gooey-font-family, sans-serif));
+    font-size: var(--gooey-colorpicker-font-size, 11px);
 }
 
 .colorpicker-container {
@@ -15,41 +15,41 @@
 .colorpicker-button {
     display: flex;
     align-items: center;
-    border: 2px outset #c1c0c1;
-    background-color: #c1c0c1;
+    border: 2px outset var(--gooey-colorpicker-button-border-color, var(--gooey-color-surface, #c1c0c1));
+    background-color: var(--gooey-colorpicker-button-bg, var(--gooey-color-surface, #c1c0c1));
     padding: 2px 4px;
     cursor: pointer;
     outline: none;
     min-width: 40px;
     height: 28px;
-    font-family: sans-serif;
+    font-family: var(--gooey-colorpicker-font-family, var(--gooey-font-family, sans-serif));
 }
 
 .colorpicker-button:hover {
-    background-color: #d4d0c8;
+    background-color: var(--gooey-colorpicker-button-bg-hover, var(--gooey-color-surface-hover, #d4d0c8));
 }
 
 .colorpicker-button:active,
 :host(.colorpicker-open) .colorpicker-button {
-    border: 2px inset #c1c0c1;
-    background-color: #c1c0c1;
+    border: 2px inset var(--gooey-colorpicker-button-border-color, var(--gooey-color-surface, #c1c0c1));
+    background-color: var(--gooey-colorpicker-button-bg, var(--gooey-color-surface, #c1c0c1));
 }
 
 .colorpicker-button:focus {
-    border: 2px inset #010082;
+    border: 2px inset var(--gooey-colorpicker-button-focus-color, var(--gooey-color-primary, #010082));
 }
 
 .colorpicker-display {
     flex: 1;
     height: 20px;
-    border: 1px inset #c1c0c1;
+    border: 1px inset var(--gooey-colorpicker-display-border-color, var(--gooey-color-surface, #c1c0c1));
     margin-right: 4px;
     background-color: #000000;
 }
 
 .colorpicker-arrow {
     font-size: 10px;
-    color: #000;
+    color: var(--gooey-colorpicker-arrow-color, var(--gooey-color-text, #000));
     user-select: none;
     font-family: monospace;
 }
@@ -58,10 +58,10 @@
     position: absolute;
     top: 100%;
     left: 0;
-    z-index: 1000;
-    background-color: #c1c0c1;
-    border: 2px outset #c1c0c1;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+    z-index: var(--gooey-colorpicker-dropdown-z-index, var(--gooey-z-dropdown, 1000));
+    background-color: var(--gooey-colorpicker-dropdown-bg, var(--gooey-color-surface, #c1c0c1));
+    border: 2px outset var(--gooey-colorpicker-dropdown-border-color, var(--gooey-color-surface, #c1c0c1));
+    box-shadow: var(--gooey-colorpicker-dropdown-shadow, var(--gooey-shadow-sm, 2px 2px 5px rgba(0, 0, 0, 0.3)));
     padding: 6px;
     min-width: 200px;
     max-width: 220px;
@@ -77,22 +77,22 @@
 .colorpicker-swatch {
     width: 24px;
     height: 24px;
-    border: 1px inset #c1c0c1;
+    border: 1px inset var(--gooey-colorpicker-swatch-border-color, var(--gooey-color-surface, #c1c0c1));
     cursor: pointer;
     outline: none;
     background-color: #000;
 }
 
 .colorpicker-swatch:hover {
-    border: 1px outset #c1c0c1;
+    border: 1px outset var(--gooey-colorpicker-swatch-border-color, var(--gooey-color-surface, #c1c0c1));
 }
 
 .colorpicker-swatch:focus {
-    border: 1px solid #010082;
+    border: 1px solid var(--gooey-colorpicker-swatch-focus-color, var(--gooey-color-primary, #010082));
 }
 
 .colorpicker-custom {
-    border-top: 1px solid #808080;
+    border-top: 1px solid var(--gooey-colorpicker-custom-border-color, var(--gooey-color-border, #808080));
     padding-top: 6px;
     display: flex;
     align-items: center;
@@ -101,33 +101,33 @@
 
 .colorpicker-custom-label {
     font-size: 11px;
-    color: #000;
+    color: var(--gooey-colorpicker-input-color, var(--gooey-color-text, #000));
     display: flex;
     align-items: center;
     gap: 4px;
-    font-family: sans-serif;
+    font-family: var(--gooey-colorpicker-font-family, var(--gooey-font-family, sans-serif));
 }
 
 .colorpicker-hex-input {
-    border: 1px inset #c1c0c1;
+    border: 1px inset var(--gooey-colorpicker-swatch-border-color, var(--gooey-color-surface, #c1c0c1));
     padding: 2px 4px;
     font-size: 11px;
     font-family: monospace;
     width: 70px;
     text-transform: uppercase;
-    background-color: white;
-    color: #000;
+    background-color: var(--gooey-colorpicker-input-bg, var(--gooey-color-surface-raised, white));
+    color: var(--gooey-colorpicker-input-color, var(--gooey-color-text, #000));
 }
 
 .colorpicker-hex-input:focus {
-    border: 1px solid #010082;
+    border: 1px solid var(--gooey-colorpicker-swatch-focus-color, var(--gooey-color-primary, #010082));
     outline: none;
 }
 
 .colorpicker-native-input {
     width: 24px;
     height: 24px;
-    border: 1px inset #c1c0c1;
+    border: 1px inset var(--gooey-colorpicker-swatch-border-color, var(--gooey-color-surface, #c1c0c1));
     cursor: pointer;
     padding: 0;
 }
@@ -136,11 +136,11 @@
 :host([disabled]) .colorpicker-button,
 :host([disabled]) .colorpicker-hex-input,
 :host([disabled]) .colorpicker-native-input {
-    opacity: 0.5;
+    opacity: var(--gooey-colorpicker-opacity-disabled, var(--gooey-opacity-disabled, 0.5));
     cursor: not-allowed;
 }
 
 :host([disabled]) .colorpicker-button {
-    background-color: #c1c0c1;
-    border: 2px outset #c1c0c1;
+    background-color: var(--gooey-colorpicker-button-bg, var(--gooey-color-surface, #c1c0c1));
+    border: 2px outset var(--gooey-colorpicker-button-border-color, var(--gooey-color-surface, #c1c0c1));
 }

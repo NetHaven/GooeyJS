@@ -1,10 +1,10 @@
 <template id="ui-ColorPicker">
     <div class="colorpicker-container">
-        <button type="button" class="colorpicker-button" aria-label="Choose color">
-            <div class="colorpicker-display"></div>
+        <button type="button" class="colorpicker-button" part="trigger" aria-label="Choose color">
+            <div class="colorpicker-display" part="display"></div>
             <span class="colorpicker-arrow">▼</span>
         </button>
-        <div class="colorpicker-dropdown">
+        <div class="colorpicker-dropdown" part="dropdown">
             <div class="colorpicker-palette">
                 <!-- Color swatches -->
                 <button type="button" class="colorpicker-swatch" style="background-color: #000000;" data-color="#000000" aria-label="Select color #000000" title="#000000"></button>
