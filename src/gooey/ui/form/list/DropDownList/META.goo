@@ -11,6 +11,23 @@
     "default": "base",
     "available": ["base", "dark", "janus"]
   },
+  "tokens": {
+    "gooey-dropdownlist-opacity-disabled": {
+      "description": "DropDownList disabled opacity",
+      "fallback": "gooey-opacity-disabled",
+      "category": "opacity"
+    },
+    "gooey-dropdownlist-bg-disabled": {
+      "description": "DropDownList disabled background color",
+      "fallback": "gooey-color-surface",
+      "category": "color"
+    },
+    "gooey-dropdownlist-color-disabled": {
+      "description": "DropDownList disabled text color",
+      "fallback": "gooey-color-text-disabled",
+      "category": "color"
+    }
+  },
   "attributes": {
     "draggable": { "type": "BOOLEAN", "default": false },
     "droppable": { "type": "BOOLEAN", "default": false },

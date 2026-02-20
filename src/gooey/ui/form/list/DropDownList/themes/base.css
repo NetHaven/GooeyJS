@@ -6,11 +6,11 @@
 /* Disabled styles for DropDownList */
 :host([disabled]),
 :host([disabled]) select {
-    opacity: 0.5;
+    opacity: var(--gooey-dropdownlist-opacity-disabled, var(--gooey-opacity-disabled, 0.5));
     cursor: not-allowed;
 }
 
 :host([disabled]) select {
-    background-color: #c1c0c1;
-    color: #808080;
+    background-color: var(--gooey-dropdownlist-bg-disabled, var(--gooey-color-surface, #c1c0c1));
+    color: var(--gooey-dropdownlist-color-disabled, var(--gooey-color-text-disabled, #808080));
 }
