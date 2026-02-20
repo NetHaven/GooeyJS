@@ -11,6 +11,33 @@
     "default": "base",
     "available": ["base", "dark", "janus"]
   },
+  "tokens": {
+    "gooey-textarea-bg-disabled": {
+      "description": "TextArea disabled background color",
+      "fallback": "gooey-color-surface-disabled",
+      "category": "color"
+    },
+    "gooey-textarea-focus-ring-color": {
+      "description": "TextArea keyboard focus ring color",
+      "fallback": "gooey-color-focus",
+      "category": "color"
+    },
+    "gooey-textarea-focus-ring-width": {
+      "description": "TextArea focus ring width",
+      "fallback": "gooey-focus-width",
+      "category": "border"
+    },
+    "gooey-textarea-focus-ring-offset": {
+      "description": "TextArea focus ring offset (negative for inset)",
+      "fallback": "gooey-focus-offset",
+      "category": "spacing"
+    },
+    "gooey-textarea-opacity-disabled": {
+      "description": "TextArea disabled opacity",
+      "fallback": "gooey-opacity-disabled",
+      "category": "opacity"
+    }
+  },
   "attributes": {
     "draggable": { "type": "BOOLEAN", "default": false },
     "droppable": { "type": "BOOLEAN", "default": false },
