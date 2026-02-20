@@ -1,0 +1,16 @@
+{
+    "MetaGooVersion": "1.0",
+    "name": "ThemeOverride",
+    "prefix": "gooey",
+    "tagName": "theme-override",
+    "script": "ThemeOverride.js",
+    "templates": [],
+    "themes": {
+        "default": "base",
+        "available": ["base"]
+    },
+    "attributes": {
+        "target": { "type": "STRING", "default": null },
+        "href": { "type": "STRING", "default": null }
+    }
+}

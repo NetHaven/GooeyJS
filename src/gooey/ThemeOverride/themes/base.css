@@ -1,0 +1,4 @@
+/* ThemeOverride Base Theme - Non-visual component */
+:host {
+    display: none;
+}
