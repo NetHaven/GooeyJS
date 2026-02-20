@@ -5,3 +5,15 @@
 input[type="date"] {
     width: 100%;
 }
+
+/* Keyboard-only focus indicator for accessibility */
+input[type="date"]:focus-visible {
+    outline: var(--gooey-datepicker-focus-ring-width, var(--gooey-focus-width, 2px)) var(--gooey-focus-style, solid) var(--gooey-datepicker-focus-ring-color, var(--gooey-color-focus, #005fcc));
+    outline-offset: var(--gooey-datepicker-focus-ring-offset, var(--gooey-focus-offset, -1px));
+}
+
+:host([disabled]) input[type="date"] {
+    cursor: not-allowed;
+    opacity: var(--gooey-datepicker-opacity-disabled, var(--gooey-opacity-disabled, 0.5));
+    background-color: var(--gooey-datepicker-bg-disabled, var(--gooey-color-surface-disabled, #f0f0f0));
+}

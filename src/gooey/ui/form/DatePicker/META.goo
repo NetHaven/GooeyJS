@@ -11,6 +11,33 @@
     "default": "base",
     "available": ["base", "dark", "janus"]
   },
+  "tokens": {
+    "gooey-datepicker-bg-disabled": {
+      "description": "DatePicker disabled background color",
+      "fallback": "gooey-color-surface-disabled",
+      "category": "color"
+    },
+    "gooey-datepicker-focus-ring-color": {
+      "description": "DatePicker keyboard focus ring color",
+      "fallback": "gooey-color-focus",
+      "category": "color"
+    },
+    "gooey-datepicker-focus-ring-width": {
+      "description": "DatePicker focus ring width",
+      "fallback": "gooey-focus-width",
+      "category": "border"
+    },
+    "gooey-datepicker-focus-ring-offset": {
+      "description": "DatePicker focus ring offset (negative for inset)",
+      "fallback": "gooey-focus-offset",
+      "category": "spacing"
+    },
+    "gooey-datepicker-opacity-disabled": {
+      "description": "DatePicker disabled opacity",
+      "fallback": "gooey-opacity-disabled",
+      "category": "opacity"
+    }
+  },
   "attributes": {
     "draggable": { "type": "BOOLEAN", "default": false },
     "droppable": { "type": "BOOLEAN", "default": false },

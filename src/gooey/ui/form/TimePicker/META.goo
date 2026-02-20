@@ -11,6 +11,33 @@
     "default": "base",
     "available": ["base", "dark", "janus"]
   },
+  "tokens": {
+    "gooey-timepicker-bg-disabled": {
+      "description": "TimePicker disabled background color",
+      "fallback": "gooey-color-surface-disabled",
+      "category": "color"
+    },
+    "gooey-timepicker-focus-ring-color": {
+      "description": "TimePicker keyboard focus ring color",
+      "fallback": "gooey-color-focus",
+      "category": "color"
+    },
+    "gooey-timepicker-focus-ring-width": {
+      "description": "TimePicker focus ring width",
+      "fallback": "gooey-focus-width",
+      "category": "border"
+    },
+    "gooey-timepicker-focus-ring-offset": {
+      "description": "TimePicker focus ring offset (negative for inset)",
+      "fallback": "gooey-focus-offset",
+      "category": "spacing"
+    },
+    "gooey-timepicker-opacity-disabled": {
+      "description": "TimePicker disabled opacity",
+      "fallback": "gooey-opacity-disabled",
+      "category": "opacity"
+    }
+  },
   "attributes": {
     "draggable": { "type": "BOOLEAN", "default": false },
     "droppable": { "type": "BOOLEAN", "default": false },
