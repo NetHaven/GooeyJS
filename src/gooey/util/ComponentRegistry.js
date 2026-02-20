@@ -10,6 +10,8 @@ export default class ComponentRegistry {
     static _componentPaths = new Map();
     // Maps tagName -> { lowercaseName -> canonicalName }
     static _attributeAliases = new Map();
+    // Maps tagName -> token metadata object from META.goo tokens section
+    static _tokenMeta = new Map();
 
     /**
      * Register a component's metadata
@@ -262,6 +264,7 @@ export default class ComponentRegistry {
         this._themeCSS.clear();
         this._componentPaths.clear();
         this._attributeAliases.clear();
+        this._tokenMeta.clear();
     }
 
     /**
@@ -298,5 +301,23 @@ export default class ComponentRegistry {
      */
     static getComponentPath(tagName) {
         return this._componentPaths.get(tagName.toLowerCase()) || null;
+    }
+
+    /**
+     * Store token metadata for a component
+     * @param {string} tagName - Custom element tag name (e.g., "gooeyui-button")
+     * @param {Object} tokens - Token metadata from META.goo tokens section
+     */
+    static setTokenMeta(tagName, tokens) {
+        this._tokenMeta.set(tagName.toLowerCase(), tokens);
+    }
+
+    /**
+     * Get token metadata for a component
+     * @param {string} tagName - Custom element tag name
+     * @returns {Object|null} Token metadata or null if not registered/no tokens
+     */
+    static getTokenMeta(tagName) {
+        return this._tokenMeta.get(tagName.toLowerCase()) || null;
     }
 }
