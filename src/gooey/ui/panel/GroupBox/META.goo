@@ -11,6 +11,28 @@
     "default": "base",
     "available": ["base", "dark", "janus"]
   },
+  "tokens": {
+    "gooey-groupbox-bg": {
+      "description": "GroupBox content background color",
+      "fallback": "gooey-color-surface",
+      "category": "color"
+    },
+    "gooey-groupbox-border-color": {
+      "description": "GroupBox border color",
+      "fallback": "gooey-color-surface",
+      "category": "color"
+    },
+    "gooey-groupbox-text-bg": {
+      "description": "GroupBox legend text background color",
+      "fallback": "gooey-color-surface",
+      "category": "color"
+    },
+    "gooey-groupbox-text-font-size": {
+      "description": "GroupBox legend text font size",
+      "fallback": null,
+      "category": "typography"
+    }
+  },
   "attributes": {
     "text": { "type": "STRING", "default": null },
     "title": { "type": "STRING", "default": null },

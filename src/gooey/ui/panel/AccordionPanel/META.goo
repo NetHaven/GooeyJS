@@ -11,6 +11,58 @@
     "default": "base",
     "available": ["base", "dark", "janus"]
   },
+  "tokens": {
+    "gooey-accordion-bg": {
+      "description": "AccordionPanel background color",
+      "fallback": "gooey-color-surface",
+      "category": "color"
+    },
+    "gooey-accordion-border-color": {
+      "description": "AccordionPanel border color",
+      "fallback": "gooey-color-surface",
+      "category": "color"
+    },
+    "gooey-accordion-item-border-color": {
+      "description": "AccordionPanel item separator border color",
+      "fallback": "gooey-color-border",
+      "category": "color"
+    },
+    "gooey-accordion-header-bg": {
+      "description": "AccordionPanel header background color",
+      "fallback": "gooey-color-surface",
+      "category": "color"
+    },
+    "gooey-accordion-header-bg-hover": {
+      "description": "AccordionPanel header hover background color",
+      "fallback": "gooey-color-surface-hover",
+      "category": "color"
+    },
+    "gooey-accordion-header-font-family": {
+      "description": "AccordionPanel header font family",
+      "fallback": "gooey-font-family",
+      "category": "typography"
+    },
+    "gooey-accordion-header-font-size": {
+      "description": "AccordionPanel header font size",
+      "fallback": null,
+      "category": "typography"
+    },
+    "gooey-accordion-arrow-color": {
+      "description": "AccordionPanel expand/collapse arrow color",
+      "fallback": "gooey-color-text",
+      "category": "color"
+    },
+    "gooey-accordion-title-color": {
+      "description": "AccordionPanel title text color",
+      "fallback": "gooey-color-text",
+      "category": "color"
+    },
+    "gooey-accordion-content-bg": {
+      "description": "AccordionPanel content area background color",
+      "fallback": "gooey-color-surface",
+      "category": "color"
+    }
+  },
   "attributes": {
     "multiopen": { "type": "BOOLEAN", "default": false },
     "draggable": { "type": "BOOLEAN", "default": false },
