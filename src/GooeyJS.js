@@ -3,6 +3,7 @@ import MetaLoader from './gooey/util/MetaLoader.js';
 import ComponentRegistry from './gooey/util/ComponentRegistry.js';
 import ComponentEvent from './gooey/events/ComponentEvent.js';
 import Logger from './gooey/logging/Logger.js';
+import ThemeManager from './gooey/util/ThemeManager.js';
 
 const SCRIPT_PATH = new URL(import.meta.url, document.baseURI);
 const PATH = SCRIPT_PATH.href.substring(0, SCRIPT_PATH.href.lastIndexOf('/'));
@@ -53,6 +54,8 @@ export default class GooeyJS {
         this.components = [{
             pkg: "gooey",
             elements: [
+                { name: "Theme" },
+                { name: "ThemeOverride" },
                 { name: "Application" },
                 { name: "Component" }
             ]
@@ -107,6 +110,58 @@ export default class GooeyJS {
      */
     static getComponentTokens(tagName) {
         return ComponentRegistry.getTokenMeta(tagName);
+    }
+
+    /**
+     * Register a theme programmatically (THEME-06)
+     * @param {string} name - Theme name
+     * @param {Object} config - { tokens: string (CSS path), extends?: string, overrides?: Object (tagName -> CSS path) }
+     * @returns {Promise<void>}
+     */
+    static async registerTheme(name, config) {
+        let tokenSheet = null;
+
+        // Load token CSS if provided
+        if (config.tokens) {
+            const response = await fetch(config.tokens);
+            if (!response.ok) {
+                throw new Error(`Token CSS not found: ${config.tokens} (HTTP ${response.status})`);
+            }
+            const cssText = await response.text();
+            tokenSheet = new CSSStyleSheet();
+            tokenSheet.replaceSync(cssText);
+        }
+
+        // Load override CSS files if provided
+        const overrides = new Map();
+        if (config.overrides && typeof config.overrides === 'object') {
+            for (const [tagName, cssPath] of Object.entries(config.overrides)) {
+                const response = await fetch(cssPath);
+                if (!response.ok) {
+                    Logger.warn({ code: "THEME_OVERRIDE_LOAD_FAILED", tagName, path: cssPath }, "Failed to load override CSS: %s", cssPath);
+                    continue;
+                }
+                const cssText = await response.text();
+                const sheet = new CSSStyleSheet();
+                sheet.replaceSync(cssText);
+                overrides.set(tagName.toLowerCase(), sheet);
+            }
+        }
+
+        ThemeManager.registerThemeConfig(name, {
+            tokenSheet,
+            overrides,
+            extends: config.extends || null
+        });
+    }
+
+    /**
+     * Set the active theme (THEME-07, THEME-08)
+     * @param {string} name - Theme name to activate ('base' to revert)
+     * @returns {Promise<void>}
+     */
+    static async setTheme(name) {
+        await ThemeManager.setTheme(name);
     }
 
     async createElements() {
