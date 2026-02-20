@@ -52,5 +52,28 @@
             "type": "BOOLEAN",
             "default": false
         }
+    },
+    "tokens": {
+        "gooey-breadcrumb-font-family": { "description": "Breadcrumb font family", "fallback": "gooey-font-family", "category": "typography" },
+        "gooey-breadcrumb-font-size": { "description": "Breadcrumb font size", "fallback": "gooey-font-size-md", "category": "typography" },
+        "gooey-breadcrumb-line-height": { "description": "Breadcrumb line height", "fallback": "gooey-line-height", "category": "typography" },
+        "gooey-breadcrumb-text-color": { "description": "Breadcrumb text color", "fallback": "gooey-color-text-muted", "category": "color" },
+        "gooey-breadcrumb-link-color": { "description": "Breadcrumb link color", "fallback": "gooey-color-text-link", "category": "color" },
+        "gooey-breadcrumb-link-hover-color": { "description": "Breadcrumb link hover color", "fallback": null, "category": "color" },
+        "gooey-breadcrumb-link-hover-bg": { "description": "Breadcrumb link hover background", "fallback": null, "category": "color" },
+        "gooey-breadcrumb-link-active-bg": { "description": "Breadcrumb link active background", "fallback": null, "category": "color" },
+        "gooey-breadcrumb-separator-color": { "description": "Breadcrumb separator color", "fallback": "gooey-color-text-disabled", "category": "color" },
+        "gooey-breadcrumb-separator-gap": { "description": "Breadcrumb separator margin gap", "fallback": "gooey-spacing-md", "category": "spacing" },
+        "gooey-breadcrumb-active-color": { "description": "Breadcrumb active/current item color", "fallback": "gooey-color-text-muted", "category": "color" },
+        "gooey-breadcrumb-max-text-width": { "description": "Breadcrumb maximum text width before truncation", "fallback": null, "category": "sizing" },
+        "gooey-breadcrumb-focus-ring": { "description": "Breadcrumb focus ring style", "fallback": null, "category": "border" },
+        "gooey-breadcrumb-ellipsis-color": { "description": "Breadcrumb ellipsis button color", "fallback": "gooey-color-text-link", "category": "color" },
+        "gooey-breadcrumb-ellipsis-hover-bg": { "description": "Breadcrumb ellipsis hover background", "fallback": null, "category": "color" },
+        "gooey-breadcrumb-menu-bg": { "description": "Breadcrumb collapsed menu background", "fallback": "gooey-color-surface-raised", "category": "color" },
+        "gooey-breadcrumb-menu-border": { "description": "Breadcrumb collapsed menu border color", "fallback": "gooey-color-border-light", "category": "color" },
+        "gooey-breadcrumb-menu-shadow": { "description": "Breadcrumb collapsed menu shadow", "fallback": "gooey-shadow-md", "category": "shadow" },
+        "gooey-breadcrumb-menu-item-hover-bg": { "description": "Breadcrumb collapsed menu item hover background", "fallback": null, "category": "color" },
+        "gooey-breadcrumb-menu-z-index": { "description": "Breadcrumb collapsed menu z-index", "fallback": "gooey-z-dropdown", "category": "z-index" },
+        "gooey-breadcrumb-opacity-disabled": { "description": "Breadcrumb disabled opacity", "fallback": "gooey-opacity-disabled", "category": "opacity" }
     }
 }

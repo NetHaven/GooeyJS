@@ -3,30 +3,30 @@
     align-items: center;
     position: relative;
     user-select: none;
-    font-family: var(--breadcrumb-font-family, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
-    font-size: var(--breadcrumb-font-size, 14px);
-    line-height: var(--breadcrumb-line-height, 1.5);
-    color: var(--breadcrumb-text-color, #333333);
-    --breadcrumb-link-color: #0066cc;
-    --breadcrumb-link-hover-color: #004499;
-    --breadcrumb-link-hover-bg: rgba(0, 102, 204, 0.08);
-    --breadcrumb-link-active-bg: rgba(0, 102, 204, 0.15);
-    --breadcrumb-separator-color: #666666;
-    --breadcrumb-separator-gap: 8px;
-    --breadcrumb-max-text-width: 200px;
-    --breadcrumb-active-color: #333333;
-    --breadcrumb-ellipsis-color: #0066cc;
-    --breadcrumb-ellipsis-hover-bg: rgba(0, 102, 204, 0.1);
-    --breadcrumb-focus-ring: 2px solid #010082;
-    --breadcrumb-menu-bg: #ffffff;
-    --breadcrumb-menu-border: #cccccc;
-    --breadcrumb-menu-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    --breadcrumb-menu-item-hover-bg: #f0f0f0;
-    --breadcrumb-menu-z-index: 1000;
+    font-family: var(--gooey-breadcrumb-font-family, var(--gooey-font-family, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif));
+    font-size: var(--gooey-breadcrumb-font-size, var(--gooey-font-size-md, 14px));
+    line-height: var(--gooey-breadcrumb-line-height, var(--gooey-line-height, 1.5));
+    color: var(--gooey-breadcrumb-text-color, var(--gooey-color-text-muted, #333333));
+    --breadcrumb-link-color: var(--gooey-breadcrumb-link-color, var(--gooey-color-text-link, #0066cc));
+    --breadcrumb-link-hover-color: var(--gooey-breadcrumb-link-hover-color, #004499);
+    --breadcrumb-link-hover-bg: var(--gooey-breadcrumb-link-hover-bg, rgba(0, 102, 204, 0.08));
+    --breadcrumb-link-active-bg: var(--gooey-breadcrumb-link-active-bg, rgba(0, 102, 204, 0.15));
+    --breadcrumb-separator-color: var(--gooey-breadcrumb-separator-color, var(--gooey-color-text-disabled, #666666));
+    --breadcrumb-separator-gap: var(--gooey-breadcrumb-separator-gap, var(--gooey-spacing-md, 8px));
+    --breadcrumb-max-text-width: var(--gooey-breadcrumb-max-text-width, 200px);
+    --breadcrumb-active-color: var(--gooey-breadcrumb-active-color, var(--gooey-color-text-muted, #333333));
+    --breadcrumb-ellipsis-color: var(--gooey-breadcrumb-ellipsis-color, var(--gooey-color-text-link, #0066cc));
+    --breadcrumb-ellipsis-hover-bg: var(--gooey-breadcrumb-ellipsis-hover-bg, rgba(0, 102, 204, 0.1));
+    --breadcrumb-focus-ring: var(--gooey-breadcrumb-focus-ring, 2px solid #010082);
+    --breadcrumb-menu-bg: var(--gooey-breadcrumb-menu-bg, var(--gooey-color-surface-raised, #ffffff));
+    --breadcrumb-menu-border: var(--gooey-breadcrumb-menu-border, var(--gooey-color-border-light, #cccccc));
+    --breadcrumb-menu-shadow: var(--gooey-breadcrumb-menu-shadow, var(--gooey-shadow-md, 0 2px 8px rgba(0, 0, 0, 0.15)));
+    --breadcrumb-menu-item-hover-bg: var(--gooey-breadcrumb-menu-item-hover-bg, #f0f0f0);
+    --breadcrumb-menu-z-index: var(--gooey-breadcrumb-menu-z-index, var(--gooey-z-dropdown, 1000));
 }
 
 :host([disabled]) {
-    opacity: 0.5;
+    opacity: var(--gooey-breadcrumb-opacity-disabled, var(--gooey-opacity-disabled, 0.5));
     pointer-events: none;
 }
 
@@ -99,7 +99,7 @@
     display: block;
     width: 100%;
     padding: 6px 12px;
-    color: #333333;
+    color: var(--gooey-breadcrumb-text-color, var(--gooey-color-text-muted, #333333));
     text-decoration: none;
     background: transparent;
     border: none;

@@ -14,7 +14,7 @@
 }
 
 :host([disabled]) .breadcrumb-link {
-    color: #999999;
+    color: var(--gooey-breadcrumbitem-disabled-color, var(--gooey-color-text-disabled, #999999));
     cursor: not-allowed;
 }
 

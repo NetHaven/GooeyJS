@@ -44,5 +44,12 @@
             "type": "BOOLEAN",
             "default": false
         }
+    },
+    "tokens": {
+        "gooey-breadcrumbitem-disabled-color": {
+            "description": "BreadcrumbItem disabled link color",
+            "fallback": "gooey-color-text-disabled",
+            "category": "color"
+        }
     }
 }
