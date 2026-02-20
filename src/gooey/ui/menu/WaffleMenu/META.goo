@@ -75,5 +75,67 @@
       "type": "STRING",
       "default": null
     }
+  },
+  "tokens": {
+    "gooey-wafflemenu-bg": {
+      "description": "WaffleMenu panel background color",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-wafflemenu-trigger-size": {
+      "description": "WaffleMenu trigger button size (width and height)",
+      "fallback": null,
+      "category": "sizing"
+    },
+    "gooey-wafflemenu-trigger-bg": {
+      "description": "WaffleMenu trigger button background",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-wafflemenu-trigger-hover-bg": {
+      "description": "WaffleMenu trigger button hover background",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-wafflemenu-focus-color": {
+      "description": "WaffleMenu focus ring color",
+      "fallback": "gooey-color-focus",
+      "category": "color"
+    },
+    "gooey-wafflemenu-icon-color": {
+      "description": "WaffleMenu waffle icon fill color",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-wafflemenu-border-radius": {
+      "description": "WaffleMenu panel border radius",
+      "fallback": null,
+      "category": "border"
+    },
+    "gooey-wafflemenu-shadow": {
+      "description": "WaffleMenu panel box shadow",
+      "fallback": null,
+      "category": "shadow"
+    },
+    "gooey-wafflemenu-gap": {
+      "description": "WaffleMenu grid item gap",
+      "fallback": null,
+      "category": "spacing"
+    },
+    "gooey-wafflemenu-padding": {
+      "description": "WaffleMenu grid and header/footer padding",
+      "fallback": null,
+      "category": "spacing"
+    },
+    "gooey-wafflemenu-header-border-color": {
+      "description": "WaffleMenu header/footer border color",
+      "fallback": "gooey-color-border-light",
+      "category": "color"
+    },
+    "gooey-wafflemenu-opacity-disabled": {
+      "description": "WaffleMenu disabled state opacity",
+      "fallback": "gooey-opacity-disabled",
+      "category": "opacity"
+    }
   }
 }

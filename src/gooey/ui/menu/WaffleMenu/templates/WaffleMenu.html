@@ -1,5 +1,5 @@
 <template id="ui-WaffleMenu">
-    <button class="waffle-trigger" type="button" aria-haspopup="menu" aria-expanded="false">
+    <button class="waffle-trigger" part="trigger" type="button" aria-haspopup="menu" aria-expanded="false">
         <slot name="icon">
             <svg class="waffle-icon" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
                 <circle cx="5" cy="5" r="2"/>
@@ -16,12 +16,12 @@
         </slot>
     </button>
     <div class="waffle-backdrop"></div>
-    <div class="waffle-panel" role="menu" aria-label="Applications" aria-hidden="true">
+    <div class="waffle-panel" part="panel" role="menu" aria-label="Applications" aria-hidden="true">
         <div class="waffle-header" role="none">
             <span class="waffle-title"></span>
             <button class="waffle-close" type="button" aria-label="Close menu">&times;</button>
         </div>
-        <div class="waffle-grid" role="none">
+        <div class="waffle-grid" part="grid" role="none">
             <slot></slot>
         </div>
         <div class="waffle-footer" role="none">

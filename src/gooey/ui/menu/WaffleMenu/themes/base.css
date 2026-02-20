@@ -1,29 +1,16 @@
 :host {
     display: inline-block;
     position: relative;
-    --waffle-trigger-size: 40px;
-    --waffle-panel-width: auto;
-    --waffle-panel-max-height: 400px;
-    --waffle-item-size: 96px;
-    --waffle-gap: 8px;
-    --waffle-padding: 16px;
-    --waffle-border-radius: 8px;
-    --waffle-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-    --waffle-bg: #ffffff;
-    --waffle-trigger-bg: transparent;
-    --waffle-trigger-hover-bg: rgba(0, 0, 0, 0.08);
-    --waffle-icon-color: #5f6368;
-    --waffle-backdrop-bg: transparent;
 }
 
 /* Trigger Button */
 .waffle-trigger {
-    width: var(--waffle-trigger-size);
-    height: var(--waffle-trigger-size);
+    width: var(--gooey-wafflemenu-trigger-size, var(--waffle-trigger-size, 40px));
+    height: var(--gooey-wafflemenu-trigger-size, var(--waffle-trigger-size, 40px));
     padding: 8px;
     border: none;
     border-radius: 50%;
-    background: var(--waffle-trigger-bg);
+    background: var(--gooey-wafflemenu-trigger-bg, var(--waffle-trigger-bg, transparent));
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -32,16 +19,16 @@
 }
 
 .waffle-trigger:hover {
-    background: var(--waffle-trigger-hover-bg);
+    background: var(--gooey-wafflemenu-trigger-hover-bg, var(--waffle-trigger-hover-bg, rgba(0, 0, 0, 0.08)));
 }
 
 .waffle-trigger:focus {
-    outline: 2px solid #1a73e8;
-    outline-offset: 2px;
+    outline: var(--gooey-focus-width, 2px) var(--gooey-focus-style, solid) var(--gooey-wafflemenu-focus-color, var(--gooey-color-focus, #1a73e8));
+    outline-offset: var(--gooey-focus-offset, 2px);
 }
 
 .waffle-icon {
-    fill: var(--waffle-icon-color);
+    fill: var(--gooey-wafflemenu-icon-color, var(--waffle-icon-color, #5f6368));
 }
 
 .waffle-custom-icon {
@@ -58,7 +45,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: var(--waffle-backdrop-bg);
+    background: transparent;
     z-index: 998;
 }
 
@@ -74,13 +61,13 @@
 .waffle-panel {
     display: none;
     position: absolute;
-    background: var(--waffle-bg);
-    border-radius: var(--waffle-border-radius);
-    box-shadow: var(--waffle-shadow);
+    background: var(--gooey-wafflemenu-bg, var(--waffle-bg, #ffffff));
+    border-radius: var(--gooey-wafflemenu-border-radius, var(--waffle-border-radius, 8px));
+    box-shadow: var(--gooey-wafflemenu-shadow, var(--waffle-shadow, 0 4px 16px rgba(0, 0, 0, 0.15)));
     z-index: 999;
     min-width: 200px;
-    width: var(--waffle-panel-width);
-    max-height: var(--waffle-panel-max-height);
+    width: var(--waffle-panel-width, auto);
+    max-height: var(--waffle-panel-max-height, 400px);
     overflow: hidden;
 }
 
@@ -117,8 +104,8 @@
 /* Header */
 .waffle-header {
     display: none;
-    padding: 12px var(--waffle-padding);
-    border-bottom: 1px solid #e0e0e0;
+    padding: 12px var(--gooey-wafflemenu-padding, var(--waffle-padding, 16px));
+    border-bottom: 1px solid var(--gooey-wafflemenu-header-border-color, var(--gooey-color-border-light, #e0e0e0));
     align-items: center;
     justify-content: space-between;
 }
@@ -155,18 +142,18 @@
 /* Grid */
 .waffle-grid {
     display: grid;
-    grid-template-columns: repeat(var(--waffle-columns, 3), var(--waffle-item-size));
-    gap: var(--waffle-gap);
-    padding: var(--waffle-padding);
+    grid-template-columns: repeat(var(--waffle-columns, 3), var(--waffle-item-size, 96px));
+    gap: var(--gooey-wafflemenu-gap, var(--waffle-gap, 8px));
+    padding: var(--gooey-wafflemenu-padding, var(--waffle-padding, 16px));
     overflow-y: auto;
-    max-height: calc(var(--waffle-panel-max-height) - 60px);
+    max-height: calc(var(--waffle-panel-max-height, 400px) - 60px);
 }
 
 /* Footer */
 .waffle-footer {
     display: none;
-    padding: 12px var(--waffle-padding);
-    border-top: 1px solid #e0e0e0;
+    padding: 12px var(--gooey-wafflemenu-padding, var(--waffle-padding, 16px));
+    border-top: 1px solid var(--gooey-wafflemenu-header-border-color, var(--gooey-color-border-light, #e0e0e0));
 }
 
 .waffle-footer.has-content {
@@ -175,7 +162,7 @@
 
 /* Disabled state */
 :host([disabled]) .waffle-trigger {
-    opacity: 0.5;
+    opacity: var(--gooey-wafflemenu-opacity-disabled, var(--gooey-opacity-disabled, 0.5));
     cursor: not-allowed;
     pointer-events: none;
 }
