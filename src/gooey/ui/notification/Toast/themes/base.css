@@ -4,8 +4,8 @@
     display: block;
     position: relative;
     pointer-events: auto;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    font-size: 14px;
+    font-family: var(--gooey-toast-font-family, var(--gooey-font-family, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif));
+    font-size: var(--gooey-toast-font-size, var(--gooey-font-size-md, 14px));
     max-width: 400px;
     min-width: 280px;
     box-sizing: border-box;
@@ -16,7 +16,7 @@
 }
 
 :host([disabled]) {
-    opacity: 0.5;
+    opacity: var(--gooey-toast-opacity-disabled, var(--gooey-opacity-disabled, 0.5));
     pointer-events: none;
 }
 
@@ -25,11 +25,11 @@
     flex-direction: row;
     align-items: flex-start;
     padding: 12px 16px;
-    background: #ffffff;
-    border: 1px solid #e0e0e0;
-    border-left: 4px solid #005fcc;
-    border-radius: 4px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    background: var(--gooey-toast-bg, var(--gooey-color-surface-raised, #ffffff));
+    border: 1px solid var(--gooey-toast-border-color, var(--gooey-color-border-light, #e0e0e0));
+    border-left: 4px solid var(--gooey-toast-info-color, var(--gooey-color-info, #005fcc));
+    border-radius: var(--gooey-toast-border-radius, var(--gooey-border-radius, 4px));
+    box-shadow: var(--gooey-toast-shadow, var(--gooey-shadow-md, 0 2px 8px rgba(0, 0, 0, 0.15)));
     gap: 12px;
     position: relative;
 }
@@ -50,7 +50,7 @@
 }
 
 .toast-message {
-    color: #333333;
+    color: var(--gooey-toast-message-color, var(--gooey-color-text-muted, #333333));
     line-height: 1.4;
     word-wrap: break-word;
 }
@@ -66,10 +66,10 @@
 .toast-action-btn {
     background: none;
     border: none;
-    color: #005fcc;
+    color: var(--gooey-toast-info-color, var(--gooey-color-info, #005fcc));
     cursor: pointer;
     font-weight: 600;
-    font-size: 13px;
+    font-size: var(--gooey-toast-action-font-size, 13px);
     padding: 4px 8px;
 }
 
@@ -78,14 +78,14 @@
 }
 
 .toast-action-btn:focus-visible {
-    outline: 2px solid #005fcc;
+    outline: 2px solid var(--gooey-toast-focus-ring-color, var(--gooey-color-focus, #005fcc));
     outline-offset: 2px;
 }
 
 .toast-close-btn {
     background: none;
     border: none;
-    color: #666666;
+    color: var(--gooey-toast-close-color, #666666);
     cursor: pointer;
     font-size: 18px;
     padding: 4px;
@@ -93,11 +93,11 @@
 }
 
 .toast-close-btn:hover {
-    color: #333333;
+    color: var(--gooey-toast-close-hover-color, var(--gooey-color-text-muted, #333333));
 }
 
 .toast-close-btn:focus-visible {
-    outline: 2px solid #005fcc;
+    outline: 2px solid var(--gooey-toast-focus-ring-color, var(--gooey-color-focus, #005fcc));
     outline-offset: 2px;
 }
 
@@ -107,14 +107,14 @@
     left: 0;
     right: 0;
     height: 3px;
-    background: rgba(0, 0, 0, 0.08);
+    background: var(--gooey-toast-progress-track-bg, rgba(0, 0, 0, 0.08));
     overflow: hidden;
 }
 
 .toast-progress-bar {
     height: 100%;
     width: 100%;
-    background: #005fcc;
+    background: var(--gooey-toast-info-color, var(--gooey-color-info, #005fcc));
 }
 
 /* Show progress bar when attribute is set */
@@ -127,73 +127,73 @@
 /* INFO (default): applied both when type="info" is set and when no type attribute is present */
 :host([type="info"]) .toast-container,
 .toast-container {
-    border-left-color: #005fcc;
+    border-left-color: var(--gooey-toast-info-color, var(--gooey-color-info, #005fcc));
 }
 
 :host([type="info"]) .toast-icon,
 .toast-icon {
-    color: #005fcc;
+    color: var(--gooey-toast-info-color, var(--gooey-color-info, #005fcc));
 }
 
 :host([type="info"]) .toast-progress-bar,
 .toast-progress-bar {
-    background-color: #005fcc;
+    background-color: var(--gooey-toast-info-color, var(--gooey-color-info, #005fcc));
 }
 
 :host([type="info"]) .toast-action-btn,
 .toast-action-btn {
-    color: #005fcc;
+    color: var(--gooey-toast-info-color, var(--gooey-color-info, #005fcc));
 }
 
 /* SUCCESS */
 :host([type="success"]) .toast-container {
-    border-left-color: #107c10;
+    border-left-color: var(--gooey-toast-success-color, var(--gooey-color-success, #107c10));
 }
 
 :host([type="success"]) .toast-icon {
-    color: #107c10;
+    color: var(--gooey-toast-success-color, var(--gooey-color-success, #107c10));
 }
 
 :host([type="success"]) .toast-progress-bar {
-    background-color: #107c10;
+    background-color: var(--gooey-toast-success-color, var(--gooey-color-success, #107c10));
 }
 
 :host([type="success"]) .toast-action-btn {
-    color: #107c10;
+    color: var(--gooey-toast-success-color, var(--gooey-color-success, #107c10));
 }
 
 /* WARNING */
 :host([type="warning"]) .toast-container {
-    border-left-color: #d83b01;
+    border-left-color: var(--gooey-toast-warning-color, var(--gooey-color-warning, #d83b01));
 }
 
 :host([type="warning"]) .toast-icon {
-    color: #d83b01;
+    color: var(--gooey-toast-warning-color, var(--gooey-color-warning, #d83b01));
 }
 
 :host([type="warning"]) .toast-progress-bar {
-    background-color: #d83b01;
+    background-color: var(--gooey-toast-warning-color, var(--gooey-color-warning, #d83b01));
 }
 
 :host([type="warning"]) .toast-action-btn {
-    color: #d83b01;
+    color: var(--gooey-toast-warning-color, var(--gooey-color-warning, #d83b01));
 }
 
 /* ERROR */
 :host([type="error"]) .toast-container {
-    border-left-color: #d13438;
+    border-left-color: var(--gooey-toast-error-color, var(--gooey-color-error, #d13438));
 }
 
 :host([type="error"]) .toast-icon {
-    color: #d13438;
+    color: var(--gooey-toast-error-color, var(--gooey-color-error, #d13438));
 }
 
 :host([type="error"]) .toast-progress-bar {
-    background-color: #d13438;
+    background-color: var(--gooey-toast-error-color, var(--gooey-color-error, #d13438));
 }
 
 :host([type="error"]) .toast-action-btn {
-    color: #d13438;
+    color: var(--gooey-toast-error-color, var(--gooey-color-error, #d13438));
 }
 
 /* ======== Type-Specific Icons ======== */
