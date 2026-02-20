@@ -11,6 +11,33 @@
     "default": "base",
     "available": ["base", "dark", "janus"]
   },
+  "tokens": {
+    "gooey-togglebuttongroup-border-color": {
+      "description": "ToggleButtonGroup container border color",
+      "fallback": "gooey-color-border",
+      "category": "color"
+    },
+    "gooey-togglebuttongroup-bg": {
+      "description": "ToggleButtonGroup container background color",
+      "fallback": "gooey-color-surface",
+      "category": "color"
+    },
+    "gooey-togglebuttongroup-separator-color": {
+      "description": "ToggleButtonGroup separator border color between buttons",
+      "fallback": "gooey-color-border",
+      "category": "color"
+    },
+    "gooey-togglebuttongroup-spaced-border-color": {
+      "description": "ToggleButtonGroup spaced mode button border color",
+      "fallback": "gooey-color-surface",
+      "category": "color"
+    },
+    "gooey-togglebuttongroup-opacity-disabled": {
+      "description": "ToggleButtonGroup disabled opacity",
+      "fallback": "gooey-opacity-disabled",
+      "category": "opacity"
+    }
+  },
   "attributes": {
     "allowdeselect": { "type": "BOOLEAN", "default": false },
     "autoselect": { "type": "BOOLEAN", "default": false },

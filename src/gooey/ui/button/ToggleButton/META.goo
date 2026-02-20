@@ -11,6 +11,83 @@
     "default": "base",
     "available": ["base", "dark", "janus"]
   },
+  "tokens": {
+    "gooey-togglebutton-bg": {
+      "description": "ToggleButton background color",
+      "fallback": "gooey-color-surface",
+      "category": "color"
+    },
+    "gooey-togglebutton-border-color": {
+      "description": "ToggleButton border color",
+      "fallback": "gooey-color-surface",
+      "category": "color"
+    },
+    "gooey-togglebutton-color": {
+      "description": "ToggleButton text color",
+      "fallback": "gooey-color-text",
+      "category": "color"
+    },
+    "gooey-togglebutton-font-family": {
+      "description": "ToggleButton font family",
+      "fallback": "gooey-font-family",
+      "category": "typography"
+    },
+    "gooey-togglebutton-font-size": {
+      "description": "ToggleButton font size",
+      "fallback": null,
+      "category": "typography"
+    },
+    "gooey-togglebutton-bg-hover": {
+      "description": "ToggleButton hover background color",
+      "fallback": "gooey-color-surface-hover",
+      "category": "color"
+    },
+    "gooey-togglebutton-focus-color": {
+      "description": "ToggleButton focus border color",
+      "fallback": "gooey-color-primary",
+      "category": "color"
+    },
+    "gooey-togglebutton-pressed-bg": {
+      "description": "ToggleButton pressed state background",
+      "fallback": "gooey-color-primary",
+      "category": "color"
+    },
+    "gooey-togglebutton-pressed-color": {
+      "description": "ToggleButton pressed state text color",
+      "fallback": "gooey-color-primary-text",
+      "category": "color"
+    },
+    "gooey-togglebutton-pressed-bg-hover": {
+      "description": "ToggleButton pressed hover background",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-togglebutton-pressed-bg-active": {
+      "description": "ToggleButton pressed active background",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-togglebutton-opacity-disabled": {
+      "description": "ToggleButton disabled opacity",
+      "fallback": "gooey-opacity-disabled",
+      "category": "opacity"
+    },
+    "gooey-togglebutton-color-disabled": {
+      "description": "ToggleButton disabled text color",
+      "fallback": "gooey-color-text-disabled",
+      "category": "color"
+    },
+    "gooey-togglebutton-pressed-bg-disabled": {
+      "description": "ToggleButton disabled pressed background",
+      "fallback": "gooey-color-border",
+      "category": "color"
+    },
+    "gooey-togglebutton-pressed-color-disabled": {
+      "description": "ToggleButton disabled pressed text color",
+      "fallback": "gooey-color-surface",
+      "category": "color"
+    }
+  },
   "attributes": {
     "action": { "type": "STRING", "default": null },
     "icon": { "type": "STRING", "default": null },
