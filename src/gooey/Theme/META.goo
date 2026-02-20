@@ -1,0 +1,18 @@
+{
+    "MetaGooVersion": "1.0",
+    "name": "Theme",
+    "prefix": "gooey",
+    "tagName": "theme",
+    "script": "Theme.js",
+    "templates": [],
+    "themes": {
+        "default": "base",
+        "available": ["base"]
+    },
+    "attributes": {
+        "name": { "type": "STRING", "default": null },
+        "tokens": { "type": "STRING", "default": null },
+        "extends": { "type": "STRING", "default": null },
+        "active": { "type": "BOOLEAN", "default": false }
+    }
+}
