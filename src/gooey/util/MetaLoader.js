@@ -144,6 +144,29 @@ export default class MetaLoader {
             }
         }
 
+        // Validate tokens object if present (optional - for design token discovery)
+        if (meta.tokens !== undefined) {
+            if (typeof meta.tokens !== 'object' || Array.isArray(meta.tokens)) {
+                errors.push('"tokens" must be an object');
+            } else {
+                Object.entries(meta.tokens).forEach(([tokenName, tokenDef]) => {
+                    if (!tokenDef || typeof tokenDef !== 'object') {
+                        errors.push(`tokens.${tokenName}: must be an object`);
+                        return;
+                    }
+                    if (!tokenDef.fallback || typeof tokenDef.fallback !== 'string') {
+                        errors.push(`tokens.${tokenName}: missing or invalid "fallback" field (string required)`);
+                    }
+                    if (tokenDef.category !== undefined && typeof tokenDef.category !== 'string') {
+                        errors.push(`tokens.${tokenName}: "category" must be a string`);
+                    }
+                    if (tokenDef.description !== undefined && typeof tokenDef.description !== 'string') {
+                        errors.push(`tokens.${tokenName}: "description" must be a string`);
+                    }
+                });
+            }
+        }
+
         // Validate each attribute definition
         if (meta.attributes && typeof meta.attributes === 'object') {
             const validTypes = ['STRING', 'NUMBER', 'BOOLEAN', 'ENUM'];
@@ -297,14 +320,26 @@ export default class MetaLoader {
     static async switchTheme(shadowRoot, componentPath, newTheme) {
         const cssResult = await this.loadThemeCSS(componentPath, newTheme);
 
-        // Clear existing adopted stylesheets
-        shadowRoot.adoptedStyleSheets = [];
-
-        // Remove existing <style> elements if using fallback
-        shadowRoot.querySelectorAll('style[data-theme]').forEach(el => el.remove());
-
-        // Inject new theme
-        this.injectCSS(shadowRoot, cssResult);
+        if (cssResult.type === 'stylesheet' && cssResult.sheet) {
+            const sheets = [...shadowRoot.adoptedStyleSheets];
+            if (sheets.length > 1) {
+                // Replace theme sheet at index 1, keep base component sheet at index 0
+                sheets[1] = cssResult.sheet;
+                // Remove any extra theme sheets beyond index 1 (clean slate for new theme)
+                shadowRoot.adoptedStyleSheets = sheets.slice(0, 2);
+            } else {
+                // Only base sheet exists (index 0) -- append new theme sheet
+                sheets.push(cssResult.sheet);
+                shadowRoot.adoptedStyleSheets = sheets;
+            }
+        } else {
+            // Fallback path: replace only data-theme style elements, preserve base styles
+            shadowRoot.querySelectorAll('style[data-theme]').forEach(el => el.remove());
+            const style = document.createElement('style');
+            style.setAttribute('data-theme', 'true');
+            style.textContent = cssResult.cssText;
+            shadowRoot.appendChild(style);
+        }
     }
 
     /**
