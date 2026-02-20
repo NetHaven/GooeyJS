@@ -11,6 +11,38 @@
     "default": "base",
     "available": ["base", "dark", "janus"]
   },
+  "tokens": {
+    "gooey-menuitem-color": {
+      "description": "MenuItem text color",
+      "fallback": "gooey-color-text",
+      "category": "color"
+    },
+    "gooey-menuitem-bg-active": {
+      "description": "MenuItem active/highlight background",
+      "fallback": "gooey-color-primary",
+      "category": "color"
+    },
+    "gooey-menuitem-color-active": {
+      "description": "MenuItem active/highlight text color",
+      "fallback": "gooey-color-primary-text",
+      "category": "color"
+    },
+    "gooey-menuitem-icon-size": {
+      "description": "MenuItem icon dimensions",
+      "fallback": "gooey-icon-size",
+      "category": "sizing"
+    },
+    "gooey-menuitem-focus-ring-color": {
+      "description": "MenuItem keyboard focus ring color",
+      "fallback": "gooey-color-focus",
+      "category": "color"
+    },
+    "gooey-menuitem-opacity-disabled": {
+      "description": "MenuItem disabled opacity",
+      "fallback": "gooey-opacity-disabled",
+      "category": "opacity"
+    }
+  },
   "attributes": {
     "accelerator": { "type": "STRING", "default": null },
     "action": { "type": "STRING", "default": null },

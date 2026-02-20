@@ -11,6 +11,28 @@
     "default": "base",
     "available": ["base", "dark", "janus"]
   },
+  "tokens": {
+    "gooey-checkboxmenuitem-color": {
+      "description": "CheckboxMenuItem text color",
+      "fallback": "gooey-color-text",
+      "category": "color"
+    },
+    "gooey-checkboxmenuitem-bg-active": {
+      "description": "CheckboxMenuItem active/highlight background",
+      "fallback": "gooey-color-primary",
+      "category": "color"
+    },
+    "gooey-checkboxmenuitem-color-active": {
+      "description": "CheckboxMenuItem active/highlight text color",
+      "fallback": "gooey-color-primary-text",
+      "category": "color"
+    },
+    "gooey-checkboxmenuitem-icon-size": {
+      "description": "CheckboxMenuItem checkbox icon dimensions",
+      "fallback": null,
+      "category": "sizing"
+    }
+  },
   "attributes": {
     "checked": { "type": "BOOLEAN", "default": false },
     "text": { "type": "STRING", "default": null },
