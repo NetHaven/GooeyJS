@@ -11,6 +11,38 @@
     "default": "base",
     "available": ["base", "dark", "janus"]
   },
+  "tokens": {
+    "gooey-progressbar-track-bg": {
+      "description": "ProgressBar track background color",
+      "fallback": "gooey-color-surface-disabled",
+      "category": "color"
+    },
+    "gooey-progressbar-track-border-color": {
+      "description": "ProgressBar track border color",
+      "fallback": "gooey-color-surface",
+      "category": "color"
+    },
+    "gooey-progressbar-fill-bg": {
+      "description": "ProgressBar fill background color",
+      "fallback": "gooey-color-primary",
+      "category": "color"
+    },
+    "gooey-progressbar-text-color": {
+      "description": "ProgressBar percentage text color",
+      "fallback": "gooey-color-text",
+      "category": "color"
+    },
+    "gooey-progressbar-text-font-size": {
+      "description": "ProgressBar text font size",
+      "fallback": null,
+      "category": "typography"
+    },
+    "gooey-progressbar-border-radius": {
+      "description": "ProgressBar track border radius",
+      "fallback": "gooey-border-radius",
+      "category": "border"
+    }
+  },
   "attributes": {
     "draggable": { "type": "BOOLEAN", "default": false },
     "droppable": { "type": "BOOLEAN", "default": false },

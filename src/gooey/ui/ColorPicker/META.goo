@@ -11,6 +11,98 @@
     "default": "base",
     "available": ["base", "dark", "janus"]
   },
+  "tokens": {
+    "gooey-colorpicker-font-family": {
+      "description": "ColorPicker font family",
+      "fallback": "gooey-font-family",
+      "category": "typography"
+    },
+    "gooey-colorpicker-font-size": {
+      "description": "ColorPicker font size",
+      "fallback": null,
+      "category": "typography"
+    },
+    "gooey-colorpicker-button-bg": {
+      "description": "ColorPicker button background color",
+      "fallback": "gooey-color-surface",
+      "category": "color"
+    },
+    "gooey-colorpicker-button-border-color": {
+      "description": "ColorPicker button border color",
+      "fallback": "gooey-color-surface",
+      "category": "color"
+    },
+    "gooey-colorpicker-button-bg-hover": {
+      "description": "ColorPicker button hover background",
+      "fallback": "gooey-color-surface-hover",
+      "category": "color"
+    },
+    "gooey-colorpicker-button-focus-color": {
+      "description": "ColorPicker button focus border color",
+      "fallback": "gooey-color-primary",
+      "category": "color"
+    },
+    "gooey-colorpicker-display-border-color": {
+      "description": "ColorPicker color display border color",
+      "fallback": "gooey-color-surface",
+      "category": "color"
+    },
+    "gooey-colorpicker-arrow-color": {
+      "description": "ColorPicker dropdown arrow color",
+      "fallback": "gooey-color-text",
+      "category": "color"
+    },
+    "gooey-colorpicker-dropdown-bg": {
+      "description": "ColorPicker dropdown background color",
+      "fallback": "gooey-color-surface",
+      "category": "color"
+    },
+    "gooey-colorpicker-dropdown-border-color": {
+      "description": "ColorPicker dropdown border color",
+      "fallback": "gooey-color-surface",
+      "category": "color"
+    },
+    "gooey-colorpicker-dropdown-shadow": {
+      "description": "ColorPicker dropdown box shadow",
+      "fallback": "gooey-shadow-sm",
+      "category": "shadow"
+    },
+    "gooey-colorpicker-dropdown-z-index": {
+      "description": "ColorPicker dropdown z-index",
+      "fallback": "gooey-z-dropdown",
+      "category": "z-index"
+    },
+    "gooey-colorpicker-swatch-border-color": {
+      "description": "ColorPicker swatch border color",
+      "fallback": "gooey-color-surface",
+      "category": "color"
+    },
+    "gooey-colorpicker-swatch-focus-color": {
+      "description": "ColorPicker swatch focus border color",
+      "fallback": "gooey-color-primary",
+      "category": "color"
+    },
+    "gooey-colorpicker-custom-border-color": {
+      "description": "ColorPicker custom section border color",
+      "fallback": "gooey-color-border",
+      "category": "color"
+    },
+    "gooey-colorpicker-input-bg": {
+      "description": "ColorPicker hex input background",
+      "fallback": "gooey-color-surface-raised",
+      "category": "color"
+    },
+    "gooey-colorpicker-input-color": {
+      "description": "ColorPicker input text color",
+      "fallback": "gooey-color-text",
+      "category": "color"
+    },
+    "gooey-colorpicker-opacity-disabled": {
+      "description": "ColorPicker disabled opacity",
+      "fallback": "gooey-opacity-disabled",
+      "category": "opacity"
+    }
+  },
   "attributes": {
     "draggable": { "type": "BOOLEAN", "default": false },
     "droppable": { "type": "BOOLEAN", "default": false },
