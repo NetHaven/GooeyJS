@@ -8,9 +8,9 @@
 }
 
 .ui-GroupBox-content {
-    border: 2px inset #c1c0c1;
+    border: 2px inset var(--gooey-groupbox-border-color, var(--gooey-color-surface, #c1c0c1));
     padding: 8px;
-    background-color: #c1c0c1;
+    background-color: var(--gooey-groupbox-bg, var(--gooey-color-surface, #c1c0c1));
     min-height: 20px;
 }
 
@@ -18,9 +18,9 @@
     position: absolute;
     top: 0;
     left: 13px;
-    background-color: #c1c0c1;
+    background-color: var(--gooey-groupbox-text-bg, var(--gooey-color-surface, #c1c0c1));
     padding: 0 4px;
-    font-size: 11px;
+    font-size: var(--gooey-groupbox-text-font-size, 11px);
     line-height: 1;
     transform: translateY(-50%);
     display: none;

@@ -1,15 +1,15 @@
 /* AccordionPanel Base Theme */
 
 :host {
-    border: 2px inset #c1c0c1;
-    background-color: #c1c0c1;
+    border: 2px inset var(--gooey-accordion-border-color, var(--gooey-color-surface, #c1c0c1));
+    background-color: var(--gooey-accordion-bg, var(--gooey-color-surface, #c1c0c1));
     display: block;
     width: 100%;
     overflow: hidden;
 }
 
 .accordion-item {
-    border-bottom: 1px solid #808080;
+    border-bottom: 1px solid var(--gooey-accordion-item-border-color, var(--gooey-color-border, #808080));
 }
 
 .accordion-item:last-child {
@@ -18,32 +18,32 @@
 
 .accordion-header {
     padding: 6px 8px;
-    background-color: #c1c0c1;
+    background-color: var(--gooey-accordion-header-bg, var(--gooey-color-surface, #c1c0c1));
     cursor: pointer;
     user-select: none;
     display: flex;
     align-items: center;
-    border: 1px outset #c1c0c1;
-    border-bottom: 1px solid #808080;
-    font-family: sans-serif;
-    font-size: 11px;
+    border: 1px outset var(--gooey-accordion-border-color, var(--gooey-color-surface, #c1c0c1));
+    border-bottom: 1px solid var(--gooey-accordion-item-border-color, var(--gooey-color-border, #808080));
+    font-family: var(--gooey-accordion-header-font-family, var(--gooey-font-family, sans-serif));
+    font-size: var(--gooey-accordion-header-font-size, 11px);
     font-weight: normal;
 }
 
 .accordion-header:hover {
-    background-color: #d4d0c8;
+    background-color: var(--gooey-accordion-header-bg-hover, var(--gooey-color-surface-hover, #d4d0c8));
 }
 
 .accordion-header.active {
-    background-color: #c1c0c1;
-    border: 1px inset #c1c0c1;
+    background-color: var(--gooey-accordion-header-bg, var(--gooey-color-surface, #c1c0c1));
+    border: 1px inset var(--gooey-accordion-border-color, var(--gooey-color-surface, #c1c0c1));
     font-weight: bold;
 }
 
 .accordion-arrow {
     margin-right: 6px;
     font-size: 10px;
-    color: #000;
+    color: var(--gooey-accordion-arrow-color, var(--gooey-color-text, #000));
     font-family: monospace;
     display: inline-block;
     width: 10px;
@@ -52,14 +52,14 @@
 
 .accordion-title {
     flex: 1;
-    font-size: 11px;
-    color: #000;
+    font-size: var(--gooey-accordion-header-font-size, 11px);
+    color: var(--gooey-accordion-title-color, var(--gooey-color-text, #000));
 }
 
 .accordion-content {
     padding: 8px;
-    background-color: #c1c0c1;
-    border: 1px inset #c1c0c1;
+    background-color: var(--gooey-accordion-content-bg, var(--gooey-color-surface, #c1c0c1));
+    border: 1px inset var(--gooey-accordion-border-color, var(--gooey-color-surface, #c1c0c1));
     border-top: none;
     overflow: auto;
     margin: 0 1px;
