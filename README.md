@@ -1,5 +1,7 @@
 # GooeyJS
-GooeyJS is a web component framework that provides a set of UI elements. Built using modern web standards, Gooey components are custom HTML elements that can be used in any web application.
+GooeyJS is a web component framework providing desktop-style UI elements built using modern web standards. All components are custom HTML elements built with pure ES6 modules, Shadow DOM, and zero dependencies; no build tools, no transpilation, no npm packages. The framework includes core infrastructure (MetaLoader, ComponentRegistry, Template, Logger) and a growing library of UI components for building rich web applications.
+
+Every UI component in GooeyJS follows a consistent architecture with Shadow DOM, theme system, META.goo configuration, and Observable event system — enabling developers to build complex applications using standard web platform APIs with no tooling overhead.
 
 ## Features
 
