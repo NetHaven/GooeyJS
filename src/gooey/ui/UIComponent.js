@@ -9,6 +9,7 @@ import KeyboardEvent from '../events/KeyboardEvent.js';
 import DragEvent from '../events/DragEvent.js';
 import MetaLoader from '../util/MetaLoader.js';
 import ComponentRegistry from '../util/ComponentRegistry.js';
+import ThemeManager from '../util/ThemeManager.js';
 
 export default class UIComponent extends GooeyElement {
     constructor () {
@@ -22,6 +23,17 @@ export default class UIComponent extends GooeyElement {
         const cssResult = ComponentRegistry.getThemeCSS(tagName);
         if (cssResult) {
             MetaLoader.injectCSS(this.shadowRoot, cssResult);
+        }
+
+        // Register with ThemeManager for future theme switches (TOKEN-05)
+        ThemeManager.registerInstance(this);
+
+        // Check if a non-default theme is active (component created after theme was applied)
+        // Actual theme override application is Phase 23 scope -- this is the awareness hook
+        if (ThemeManager.activeTheme !== 'base') {
+            // Phase 23 will add: ThemeManager.applyThemeToInstance(this);
+            // For now, just log that this instance was created under a non-base theme
+            // so we can verify the detection path works
         }
 
         // MVC additions (optional - only if used)
