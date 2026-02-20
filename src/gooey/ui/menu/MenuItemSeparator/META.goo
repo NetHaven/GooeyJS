@@ -11,6 +11,7 @@
     "default": "base",
     "available": ["base", "dark", "janus"]
   },
+  "tokens": {},
   "attributes": {
     "draggable": { "type": "BOOLEAN", "default": false },
     "droppable": { "type": "BOOLEAN", "default": false },

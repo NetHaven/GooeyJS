@@ -12,6 +12,33 @@
     "default": "base",
     "available": ["base", "dark", "janus"]
   },
+  "tokens": {
+    "gooey-menubar-height": {
+      "description": "Menubar host height",
+      "fallback": null,
+      "category": "sizing"
+    },
+    "gooey-menubar-header-margin": {
+      "description": "Menubar header left/right margin",
+      "fallback": "gooey-spacing-lg",
+      "category": "spacing"
+    },
+    "gooey-menubar-header-padding": {
+      "description": "Menubar header left/right padding",
+      "fallback": "gooey-spacing-sm",
+      "category": "spacing"
+    },
+    "gooey-menubar-header-active-bg": {
+      "description": "Menubar header active/hover background",
+      "fallback": "gooey-color-primary",
+      "category": "color"
+    },
+    "gooey-menubar-header-active-color": {
+      "description": "Menubar header active/hover text color",
+      "fallback": "gooey-color-primary-text",
+      "category": "color"
+    }
+  },
   "attributes": {
     "active": { "type": "BOOLEAN", "default": false },
     "draggable": { "type": "BOOLEAN", "default": false },

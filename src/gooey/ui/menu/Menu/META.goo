@@ -11,6 +11,18 @@
     "default": "base",
     "available": ["base", "dark", "janus"]
   },
+  "tokens": {
+    "gooey-menu-border-width": {
+      "description": "Menu border width",
+      "fallback": "gooey-border-width",
+      "category": "border"
+    },
+    "gooey-menu-z-index": {
+      "description": "Menu z-index stacking order",
+      "fallback": "gooey-z-dropdown",
+      "category": "z-index"
+    }
+  },
   "attributes": {
     "accelerator": { "type": "STRING", "default": null },
     "active": { "type": "BOOLEAN", "default": false },
