@@ -11,6 +11,88 @@
     "default": "base",
     "available": ["base", "dark", "janus"]
   },
+  "tokens": {
+    "gooey-badge-font-family": {
+      "description": "Badge font family",
+      "fallback": "gooey-font-family",
+      "category": "typography"
+    },
+    "gooey-badge-border-radius": {
+      "description": "Badge border radius",
+      "fallback": "gooey-border-radius",
+      "category": "border"
+    },
+    "gooey-badge-default-bg": {
+      "description": "Badge default variant background and border color",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-badge-default-color": {
+      "description": "Badge default variant text color",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-badge-primary-bg": {
+      "description": "Badge primary variant background and border color",
+      "fallback": "gooey-color-primary",
+      "category": "color"
+    },
+    "gooey-badge-primary-color": {
+      "description": "Badge primary variant text color",
+      "fallback": "gooey-color-primary-text",
+      "category": "color"
+    },
+    "gooey-badge-success-bg": {
+      "description": "Badge success variant background and border color",
+      "fallback": "gooey-color-success",
+      "category": "color"
+    },
+    "gooey-badge-success-color": {
+      "description": "Badge success variant text color",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-badge-warning-bg": {
+      "description": "Badge warning variant background and border color",
+      "fallback": "gooey-color-warning",
+      "category": "color"
+    },
+    "gooey-badge-warning-color": {
+      "description": "Badge warning variant text color",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-badge-error-bg": {
+      "description": "Badge error variant background and border color",
+      "fallback": "gooey-color-error",
+      "category": "color"
+    },
+    "gooey-badge-error-color": {
+      "description": "Badge error variant text color",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-badge-info-bg": {
+      "description": "Badge info variant background and border color",
+      "fallback": "gooey-color-info",
+      "category": "color"
+    },
+    "gooey-badge-info-color": {
+      "description": "Badge info variant text color",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-badge-opacity-disabled": {
+      "description": "Badge disabled opacity",
+      "fallback": "gooey-opacity-disabled",
+      "category": "opacity"
+    },
+    "gooey-badge-focus-ring-color": {
+      "description": "Badge focus ring color",
+      "fallback": "gooey-color-focus",
+      "category": "color"
+    }
+  },
   "attributes": {
     "text": {
       "type": "STRING",
