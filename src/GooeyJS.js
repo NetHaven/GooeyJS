@@ -100,6 +100,15 @@ export default class GooeyJS {
         return PATH;
     }
 
+    /**
+     * Get token metadata for a registered component
+     * @param {string} tagName - Custom element tag name (e.g., "gooeyui-button")
+     * @returns {Object|null} Token metadata or null if not registered/no tokens
+     */
+    static getComponentTokens(tagName) {
+        return ComponentRegistry.getTokenMeta(tagName);
+    }
+
     async createElements() {
         for (const component of this.components) {
             // Convert dot-separated package name to folder path (e.g., "gooey.ui.button" -> "gooey/ui/button")
@@ -116,6 +125,12 @@ export default class GooeyJS {
 
                     // Register in ComponentRegistry using fullTagName
                     ComponentRegistry.register(meta.fullTagName, meta);
+
+                    // Store token metadata if META.goo has a tokens section
+                    if (meta.tokens && typeof meta.tokens === 'object') {
+                        ComponentRegistry.setTokenMeta(meta.fullTagName, meta.tokens);
+                        Logger.debug({ code: "TOKENS_REGISTERED", tagName: meta.fullTagName }, "Registered token metadata for %s", meta.fullTagName);
+                    }
 
                     // Store component path early (needed for theme loading)
                     ComponentRegistry.setComponentPath(meta.fullTagName, fullComponentPath);
