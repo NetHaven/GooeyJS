@@ -12,7 +12,7 @@
 
 /* Base HTML/Body Styles */
 html, body, gooeyui-apppanel {
-    background-color: #c1c0c1;
+    background-color: var(--gooey-color-surface);
     height: 100%;
     margin: 0;
     overflow: hidden;
@@ -78,8 +78,8 @@ html, body, gooeyui-apppanel {
     position: fixed;
     top: 0;
     width: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 1400;
+    background-color: rgba(0, 0, 0, var(--gooey-opacity-modal-backdrop));
+    z-index: var(--gooey-z-modal-backdrop);
 }
 
 /* Required Field Indicator (used by FormPanel) */
@@ -90,24 +90,88 @@ html, body, gooeyui-apppanel {
     font-size: 14px !important;
 }
 
-/* GooeyJS Theme Variables */
+/* GooeyJS Global Design Tokens */
 :root {
-    /* Primary Colors */
-    --gooey-bg-color: #c1c0c1;
-    --gooey-bg-hover: #d4d0c8;
-    --gooey-accent-color: #010082;
-    --gooey-text-color: #000;
-    --gooey-text-disabled: #808080;
-    --gooey-border-color: #808080;
+    /* ===== Surface Colors ===== */
+    --gooey-color-surface: #c1c0c1;
+    --gooey-color-surface-hover: #d4d0c8;
+    --gooey-color-surface-active: #c1c0c1;
+    --gooey-color-surface-raised: #ffffff;
+    --gooey-color-surface-sunken: #ffffff;
+    --gooey-color-surface-disabled: #f0f0f0;
 
-    /* Component Sizing */
-    --gooey-button-min-width: 24px;
-    --gooey-button-min-height: 24px;
+    /* ===== Accent / Primary ===== */
+    --gooey-color-primary: #010082;
+    --gooey-color-primary-text: #ffffff;
 
-    /* Z-Index Layers */
+    /* ===== Text Colors ===== */
+    --gooey-color-text: #000000;
+    --gooey-color-text-muted: #333333;
+    --gooey-color-text-disabled: #808080;
+    --gooey-color-text-link: #005fcc;
+
+    /* ===== Border Colors ===== */
+    --gooey-color-border: #808080;
+    --gooey-color-border-light: #e0e0e0;
+
+    /* ===== Focus ===== */
+    --gooey-color-focus: #005fcc;
+    --gooey-focus-width: 2px;
+    --gooey-focus-style: solid;
+    --gooey-focus-offset: 2px;
+
+    /* ===== Status Colors ===== */
+    --gooey-color-info: #005fcc;
+    --gooey-color-success: #107c10;
+    --gooey-color-warning: #d83b01;
+    --gooey-color-error: #d13438;
+
+    /* ===== Typography ===== */
+    --gooey-font-family: sans-serif;
+    --gooey-font-family-mono: monospace;
+    --gooey-font-size-xs: 9px;
+    --gooey-font-size-sm: 10px;
+    --gooey-font-size-md: 14px;
+    --gooey-font-size-lg: 16px;
+    --gooey-font-weight-normal: 400;
+    --gooey-font-weight-bold: 700;
+    --gooey-line-height: 1.4;
+
+    /* ===== Spacing ===== */
+    --gooey-spacing-xs: 2px;
+    --gooey-spacing-sm: 4px;
+    --gooey-spacing-md: 8px;
+    --gooey-spacing-lg: 12px;
+    --gooey-spacing-xl: 16px;
+
+    /* ===== Borders ===== */
+    --gooey-border-width: 2px;
+    --gooey-border-style: outset;
+    --gooey-border-radius: 0;
+
+    /* ===== Sizing ===== */
+    --gooey-control-min-height: 24px;
+    --gooey-control-min-width: 24px;
+    --gooey-icon-size: 16px;
+
+    /* ===== Shadows ===== */
+    --gooey-shadow-none: none;
+    --gooey-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12);
+    --gooey-shadow-md: 0 2px 8px rgba(0, 0, 0, 0.15);
+    --gooey-shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.2);
+
+    /* ===== Opacity ===== */
+    --gooey-opacity-disabled: 0.5;
+    --gooey-opacity-modal-backdrop: 0.5;
+
+    /* ===== Z-Index Layers ===== */
     --gooey-z-dropdown: 1000;
     --gooey-z-modal-backdrop: 1400;
     --gooey-z-window: 1500;
     --gooey-z-modal-window: 1600;
     --gooey-z-toast: 1700;
+
+    /* ===== Component Sizing ===== */
+    --gooey-button-min-width: 24px;
+    --gooey-button-min-height: 24px;
 }
