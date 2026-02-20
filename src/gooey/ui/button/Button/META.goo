@@ -11,6 +11,93 @@
     "default": "base",
     "available": ["base", "dark", "janus"]
   },
+  "tokens": {
+    "gooey-button-bg": {
+      "description": "Button background color",
+      "fallback": "gooey-color-surface",
+      "category": "color"
+    },
+    "gooey-button-bg-hover": {
+      "description": "Button background color on hover",
+      "fallback": "gooey-color-surface-hover",
+      "category": "color"
+    },
+    "gooey-button-bg-active": {
+      "description": "Button background color when active/pressed",
+      "fallback": "gooey-color-surface-active",
+      "category": "color"
+    },
+    "gooey-button-color": {
+      "description": "Button text color",
+      "fallback": "gooey-color-text",
+      "category": "color"
+    },
+    "gooey-button-color-disabled": {
+      "description": "Button text color when disabled",
+      "fallback": "gooey-color-text-disabled",
+      "category": "color"
+    },
+    "gooey-button-border-color": {
+      "description": "Button border color",
+      "fallback": "gooey-color-surface",
+      "category": "color"
+    },
+    "gooey-button-border-width": {
+      "description": "Button border width",
+      "fallback": "gooey-border-width",
+      "category": "border"
+    },
+    "gooey-button-focus-color": {
+      "description": "Button border color when focused",
+      "fallback": "gooey-color-primary",
+      "category": "color"
+    },
+    "gooey-button-focus-ring-color": {
+      "description": "Button keyboard focus ring color",
+      "fallback": "gooey-color-focus",
+      "category": "color"
+    },
+    "gooey-button-font-family": {
+      "description": "Button font family",
+      "fallback": "gooey-font-family",
+      "category": "typography"
+    },
+    "gooey-button-font-size": {
+      "description": "Button font size",
+      "fallback": "gooey-font-size-sm",
+      "category": "typography"
+    },
+    "gooey-button-min-width": {
+      "description": "Button minimum width",
+      "fallback": "gooey-control-min-width",
+      "category": "sizing"
+    },
+    "gooey-button-min-height": {
+      "description": "Button minimum height",
+      "fallback": "gooey-control-min-height",
+      "category": "sizing"
+    },
+    "gooey-button-height": {
+      "description": "Button host height",
+      "fallback": null,
+      "category": "sizing"
+    },
+    "gooey-button-width": {
+      "description": "Button host width",
+      "fallback": null,
+      "category": "sizing"
+    },
+    "gooey-button-margin": {
+      "description": "Button host margin",
+      "fallback": "gooey-spacing-xs",
+      "category": "spacing"
+    },
+    "gooey-button-icon-gap": {
+      "description": "Space between icon and text",
+      "fallback": "gooey-spacing-sm",
+      "category": "spacing"
+    }
+  },
   "attributes": {
     "action": { "type": "STRING", "default": null },
     "icon": { "type": "STRING", "default": null },
