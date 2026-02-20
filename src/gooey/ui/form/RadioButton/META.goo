@@ -11,6 +11,23 @@
     "default": "base",
     "available": ["base", "dark", "janus"]
   },
+  "tokens": {
+    "gooey-radiobutton-focus-ring-color": {
+      "description": "RadioButton keyboard focus ring color",
+      "fallback": "gooey-color-focus",
+      "category": "color"
+    },
+    "gooey-radiobutton-focus-ring-width": {
+      "description": "RadioButton focus ring width",
+      "fallback": "gooey-focus-width",
+      "category": "border"
+    },
+    "gooey-radiobutton-opacity-disabled": {
+      "description": "RadioButton disabled opacity",
+      "fallback": "gooey-opacity-disabled",
+      "category": "opacity"
+    }
+  },
   "attributes": {
     "draggable": { "type": "BOOLEAN", "default": false },
     "droppable": { "type": "BOOLEAN", "default": false },

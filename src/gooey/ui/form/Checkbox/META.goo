@@ -11,6 +11,23 @@
     "default": "base",
     "available": ["base", "dark", "janus"]
   },
+  "tokens": {
+    "gooey-checkbox-focus-ring-color": {
+      "description": "Checkbox keyboard focus ring color",
+      "fallback": "gooey-color-focus",
+      "category": "color"
+    },
+    "gooey-checkbox-focus-ring-width": {
+      "description": "Checkbox focus ring width",
+      "fallback": "gooey-focus-width",
+      "category": "border"
+    },
+    "gooey-checkbox-opacity-disabled": {
+      "description": "Checkbox disabled opacity",
+      "fallback": "gooey-opacity-disabled",
+      "category": "opacity"
+    }
+  },
   "attributes": {
     "draggable": { "type": "BOOLEAN", "default": false },
     "droppable": { "type": "BOOLEAN", "default": false },
