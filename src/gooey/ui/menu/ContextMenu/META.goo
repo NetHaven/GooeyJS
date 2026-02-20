@@ -11,6 +11,53 @@
     "default": "base",
     "available": ["base", "dark", "janus"]
   },
+  "tokens": {
+    "gooey-contextmenu-bg": {
+      "description": "Context menu background color",
+      "fallback": "gooey-color-surface",
+      "category": "color"
+    },
+    "gooey-contextmenu-border-color": {
+      "description": "Context menu border color",
+      "fallback": "gooey-color-border",
+      "category": "color"
+    },
+    "gooey-contextmenu-shadow": {
+      "description": "Context menu box shadow",
+      "fallback": "gooey-shadow-sm",
+      "category": "shadow"
+    },
+    "gooey-contextmenu-min-width": {
+      "description": "Context menu minimum width",
+      "fallback": null,
+      "category": "sizing"
+    },
+    "gooey-contextmenu-z-index": {
+      "description": "Context menu z-index stacking order",
+      "fallback": "gooey-z-dropdown",
+      "category": "z-index"
+    },
+    "gooey-contextmenu-item-hover-bg": {
+      "description": "Context menu item hover/active background",
+      "fallback": "gooey-color-primary",
+      "category": "color"
+    },
+    "gooey-contextmenu-item-hover-color": {
+      "description": "Context menu item hover/active text color",
+      "fallback": "gooey-color-primary-text",
+      "category": "color"
+    },
+    "gooey-contextmenu-item-disabled-color": {
+      "description": "Context menu disabled item text color",
+      "fallback": "gooey-color-text-disabled",
+      "category": "color"
+    },
+    "gooey-contextmenu-separator-color": {
+      "description": "Context menu separator line color",
+      "fallback": "gooey-color-border",
+      "category": "color"
+    }
+  },
   "attributes": {
     "active": { "type": "BOOLEAN", "default": false },
     "draggable": { "type": "BOOLEAN", "default": false },
