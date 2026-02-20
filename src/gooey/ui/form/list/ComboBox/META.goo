@@ -11,6 +11,118 @@
     "default": "base",
     "available": ["base", "dark", "janus"]
   },
+  "tokens": {
+    "gooey-combobox-font-family": {
+      "description": "ComboBox font family",
+      "fallback": "gooey-font-family",
+      "category": "typography"
+    },
+    "gooey-combobox-font-size": {
+      "description": "ComboBox font size",
+      "fallback": "gooey-font-size-sm",
+      "category": "typography"
+    },
+    "gooey-combobox-min-width": {
+      "description": "ComboBox minimum width",
+      "fallback": null,
+      "category": "sizing"
+    },
+    "gooey-combobox-input-border-color": {
+      "description": "ComboBox input border color",
+      "fallback": "gooey-color-border",
+      "category": "color"
+    },
+    "gooey-combobox-input-bg": {
+      "description": "ComboBox input background color",
+      "fallback": "gooey-color-surface-raised",
+      "category": "color"
+    },
+    "gooey-combobox-input-color": {
+      "description": "ComboBox input text color",
+      "fallback": "gooey-color-text",
+      "category": "color"
+    },
+    "gooey-combobox-input-focus-color": {
+      "description": "ComboBox input focus border color",
+      "fallback": "gooey-color-primary",
+      "category": "color"
+    },
+    "gooey-combobox-button-border-color": {
+      "description": "ComboBox button border color",
+      "fallback": "gooey-color-border",
+      "category": "color"
+    },
+    "gooey-combobox-button-bg": {
+      "description": "ComboBox button background color",
+      "fallback": "gooey-color-surface",
+      "category": "color"
+    },
+    "gooey-combobox-button-bg-hover": {
+      "description": "ComboBox button hover background color",
+      "fallback": "gooey-color-surface-hover",
+      "category": "color"
+    },
+    "gooey-combobox-dropdown-border-color": {
+      "description": "ComboBox dropdown border color",
+      "fallback": "gooey-color-border",
+      "category": "color"
+    },
+    "gooey-combobox-dropdown-top-border-color": {
+      "description": "ComboBox dropdown top border color",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-combobox-dropdown-bg": {
+      "description": "ComboBox dropdown background color",
+      "fallback": "gooey-color-surface-raised",
+      "category": "color"
+    },
+    "gooey-combobox-dropdown-shadow": {
+      "description": "ComboBox dropdown box shadow",
+      "fallback": "gooey-shadow-sm",
+      "category": "shadow"
+    },
+    "gooey-combobox-option-color": {
+      "description": "ComboBox option text color",
+      "fallback": "gooey-color-text",
+      "category": "color"
+    },
+    "gooey-combobox-option-bg": {
+      "description": "ComboBox option background color",
+      "fallback": "gooey-color-surface-raised",
+      "category": "color"
+    },
+    "gooey-combobox-option-bg-hover": {
+      "description": "ComboBox option hover background",
+      "fallback": "gooey-color-surface-hover",
+      "category": "color"
+    },
+    "gooey-combobox-option-selected-bg": {
+      "description": "ComboBox selected option background",
+      "fallback": "gooey-color-primary",
+      "category": "color"
+    },
+    "gooey-combobox-option-selected-color": {
+      "description": "ComboBox selected option text color",
+      "fallback": "gooey-color-primary-text",
+      "category": "color"
+    },
+    "gooey-combobox-opacity-disabled": {
+      "description": "ComboBox disabled opacity",
+      "fallback": "gooey-opacity-disabled",
+      "category": "opacity"
+    },
+    "gooey-combobox-bg-disabled": {
+      "description": "ComboBox disabled background color",
+      "fallback": "gooey-color-surface",
+      "category": "color"
+    },
+    "gooey-combobox-color-disabled": {
+      "description": "ComboBox disabled text color",
+      "fallback": "gooey-color-text-disabled",
+      "category": "color"
+    }
+  },
   "attributes": {
     "draggable": { "type": "BOOLEAN", "default": false },
     "droppable": { "type": "BOOLEAN", "default": false },
