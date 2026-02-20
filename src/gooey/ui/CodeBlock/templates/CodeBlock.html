@@ -1,13 +1,13 @@
 <template id="ui-CodeBlock">
-  <div class="codeblock-container">
-    <div class="codeblock-header">
+  <div class="codeblock-container" part="container">
+    <div class="codeblock-header" part="header">
       <span class="language-label"></span>
-      <button class="copy-button" type="button" title="Copy to clipboard">Copy</button>
+      <button class="copy-button" type="button" title="Copy to clipboard" part="copy-button">Copy</button>
     </div>
     <div class="codeblock-body">
-      <div class="line-numbers"></div>
-      <pre class="code-content"><code><slot></slot></code></pre>
-      <pre class="code-highlighted"><code></code></pre>
+      <div class="line-numbers" part="line-numbers"></div>
+      <pre class="code-content" part="code"><code><slot></slot></code></pre>
+      <pre class="code-highlighted" part="code-highlighted"><code></code></pre>
     </div>
   </div>
 </template>

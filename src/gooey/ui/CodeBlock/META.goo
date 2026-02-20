@@ -11,6 +11,138 @@
     "default": "base",
     "available": ["base", "dark", "janus"]
   },
+  "tokens": {
+    "gooey-codeblock-font-family": {
+      "description": "CodeBlock font family",
+      "fallback": "gooey-font-family-mono",
+      "category": "typography"
+    },
+    "gooey-codeblock-font-size": {
+      "description": "CodeBlock font size",
+      "fallback": "gooey-font-size-md",
+      "category": "typography"
+    },
+    "gooey-codeblock-bg": {
+      "description": "CodeBlock container and code area background",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-codeblock-border-color": {
+      "description": "CodeBlock border color",
+      "fallback": "gooey-color-border-light",
+      "category": "color"
+    },
+    "gooey-codeblock-border-radius": {
+      "description": "CodeBlock border radius",
+      "fallback": "gooey-border-radius",
+      "category": "border"
+    },
+    "gooey-codeblock-header-bg": {
+      "description": "CodeBlock header background",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-codeblock-label-color": {
+      "description": "CodeBlock language label color",
+      "fallback": "gooey-color-text-disabled",
+      "category": "color"
+    },
+    "gooey-codeblock-copy-bg": {
+      "description": "CodeBlock copy button background",
+      "fallback": "gooey-color-surface-raised",
+      "category": "color"
+    },
+    "gooey-codeblock-copy-border-color": {
+      "description": "CodeBlock copy button border color",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-codeblock-copy-color": {
+      "description": "CodeBlock copy button text color",
+      "fallback": "gooey-color-text-muted",
+      "category": "color"
+    },
+    "gooey-codeblock-copy-bg-hover": {
+      "description": "CodeBlock copy button hover background",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-codeblock-linenumber-bg": {
+      "description": "CodeBlock line number gutter background",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-codeblock-linenumber-color": {
+      "description": "CodeBlock line number text color",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-codeblock-code-color": {
+      "description": "CodeBlock code text color",
+      "fallback": "gooey-color-text-muted",
+      "category": "color"
+    },
+    "gooey-codeblock-opacity-disabled": {
+      "description": "CodeBlock disabled opacity",
+      "fallback": "gooey-opacity-disabled",
+      "category": "opacity"
+    },
+    "gooey-syntax-keyword": {
+      "description": "Syntax highlighting: keyword color",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-syntax-string": {
+      "description": "Syntax highlighting: string color",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-syntax-number": {
+      "description": "Syntax highlighting: number color",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-syntax-comment": {
+      "description": "Syntax highlighting: comment color",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-syntax-tag-name": {
+      "description": "Syntax highlighting: HTML/XML tag name color",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-syntax-attr-name": {
+      "description": "Syntax highlighting: attribute name color",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-syntax-attr-value": {
+      "description": "Syntax highlighting: attribute value color",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-syntax-punctuation": {
+      "description": "Syntax highlighting: punctuation color",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-syntax-operator": {
+      "description": "Syntax highlighting: operator color",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-syntax-entity": {
+      "description": "Syntax highlighting: entity/built-in color",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-syntax-doctype": {
+      "description": "Syntax highlighting: doctype/processing instruction color",
+      "fallback": null,
+      "category": "color"
+    }
+  },
   "attributes": {
     "language": { "type": "STRING", "default": null },
     "syntaxhighlight": { "type": "BOOLEAN", "default": false },

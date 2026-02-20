@@ -11,6 +11,98 @@
     "default": "base",
     "available": ["base", "dark"]
   },
+  "tokens": {
+    "gooey-toast-font-family": {
+      "description": "Toast font family",
+      "fallback": "gooey-font-family",
+      "category": "typography"
+    },
+    "gooey-toast-font-size": {
+      "description": "Toast font size",
+      "fallback": "gooey-font-size-md",
+      "category": "typography"
+    },
+    "gooey-toast-bg": {
+      "description": "Toast container background color",
+      "fallback": "gooey-color-surface-raised",
+      "category": "color"
+    },
+    "gooey-toast-border-color": {
+      "description": "Toast container border color",
+      "fallback": "gooey-color-border-light",
+      "category": "color"
+    },
+    "gooey-toast-border-radius": {
+      "description": "Toast container border radius",
+      "fallback": "gooey-border-radius",
+      "category": "border"
+    },
+    "gooey-toast-shadow": {
+      "description": "Toast container box shadow",
+      "fallback": "gooey-shadow-md",
+      "category": "shadow"
+    },
+    "gooey-toast-message-color": {
+      "description": "Toast message text color",
+      "fallback": "gooey-color-text-muted",
+      "category": "color"
+    },
+    "gooey-toast-close-color": {
+      "description": "Toast close button color",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-toast-close-hover-color": {
+      "description": "Toast close button hover color",
+      "fallback": "gooey-color-text-muted",
+      "category": "color"
+    },
+    "gooey-toast-progress-track-bg": {
+      "description": "Toast progress bar track background",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-toast-opacity-disabled": {
+      "description": "Toast disabled opacity",
+      "fallback": "gooey-opacity-disabled",
+      "category": "opacity"
+    },
+    "gooey-toast-info-color": {
+      "description": "Toast info type accent color (border, icon, progress, action)",
+      "fallback": "gooey-color-info",
+      "category": "color"
+    },
+    "gooey-toast-success-color": {
+      "description": "Toast success type accent color",
+      "fallback": "gooey-color-success",
+      "category": "color"
+    },
+    "gooey-toast-warning-color": {
+      "description": "Toast warning type accent color",
+      "fallback": "gooey-color-warning",
+      "category": "color"
+    },
+    "gooey-toast-error-color": {
+      "description": "Toast error type accent color",
+      "fallback": "gooey-color-error",
+      "category": "color"
+    },
+    "gooey-toast-action-font-size": {
+      "description": "Toast action button font size",
+      "fallback": null,
+      "category": "typography"
+    },
+    "gooey-toast-focus-ring-color": {
+      "description": "Toast focus ring color for interactive elements",
+      "fallback": "gooey-color-focus",
+      "category": "color"
+    },
+    "gooey-toast-z-index": {
+      "description": "Toast z-index for stacking",
+      "fallback": "gooey-z-toast",
+      "category": "z-index"
+    }
+  },
   "attributes": {
     "message": { "type": "STRING", "default": "" },
     "type": { "type": "ENUM", "default": "info", "values": ["info", "success", "warning", "error"] },
