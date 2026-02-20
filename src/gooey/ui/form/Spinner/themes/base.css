@@ -16,3 +16,10 @@ input[type="number"] {
 .decrement-btn {
     cursor: pointer;
 }
+
+:host([disabled]) input[type="number"],
+:host([disabled]) .increment-btn,
+:host([disabled]) .decrement-btn {
+    cursor: not-allowed;
+    opacity: var(--gooey-spinner-opacity-disabled, var(--gooey-opacity-disabled, 0.5));
+}
