@@ -1,6 +1,6 @@
 :host {
     display: inline-block;
-    border-color: white;
+    border-color: var(--gooey-toolbarseparator-border-color, var(--gooey-color-surface-raised, white));
     border-style: solid;
     border-width: 1px;
     margin: 2px;
