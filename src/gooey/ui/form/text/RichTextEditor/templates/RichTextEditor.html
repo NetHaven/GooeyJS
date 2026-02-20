@@ -1,6 +1,6 @@
 <template id="ui-RichTextEditor">
     <div class="richtexteditor-shell">
-        <div class="richtexteditor-toolbar">
+        <div class="richtexteditor-toolbar" part="toolbar">
             <button class="richtexteditor-button" type="button" aria-label="Bold (Ctrl+B)" data-command="bold">
                 <img src="text_bold32.png" alt="Bold">
             </button>
@@ -32,7 +32,7 @@
                 <img src="text_align_justified32.png" alt="Justify">
             </button>
         </div>
-        <div class="richtexteditor-content" contenteditable="true" role="textbox" tabindex="0" aria-multiline="true" spellcheck="true">
+        <div class="richtexteditor-content" contenteditable="true" role="textbox" tabindex="0" aria-multiline="true" spellcheck="true" part="content">
         </div>
     </div>
 </template>
