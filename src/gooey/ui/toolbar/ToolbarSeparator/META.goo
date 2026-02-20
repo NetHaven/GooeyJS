@@ -11,6 +11,13 @@
     "default": "base",
     "available": ["base", "dark", "janus"]
   },
+  "tokens": {
+    "gooey-toolbarseparator-border-color": {
+      "description": "ToolbarSeparator border color",
+      "fallback": "gooey-color-surface-raised",
+      "category": "color"
+    }
+  },
   "attributes": {
     "draggable": { "type": "BOOLEAN", "default": false },
     "droppable": { "type": "BOOLEAN", "default": false },

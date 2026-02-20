@@ -11,6 +11,13 @@
     "default": "base",
     "available": ["base", "dark", "janus"]
   },
+  "tokens": {
+    "gooey-toolbar-margin": {
+      "description": "Toolbar left margin when visible",
+      "fallback": null,
+      "category": "spacing"
+    }
+  },
   "attributes": {
     "buttonsize": { "type": "STRING", "default": null },
     "wrap": { "type": "BOOLEAN", "default": false },
