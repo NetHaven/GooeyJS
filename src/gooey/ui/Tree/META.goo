@@ -20,5 +20,17 @@
     "tooltip": { "type": "STRING", "default": null },
     "visible": { "type": "BOOLEAN", "default": true },
     "disabled": { "type": "BOOLEAN", "default": false }
+  },
+  "tokens": {
+    "gooey-tree-font-family": {
+      "description": "Tree font family",
+      "fallback": "gooey-font-family",
+      "category": "typography"
+    },
+    "gooey-tree-font-size": {
+      "description": "Tree font size",
+      "fallback": "gooey-font-size-md",
+      "category": "typography"
+    }
   }
 }

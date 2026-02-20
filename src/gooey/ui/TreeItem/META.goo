@@ -25,5 +25,57 @@
     "expanded": { "type": "BOOLEAN", "default": false },
     "droptree": { "type": "STRING", "default": null },
     "editable": { "type": "BOOLEAN", "default": false }
+  },
+  "tokens": {
+    "gooey-treeitem-content-padding": {
+      "description": "TreeItem content row padding",
+      "fallback": null,
+      "category": "spacing"
+    },
+    "gooey-treeitem-content-radius": {
+      "description": "TreeItem content row border radius",
+      "fallback": "gooey-border-radius",
+      "category": "border"
+    },
+    "gooey-treeitem-hover-bg": {
+      "description": "TreeItem hover background",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-treeitem-selected-bg": {
+      "description": "TreeItem selected background",
+      "fallback": "gooey-color-primary",
+      "category": "color"
+    },
+    "gooey-treeitem-selected-color": {
+      "description": "TreeItem selected text color",
+      "fallback": "gooey-color-primary-text",
+      "category": "color"
+    },
+    "gooey-treeitem-focus-ring-color": {
+      "description": "TreeItem keyboard focus ring color",
+      "fallback": "gooey-color-focus",
+      "category": "color"
+    },
+    "gooey-treeitem-children-indent": {
+      "description": "TreeItem children indentation",
+      "fallback": null,
+      "category": "spacing"
+    },
+    "gooey-treeitem-drop-color": {
+      "description": "TreeItem drag-drop indicator color",
+      "fallback": "gooey-color-primary",
+      "category": "color"
+    },
+    "gooey-treeitem-drop-inside-bg": {
+      "description": "TreeItem drop-inside background overlay",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-treeitem-drop-invalid-color": {
+      "description": "TreeItem invalid drop indicator color",
+      "fallback": "gooey-color-error",
+      "category": "color"
+    }
   }
 }

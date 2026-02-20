@@ -14,20 +14,20 @@
 .ui-TreeItem-content {
     display: flex;
     align-items: center;
-    padding: 2px 4px;
+    padding: var(--gooey-treeitem-content-padding, 2px 4px);
     cursor: pointer;
-    border-radius: 2px;
+    border-radius: var(--gooey-treeitem-content-radius, var(--gooey-border-radius, 2px));
     transition: background-color 0.15s ease;
     order: 1;
 }
 
 .ui-TreeItem-content:hover {
-    background-color: rgba(0, 0, 0, 0.1);
+    background-color: var(--gooey-treeitem-hover-bg, rgba(0, 0, 0, 0.1));
 }
 
 :host(.selected) .ui-TreeItem-content {
-    background-color: #010082;
-    color: white;
+    background-color: var(--gooey-treeitem-selected-bg, var(--gooey-color-primary, #010082));
+    color: var(--gooey-treeitem-selected-color, var(--gooey-color-primary-text, white));
 }
 
 .ui-TreeItem-expander {
@@ -64,7 +64,7 @@
 .ui-TreeItem-children {
     list-style: none;
     margin: 0;
-    padding-left: 20px;
+    padding-left: var(--gooey-treeitem-children-indent, 20px);
     overflow: hidden;
     transition: max-height 0.3s ease, opacity 0.2s ease;
     order: 2;
@@ -86,8 +86,8 @@
 
 /* Keyboard-only focus indicator for accessibility */
 .ui-TreeItem-content:focus-visible {
-    outline: 2px solid #005fcc;
-    outline-offset: 2px;
+    outline: var(--gooey-focus-width, 2px) var(--gooey-focus-style, solid) var(--gooey-treeitem-focus-ring-color, var(--gooey-color-focus, #005fcc));
+    outline-offset: var(--gooey-focus-offset, 2px);
 }
 
 /* TreeItem Drag and Drop Styles */
@@ -100,24 +100,24 @@
 }
 
 .ui-TreeItem-content.drop-before {
-    border-top: 2px solid #010082;
+    border-top: 2px solid var(--gooey-treeitem-drop-color, var(--gooey-color-primary, #010082));
     border-radius: 0;
 }
 
 .ui-TreeItem-content.drop-after {
-    border-bottom: 2px solid #010082;
+    border-bottom: 2px solid var(--gooey-treeitem-drop-color, var(--gooey-color-primary, #010082));
     border-radius: 0;
 }
 
 .ui-TreeItem-content.drop-inside {
-    background-color: rgba(1, 0, 130, 0.2);
-    border: 2px dashed #010082;
+    background-color: var(--gooey-treeitem-drop-inside-bg, rgba(1, 0, 130, 0.2));
+    border: 2px dashed var(--gooey-treeitem-drop-color, var(--gooey-color-primary, #010082));
     border-radius: 4px;
 }
 
 .ui-TreeItem-content.drop-invalid {
     background-color: rgba(255, 0, 0, 0.1);
-    border: 2px dashed #ff0000;
+    border: 2px dashed var(--gooey-treeitem-drop-invalid-color, var(--gooey-color-error, #ff0000));
     border-radius: 4px;
     cursor: not-allowed;
 }
