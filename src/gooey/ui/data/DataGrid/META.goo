@@ -11,6 +11,168 @@
     "default": "base",
     "available": ["base", "dark", "janus"]
   },
+  "tokens": {
+    "gooey-datagrid-font-family": {
+      "description": "DataGrid font family",
+      "fallback": "gooey-font-family",
+      "category": "typography"
+    },
+    "gooey-datagrid-font-size": {
+      "description": "DataGrid font size",
+      "fallback": null,
+      "category": "typography"
+    },
+    "gooey-datagrid-border-color": {
+      "description": "DataGrid outer border and header border color",
+      "fallback": "gooey-color-border",
+      "category": "color"
+    },
+    "gooey-datagrid-opacity-disabled": {
+      "description": "DataGrid disabled opacity",
+      "fallback": "gooey-opacity-disabled",
+      "category": "opacity"
+    },
+    "gooey-datagrid-bg": {
+      "description": "DataGrid container background",
+      "fallback": "gooey-color-surface-raised",
+      "category": "color"
+    },
+    "gooey-datagrid-header-bg": {
+      "description": "DataGrid header viewport background",
+      "fallback": "gooey-color-surface-hover",
+      "category": "color"
+    },
+    "gooey-datagrid-header-gradient-start": {
+      "description": "DataGrid column header gradient start color",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-datagrid-header-gradient-end": {
+      "description": "DataGrid column header gradient end color",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-datagrid-header-hover-gradient-start": {
+      "description": "DataGrid column header hover gradient start",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-datagrid-header-hover-gradient-end": {
+      "description": "DataGrid column header hover gradient end",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-datagrid-header-sorted-gradient-start": {
+      "description": "DataGrid sorted column header gradient start",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-datagrid-header-sorted-gradient-end": {
+      "description": "DataGrid sorted column header gradient end",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-datagrid-header-font-weight": {
+      "description": "DataGrid header font weight",
+      "fallback": "gooey-font-weight-bold",
+      "category": "typography"
+    },
+    "gooey-datagrid-row-bg": {
+      "description": "DataGrid row background",
+      "fallback": "gooey-color-surface-raised",
+      "category": "color"
+    },
+    "gooey-datagrid-row-alt-bg": {
+      "description": "DataGrid alternating row background",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-datagrid-row-hover-bg": {
+      "description": "DataGrid row hover background",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-datagrid-row-border-color": {
+      "description": "DataGrid row bottom border color",
+      "fallback": "gooey-color-border-light",
+      "category": "color"
+    },
+    "gooey-datagrid-selection-bg": {
+      "description": "DataGrid selected row background",
+      "fallback": "gooey-color-primary",
+      "category": "color"
+    },
+    "gooey-datagrid-selection-color": {
+      "description": "DataGrid selected row text color",
+      "fallback": "gooey-color-primary-text",
+      "category": "color"
+    },
+    "gooey-datagrid-selection-hover-bg": {
+      "description": "DataGrid selected row hover background",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-datagrid-cell-border-color": {
+      "description": "DataGrid cell right border color",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-datagrid-cell-selected-outline": {
+      "description": "DataGrid selected cell outline color",
+      "fallback": "gooey-color-primary",
+      "category": "color"
+    },
+    "gooey-datagrid-focus-color": {
+      "description": "DataGrid focus outline and editor border color",
+      "fallback": "gooey-color-primary",
+      "category": "color"
+    },
+    "gooey-datagrid-filter-bg": {
+      "description": "DataGrid filter row background",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-datagrid-filter-border-color": {
+      "description": "DataGrid filter cell border color",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-datagrid-filter-input-border-color": {
+      "description": "DataGrid filter input border color",
+      "fallback": "gooey-color-border",
+      "category": "color"
+    },
+    "gooey-datagrid-filter-focus-color": {
+      "description": "DataGrid filter input focus border color",
+      "fallback": "gooey-color-primary",
+      "category": "color"
+    },
+    "gooey-datagrid-resize-hover-bg": {
+      "description": "DataGrid column resize handle hover color",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-datagrid-scrollbar-track": {
+      "description": "DataGrid scrollbar track background",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-datagrid-scrollbar-thumb": {
+      "description": "DataGrid scrollbar thumb background",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-datagrid-scrollbar-thumb-hover": {
+      "description": "DataGrid scrollbar thumb hover background",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-datagrid-scrollbar-border": {
+      "description": "DataGrid scrollbar thumb border color",
+      "fallback": null,
+      "category": "color"
+    }
+  },
   "attributes": {
     "draggable": { "type": "BOOLEAN", "default": false },
     "droppable": { "type": "BOOLEAN", "default": false },

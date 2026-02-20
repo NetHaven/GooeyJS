@@ -11,6 +11,7 @@
     "default": "base",
     "available": ["base", "dark", "janus"]
   },
+  "tokens": {},
   "attributes": {
     "field": { "type": "STRING", "default": "" },
     "header": { "type": "STRING", "default": "" },
