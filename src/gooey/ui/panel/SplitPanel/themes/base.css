@@ -5,33 +5,33 @@
     position: relative;
     width: 100%;
     height: 100%;
-    background-color: #c1c0c1;
+    background-color: var(--gooey-splitpanel-bg, var(--gooey-color-surface, #c1c0c1));
 }
 
 .splitpanel-pane {
     overflow: auto;
-    background-color: #c1c0c1;
-    border: 1px inset #c1c0c1;
+    background-color: var(--gooey-splitpanel-pane-bg, var(--gooey-color-surface, #c1c0c1));
+    border: 1px inset var(--gooey-splitpanel-pane-border-color, var(--gooey-color-surface, #c1c0c1));
     display: flex;
     flex-direction: column;
 }
 
 .splitpanel-divider {
-    background-color: #c1c0c1;
-    border: 1px outset #c1c0c1;
+    background-color: var(--gooey-splitpanel-divider-bg, var(--gooey-color-surface, #c1c0c1));
+    border: 1px outset var(--gooey-splitpanel-divider-border-color, var(--gooey-color-surface, #c1c0c1));
     user-select: none;
     flex-shrink: 0;
     position: relative;
 }
 
 .splitpanel-divider:hover {
-    background-color: #d4d0c8;
+    background-color: var(--gooey-splitpanel-divider-bg-hover, var(--gooey-color-surface-hover, #d4d0c8));
 }
 
 .splitpanel-divider:active,
 :host(.splitpanel-dragging) .splitpanel-divider {
-    background-color: #b4b0a8;
-    border: 1px inset #c1c0c1;
+    background-color: var(--gooey-splitpanel-divider-bg-active, #b4b0a8);
+    border: 1px inset var(--gooey-splitpanel-divider-border-color, var(--gooey-color-surface, #c1c0c1));
 }
 
 /* Horizontal orientation (left/right split) */
