@@ -11,6 +11,83 @@
     "default": "base",
     "available": ["base", "dark", "janus"]
   },
+  "tokens": {
+    "gooey-hamburgermenu-button-padding": {
+      "description": "Hamburger button padding",
+      "fallback": "gooey-spacing-md",
+      "category": "spacing"
+    },
+    "gooey-hamburgermenu-button-font-size": {
+      "description": "Hamburger button font size",
+      "fallback": "gooey-font-size-md",
+      "category": "typography"
+    },
+    "gooey-hamburgermenu-button-hover-bg": {
+      "description": "Hamburger button hover background",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-hamburgermenu-focus-color": {
+      "description": "Hamburger menu focus ring color",
+      "fallback": "gooey-color-focus",
+      "category": "color"
+    },
+    "gooey-hamburgermenu-opacity-disabled": {
+      "description": "Hamburger menu disabled opacity",
+      "fallback": "gooey-opacity-disabled",
+      "category": "opacity"
+    },
+    "gooey-hamburgermenu-bar-color": {
+      "description": "Hamburger icon bar color",
+      "fallback": "gooey-color-text-muted",
+      "category": "color"
+    },
+    "gooey-hamburgermenu-bar-radius": {
+      "description": "Hamburger icon bar border radius",
+      "fallback": "gooey-border-radius",
+      "category": "border"
+    },
+    "gooey-hamburgermenu-backdrop-bg": {
+      "description": "Hamburger menu backdrop background",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-hamburgermenu-panel-bg": {
+      "description": "Hamburger menu panel background",
+      "fallback": "gooey-color-surface-raised",
+      "category": "color"
+    },
+    "gooey-hamburgermenu-panel-shadow": {
+      "description": "Hamburger menu panel box shadow",
+      "fallback": "gooey-shadow-md",
+      "category": "shadow"
+    },
+    "gooey-hamburgermenu-panel-z-index": {
+      "description": "Hamburger menu panel z-index",
+      "fallback": null,
+      "category": "z-index"
+    },
+    "gooey-hamburgermenu-header-border-color": {
+      "description": "Panel header border color",
+      "fallback": "gooey-color-border-light",
+      "category": "color"
+    },
+    "gooey-hamburgermenu-close-color": {
+      "description": "Close button color",
+      "fallback": null,
+      "category": "color"
+    },
+    "gooey-hamburgermenu-close-hover-color": {
+      "description": "Close button hover color",
+      "fallback": "gooey-color-text-muted",
+      "category": "color"
+    },
+    "gooey-hamburgermenu-close-hover-bg": {
+      "description": "Close button hover background",
+      "fallback": null,
+      "category": "color"
+    }
+  },
   "attributes": {
     "active": { "type": "BOOLEAN", "default": false },
     "position": {

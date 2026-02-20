@@ -1,5 +1,5 @@
 <template id="ui-HamburgerMenu">
-    <button class="hamburger-button" type="button" aria-label="Menu" aria-expanded="false">
+    <button class="hamburger-button" part="trigger" type="button" aria-label="Menu" aria-expanded="false">
         <slot name="icon">
             <span class="hamburger-icon">
                 <span class="bar"></span>
@@ -10,7 +10,7 @@
         <span class="hamburger-text"></span>
     </button>
     <div class="hamburger-backdrop"></div>
-    <nav class="hamburger-panel" role="navigation" aria-hidden="true">
+    <nav class="hamburger-panel" part="panel" role="navigation" aria-hidden="true">
         <div class="panel-header">
             <button class="close-button" type="button" aria-label="Close menu">&times;</button>
         </div>

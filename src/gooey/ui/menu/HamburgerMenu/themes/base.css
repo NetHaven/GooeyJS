@@ -8,26 +8,26 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 8px;
+    padding: var(--gooey-hamburgermenu-button-padding, var(--gooey-spacing-md, 8px));
     border: none;
     background: transparent;
     cursor: pointer;
     font-family: inherit;
-    font-size: 14px;
+    font-size: var(--gooey-hamburgermenu-button-font-size, var(--gooey-font-size-md, 14px));
     color: inherit;
 }
 
 .hamburger-button:hover {
-    background-color: rgba(0, 0, 0, 0.05);
+    background-color: var(--gooey-hamburgermenu-button-hover-bg, rgba(0, 0, 0, 0.05));
 }
 
 .hamburger-button:focus {
-    outline: 2px solid #0066cc;
-    outline-offset: 2px;
+    outline: var(--gooey-focus-width, 2px) var(--gooey-focus-style, solid) var(--gooey-hamburgermenu-focus-color, var(--gooey-color-focus, #0066cc));
+    outline-offset: var(--gooey-focus-offset, 2px);
 }
 
 :host([disabled]) .hamburger-button {
-    opacity: 0.5;
+    opacity: var(--gooey-hamburgermenu-opacity-disabled, var(--gooey-opacity-disabled, 0.5));
     cursor: not-allowed;
 }
 
@@ -44,8 +44,8 @@
     display: block;
     width: 100%;
     height: 3px;
-    background-color: #333;
-    border-radius: 2px;
+    background-color: var(--gooey-hamburgermenu-bar-color, var(--gooey-color-text-muted, #333));
+    border-radius: var(--gooey-hamburgermenu-bar-radius, var(--gooey-border-radius, 2px));
     transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
@@ -84,7 +84,7 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: var(--gooey-hamburgermenu-backdrop-bg, rgba(0, 0, 0, 0.5));
     z-index: 998;
 }
 
@@ -95,9 +95,9 @@
 /* Navigation Panel */
 .hamburger-panel {
     position: fixed;
-    background-color: #ffffff;
-    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
-    z-index: 999;
+    background-color: var(--gooey-hamburgermenu-panel-bg, var(--gooey-color-surface-raised, #ffffff));
+    box-shadow: var(--gooey-hamburgermenu-panel-shadow, var(--gooey-shadow-md, 2px 0 8px rgba(0, 0, 0, 0.2)));
+    z-index: var(--gooey-hamburgermenu-panel-z-index, 999);
     transition: transform 0.3s ease;
     overflow-y: auto;
     display: flex;
@@ -110,7 +110,7 @@
     top: 0;
     left: 0;
     height: 100vh;
-    width: var(--hamburger-panel-width, 250px);
+    width: var(--gooey-hamburgermenu-panel-width, var(--hamburger-panel-width, 250px));
     transform: translateX(-100%);
 }
 
@@ -125,7 +125,7 @@
     right: 0;
     left: auto;
     height: 100vh;
-    width: var(--hamburger-panel-width, 250px);
+    width: var(--gooey-hamburgermenu-panel-width, var(--hamburger-panel-width, 250px));
     transform: translateX(100%);
     box-shadow: -2px 0 8px rgba(0, 0, 0, 0.2);
 }
@@ -139,7 +139,7 @@
     top: 0;
     left: 0;
     width: 100vw;
-    height: var(--hamburger-panel-height, auto);
+    height: var(--gooey-hamburgermenu-panel-height, var(--hamburger-panel-height, auto));
     max-height: 80vh;
     transform: translateY(-100%);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
@@ -155,7 +155,7 @@
     left: 0;
     top: auto;
     width: 100vw;
-    height: var(--hamburger-panel-height, auto);
+    height: var(--gooey-hamburgermenu-panel-height, var(--hamburger-panel-height, auto));
     max-height: 80vh;
     transform: translateY(100%);
     box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.2);
@@ -170,7 +170,7 @@
     display: flex;
     justify-content: flex-end;
     padding: 8px;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid var(--gooey-hamburgermenu-header-border-color, var(--gooey-color-border-light, #e0e0e0));
     flex-shrink: 0;
 }
 
@@ -180,18 +180,18 @@
     background: transparent;
     font-size: 24px;
     cursor: pointer;
-    color: #666;
+    color: var(--gooey-hamburgermenu-close-color, #666);
     line-height: 1;
 }
 
 .close-button:hover {
-    color: #333;
-    background-color: rgba(0, 0, 0, 0.05);
+    color: var(--gooey-hamburgermenu-close-hover-color, var(--gooey-color-text-muted, #333));
+    background-color: var(--gooey-hamburgermenu-close-hover-bg, rgba(0, 0, 0, 0.05));
 }
 
 .close-button:focus {
-    outline: 2px solid #0066cc;
-    outline-offset: 2px;
+    outline: var(--gooey-focus-width, 2px) var(--gooey-focus-style, solid) var(--gooey-hamburgermenu-focus-color, var(--gooey-color-focus, #0066cc));
+    outline-offset: var(--gooey-focus-offset, 2px);
 }
 
 /* Panel Content */
