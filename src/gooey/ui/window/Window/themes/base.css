@@ -1,12 +1,12 @@
 /* Window Base Theme */
 :host {
-    background-color: #c1c0c1;
+    background-color: var(--gooey-window-bg, var(--gooey-color-surface, #c1c0c1));
     border-style: solid;
-    border-width: 1px;
+    border-width: var(--gooey-window-border-width, var(--gooey-border-width, 1px));
     display: none;
     margin: 0;
     position: fixed;
-    z-index: 1500;
+    z-index: var(--gooey-window-z-index, var(--gooey-z-window, 1500));
 }
 
 :host([visible=true]) {
@@ -16,11 +16,11 @@
 }
 
 .WindowTitlebar {
-    background: #010082;
-    color: white;
+    background: var(--gooey-window-titlebar-bg, var(--gooey-color-primary, #010082));
+    color: var(--gooey-window-titlebar-color, var(--gooey-color-primary-text, white));
     cursor: default;
-    font-weight: bold;
-    height: 20px;
+    font-weight: var(--gooey-window-titlebar-font-weight, var(--gooey-font-weight-bold, bold));
+    height: var(--gooey-window-titlebar-height, 20px);
     text-align: center;
     user-select: none;
     width: 100%;
@@ -29,14 +29,14 @@
 .WindowContent {
     display: flex;
     flex: 1;
-    margin: 8px;
+    margin: var(--gooey-window-content-margin, var(--gooey-spacing-md, 8px));
     min-height: 0px;
 }
 
 .WindowButtonbar {
     display: flex;
     height: 30px;
-    margin: 10px;
+    margin: var(--gooey-window-buttonbar-margin, var(--gooey-spacing-lg, 10px));
     justify-content: flex-end;
 }
 
@@ -53,13 +53,13 @@
     position: fixed;
     top: 0;
     width: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 1400;
+    background-color: rgba(0, 0, 0, var(--gooey-opacity-modal-backdrop, 0.5));
+    z-index: var(--gooey-z-modal-backdrop, 1400);
 }
 
 /* Ensure modal windows appear above everything else */
 :host([modal]) {
-    z-index: 1600;
+    z-index: var(--gooey-window-modal-z-index, var(--gooey-z-modal-window, 1600));
 }
 
 /* Dialog Alert Styles */
@@ -78,9 +78,9 @@
 
 .DialogAlert-message {
     flex: 1;
-    font-family: sans-serif;
-    font-size: 14px;
-    line-height: 1.4;
+    font-family: var(--gooey-window-font-family, var(--gooey-font-family, sans-serif));
+    font-size: var(--gooey-window-font-size, var(--gooey-font-size-md, 14px));
+    line-height: var(--gooey-line-height, 1.4);
     word-wrap: break-word;
 }
 
@@ -100,9 +100,9 @@
 
 .DialogInfo-message {
     flex: 1;
-    font-family: sans-serif;
-    font-size: 14px;
-    line-height: 1.4;
+    font-family: var(--gooey-window-font-family, var(--gooey-font-family, sans-serif));
+    font-size: var(--gooey-window-font-size, var(--gooey-font-size-md, 14px));
+    line-height: var(--gooey-line-height, 1.4);
     word-wrap: break-word;
 }
 
@@ -122,9 +122,9 @@
 
 .DialogConfirm-message {
     flex: 1;
-    font-family: sans-serif;
-    font-size: 14px;
-    line-height: 1.4;
+    font-family: var(--gooey-window-font-family, var(--gooey-font-family, sans-serif));
+    font-size: var(--gooey-window-font-size, var(--gooey-font-size-md, 14px));
+    line-height: var(--gooey-line-height, 1.4);
     word-wrap: break-word;
 }
 
@@ -150,9 +150,9 @@
 }
 
 .DialogPrompt-message {
-    font-family: sans-serif;
-    font-size: 14px;
-    line-height: 1.4;
+    font-family: var(--gooey-window-font-family, var(--gooey-font-family, sans-serif));
+    font-size: var(--gooey-window-font-size, var(--gooey-font-size-md, 14px));
+    line-height: var(--gooey-line-height, 1.4);
     word-wrap: break-word;
 }
 
