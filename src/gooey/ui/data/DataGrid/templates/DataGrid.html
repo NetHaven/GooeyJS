@@ -1,7 +1,7 @@
 <template id="ui-DataGrid">
     <div class="datagrid-container">
         <!-- Fixed header section -->
-        <div class="datagrid-header-viewport">
+        <div class="datagrid-header-viewport" part="header">
             <div class="datagrid-header-row"></div>
         </div>
 
@@ -11,7 +11,7 @@
         </div>
 
         <!-- Scrollable body section -->
-        <div class="datagrid-body-viewport">
+        <div class="datagrid-body-viewport" part="body">
             <!-- Spacer maintains scroll height for virtual scrolling -->
             <div class="datagrid-body-spacer"></div>
             <!-- Only visible rows are rendered here -->
