@@ -2,6 +2,7 @@
 
 :host {
     display: block;
+    background-color: var(--gooey-panel-bg, transparent);
 }
 
 ::slotted(*) {

@@ -11,6 +11,13 @@
     "default": "base",
     "available": ["base", "dark", "janus"]
   },
+  "tokens": {
+    "gooey-panel-bg": {
+      "description": "Panel background color (transparent by default)",
+      "fallback": null,
+      "category": "color"
+    }
+  },
   "attributes": {
     "title": { "type": "STRING", "default": null },
     "draggable": { "type": "BOOLEAN", "default": false },

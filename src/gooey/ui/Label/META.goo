@@ -11,6 +11,13 @@
     "default": "base",
     "available": ["base", "dark", "janus"]
   },
+  "tokens": {
+    "gooey-label-icon-gap": {
+      "description": "Space between icon and text in label",
+      "fallback": "gooey-spacing-sm",
+      "category": "spacing"
+    }
+  },
   "attributes": {
     "draggable": { "type": "BOOLEAN", "default": false },
     "droppable": { "type": "BOOLEAN", "default": false },
