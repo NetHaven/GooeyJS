@@ -1,8 +1,8 @@
 <template id="ui-ComboBox">
     <div class="combobox-container">
-        <input type="text" class="combobox-input" readonly>
-        <button type="button" class="combobox-button" aria-label="Open dropdown">▼</button>
-        <div class="combobox-dropdown">
+        <input type="text" class="combobox-input" readonly part="input">
+        <button type="button" class="combobox-button" aria-label="Open dropdown" part="trigger">▼</button>
+        <div class="combobox-dropdown" part="dropdown">
             <select class="combobox-list" size="1"></select>
         </div>
     </div>
