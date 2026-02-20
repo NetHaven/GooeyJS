@@ -11,6 +11,13 @@
     "default": "base",
     "available": ["base", "dark", "janus"]
   },
+  "tokens": {
+    "gooey-apppanel-bg": {
+      "description": "AppPanel background color",
+      "fallback": "gooey-color-surface",
+      "category": "color"
+    }
+  },
   "attributes": {
     "formfactor": { "type": "STRING", "default": null },
     "draggable": { "type": "BOOLEAN", "default": false },

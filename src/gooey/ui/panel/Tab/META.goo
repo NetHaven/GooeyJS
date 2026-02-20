@@ -11,6 +11,13 @@
     "default": "base",
     "available": ["base", "dark", "janus"]
   },
+  "tokens": {
+    "gooey-tab-bg": {
+      "description": "Tab background color",
+      "fallback": "gooey-color-surface",
+      "category": "color"
+    }
+  },
   "attributes": {
     "name": { "type": "STRING", "default": "Tab" },
     "text": { "type": "STRING", "default": null },

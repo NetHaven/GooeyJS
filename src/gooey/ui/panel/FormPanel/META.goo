@@ -11,6 +11,18 @@
     "default": "base",
     "available": ["base", "dark", "janus"]
   },
+  "tokens": {
+    "gooey-formpanel-label-font-weight": {
+      "description": "FormPanel label font weight",
+      "fallback": "gooey-font-weight-bold",
+      "category": "typography"
+    },
+    "gooey-formpanel-required-color": {
+      "description": "FormPanel required indicator color",
+      "fallback": "gooey-color-error",
+      "category": "color"
+    }
+  },
   "attributes": {
     "title": { "type": "STRING", "default": null },
     "draggable": { "type": "BOOLEAN", "default": false },
