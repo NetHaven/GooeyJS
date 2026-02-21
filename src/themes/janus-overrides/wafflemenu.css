@@ -1,0 +1,64 @@
+/* WaffleMenu - Janus structural override */
+/* Uses component-scoped --waffle-* custom properties, not global --gooey-* tokens */
+
+:host {
+    --waffle-trigger-size: 40px;
+    --waffle-panel-width: auto;
+    --waffle-panel-max-height: 400px;
+    --waffle-item-size: 96px;
+    --waffle-gap: 8px;
+    --waffle-padding: 16px;
+    --waffle-border-radius: 4px;
+    --waffle-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    --waffle-bg: #ffffff;
+    --waffle-trigger-bg: transparent;
+    --waffle-trigger-hover-bg: #e6e6e6;
+    --waffle-icon-color: #333333;
+    --waffle-backdrop-bg: transparent;
+}
+
+.waffle-trigger {
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+}
+
+.waffle-trigger:hover {
+    border-color: #999999;
+}
+
+.waffle-trigger:focus {
+    outline: none;
+    border-color: #0066cc;
+    box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.3);
+}
+
+.waffle-panel {
+    border: 1px solid #cccccc;
+}
+
+.waffle-header {
+    border-bottom: 1px solid #cccccc;
+    background: #f5f5f5;
+}
+
+.waffle-title {
+    font-weight: 600;
+    font-size: 13px;
+    color: #333333;
+}
+
+.waffle-close {
+    border: none;
+    background: transparent;
+    border-radius: 2px;
+    color: #666666;
+}
+
+.waffle-close:hover {
+    background: #e0e0e0;
+}
+
+.waffle-footer {
+    border-top: 1px solid #cccccc;
+    background: #f5f5f5;
+}
