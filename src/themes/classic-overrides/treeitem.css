@@ -1,0 +1,144 @@
+/* TreeItem - Classic Mac OS 7/8/9 structural override */
+
+/* Kill expand/collapse animations for instant state changes */
+:host,
+.ui-TreeItem-children {
+    animation: none !important;
+    transition: none !important;
+}
+
+.ui-TreeItem-content {
+    padding: 1px 4px;
+    border-radius: 0;
+    transition: none !important;
+}
+
+.ui-TreeItem-content:hover {
+    background-color: #EEEEEE;
+}
+
+/* Selected state - Classic Mac blue */
+:host(.selected) .ui-TreeItem-content {
+    background-color: #0000A5;
+    color: #FFFFFF;
+}
+
+/* Disclosure triangle - replace default expander */
+.ui-TreeItem-expander {
+    width: 16px;
+    height: 16px;
+    font-size: 0;
+    margin-right: 2px;
+    position: relative;
+    transition: none !important;
+    transform: none !important;
+}
+
+/* Hide any existing expander text/icon content */
+.ui-TreeItem-expander::before {
+    content: "";
+    display: block;
+    width: 0;
+    height: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+}
+
+/* Collapsed state - right-pointing disclosure triangle */
+.ui-TreeItem-expander:not(.expanded)::before {
+    border: 5px solid transparent;
+    border-left: 7px solid #000000;
+    border-right: none;
+    margin-top: -5px;
+    margin-left: -3px;
+}
+
+/* Expanded state - down-pointing disclosure triangle */
+.ui-TreeItem-expander.expanded {
+    transform: none !important;
+}
+
+.ui-TreeItem-expander.expanded::before {
+    border: 5px solid transparent;
+    border-top: 7px solid #000000;
+    border-bottom: none;
+    margin-top: -3px;
+    margin-left: -5px;
+}
+
+.ui-TreeItem-icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 4px;
+}
+
+/* Connector lines - dotted lines connecting parent to children */
+.ui-TreeItem-children {
+    border-left: 1px dotted #A0A0A0;
+    margin-left: 7px;
+}
+
+/* Override base max-height animation */
+.ui-TreeItem-children:not(.expanded) {
+    max-height: 0;
+    opacity: 0;
+}
+
+.ui-TreeItem-children.expanded {
+    max-height: none;
+    opacity: 1;
+}
+
+/* Focus state - dotted outline */
+:host(:focus) {
+    outline: none;
+}
+
+.ui-TreeItem-content:focus-visible {
+    outline: 1px dotted #000000;
+    outline-offset: -1px;
+}
+
+/* Disabled state - emboss effect */
+:host([disabled]) .ui-TreeItem-content {
+    color: #A0A0A0;
+    text-shadow: 1px 1px 0 #FFFFFF;
+}
+
+:host([disabled]) .ui-TreeItem-expander::before {
+    border-left-color: #A0A0A0;
+    border-top-color: #A0A0A0;
+}
+
+/* Drag and Drop */
+.ui-TreeItem-content[draggable="true"] {
+    cursor: grab;
+}
+
+.ui-TreeItem-content[draggable="true"]:active {
+    cursor: grabbing;
+}
+
+.ui-TreeItem-content.drop-before {
+    border-top: 2px solid #0000A5;
+    border-radius: 0;
+}
+
+.ui-TreeItem-content.drop-after {
+    border-bottom: 2px solid #0000A5;
+    border-radius: 0;
+}
+
+.ui-TreeItem-content.drop-inside {
+    background-color: rgba(0, 0, 165, 0.2);
+    border: 1px dashed #0000A5;
+    border-radius: 0;
+}
+
+.ui-TreeItem-content.drop-invalid {
+    background-color: rgba(255, 0, 0, 0.1);
+    border: 1px dashed #FF0000;
+    border-radius: 0;
+    cursor: not-allowed;
+}
