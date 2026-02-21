@@ -15,19 +15,22 @@ export default class GooeyJS {
     static _instance = null;
     static _readyPromise = null;
     static _readyResolve = null;
+    static _readyReject = null;
 
     /**
      * Promise that resolves when all components are registered and ready.
+     * Rejects if initialization fails.
      * @type {Promise<GooeyJS>}
      * @example
      * await GooeyJS.ready;
      * // or
-     * GooeyJS.ready.then(() => { ... });
+     * GooeyJS.ready.then(() => { ... }).catch(err => { ... });
      */
     static get ready() {
         if (!GooeyJS._readyPromise) {
-            GooeyJS._readyPromise = new Promise(resolve => {
+            GooeyJS._readyPromise = new Promise((resolve, reject) => {
                 GooeyJS._readyResolve = resolve;
+                GooeyJS._readyReject = reject;
             });
         }
         return GooeyJS._readyPromise;
@@ -76,6 +79,7 @@ export default class GooeyJS {
             if (GooeyJS._readyResolve) {
                 GooeyJS._readyResolve(this);
                 GooeyJS._readyResolve = null;
+                GooeyJS._readyReject = null;
             }
             // Dispatch ready event for event-based consumers
             document.dispatchEvent(new CustomEvent('gooeyjs-ready', {
@@ -83,6 +87,12 @@ export default class GooeyJS {
             }));
         }).catch(error => {
             Logger.fatal(error, { code: "GOOEY_INIT_FAILED" }, "GooeyJS initialization failed");
+            // Reject the ready promise to prevent infinite hang
+            if (GooeyJS._readyReject) {
+                GooeyJS._readyReject(error);
+                GooeyJS._readyResolve = null;
+                GooeyJS._readyReject = null;
+            }
         });
 
         linkEl = document.createElement('link');
