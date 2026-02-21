@@ -37,6 +37,10 @@ export default class VideoPlayer extends UIComponent {
     #controlsFadeTimer = null;
     #stopTimeCheckInterval = null;
 
+    // Construction guard: prevents parent constructor from calling private methods
+    // before this class's private fields are initialized (ES6 private field timing issue)
+    #constructed = false;
+
     // References for cleanup
     #trackObserver = null;
     #boundFullscreenChangeHandler = null;
@@ -82,6 +86,11 @@ export default class VideoPlayer extends UIComponent {
         this.#setupControlEvents();
         this.#setupKeyboardEvents();
         this.#setupFullscreenEvents();
+
+        // Mark construction complete so setters can safely call private methods.
+        // Must be set before #initializeFromAttributes() which uses setters that
+        // depend on #constructed being true to call #applyDimension().
+        this.#constructed = true;
 
         // Initialize from attributes
         this.#initializeFromAttributes();
@@ -1232,7 +1241,7 @@ export default class VideoPlayer extends UIComponent {
 
     set width(val) {
         this.setAttribute('width', val);
-        this.#applyDimension('width', val);
+        if (this.#constructed) this.#applyDimension('width', val);
     }
 
     get height() {
@@ -1241,7 +1250,7 @@ export default class VideoPlayer extends UIComponent {
 
     set height(val) {
         this.setAttribute('height', val);
-        this.#applyDimension('height', val);
+        if (this.#constructed) this.#applyDimension('height', val);
     }
 
     // ========== Poster Property ==========
