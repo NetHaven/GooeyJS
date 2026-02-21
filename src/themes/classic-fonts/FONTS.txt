@@ -1,0 +1,38 @@
+Classic Mac Theme Font Files
+============================
+
+These WOFF2 files are PLACEHOLDERS that should be replaced with actual font files.
+The placeholder files have valid WOFF2 headers but contain no glyph data.
+The Classic theme's font fallback chains in classic-tokens.css will activate
+gracefully when these placeholders fail to load:
+
+  --gooey-font-family: "ChicagoFLF", "Chicago", Geneva, sans-serif;
+  --gooey-font-family-mono: "Monaco", monospace;
+
+Font Sources and Licensing:
+---------------------------
+
+1. ChicagoFLF.woff2
+   - Source: ChicagoFLF by Robin Casady
+   - License: PUBLIC DOMAIN - free for all uses
+   - Download: https://fontsarena.com/chicago-flf-by-robin-casady/
+   - Convert TTF to WOFF2 using woff2_compress or an online converter
+
+2. Geneva.woff2
+   - Source: FindersKeepers by Giles Booth (Geneva recreation)
+   - License: UNCLEAR - verify before redistribution
+   - Alternative: System Geneva font (available on macOS)
+   - If license cannot be verified, remove this file and rely on fallback
+
+3. Monaco.woff2
+   - Source: Monaco recreation or open alternative monospace bitmap font
+   - License: UNCLEAR - Apple's Monaco is copyrighted
+   - Alternative: System Monaco font (available on macOS), or use monospace fallback
+   - If license cannot be verified, remove this file and rely on fallback
+
+Replacement Instructions:
+-------------------------
+1. Obtain the actual font files (TTF/OTF/WOFF2)
+2. If not already WOFF2, convert using: woff2_compress fontfile.ttf
+3. Replace the placeholder files in this directory
+4. The font-faces attribute on <gooey-theme> handles loading via FontFace API

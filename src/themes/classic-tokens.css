@@ -1,0 +1,56 @@
+/* GooeyJS Classic (Mac OS 7/8/9) Theme Token Overrides */
+/* Applied via: <gooey-theme name="classic" tokens="themes/classic-tokens.css" active> */
+/* This file redefines :root custom properties from styles.css for Classic Mac Platinum appearance. */
+/* For structural overrides, see themes/classic-overrides/ directory. */
+/* For bitmap fonts (Chicago, Geneva, Monaco), see themes/classic-fonts/ directory. */
+
+:root {
+    /* ===== Surface Colors (Platinum Gray) ===== */
+    --gooey-color-surface: #DDDDDD;
+    --gooey-color-surface-hover: #EEEEEE;
+    --gooey-color-surface-active: #CCCCCC;
+    --gooey-color-surface-raised: #FFFFFF;
+    --gooey-color-surface-sunken: #FFFFFF;
+    --gooey-color-surface-disabled: #DDDDDD;
+
+    /* ===== Accent / Primary (Classic Mac Blue) ===== */
+    --gooey-color-primary: #0000A5;
+    --gooey-color-primary-text: #FFFFFF;
+
+    /* ===== Text Colors ===== */
+    --gooey-color-text: #000000;
+    --gooey-color-text-muted: #555555;
+    --gooey-color-text-disabled: #7F7F7F;
+    --gooey-color-text-link: #0000A5;
+
+    /* ===== Border Colors ===== */
+    --gooey-color-border: #000000;
+    --gooey-color-border-light: #A0A0A0;
+
+    /* ===== Focus (Classic Mac Dotted Rectangle) ===== */
+    --gooey-color-focus: #000000;
+    --gooey-focus-width: 1px;
+    --gooey-focus-style: dotted;
+    --gooey-focus-offset: -3px;
+
+    /* ===== Typography (Chicago / Geneva / Monaco) ===== */
+    --gooey-font-family: "ChicagoFLF", "Chicago", Geneva, sans-serif;
+    --gooey-font-family-mono: "Monaco", monospace;
+    --gooey-font-size-xs: 9px;
+    --gooey-font-size-sm: 9px;
+    --gooey-font-size-md: 12px;
+    --gooey-font-size-lg: 12px;
+
+    /* ===== Borders (Classic Mac No Radius) ===== */
+    --gooey-border-width: 1px;
+    --gooey-border-style: solid;
+    --gooey-border-radius: 0;
+
+    /* ===== Shadows (Classic 1px Drop Shadow) ===== */
+    --gooey-shadow-sm: 1px 1px 0 #000000;
+    --gooey-shadow-md: 1px 1px 0 #000000;
+    --gooey-shadow-lg: 1px 1px 0 #000000;
+
+    /* ===== Opacity ===== */
+    --gooey-opacity-modal-backdrop: 0.4;
+}
