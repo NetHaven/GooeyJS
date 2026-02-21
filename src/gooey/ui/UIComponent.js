@@ -39,6 +39,9 @@ export default class UIComponent extends GooeyElement {
         this._bindings = [];
         this._boundModelChangeHandler = null;
 
+        // Track native listener registration (done in connectedCallback)
+        this._nativeListenersRegistered = false;
+
         // Add MVC events to valid events
         this.addValidEvent(UIComponentEvent.MODEL_CHANGE);
         this.addValidEvent(UIComponentEvent.CONTROLLER_ATTACHED);
@@ -54,141 +57,18 @@ export default class UIComponent extends GooeyElement {
         this.addValidEvent(MouseEvent.MOUSE_OVER);
         this.addValidEvent(MouseEvent.MOUSE_UP);
 
-        /* Translate Native Mouse Events */
-        HTMLElement.prototype.addEventListener.call(this, MouseEvent.CLICK, ()=> {
-            if (!this.disabled) {
-                this.fireEvent(MouseEvent.CLICK);
-            }
-        });
-
-        HTMLElement.prototype.addEventListener.call(this, MouseEvent.MOUSE_DOWN, ()=> {
-            if (!this.disabled) {
-                this.fireEvent(MouseEvent.MOUSE_DOWN);
-            }
-        });
-
-        HTMLElement.prototype.addEventListener.call(this, MouseEvent.MOUSE_UP, ()=> {
-            if (!this.disabled) {
-                this.fireEvent(MouseEvent.MOUSE_UP);
-            }
-        });
-
-        HTMLElement.prototype.addEventListener.call(this, MouseEvent.MOUSE_OUT, ()=> {
-            if (!this.disabled) {
-                this.fireEvent(MouseEvent.MOUSE_OUT);
-            }
-        });
-
-        HTMLElement.prototype.addEventListener.call(this, MouseEvent.MOUSE_OVER, ()=> {
-            if (!this.disabled) {
-                this.fireEvent(MouseEvent.MOUSE_OVER);
-            }
-        });
+        // Note: Native event listener registration deferred to connectedCallback
 
         // Add valid keyboard events
         this.addValidEvent(KeyboardEvent.KEY_DOWN);
         this.addValidEvent(KeyboardEvent.KEY_UP);
         this.addValidEvent(KeyboardEvent.KEY_PRESS);
 
-        /* Translate Native Keyboard Events */
-        HTMLElement.prototype.addEventListener.call(this, KeyboardEvent.KEY_DOWN, (ev) => {
-            if (!this.disabled) {
-                this.fireEvent(KeyboardEvent.KEY_DOWN, {
-                    key: ev.key,
-                    code: ev.code,
-                    altKey: ev.altKey,
-                    ctrlKey: ev.ctrlKey,
-                    shiftKey: ev.shiftKey,
-                    metaKey: ev.metaKey,
-                    repeat: ev.repeat,
-                    preventDefault: () => ev.preventDefault(),
-                    stopPropagation: () => ev.stopPropagation(),
-                    nativeEvent: ev
-                });
-            }
-        });
-
-        HTMLElement.prototype.addEventListener.call(this, KeyboardEvent.KEY_UP, (ev) => {
-            if (!this.disabled) {
-                this.fireEvent(KeyboardEvent.KEY_UP, {
-                    key: ev.key,
-                    code: ev.code,
-                    altKey: ev.altKey,
-                    ctrlKey: ev.ctrlKey,
-                    shiftKey: ev.shiftKey,
-                    metaKey: ev.metaKey,
-                    preventDefault: () => ev.preventDefault(),
-                    stopPropagation: () => ev.stopPropagation(),
-                    nativeEvent: ev
-                });
-            }
-        });
-
-        HTMLElement.prototype.addEventListener.call(this, KeyboardEvent.KEY_PRESS, (ev) => {
-            if (!this.disabled) {
-                this.fireEvent(KeyboardEvent.KEY_PRESS, {
-                    key: ev.key,
-                    code: ev.code,
-                    altKey: ev.altKey,
-                    ctrlKey: ev.ctrlKey,
-                    shiftKey: ev.shiftKey,
-                    metaKey: ev.metaKey,
-                    preventDefault: () => ev.preventDefault(),
-                    stopPropagation: () => ev.stopPropagation(),
-                    nativeEvent: ev
-                });
-            }
-        });
-
         // Add valid drag and drop events
         this.addValidEvent(DragEvent.START);
         this.addValidEvent(DragEvent.OVER);
         this.addValidEvent(DragEvent.END);
         this.addValidEvent(DragEvent.DROP);
-
-        /* Translate Native Drag and Drop Events */
-        HTMLElement.prototype.addEventListener.call(this, DragEvent.START, (ev)=> {
-            ev.dataTransfer.setData("text", ev.target.id);
-            this.fireEvent(DragEvent.START);
-        });
-
-        HTMLElement.prototype.addEventListener.call(this, DragEvent.OVER, (ev)=> {
-            let id, srcElement;
-
-            id = ev.dataTransfer.getData("text");
-            if (this.droppable === true) {
-                if (id) {
-                    srcElement = document.getElementById(id);
-                    if (srcElement) {
-                        if (this.classList.contains(srcElement.getAttribute("dropzone"))) {
-                            ev.preventDefault();
-                            this.fireEvent(DragEvent.OVER);
-                        }
-                    }
-                }
-            }
-        });
-
-        HTMLElement.prototype.addEventListener.call(this, DragEvent.END, ()=> {
-            this.fireEvent(DragEvent.END);
-        });
-
-        HTMLElement.prototype.addEventListener.call(this, DragEvent.DROP, (ev)=> {
-            let id, srcElement;
-
-            id = ev.dataTransfer.getData("text");
-            if (this.droppable === true) {
-                if (id) {
-                    srcElement = document.getElementById(id);
-                    if (srcElement) {
-                        if (this.classList.contains(srcElement.getAttribute("dropzone"))) {
-                            ev.preventDefault();
-                            this.fireEvent(DragEvent.DROP);
-                        }
-                    }
-                }
-            }
-        });
 
         this.classList.add("ui-Component");
 
@@ -254,6 +134,137 @@ export default class UIComponent extends GooeyElement {
         if (this.hasAttribute("visible")) {
             const isVisible = this.getAttribute("visible").toLowerCase() !== "false";
             this.style.display = isVisible ? '' : 'none';
+        }
+
+        // Register native event listeners (moved from constructor per Custom Elements spec)
+        // Only register once
+        if (!this._nativeListenersRegistered) {
+            this._nativeListenersRegistered = true;
+
+            /* Translate Native Mouse Events */
+            HTMLElement.prototype.addEventListener.call(this, MouseEvent.CLICK, ()=> {
+                if (!this.disabled) {
+                    this.fireEvent(MouseEvent.CLICK);
+                }
+            });
+
+            HTMLElement.prototype.addEventListener.call(this, MouseEvent.MOUSE_DOWN, ()=> {
+                if (!this.disabled) {
+                    this.fireEvent(MouseEvent.MOUSE_DOWN);
+                }
+            });
+
+            HTMLElement.prototype.addEventListener.call(this, MouseEvent.MOUSE_UP, ()=> {
+                if (!this.disabled) {
+                    this.fireEvent(MouseEvent.MOUSE_UP);
+                }
+            });
+
+            HTMLElement.prototype.addEventListener.call(this, MouseEvent.MOUSE_OUT, ()=> {
+                if (!this.disabled) {
+                    this.fireEvent(MouseEvent.MOUSE_OUT);
+                }
+            });
+
+            HTMLElement.prototype.addEventListener.call(this, MouseEvent.MOUSE_OVER, ()=> {
+                if (!this.disabled) {
+                    this.fireEvent(MouseEvent.MOUSE_OVER);
+                }
+            });
+
+            /* Translate Native Keyboard Events */
+            HTMLElement.prototype.addEventListener.call(this, KeyboardEvent.KEY_DOWN, (ev) => {
+                if (!this.disabled) {
+                    this.fireEvent(KeyboardEvent.KEY_DOWN, {
+                        key: ev.key,
+                        code: ev.code,
+                        altKey: ev.altKey,
+                        ctrlKey: ev.ctrlKey,
+                        shiftKey: ev.shiftKey,
+                        metaKey: ev.metaKey,
+                        repeat: ev.repeat,
+                        preventDefault: () => ev.preventDefault(),
+                        stopPropagation: () => ev.stopPropagation(),
+                        nativeEvent: ev
+                    });
+                }
+            });
+
+            HTMLElement.prototype.addEventListener.call(this, KeyboardEvent.KEY_UP, (ev) => {
+                if (!this.disabled) {
+                    this.fireEvent(KeyboardEvent.KEY_UP, {
+                        key: ev.key,
+                        code: ev.code,
+                        altKey: ev.altKey,
+                        ctrlKey: ev.ctrlKey,
+                        shiftKey: ev.shiftKey,
+                        metaKey: ev.metaKey,
+                        preventDefault: () => ev.preventDefault(),
+                        stopPropagation: () => ev.stopPropagation(),
+                        nativeEvent: ev
+                    });
+                }
+            });
+
+            HTMLElement.prototype.addEventListener.call(this, KeyboardEvent.KEY_PRESS, (ev) => {
+                if (!this.disabled) {
+                    this.fireEvent(KeyboardEvent.KEY_PRESS, {
+                        key: ev.key,
+                        code: ev.code,
+                        altKey: ev.altKey,
+                        ctrlKey: ev.ctrlKey,
+                        shiftKey: ev.shiftKey,
+                        metaKey: ev.metaKey,
+                        preventDefault: () => ev.preventDefault(),
+                        stopPropagation: () => ev.stopPropagation(),
+                        nativeEvent: ev
+                    });
+                }
+            });
+
+            /* Translate Native Drag and Drop Events */
+            HTMLElement.prototype.addEventListener.call(this, DragEvent.START, (ev)=> {
+                ev.dataTransfer.setData("text", ev.target.id);
+                this.fireEvent(DragEvent.START);
+            });
+
+            HTMLElement.prototype.addEventListener.call(this, DragEvent.OVER, (ev)=> {
+                let id, srcElement;
+
+                id = ev.dataTransfer.getData("text");
+                if (this.droppable === true) {
+                    if (id) {
+                        srcElement = document.getElementById(id);
+                        if (srcElement) {
+                            if (this.classList.contains(srcElement.getAttribute("dropzone"))) {
+                                ev.preventDefault();
+                                this.fireEvent(DragEvent.OVER);
+                            }
+                        }
+                    }
+                }
+            });
+
+            HTMLElement.prototype.addEventListener.call(this, DragEvent.END, ()=> {
+                this.fireEvent(DragEvent.END);
+            });
+
+            HTMLElement.prototype.addEventListener.call(this, DragEvent.DROP, (ev)=> {
+                let id, srcElement;
+
+                id = ev.dataTransfer.getData("text");
+                if (this.droppable === true) {
+                    if (id) {
+                        srcElement = document.getElementById(id);
+                        if (srcElement) {
+                            if (this.classList.contains(srcElement.getAttribute("dropzone"))) {
+                                ev.preventDefault();
+                                this.fireEvent(DragEvent.DROP);
+                            }
+                        }
+                    }
+                }
+            });
         }
 
         // Apply any pending bindings after DOM is connected
