@@ -812,7 +812,8 @@
         <div class="component-row">
             <div class="component-box" style="min-width: 500px;">
                 <div class="box-label">Window</div>
-                <gooeyui-window text="Sample Window" width="480" height="200">
+                <gooeyui-button text="Show Window" id="toggle-window-btn"></gooeyui-button>
+                <gooeyui-window id="sample-window" text="Sample Window" width="480" height="200" visible="false">
                     <gooeyui-label text="Window content goes here."></gooeyui-label>
                     <gooeyui-button text="OK"></gooeyui-button>
                 </gooeyui-window>
@@ -866,14 +867,24 @@
         switchTheme(e.target.value);
     });
 
-    // Toast buttons
+    // Toast buttons and Window toggle
     document.addEventListener('gooeyjs-ready', () => {
         // Setup component listeners after GooeyJS core is ready
         // (gooey-component elements are now defined)
         setupComponentListeners();
 
-        // Wait a moment for dynamic components to start loading, then set up toast buttons
+        // Wait a moment for dynamic components to start loading, then set up toast buttons and window toggle
         setTimeout(() => {
+            // Window toggle button
+            const toggleWindowBtn = document.getElementById('toggle-window-btn');
+            const sampleWindow = document.getElementById('sample-window');
+            if (toggleWindowBtn && sampleWindow) {
+                toggleWindowBtn.addEventListener('click', () => {
+                    sampleWindow.visible = !sampleWindow.visible;
+                    toggleWindowBtn.text = sampleWindow.visible ? 'Hide Window' : 'Show Window';
+                });
+            }
+
             const infoBtn = document.getElementById('toast-info-btn');
             const successBtn = document.getElementById('toast-success-btn');
             const warningBtn = document.getElementById('toast-warning-btn');
