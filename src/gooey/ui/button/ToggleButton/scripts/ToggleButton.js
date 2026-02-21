@@ -11,26 +11,13 @@ export default class ToggleButton extends UIComponent {
 
         Template.activate("ui-ToggleButton", this.shadowRoot);
         this.button = this.shadowRoot.querySelector("button");
-        
+
         // Initialize toggle state
         this._pressed = false;
         this._updatingAttribute = false;
-        
-        if (this.hasAttribute("icon")) {
-            this.icon = this.getAttribute("icon");
-        }
-        
-        if (this.hasAttribute("text")) {
-            this.text = this.getAttribute("text");
-        }
 
-        if (this.hasAttribute("action")) {
-            this.action = this.getAttribute("action");
-        }
-        
-        if (this.hasAttribute("pressed")) {
-            this.pressed = this.getAttribute("pressed") === 'true';
-        }
+        // Note: icon, text, action, pressed initialization deferred to connectedCallback
+        // (Custom Elements spec prohibits setAttribute in constructor)
 
         this.addValidEvent(MouseEvent.CLICK);
         this.addValidEvent(MouseEvent.MOUSE_DOWN);
@@ -59,7 +46,52 @@ export default class ToggleButton extends UIComponent {
             this.fireEvent(MouseEvent.MOUSE_DOWN);
         }.bind(this))
     }
-    
+
+    connectedCallback() {
+        if (super.connectedCallback) {
+            super.connectedCallback();
+        }
+
+        // Initialize attributes inherited from Button (icon, text, action)
+        // Use parent Button logic if available, otherwise apply directly
+        if (this.hasAttribute("icon")) {
+            const val = this.getAttribute("icon");
+            const slottedIcon = this.querySelector('[slot="icon"]');
+            if (!slottedIcon) {
+                if (!this.image) {
+                    this.image = document.createElement("img");
+                    this.button.appendChild(this.image);
+                    this.image.addEventListener(MouseEvent.CLICK, e=> {
+                        if (this.disabled) {
+                            e.stopPropagation();
+                        }
+                    });
+                }
+                this.image.style.display = '';
+                this.image.src = val;
+            }
+        }
+
+        if (this.hasAttribute("text")) {
+            const val = this.getAttribute("text");
+            if (!this.textElement) {
+                this.textElement = document.createElement("span");
+                this.button.appendChild(this.textElement);
+            }
+            this.textElement.textContent = val;
+        }
+
+        // Initialize pressed state
+        if (this.hasAttribute("pressed")) {
+            const val = this.getAttribute("pressed") === 'true';
+            this._pressed = val;
+            if (val) {
+                this.button.classList.add("pressed");
+                this.button.setAttribute("aria-pressed", "true");
+            }
+        }
+    }
+
     get action() {
         return this.getAttribute("action");
     }
