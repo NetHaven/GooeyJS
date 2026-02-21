@@ -1,0 +1,100 @@
+/* ComboBox - Janus (Win3.1) structural override */
+
+:host {
+    min-width: 120px;
+}
+
+.combobox-input {
+    border-right: none;
+    outline: none;
+    /* Windows 3.1 sunken border */
+    border-top: 1px solid #808080;
+    border-left: 1px solid #808080;
+    border-bottom: 1px solid #ffffff;
+    box-shadow: inset 1px 1px 0 #000000;
+}
+
+.combobox-input:focus {
+    outline: none;
+}
+
+.combobox-input[readonly] {
+    cursor: pointer;
+}
+
+.combobox-button {
+    background-color: #c0c0c0;
+    cursor: pointer;
+    outline: none;
+    min-width: 16px;
+    /* Windows 3.1 raised button */
+    border-top: 1px solid #ffffff;
+    border-left: 1px solid #ffffff;
+    border-right: 1px solid #808080;
+    border-bottom: 1px solid #808080;
+    box-shadow: inset -1px -1px 0 #000000;
+}
+
+.combobox-button:hover {
+    background-color: #d4d4d4;
+}
+
+.combobox-button:active,
+:host(.dropdown-open) .combobox-button {
+    background-color: #c0c0c0;
+    border-top: 1px solid #808080;
+    border-left: 1px solid #808080;
+    border-right: 1px solid #ffffff;
+    border-bottom: 1px solid #ffffff;
+    box-shadow: inset 1px 1px 0 #000000;
+}
+
+.combobox-dropdown {
+    background-color: #ffffff;
+    /* Windows 3.1 sunken border + drop shadow */
+    border-top: 1px solid #808080;
+    border-left: 1px solid #808080;
+    border-right: 1px solid #ffffff;
+    border-bottom: 1px solid #ffffff;
+    box-shadow:
+        inset 1px 1px 0 #000000,
+        2px 2px 0 #000000;
+}
+
+.combobox-list option {
+    cursor: pointer;
+    color: #000000;
+    background-color: #ffffff;
+}
+
+.combobox-list option:hover {
+    background-color: #000080;
+    color: #ffffff;
+}
+
+.combobox-list option:checked {
+    background-color: #000080;
+    color: #ffffff;
+}
+
+/* Disabled state */
+:host([disabled]) .combobox-input,
+:host([disabled]) .combobox-button {
+    cursor: not-allowed;
+}
+
+:host([disabled]) .combobox-input {
+    background-color: #c0c0c0;
+    color: #808080;
+}
+
+:host([disabled]) .combobox-button {
+    background-color: #c0c0c0;
+    color: #808080;
+    text-shadow: 1px 1px 0 #ffffff;
+}
+
+/* Focus states */
+:host(.focused) .combobox-input {
+    border-color: #000080;
+}

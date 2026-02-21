@@ -1,0 +1,28 @@
+/* TextArea - Janus (Win3.1) structural override */
+
+textarea {
+    /* Windows 3.1 sunken border */
+    border-top: 1px solid #808080;
+    border-left: 1px solid #808080;
+    border-right: 1px solid #ffffff;
+    border-bottom: 1px solid #ffffff;
+    box-shadow: inset 1px 1px 0 #000000;
+}
+
+textarea:focus {
+    outline: none;
+}
+
+textarea:disabled {
+    background-color: #c0c0c0;
+    color: #808080;
+    cursor: not-allowed;
+}
+
+textarea::placeholder {
+    color: #808080;
+}
+
+textarea:read-only {
+    background-color: #c0c0c0;
+}

@@ -1,0 +1,29 @@
+/* DropDownList - Janus (Win3.1) structural override */
+
+select {
+    background-color: #c0c0c0;
+    cursor: pointer;
+    /* Windows 3.1 raised button style */
+    border-top: 1px solid #ffffff;
+    border-left: 1px solid #ffffff;
+    border-right: 1px solid #808080;
+    border-bottom: 1px solid #808080;
+    box-shadow: inset -1px -1px 0 #000000;
+}
+
+select:focus {
+    outline: 1px dotted #000000;
+    outline-offset: -2px;
+}
+
+/* Disabled state */
+:host([disabled]),
+:host([disabled]) select {
+    cursor: not-allowed;
+}
+
+:host([disabled]) select {
+    background-color: #c0c0c0;
+    color: #808080;
+    text-shadow: 1px 1px 0 #ffffff;
+}
