@@ -187,6 +187,12 @@ export default class Observable extends HTMLElement {
             return false;
         }
 
+        // Guard: Don't fire events on HTMLElements that aren't connected to the DOM
+        // This prevents "Operation is not supported" errors during construction
+        if (this instanceof HTMLElement && !this.isConnected) {
+            return false;
+        }
+
         // Track if event was cancelled (only matters if cancelable)
         let defaultPrevented = false;
 
