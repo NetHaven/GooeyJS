@@ -64,10 +64,12 @@ export default class CodeBlock extends UIComponent {
         });
 
         // Listen for slot content changes to update line numbers and highlighting
-        this.slot.addEventListener("slotchange", () => {
-            this._updateLineNumbers();
-            this._requestHighlight();
-        });
+        if (this.slot) {
+            this.slot.addEventListener("slotchange", () => {
+                this._updateLineNumbers();
+                this._requestHighlight();
+            });
+        }
 
         // Initial line number update
         this._updateLineNumbers();
@@ -110,6 +112,7 @@ export default class CodeBlock extends UIComponent {
      * Get the code content from the slot
      */
     get code() {
+        if (!this.slot) return this.textContent || '';
         const nodes = this.slot.assignedNodes();
         return nodes.map(n => n.textContent).join('');
     }
