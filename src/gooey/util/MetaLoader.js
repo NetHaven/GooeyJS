@@ -154,8 +154,8 @@ export default class MetaLoader {
                         errors.push(`tokens.${tokenName}: must be an object`);
                         return;
                     }
-                    if (!tokenDef.fallback || typeof tokenDef.fallback !== 'string') {
-                        errors.push(`tokens.${tokenName}: missing or invalid "fallback" field (string required)`);
+                    if (tokenDef.fallback !== undefined && tokenDef.fallback !== null && typeof tokenDef.fallback !== 'string') {
+                        errors.push(`tokens.${tokenName}: "fallback" must be a string or null`);
                     }
                     if (tokenDef.category !== undefined && typeof tokenDef.category !== 'string') {
                         errors.push(`tokens.${tokenName}: "category" must be a string`);
