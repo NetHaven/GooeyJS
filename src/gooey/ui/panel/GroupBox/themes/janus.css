@@ -1,37 +1,5 @@
-/* GroupBox - Windows 3.1 Janus Theme */
-
-:host {
-    position: relative;
-    display: block;
-    padding: 8px;
-    margin: 4px;
-    font-family: "MS Sans Serif", "Segoe UI", Tahoma, sans-serif;
-    font-size: 11px;
-}
-
-.ui-GroupBox-content {
-    padding: 8px;
-    background-color: #c0c0c0;
-    min-height: 20px;
-    /* Windows 3.1 etched border effect */
-    border-top: 1px solid #808080;
-    border-left: 1px solid #808080;
-    border-right: 1px solid #ffffff;
-    border-bottom: 1px solid #ffffff;
-    box-shadow:
-        inset 1px 1px 0 #ffffff,
-        inset -1px -1px 0 #808080;
-}
-
-.ui-GroupBox-text {
-    position: absolute;
-    top: 0;
-    left: 13px;
-    background-color: #c0c0c0;
-    padding: 0 4px;
-    font-size: 11px;
-    line-height: 1;
-    transform: translateY(-50%);
-    display: none;
-    color: #000000;
-}
+/* Janus theme now provided via <gooey-theme> token architecture.
+   See: src/themes/janus-tokens.css (global token overrides)
+   See: src/themes/janus-overrides/ (structural overrides)
+   Usage: <gooey-theme name="janus" tokens="themes/janus-tokens.css" active>
+   This file is intentionally empty for backward compatibility with switchTheme('janus'). */

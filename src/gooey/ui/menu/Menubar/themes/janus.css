@@ -1,32 +1,5 @@
-/* Menubar - Windows 3.1 Janus Theme */
-
-:host, :host(.ui-Toolbar) {
-    display: block;
-}
-
-:host {
-    display: flex !important;
-    height: 20px;
-    width: 100%;
-    background-color: #c0c0c0;
-    font-family: "MS Sans Serif", "Segoe UI", Tahoma, sans-serif;
-    font-size: 11px;
-    /* Windows 3.1 subtle bottom border */
-    border-bottom: 1px solid #808080;
-    box-shadow: 0 1px 0 #ffffff;
-}
-
-.menuHeader {
-    cursor: default;
-    margin-left: 0;
-    margin-right: 0;
-    padding: 2px 8px;
-    user-select: none;
-    color: #000000;
-}
-
-.menuHeader[active], .menuHeader:hover {
-    background-color: #000080;
-    color: #ffffff;
-    user-select: none;
-}
+/* Janus theme now provided via <gooey-theme> token architecture.
+   See: src/themes/janus-tokens.css (global token overrides)
+   See: src/themes/janus-overrides/ (structural overrides)
+   Usage: <gooey-theme name="janus" tokens="themes/janus-tokens.css" active>
+   This file is intentionally empty for backward compatibility with switchTheme('janus'). */

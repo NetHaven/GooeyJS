@@ -1,54 +1,5 @@
-/* ProgressBar - Windows 3.1 Janus Theme */
-
-:host {
-    display: block;
-    width: 100%;
-    margin: 6px 0;
-    font-family: "MS Sans Serif", "Segoe UI", Tahoma, sans-serif;
-    font-size: 11px;
-}
-
-.progress-container {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.progress-bar {
-    flex: 1;
-    height: 16px;
-    background-color: #ffffff;
-    position: relative;
-    overflow: hidden;
-    /* Windows 3.1 sunken border */
-    border-top: 1px solid #808080;
-    border-left: 1px solid #808080;
-    border-right: 1px solid #ffffff;
-    border-bottom: 1px solid #ffffff;
-    box-shadow: inset 1px 1px 0 #000000;
-}
-
-.progress-fill {
-    height: 100%;
-    background-color: #000080;
-    transition: width 0.3s ease;
-    width: 0%;
-}
-
-.progress-bar.indeterminate .progress-fill {
-    width: 30%;
-    animation: progress-indeterminate-win31 1.5s infinite linear;
-}
-
-.progress-text {
-    font-size: 11px;
-    color: #000000;
-    white-space: nowrap;
-    min-width: 30px;
-    text-align: right;
-}
-
-@keyframes progress-indeterminate-win31 {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(333%); }
-}
+/* Janus theme now provided via <gooey-theme> token architecture.
+   See: src/themes/janus-tokens.css (global token overrides)
+   See: src/themes/janus-overrides/ (structural overrides)
+   Usage: <gooey-theme name="janus" tokens="themes/janus-tokens.css" active>
+   This file is intentionally empty for backward compatibility with switchTheme('janus'). */

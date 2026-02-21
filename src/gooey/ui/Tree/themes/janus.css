@@ -1,23 +1,5 @@
-/* Tree - Windows 3.1 Janus Theme */
-
-:host {
-    display: block;
-    font-family: "MS Sans Serif", "Segoe UI", Tahoma, sans-serif;
-    font-size: 11px;
-}
-
-.ui-Tree {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    font-family: "MS Sans Serif", "Segoe UI", Tahoma, sans-serif;
-    font-size: 11px;
-    user-select: none;
-    background-color: #ffffff;
-    /* Windows 3.1 sunken tree view */
-    border-top: 1px solid #808080;
-    border-left: 1px solid #808080;
-    border-right: 1px solid #ffffff;
-    border-bottom: 1px solid #ffffff;
-    box-shadow: inset 1px 1px 0 #000000;
-}
+/* Janus theme now provided via <gooey-theme> token architecture.
+   See: src/themes/janus-tokens.css (global token overrides)
+   See: src/themes/janus-overrides/ (structural overrides)
+   Usage: <gooey-theme name="janus" tokens="themes/janus-tokens.css" active>
+   This file is intentionally empty for backward compatibility with switchTheme('janus'). */

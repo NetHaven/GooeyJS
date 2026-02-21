@@ -1,41 +1,5 @@
-/* TextField - Windows 3.1 Janus Theme */
-
-:host {
-    display: inline-block;
-    font-family: "MS Sans Serif", "Segoe UI", Tahoma, sans-serif;
-    font-size: 11px;
-}
-
-input[type='text'] {
-    height: 100%;
-    width: 100%;
-    padding: 2px 4px;
-    background-color: #ffffff;
-    color: #000000;
-    font-family: "MS Sans Serif", "Segoe UI", Tahoma, sans-serif;
-    font-size: 11px;
-    /* Windows 3.1 sunken border */
-    border-top: 1px solid #808080;
-    border-left: 1px solid #808080;
-    border-right: 1px solid #ffffff;
-    border-bottom: 1px solid #ffffff;
-    box-shadow: inset 1px 1px 0 #000000;
-}
-
-input[type='text']:focus {
-    outline: none;
-}
-
-input[type='text']:disabled {
-    background-color: #c0c0c0;
-    color: #808080;
-    cursor: not-allowed;
-}
-
-input[type='text']::placeholder {
-    color: #808080;
-}
-
-input[type='text']:read-only {
-    background-color: #c0c0c0;
-}
+/* Janus theme now provided via <gooey-theme> token architecture.
+   See: src/themes/janus-tokens.css (global token overrides)
+   See: src/themes/janus-overrides/ (structural overrides)
+   Usage: <gooey-theme name="janus" tokens="themes/janus-tokens.css" active>
+   This file is intentionally empty for backward compatibility with switchTheme('janus'). */

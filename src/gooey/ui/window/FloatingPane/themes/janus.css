@@ -1,17 +1,5 @@
-/* FloatingPane - Windows 3.1 Janus Theme */
-/* FloatingPane inherits most styles from Window */
-
-:host {
-    display: block;
-    background-color: #c0c0c0;
-    font-family: "MS Sans Serif", "Segoe UI", Tahoma, sans-serif;
-    font-size: 11px;
-    /* Windows 3.1 raised border */
-    border-top: 1px solid #ffffff;
-    border-left: 1px solid #ffffff;
-    border-right: 1px solid #808080;
-    border-bottom: 1px solid #808080;
-    box-shadow:
-        inset -1px -1px 0 #000000,
-        inset 1px 1px 0 #dfdfdf;
-}
+/* Janus theme now provided via <gooey-theme> token architecture.
+   See: src/themes/janus-tokens.css (global token overrides)
+   See: src/themes/janus-overrides/ (structural overrides)
+   Usage: <gooey-theme name="janus" tokens="themes/janus-tokens.css" active>
+   This file is intentionally empty for backward compatibility with switchTheme('janus'). */

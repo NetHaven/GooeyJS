@@ -1,10 +1,5 @@
-/* MenuItemSeparator - Windows 3.1 Janus Theme */
-
-:host {
-    display: block;
-    height: 2px;
-    margin: 2px 4px;
-    /* Windows 3.1 etched line */
-    border-top: 1px solid #808080;
-    border-bottom: 1px solid #ffffff;
-}
+/* Janus theme now provided via <gooey-theme> token architecture.
+   See: src/themes/janus-tokens.css (global token overrides)
+   See: src/themes/janus-overrides/ (structural overrides)
+   Usage: <gooey-theme name="janus" tokens="themes/janus-tokens.css" active>
+   This file is intentionally empty for backward compatibility with switchTheme('janus'). */
