@@ -21,5 +21,5 @@ input[type="number"] {
 :host([disabled]) .increment-btn,
 :host([disabled]) .decrement-btn {
     cursor: not-allowed;
-    opacity: var(--gooey-spinner-opacity-disabled, var(--gooey-opacity-disabled, 0.5));
+    opacity: var(--gooey-spinner-opacity-disabled, var(--gooey-opacity-disabled));
 }

@@ -1,5 +1,5 @@
 :host {
-    color: var(--gooey-checkboxmenuitem-color, var(--gooey-color-text, black));
+    color: var(--gooey-checkboxmenuitem-color, var(--gooey-color-text));
     display: flex !important;
     justify-content: space-around;
     width: 100%;
@@ -35,6 +35,6 @@
 }
 
 :host([active]) {
-    background-color: var(--gooey-checkboxmenuitem-bg-active, var(--gooey-color-primary, #010082)) !important;
-    color: var(--gooey-checkboxmenuitem-color-active, var(--gooey-color-primary-text, white));
+    background-color: var(--gooey-checkboxmenuitem-bg-active, var(--gooey-color-primary)) !important;
+    color: var(--gooey-checkboxmenuitem-color-active, var(--gooey-color-primary-text));
 }

@@ -10,12 +10,12 @@ textarea {
 
 /* Keyboard-only focus indicator for accessibility */
 textarea:focus-visible {
-    outline: var(--gooey-textarea-focus-ring-width, var(--gooey-focus-width, 2px)) var(--gooey-focus-style, solid) var(--gooey-textarea-focus-ring-color, var(--gooey-color-focus, #005fcc));
-    outline-offset: var(--gooey-textarea-focus-ring-offset, var(--gooey-focus-offset, -1px));
+    outline: var(--gooey-textarea-focus-ring-width, var(--gooey-focus-width)) var(--gooey-focus-style, solid) var(--gooey-textarea-focus-ring-color, var(--gooey-color-focus));
+    outline-offset: var(--gooey-textarea-focus-ring-offset, var(--gooey-focus-offset));
 }
 
 :host([disabled]) textarea {
     cursor: not-allowed;
-    opacity: var(--gooey-textarea-opacity-disabled, var(--gooey-opacity-disabled, 0.5));
-    background-color: var(--gooey-textarea-bg-disabled, var(--gooey-color-surface-disabled, #f0f0f0));
+    opacity: var(--gooey-textarea-opacity-disabled, var(--gooey-opacity-disabled));
+    background-color: var(--gooey-textarea-bg-disabled, var(--gooey-color-surface-disabled));
 }

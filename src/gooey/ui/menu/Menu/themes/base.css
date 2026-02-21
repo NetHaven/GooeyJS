@@ -1,9 +1,9 @@
 :host {
     border-style: solid;
-    border-width: var(--gooey-menu-border-width, var(--gooey-border-width, 1px));
+    border-width: var(--gooey-menu-border-width, var(--gooey-border-width));
     cursor: default;
     display: flex;
     padding-bottom: 2px;
     position: absolute;
-    z-index: var(--gooey-menu-z-index, var(--gooey-z-dropdown, 5));
+    z-index: var(--gooey-menu-z-index, var(--gooey-z-dropdown));
 }

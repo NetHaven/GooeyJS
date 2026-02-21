@@ -1,5 +1,0 @@
-/* Janus theme now provided via <gooey-theme> token architecture.
-   See: src/themes/janus-tokens.css (global token overrides)
-   See: src/themes/janus-overrides/ (structural overrides)
-   Usage: <gooey-theme name="janus" tokens="themes/janus-tokens.css" active>
-   This file is intentionally empty for backward compatibility with switchTheme('janus'). */

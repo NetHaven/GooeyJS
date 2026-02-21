@@ -3,7 +3,7 @@
     position: relative;
     background: var(--gooey-videoplayer-bg, #000);
     overflow: hidden;
-    font-family: var(--gooey-videoplayer-font-family, var(--gooey-font-family, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif));
+    font-family: var(--gooey-videoplayer-font-family, var(--gooey-font-family));
 }
 
 :host([fullscreen]) {
@@ -185,7 +185,7 @@ button:focus-visible {
 }
 
 button:disabled {
-    opacity: var(--gooey-videoplayer-opacity-disabled, var(--gooey-opacity-disabled, 0.5));
+    opacity: var(--gooey-videoplayer-opacity-disabled, var(--gooey-opacity-disabled));
     cursor: not-allowed;
 }
 
@@ -199,7 +199,7 @@ button[hidden] {
 
 /* Time Display */
 .time-display {
-    font-family: var(--gooey-videoplayer-time-font-family, var(--gooey-font-family-mono, 'SF Mono', 'Consolas', 'Monaco', monospace));
+    font-family: var(--gooey-videoplayer-time-font-family, var(--gooey-font-family-mono));
     font-size: 13px;
     color: var(--gooey-videoplayer-time-color, #fff);
     white-space: nowrap;

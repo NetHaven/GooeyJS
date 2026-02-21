@@ -8,11 +8,11 @@ input[type="checkbox"] {
 
 /* Keyboard-only focus indicator for accessibility */
 input[type="checkbox"]:focus-visible {
-    outline: var(--gooey-checkbox-focus-ring-width, var(--gooey-focus-width, 2px)) var(--gooey-focus-style, solid) var(--gooey-checkbox-focus-ring-color, var(--gooey-color-focus, #005fcc));
+    outline: var(--gooey-checkbox-focus-ring-width, var(--gooey-focus-width)) var(--gooey-focus-style, solid) var(--gooey-checkbox-focus-ring-color, var(--gooey-color-focus));
     outline-offset: var(--gooey-focus-offset, 2px);
 }
 
 :host([disabled]) input[type="checkbox"] {
     cursor: not-allowed;
-    opacity: var(--gooey-checkbox-opacity-disabled, var(--gooey-opacity-disabled, 0.5));
+    opacity: var(--gooey-checkbox-opacity-disabled, var(--gooey-opacity-disabled));
 }

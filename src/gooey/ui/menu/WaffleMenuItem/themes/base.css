@@ -27,7 +27,7 @@
 }
 
 .waffle-item:focus {
-    outline: var(--gooey-focus-width, 2px) var(--gooey-focus-style, solid) var(--gooey-wafflemenuitem-focus-color, var(--gooey-color-focus, #1a73e8));
+    outline: var(--gooey-focus-width, 2px) var(--gooey-focus-style, solid) var(--gooey-wafflemenuitem-focus-color, var(--gooey-color-focus));
     outline-offset: -2px;
 }
 
@@ -56,7 +56,7 @@
     height: 18px;
     padding: 0 5px;
     border-radius: 9px;
-    background: var(--gooey-wafflemenuitem-badge-bg, var(--gooey-color-error, #ea4335));
+    background: var(--gooey-wafflemenuitem-badge-bg, var(--gooey-color-error));
     color: var(--gooey-wafflemenuitem-badge-color, var(--waffle-badge-color, #ffffff));
     font-size: 11px;
     font-weight: 500;
@@ -71,7 +71,7 @@
 .waffle-item-label {
     font-size: 12px;
     font-weight: 400;
-    color: var(--gooey-wafflemenuitem-label-color, var(--gooey-color-text, #202124));
+    color: var(--gooey-wafflemenuitem-label-color, var(--gooey-color-text));
     text-align: center;
     max-width: 100%;
     overflow: hidden;
@@ -81,7 +81,7 @@
 
 /* Disabled state */
 :host([disabled]) .waffle-item {
-    opacity: var(--gooey-wafflemenuitem-opacity-disabled, var(--gooey-opacity-disabled, 0.5));
+    opacity: var(--gooey-wafflemenuitem-opacity-disabled, var(--gooey-opacity-disabled));
     cursor: not-allowed;
     pointer-events: none;
 }

@@ -10,7 +10,7 @@ div {
 
 img {
     vertical-align: middle;
-    margin-right: var(--gooey-label-icon-gap, var(--gooey-spacing-sm, 4px));
+    margin-right: var(--gooey-label-icon-gap, var(--gooey-spacing-sm));
 }
 
 span {

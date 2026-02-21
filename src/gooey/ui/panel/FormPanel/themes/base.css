@@ -12,7 +12,7 @@
 ::slotted(gooeyui-label) {
     justify-self: end;
     align-self: start;
-    font-weight: var(--gooey-formpanel-label-font-weight, var(--gooey-font-weight-bold, bold));
+    font-weight: var(--gooey-formpanel-label-font-weight, var(--gooey-font-weight-bold));
 }
 
 ::slotted(:not(gooeyui-label):not(.required-indicator)) {
@@ -30,7 +30,7 @@
 
 /* Required indicator for form elements */
 .required-indicator {
-    color: var(--gooey-formpanel-required-color, var(--gooey-color-error, red)) !important;
+    color: var(--gooey-formpanel-required-color, var(--gooey-color-error)) !important;
     font-weight: bold !important;
     margin-left: 4px !important;
     font-size: 14px !important;

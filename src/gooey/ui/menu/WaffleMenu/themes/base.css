@@ -23,7 +23,7 @@
 }
 
 .waffle-trigger:focus {
-    outline: var(--gooey-focus-width, 2px) var(--gooey-focus-style, solid) var(--gooey-wafflemenu-focus-color, var(--gooey-color-focus, #1a73e8));
+    outline: var(--gooey-focus-width, 2px) var(--gooey-focus-style, solid) var(--gooey-wafflemenu-focus-color, var(--gooey-color-focus));
     outline-offset: var(--gooey-focus-offset, 2px);
 }
 
@@ -105,7 +105,7 @@
 .waffle-header {
     display: none;
     padding: 12px var(--gooey-wafflemenu-padding, var(--waffle-padding, 16px));
-    border-bottom: 1px solid var(--gooey-wafflemenu-header-border-color, var(--gooey-color-border-light, #e0e0e0));
+    border-bottom: 1px solid var(--gooey-wafflemenu-header-border-color, var(--gooey-color-border-light));
     align-items: center;
     justify-content: space-between;
 }
@@ -153,7 +153,7 @@
 .waffle-footer {
     display: none;
     padding: 12px var(--gooey-wafflemenu-padding, var(--waffle-padding, 16px));
-    border-top: 1px solid var(--gooey-wafflemenu-header-border-color, var(--gooey-color-border-light, #e0e0e0));
+    border-top: 1px solid var(--gooey-wafflemenu-header-border-color, var(--gooey-color-border-light));
 }
 
 .waffle-footer.has-content {
@@ -162,7 +162,7 @@
 
 /* Disabled state */
 :host([disabled]) .waffle-trigger {
-    opacity: var(--gooey-wafflemenu-opacity-disabled, var(--gooey-opacity-disabled, 0.5));
+    opacity: var(--gooey-wafflemenu-opacity-disabled, var(--gooey-opacity-disabled));
     cursor: not-allowed;
     pointer-events: none;
 }
