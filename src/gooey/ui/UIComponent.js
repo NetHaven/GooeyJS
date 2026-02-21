@@ -192,28 +192,8 @@ export default class UIComponent extends GooeyElement {
 
         this.classList.add("ui-Component");
 
-        // Apply initial attribute values without calling setters (which call setAttribute)
-        // Custom Elements spec prohibits setAttribute in constructor
-        if (this.hasAttribute("height"))  {
-            const val = this.getAttribute("height");
-            this.style.height = typeof val === 'number' ? `${val}px` : val;
-        }
-
-        if (this.hasAttribute("width"))   {
-            const val = this.getAttribute("width");
-            this.style.width = typeof val === 'number' ? `${val}px` : val;
-        }
-
-        if (this.hasAttribute("tooltip")) {
-            // Note: title attribute should already be set in HTML if tooltip is set
-            // We don't set it here to avoid setAttribute in constructor
-        }
-
-        if (this.hasAttribute("visible")) {
-            // Apply visibility without calling setter (which would call setAttribute)
-            const isVisible = this.getAttribute("visible").toLowerCase() !== "false";
-            this.style.display = isVisible ? '' : 'none';
-        }
+        // Note: All attribute initialization deferred to connectedCallback
+        // to fully comply with Custom Elements spec and avoid "Operation is not supported" errors
     }
 
     // Data binding application
@@ -254,6 +234,26 @@ export default class UIComponent extends GooeyElement {
 
         if (super.connectedCallback) {
             super.connectedCallback();
+        }
+
+        // Apply initial attribute values (moved from constructor per Custom Elements spec)
+        if (this.hasAttribute("height"))  {
+            const val = this.getAttribute("height");
+            this.style.height = typeof val === 'number' ? `${val}px` : val;
+        }
+
+        if (this.hasAttribute("width"))   {
+            const val = this.getAttribute("width");
+            this.style.width = typeof val === 'number' ? `${val}px` : val;
+        }
+
+        if (this.hasAttribute("tooltip")) {
+            this.setAttribute("title", this.getAttribute("tooltip"));
+        }
+
+        if (this.hasAttribute("visible")) {
+            const isVisible = this.getAttribute("visible").toLowerCase() !== "false";
+            this.style.display = isVisible ? '' : 'none';
         }
 
         // Apply any pending bindings after DOM is connected
