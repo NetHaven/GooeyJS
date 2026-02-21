@@ -63,6 +63,11 @@ export default class Window extends UIComponent {
             this.draggable = true;
         }
 
+        const okButton = this.shadowRoot.querySelector(".WindowOKButton");
+        okButton.addEventListener(MouseEvent.CLICK, ()=> {
+            this.close();
+        });
+
         cancelButton = this.shadowRoot.querySelector(".WindowCancelButton");
         cancelButton.addEventListener(MouseEvent.CLICK, ()=> {
             this.close();
