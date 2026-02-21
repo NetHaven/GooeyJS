@@ -1,0 +1,49 @@
+/* Toolbar - Classic Mac (OS 7/8/9) structural override */
+/* Platinum toolbar styling (CLSC-09) */
+
+:host {
+    /* Classic Mac toolbar border */
+    border-bottom: 1px solid #000000;
+
+    /* Button sizing variables -- Classic Mac smaller proportions */
+    --button-height: 32px;
+    --button-width: 32px;
+    --button-line-height: 32px;
+}
+
+/* Button size variants - Classic Mac proportions */
+:host([buttonsize='tiny']) {
+    --button-height: 24px;
+    --button-width: 24px;
+    --button-line-height: 24px;
+}
+
+:host([buttonsize='small']) {
+    --button-height: 28px;
+    --button-width: 28px;
+    --button-line-height: 28px;
+}
+
+:host([buttonsize='medium']) {
+    --button-height: 32px;
+    --button-width: 32px;
+    --button-line-height: 32px;
+}
+
+:host([buttonsize='large']) {
+    --button-height: 48px;
+    --button-width: 48px;
+    --button-line-height: 48px;
+}
+
+:host([buttonsize='xlarge']) {
+    --button-height: 64px;
+    --button-width: 64px;
+    --button-line-height: 64px;
+}
+
+/* Disabled: Classic Mac emboss effect (CLSC-10) */
+:host([disabled]) {
+    color: #7F7F7F;
+    text-shadow: 1px 1px 0 #FFFFFF;
+}

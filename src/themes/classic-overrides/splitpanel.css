@@ -1,0 +1,41 @@
+/* SplitPanel - Classic Mac (OS 7/8/9) structural override */
+/* Flat Platinum divider styling (CLSC-09) */
+
+.splitpanel-pane {
+    border: 1px solid #A0A0A0;
+}
+
+/* Divider - simple gray line */
+.splitpanel-divider {
+    border: none;
+    background-color: #DDDDDD;
+    border-left: 1px solid #A0A0A0;
+    border-right: 1px solid #A0A0A0;
+}
+
+.splitpanel-divider:hover {
+    background-color: #CCCCCC;
+}
+
+.splitpanel-divider:active,
+:host(.splitpanel-dragging) .splitpanel-divider {
+    background-color: #999999;
+    border-left: 1px solid #A0A0A0;
+    border-right: 1px solid #A0A0A0;
+}
+
+/* Horizontal orientation */
+:host([orientation="horizontal"]) .splitpanel-divider {
+    min-width: 4px;
+    width: 6px;
+}
+
+/* Vertical orientation */
+:host([orientation="vertical"]) .splitpanel-divider {
+    min-height: 4px;
+    height: 6px;
+    border-left: none;
+    border-right: none;
+    border-top: 1px solid #A0A0A0;
+    border-bottom: 1px solid #A0A0A0;
+}

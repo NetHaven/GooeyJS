@@ -1,0 +1,63 @@
+/* AccordionPanel - Classic Mac (OS 7/8/9) structural override */
+/* Kill expand/collapse transitions (CLSC-13), flat Platinum styling (CLSC-09) */
+
+/* Kill all transitions */
+:host,
+.accordion-content,
+.accordion-header {
+    transition: none !important;
+}
+
+:host {
+    border: 1px solid #000000;
+}
+
+.accordion-item {
+    border-bottom: 1px solid #A0A0A0;
+}
+
+.accordion-item:last-child {
+    border-bottom: none;
+}
+
+/* Header - Platinum flat style */
+.accordion-header {
+    border: none;
+    border-bottom: 1px solid #A0A0A0;
+}
+
+.accordion-header:hover {
+    background-color: #EEEEEE;
+}
+
+/* Active/expanded header - Classic Mac blue highlight */
+.accordion-header.active {
+    background-color: #0000A5;
+    color: #FFFFFF;
+    font-weight: bold;
+    border: none;
+    border-bottom: 1px solid #A0A0A0;
+}
+
+/* Arrow indicator */
+.accordion-arrow {
+    margin-right: 6px;
+    font-size: 10px;
+    font-family: monospace;
+    width: 10px;
+}
+
+/* Content area */
+.accordion-content {
+    padding: 8px;
+    background-color: #FFFFFF;
+    margin: 1px;
+    border: 1px solid #A0A0A0;
+    border-top: none;
+}
+
+.accordion-content:empty {
+    padding: 0;
+    border: none;
+    margin: 0;
+}

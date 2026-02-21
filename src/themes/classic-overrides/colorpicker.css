@@ -1,0 +1,117 @@
+/* ColorPicker - Classic Mac (OS 7/8/9) structural override */
+/* Flat Platinum styling with 1px black borders (CLSC-09) */
+
+.colorpicker-button {
+    padding: 2px 4px;
+    min-width: 40px;
+    height: 24px;
+    border: 1px solid #000000;
+    box-shadow: 1px 1px 0 #FFFFFF inset, -1px -1px 0 #A0A0A0 inset;
+}
+
+.colorpicker-button:hover {
+    background-color: #EEEEEE;
+}
+
+.colorpicker-button:active,
+:host(.colorpicker-open) .colorpicker-button {
+    border: 1px solid #000000;
+    box-shadow: -1px -1px 0 #FFFFFF inset, 1px 1px 0 #A0A0A0 inset;
+}
+
+.colorpicker-button:focus {
+    outline: 1px dotted #000000;
+    outline-offset: -3px;
+}
+
+/* Color display swatch */
+.colorpicker-display {
+    flex: 1;
+    height: 16px;
+    margin-right: 4px;
+    border: 1px solid #000000;
+}
+
+/* Arrow */
+.colorpicker-arrow {
+    font-family: monospace;
+    color: #000000;
+    user-select: none;
+}
+
+/* Dropdown panel */
+.colorpicker-dropdown {
+    min-width: 160px;
+    max-width: 180px;
+    padding: 4px;
+    border: 1px solid #000000;
+    box-shadow: 1px 1px 0 #000000;
+    border-radius: 0;
+}
+
+/* Palette swatches */
+.colorpicker-palette {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 2px;
+    margin-bottom: 4px;
+}
+
+.colorpicker-swatch {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    border: 1px solid #A0A0A0;
+}
+
+.colorpicker-swatch:hover {
+    border: 1px solid #000000;
+}
+
+.colorpicker-swatch:focus {
+    outline: 1px dotted #000000;
+}
+
+/* Custom color section */
+.colorpicker-custom {
+    padding-top: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    border-top: 1px solid #A0A0A0;
+    margin-top: 4px;
+}
+
+.colorpicker-hex-input {
+    padding: 2px 4px;
+    font-family: monospace;
+    width: 60px;
+    text-transform: uppercase;
+    background-color: #FFFFFF;
+    color: #000000;
+    border: 1px solid #000000;
+}
+
+.colorpicker-hex-input:focus {
+    outline: none;
+}
+
+.colorpicker-native-input {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    padding: 0;
+    border: 1px solid #000000;
+}
+
+/* Disabled state - Classic Mac emboss (CLSC-10) */
+:host([disabled]) .colorpicker-button,
+:host([disabled]) .colorpicker-hex-input,
+:host([disabled]) .colorpicker-native-input {
+    cursor: not-allowed;
+}
+
+:host([disabled]) .colorpicker-button {
+    color: #7F7F7F;
+    text-shadow: 1px 1px 0 #FFFFFF;
+}

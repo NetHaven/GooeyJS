@@ -1,0 +1,9 @@
+/* Label - Classic Mac (OS 7/8/9) structural override */
+/* Mostly token-covered (font-family, font-size, color). */
+/* Only disabled emboss effect needed as structural override. */
+
+/* Disabled: Classic Mac emboss effect (CLSC-10) */
+:host([disabled]) {
+    color: #7F7F7F;
+    text-shadow: 1px 1px 0 #FFFFFF;
+}
