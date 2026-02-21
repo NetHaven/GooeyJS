@@ -24,8 +24,10 @@ export default class Tab extends Container {
 
         // Find parent TabPanel
         this._tabPanel = this.closest('gooeyui-tabpanel');
-        
-        if (this._tabPanel) {
+
+        // Guard: TabPanel may exist in DOM but not yet be upgraded (dynamic loading race condition).
+        // If _addTab is not available, TabPanel's own connectedCallback will add this tab when it fires.
+        if (this._tabPanel && typeof this._tabPanel._addTab === 'function') {
             this._tabPanel._addTab(this);
         }
         
