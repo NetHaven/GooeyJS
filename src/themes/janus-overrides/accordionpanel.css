@@ -1,0 +1,61 @@
+/* AccordionPanel - Janus (Win3.1) structural override */
+
+:host {
+    /* Win3.1 sunken border */
+    border-top: 1px solid #808080;
+    border-left: 1px solid #808080;
+    border-right: 1px solid #ffffff;
+    border-bottom: 1px solid #ffffff;
+    box-shadow: inset 1px 1px 0 #000000;
+}
+
+.accordion-item {
+    border-bottom: 1px solid #808080;
+}
+
+.accordion-item:last-child {
+    border-bottom: none;
+}
+
+.accordion-header {
+    /* Win3.1 raised button header */
+    border-top: 1px solid #ffffff;
+    border-left: 1px solid #ffffff;
+    border-right: 1px solid #808080;
+    border-bottom: 1px solid #808080;
+}
+
+.accordion-header.active {
+    /* Active/expanded state - navy blue with inverted borders */
+    background-color: #000080;
+    color: #ffffff;
+    font-weight: bold;
+    border-top: 1px solid #808080;
+    border-left: 1px solid #808080;
+    border-right: 1px solid #ffffff;
+    border-bottom: 1px solid #ffffff;
+}
+
+.accordion-arrow {
+    margin-right: 6px;
+    font-size: 10px;
+    font-family: monospace;
+    width: 10px;
+}
+
+.accordion-content {
+    padding: 8px;
+    background-color: #ffffff;
+    margin: 1px;
+    /* Win3.1 sunken content area */
+    border-top: 1px solid #808080;
+    border-left: 1px solid #808080;
+    border-right: 1px solid #ffffff;
+    border-bottom: 1px solid #ffffff;
+}
+
+.accordion-content:empty {
+    padding: 0;
+    border: none;
+    margin: 0;
+}
