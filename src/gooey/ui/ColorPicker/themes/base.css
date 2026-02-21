@@ -44,7 +44,7 @@
     height: 20px;
     border: 1px inset var(--gooey-colorpicker-display-border-color, var(--gooey-color-surface));
     margin-right: 4px;
-    background-color: #000000;
+    background-color: #000000; /* functional: not tokenized -- JS sets actual selected color */
 }
 
 .colorpicker-arrow {
@@ -80,7 +80,7 @@
     border: 1px inset var(--gooey-colorpicker-swatch-border-color, var(--gooey-color-surface));
     cursor: pointer;
     outline: none;
-    background-color: #000;
+    background-color: #000; /* functional: not tokenized -- JS sets actual swatch color */
 }
 
 .colorpicker-swatch:hover {

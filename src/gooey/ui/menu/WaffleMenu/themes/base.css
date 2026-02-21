@@ -117,7 +117,7 @@
 .waffle-title {
     font-weight: 500;
     font-size: 14px;
-    color: #202124;
+    color: var(--gooey-wafflemenu-title-color, var(--gooey-color-text));
 }
 
 .waffle-close {
@@ -129,7 +129,7 @@
     cursor: pointer;
     font-size: 20px;
     line-height: 1;
-    color: #5f6368;
+    color: var(--gooey-wafflemenu-close-color, var(--gooey-color-text-muted));
     display: flex;
     align-items: center;
     justify-content: center;

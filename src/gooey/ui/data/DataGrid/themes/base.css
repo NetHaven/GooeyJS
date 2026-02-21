@@ -216,18 +216,18 @@
 }
 
 .datagrid-row.selected .datagrid-cell.selected {
-    outline-color: #ffffff;
+    outline-color: var(--gooey-datagrid-focus-outline-color, var(--gooey-color-surface-raised));
     background-color: transparent;
 }
 
 /* Cell Editing */
 .datagrid-cell.editing {
     padding: 0;
-    background-color: #ffffff;
+    background-color: var(--gooey-datagrid-cell-editing-bg, var(--gooey-color-surface-raised));
 }
 
 .datagrid-row.selected .datagrid-cell.editing {
-    color: #000000;
+    color: var(--gooey-datagrid-cell-editing-color, var(--gooey-color-text));
 }
 
 .datagrid-cell-editor {
