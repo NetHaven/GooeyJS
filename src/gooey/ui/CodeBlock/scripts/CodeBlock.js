@@ -28,7 +28,7 @@ export default class CodeBlock extends UIComponent {
         this.codeContent = this.shadowRoot.querySelector(".code-content");
         this.codeHighlighted = this.shadowRoot.querySelector(".code-highlighted");
         this.highlightedCode = this.codeHighlighted.querySelector("code");
-        this.slot = this.shadowRoot.querySelector("slot");
+        this._slot = this.shadowRoot.querySelector("slot");
 
         // Syntax highlighting state
         this._highlightPending = false;
@@ -64,8 +64,8 @@ export default class CodeBlock extends UIComponent {
         });
 
         // Listen for slot content changes to update line numbers and highlighting
-        if (this.slot) {
-            this.slot.addEventListener("slotchange", () => {
+        if (this._slot) {
+            this._slot.addEventListener("slotchange", () => {
                 this._updateLineNumbers();
                 this._requestHighlight();
             });
@@ -112,8 +112,8 @@ export default class CodeBlock extends UIComponent {
      * Get the code content from the slot
      */
     get code() {
-        if (!this.slot) return this.textContent || '';
-        const nodes = this.slot.assignedNodes();
+        if (!this._slot) return this.textContent || '';
+        const nodes = this._slot.assignedNodes();
         return nodes.map(n => n.textContent).join('');
     }
 
