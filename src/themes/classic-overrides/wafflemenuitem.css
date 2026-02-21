@@ -1,0 +1,53 @@
+/* WaffleMenuItem - Classic Mac (OS 7/8/9) structural override */
+/* Uses component-scoped --waffle-item-* custom properties */
+/* Kill hover/focus transitions (CLSC-13), flat styling (CLSC-09) */
+
+:host {
+    --waffle-item-size: 96px;
+    --waffle-item-icon-size: 48px;
+    --waffle-item-bg: transparent;
+    --waffle-item-hover-bg: #EEEEEE;
+    --waffle-item-active-bg: #0000A5;
+    --waffle-item-label-color: #000000;
+    --waffle-item-border-radius: 0;
+    --waffle-badge-bg: #CC0000;
+    --waffle-badge-color: #FFFFFF;
+    transition: none !important;
+}
+
+/* Kill transition on item */
+.waffle-item {
+    transition: none !important;
+    border-radius: 0;
+}
+
+.waffle-item:hover {
+    background: #EEEEEE;
+}
+
+.waffle-item:active {
+    background: #0000A5;
+    color: #FFFFFF;
+}
+
+.waffle-item:focus {
+    outline: 1px dotted #000000;
+    outline-offset: -2px;
+    box-shadow: none;
+}
+
+/* Image - no border-radius */
+.waffle-item-image {
+    border-radius: 0;
+}
+
+/* Badge - square for Classic Mac */
+.waffle-item-badge {
+    border-radius: 0;
+}
+
+/* Disabled state - Classic Mac emboss (CLSC-10) */
+:host([disabled]) .waffle-item {
+    color: #7F7F7F;
+    text-shadow: 1px 1px 0 #FFFFFF;
+}

@@ -1,0 +1,64 @@
+/* Toast - Classic Mac (OS 7/8/9) structural override */
+/* Kill all show/hide animations (CLSC-13), flat Platinum styling (CLSC-09) */
+
+/* Kill all animations and transitions globally */
+:host,
+:host(.toast-showing),
+:host(.toast-hiding),
+:host([position^="bottom"].toast-showing),
+:host([position^="bottom"].toast-hiding),
+.toast-container,
+.toast-progress-bar {
+    animation: none !important;
+    transition: none !important;
+}
+
+/* Ensure showing state is immediately visible */
+:host(.toast-showing) {
+    opacity: 1;
+    transform: none;
+}
+
+/* Ensure hiding state is immediately hidden */
+:host(.toast-hiding) {
+    opacity: 0;
+    transform: none;
+}
+
+/* Flat Classic Mac toast container */
+.toast-container {
+    border-radius: 0;
+    box-shadow: 1px 1px 0 #000000;
+    border: 1px solid #000000;
+}
+
+/* Close button - flat */
+.toast-close-btn {
+    border-radius: 0;
+}
+
+.toast-close-btn:focus-visible {
+    outline: 1px dotted #000000;
+    outline-offset: -3px;
+}
+
+/* Action button focus */
+.toast-action-btn:focus-visible {
+    outline: 1px dotted #000000;
+    outline-offset: -3px;
+}
+
+/* Progress bar within toast - flat, no animation */
+.toast-progress {
+    border-radius: 0;
+}
+
+.toast-progress-bar {
+    border-radius: 0;
+}
+
+/* Disabled: Classic Mac emboss effect (CLSC-10) */
+:host([disabled]) .toast-message {
+    color: #7F7F7F;
+    text-shadow: 1px 1px 0 #FFFFFF;
+}
