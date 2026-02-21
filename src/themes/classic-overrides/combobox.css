@@ -1,0 +1,95 @@
+/* ComboBox - Classic Mac OS 7/8/9 (Platinum) structural override */
+
+:host {
+    min-width: 120px;
+}
+
+.combobox-input {
+    /* Classic Mac sunken field */
+    border: 1px solid #000000;
+    border-right: none;
+    background-color: #FFFFFF;
+    border-radius: 0;
+    box-shadow: none;
+    outline: none;
+}
+
+.combobox-input:focus {
+    outline: none;
+}
+
+.combobox-input[readonly] {
+    cursor: pointer;
+}
+
+.combobox-button {
+    background-color: #DDDDDD;
+    cursor: pointer;
+    outline: none;
+    min-width: 16px;
+    border: 1px solid #000000;
+    /* Platinum subtle raised bevel */
+    box-shadow:
+        inset 1px 1px 0 #FFFFFF,
+        inset -1px -1px 0 #999999;
+}
+
+.combobox-button:hover {
+    background-color: #EEEEEE;
+}
+
+.combobox-button:active,
+:host(.dropdown-open) .combobox-button {
+    background-color: #DDDDDD;
+    /* Pressed: inverted bevel */
+    box-shadow:
+        inset -1px -1px 0 #FFFFFF,
+        inset 1px 1px 0 #999999;
+}
+
+.combobox-dropdown {
+    background-color: #FFFFFF;
+    /* Classic Mac sunken border */
+    border: 1px solid #000000;
+    box-shadow: none;
+}
+
+.combobox-list option {
+    cursor: pointer;
+    color: #000000;
+    background-color: #FFFFFF;
+}
+
+.combobox-list option:hover {
+    background-color: #0000A5;
+    color: #FFFFFF;
+}
+
+.combobox-list option:checked {
+    background-color: #0000A5;
+    color: #FFFFFF;
+}
+
+/* Focus state */
+:host(.focused) .combobox-input {
+    outline: 1px dotted #000000;
+    outline-offset: -3px;
+}
+
+/* Disabled state */
+:host([disabled]) .combobox-input,
+:host([disabled]) .combobox-button {
+    cursor: not-allowed;
+}
+
+:host([disabled]) .combobox-input {
+    background-color: #DDDDDD;
+    color: #7F7F7F;
+    text-shadow: 1px 1px 0 #FFFFFF;
+}
+
+:host([disabled]) .combobox-button {
+    background-color: #DDDDDD;
+    color: #7F7F7F;
+    text-shadow: 1px 1px 0 #FFFFFF;
+}

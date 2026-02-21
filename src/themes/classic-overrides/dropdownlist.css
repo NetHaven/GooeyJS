@@ -1,0 +1,27 @@
+/* DropDownList - Classic Mac OS 7/8/9 (Platinum) structural override */
+
+select {
+    background-color: #DDDDDD;
+    cursor: pointer;
+    /* Classic Mac border */
+    border: 1px solid #000000;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+select:focus {
+    outline: 1px dotted #000000;
+    outline-offset: -2px;
+}
+
+/* Disabled state */
+:host([disabled]),
+:host([disabled]) select {
+    cursor: not-allowed;
+}
+
+:host([disabled]) select {
+    background-color: #DDDDDD;
+    color: #7F7F7F;
+    text-shadow: 1px 1px 0 #FFFFFF;
+}
