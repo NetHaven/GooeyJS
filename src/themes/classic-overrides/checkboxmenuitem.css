@@ -1,0 +1,70 @@
+/* CheckboxMenuItem - Classic Mac (Platinum) structural override */
+
+/* Icon area: checkmark glyph space */
+.MenuItemIcon {
+    height: 14px;
+    width: 14px;
+    margin-left: 4px;
+    margin-right: 4px;
+}
+
+/* Checkmark glyph when checked (CLSC-07) */
+:host([checked]) .MenuItemIcon::after {
+    content: "\2713";
+    font-size: 12px;
+    font-weight: bold;
+    color: #000000;
+}
+
+/* Override base background-image checkmark with pseudo-element */
+:host([checked]) .MenuItemIcon {
+    background-image: none;
+}
+
+/* Menu item text */
+.MenuItemText {
+    margin-left: 0px;
+    margin-right: 40px;
+}
+
+/* Keyboard shortcut text */
+.MenuItemShortcut {
+    margin-right: 6px;
+    width: 50px;
+}
+
+/* Active/selected state: inverted blue selection (CLSC-07) */
+:host([active]) {
+    background-color: #0000A5 !important;
+    color: #FFFFFF;
+}
+
+:host([active]) .MenuItemShortcut {
+    color: #FFFFFF;
+}
+
+:host([active]) .MenuItemIcon::after {
+    color: #FFFFFF;
+}
+
+/* Disabled state: emboss effect (CLSC-10) */
+:host([disabled]) {
+    opacity: 1;
+    color: #7F7F7F;
+    text-shadow: 1px 1px 0 #FFFFFF;
+    cursor: default;
+}
+
+:host([disabled]) .MenuItemText {
+    text-shadow: 1px 1px 0 #FFFFFF;
+}
+
+:host([disabled]) .MenuItemShortcut {
+    color: #7F7F7F;
+}
+
+/* Disabled + hover: do NOT show blue selection highlight */
+:host([disabled][active]) {
+    background-color: transparent !important;
+    color: #7F7F7F;
+}
