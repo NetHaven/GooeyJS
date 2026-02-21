@@ -1241,7 +1241,11 @@ export default class VideoPlayer extends UIComponent {
 
     set width(val) {
         this.setAttribute('width', val);
-        if (this.#constructed) this.#applyDimension('width', val);
+        try {
+            if (this.#constructed) this.#applyDimension('width', val);
+        } catch (e) {
+            // Private fields not yet initialized - ignore
+        }
     }
 
     get height() {
@@ -1250,7 +1254,11 @@ export default class VideoPlayer extends UIComponent {
 
     set height(val) {
         this.setAttribute('height', val);
-        if (this.#constructed) this.#applyDimension('height', val);
+        try {
+            if (this.#constructed) this.#applyDimension('height', val);
+        } catch (e) {
+            // Private fields not yet initialized - ignore
+        }
     }
 
     // ========== Poster Property ==========
