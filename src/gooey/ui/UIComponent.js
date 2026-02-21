@@ -192,28 +192,27 @@ export default class UIComponent extends GooeyElement {
 
         this.classList.add("ui-Component");
 
+        // Apply initial attribute values without calling setters (which call setAttribute)
+        // Custom Elements spec prohibits setAttribute in constructor
         if (this.hasAttribute("height"))  {
-            this.height = this.getAttribute("height");
+            const val = this.getAttribute("height");
+            this.style.height = typeof val === 'number' ? `${val}px` : val;
         }
 
         if (this.hasAttribute("width"))   {
-            this.width = this.getAttribute("width");
+            const val = this.getAttribute("width");
+            this.style.width = typeof val === 'number' ? `${val}px` : val;
         }
 
         if (this.hasAttribute("tooltip")) {
-            this.tooltip = this.getAttribute("tooltip");
+            // Note: title attribute should already be set in HTML if tooltip is set
+            // We don't set it here to avoid setAttribute in constructor
         }
 
         if (this.hasAttribute("visible")) {
-            if (this.getAttribute("visible").toLowerCase() === "false") {
-                this.visible = false;
-            }
-            else {
-                this.visible = true;
-            }
-        }
-        else {
-            this.visible = true;
+            // Apply visibility without calling setter (which would call setAttribute)
+            const isVisible = this.getAttribute("visible").toLowerCase() !== "false";
+            this.style.display = isVisible ? '' : 'none';
         }
     }
 

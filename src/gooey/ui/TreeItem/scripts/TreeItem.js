@@ -30,9 +30,10 @@ export default class TreeItem extends UIComponent {
             Logger.error({ code: "TREEITEM_INIT_FAILED", contentElement: !!this._contentElement, childrenElement: !!this._childrenElement, innerHTML: this.innerHTML }, "TreeItem initialization failed - missing essential DOM elements");
         }
 
-        // ARIA: Set treeitem role and make focusable
-        this.setAttribute('role', 'treeitem');
+        // ARIA: Make content element focusable (shadow DOM element, not the custom element itself)
         this._contentElement.setAttribute('tabindex', '0');
+
+        // Note: role='treeitem' will be set in connectedCallback (Custom Elements spec)
 
         // Add valid events (must be before addChild which fires TREE_ITEM_CHILD_ADDED)
         this.addValidEvent(TreeItemEvent.TREE_ITEM_EXPAND);
@@ -63,6 +64,11 @@ export default class TreeItem extends UIComponent {
     }
 
     connectedCallback() {
+        // ARIA: Set treeitem role (must be done here, not in constructor per Custom Elements spec)
+        if (!this.hasAttribute('role')) {
+            this.setAttribute('role', 'treeitem');
+        }
+
         // Handle any child tree items that were added after construction
         const orphanedChildren = Array.from(this.querySelectorAll(':scope > gooeyui-treeitem:not(.ui-TreeItem-children gooeyui-treeitem)'));
         orphanedChildren.forEach(child => {

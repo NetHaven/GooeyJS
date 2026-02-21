@@ -83,8 +83,8 @@ export default class Toast extends UIComponent {
         // Progress bar animation state
         this._progressAnimation = null;
 
-        // Make toast focusable for keyboard-triggered timer pause
-        this.setAttribute('tabindex', '0');
+        // Note: tabindex will be set in connectedCallback to comply with Custom Elements spec
+        // (setAttribute not allowed in constructor)
 
         // Apply initial interactive state (prevents flash-of-incorrect-state)
         this._applyClosable(this.closable);
@@ -163,6 +163,22 @@ export default class Toast extends UIComponent {
     // ========================================
     // Lifecycle
     // ========================================
+
+    /**
+     * Called when element is connected to the DOM.
+     * Sets attributes that couldn't be set in constructor (Custom Elements spec requirement).
+     */
+    connectedCallback() {
+        if (super.connectedCallback) {
+            super.connectedCallback();
+        }
+
+        // Make toast focusable for keyboard-triggered timer pause
+        // Must be done here, not in constructor (Custom Elements spec)
+        if (!this.hasAttribute('tabindex')) {
+            this.setAttribute('tabindex', '0');
+        }
+    }
 
     /**
      * Clean up timer when element is removed from the DOM.

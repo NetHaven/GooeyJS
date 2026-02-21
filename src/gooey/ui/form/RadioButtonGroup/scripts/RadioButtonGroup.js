@@ -14,8 +14,7 @@ export default class RadioButtonGroup extends UIComponent {
         // MutationObserver for dynamically added radio buttons
         this._observer = null;
 
-        // ARIA: Set radiogroup role
-        this.setAttribute('role', 'radiogroup');
+        // Note: ARIA role will be set in connectedCallback (Custom Elements spec)
 
         // ARIA: Set up label if provided
         this._setupAriaLabel();
@@ -28,6 +27,16 @@ export default class RadioButtonGroup extends UIComponent {
 
         // Set up mutation observer to watch for radio button changes
         this._setupSelectionHandling();
+    }
+
+    connectedCallback() {
+        // ARIA: Set radiogroup role (must be done here, not in constructor per Custom Elements spec)
+        if (!this.hasAttribute('role')) {
+            this.setAttribute('role', 'radiogroup');
+        }
+
+        // Call parent setup if exists
+        super.connectedCallback?.();
     }
 
     disconnectedCallback() {

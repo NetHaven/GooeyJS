@@ -20,12 +20,12 @@ export default class DataGridColumn extends UIComponent {
         this.addValidEvent(DataGridColumnEvent.RESIZE_START);
         this.addValidEvent(DataGridColumnEvent.RESIZE_END);
 
-        // Initialize attributes from markup
-        this._initializeAttributes();
+        // Note: Attributes will be initialized in connectedCallback (Custom Elements spec)
     }
 
     /**
      * Initialize attributes from markup
+     * Called from connectedCallback to comply with Custom Elements spec
      */
     _initializeAttributes() {
         // Width defaults
@@ -39,6 +39,9 @@ export default class DataGridColumn extends UIComponent {
 
     connectedCallback() {
         super.connectedCallback && super.connectedCallback();
+
+        // Initialize attributes (must be done here, not in constructor per Custom Elements spec)
+        this._initializeAttributes();
 
         // Find parent DataGrid and register this column
         const parent = this.parentElement;

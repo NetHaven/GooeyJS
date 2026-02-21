@@ -24,8 +24,7 @@ export default class ComboBox extends ListBox {
         // Update formElement reference for FormElement functionality
         this.formElement = this._textInput;
 
-        // ARIA: Set combobox role and attributes
-        this.setAttribute('role', 'combobox');
+        // Note: ARIA role will be set in connectedCallback (Custom Elements spec)
 
         // Generate unique ID for the listbox
         const listboxId = `combobox-listbox-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -433,6 +432,16 @@ export default class ComboBox extends ListBox {
         if (selected) {
             this._textInput.value = text;
         }
+    }
+
+    connectedCallback() {
+        // ARIA: Set combobox role (must be done here, not in constructor per Custom Elements spec)
+        if (!this.hasAttribute('role')) {
+            this.setAttribute('role', 'combobox');
+        }
+
+        // Call parent setup if exists
+        super.connectedCallback?.();
     }
 
     disconnectedCallback() {
