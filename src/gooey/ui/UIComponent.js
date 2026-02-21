@@ -508,8 +508,8 @@ export default class UIComponent extends GooeyElement {
             this.setAttribute("visible", "false");
         }
 
-        // Fire visibility change events
-        if (wasVisible !== val) {
+        // Fire visibility change events only if element is connected to DOM
+        if (wasVisible !== val && this.isConnected) {
             const eventType = val ? UIComponentEvent.SHOW : UIComponentEvent.HIDE;
             this.fireEvent(eventType, {
                 component: this,
