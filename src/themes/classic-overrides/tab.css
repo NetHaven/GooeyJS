@@ -1,0 +1,7 @@
+/* Tab - Classic Mac OS 7/8/9 structural override */
+
+/* Tab content panel styling */
+:host {
+    background-color: #FFFFFF;
+    border-radius: 0;
+}

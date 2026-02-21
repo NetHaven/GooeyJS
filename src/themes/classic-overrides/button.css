@@ -1,0 +1,68 @@
+/* Button - Classic (Mac OS 7/8/9 Platinum) structural override */
+
+button {
+    /* Classic Mac Platinum button: 1px black border, subtle bevel */
+    border: 1px solid #000000;
+    background-color: #DDDDDD;
+    box-shadow:
+        inset -1px -1px 0 #999999,
+        inset 1px 1px 0 #FFFFFF;
+    padding: 3px 12px;
+    border-radius: 3px;
+}
+
+button:hover {
+    background-color: #EEEEEE;
+}
+
+button:active {
+    /* Inverted bevel on press */
+    border: 1px solid #000000;
+    box-shadow:
+        inset 1px 1px 0 #999999,
+        inset -1px -1px 0 #FFFFFF;
+    padding: 4px 11px 2px 13px;
+}
+
+button:focus {
+    /* Classic Mac dotted focus rectangle (CLSC-11) */
+    outline: 1px dotted #000000;
+    outline-offset: -3px;
+}
+
+/* Default button heavy outline (CLSC-05) */
+:host([default]) button {
+    border: 2px solid #000000;
+    border-radius: 4px;
+}
+
+/* Disabled state: emboss effect (CLSC-10) */
+:host([disabled]) button {
+    color: #7F7F7F;
+    text-shadow: 1px 1px 0 #FFFFFF;
+    cursor: not-allowed;
+}
+
+:host([disabled]) button:hover,
+:host([disabled]) button:active {
+    background-color: #DDDDDD;
+    box-shadow:
+        inset -1px -1px 0 #999999,
+        inset 1px 1px 0 #FFFFFF;
+    padding: 3px 12px;
+}
+
+/* Icon and text styling */
+button img {
+    margin-right: 4px;
+    display: block;
+}
+
+button span {
+    display: inline-block;
+    line-height: 1;
+}
+
+button img:only-child {
+    margin-right: 0;
+}

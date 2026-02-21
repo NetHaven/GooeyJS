@@ -1,0 +1,5 @@
+/* DataGridColumn - Classic Mac OS 7/8/9 structural override */
+/* DataGridColumn is a configuration-only component - column header styling is in datagrid.css */
+/* Column header cell appearance: flat #DDDDDD background, 1px solid #A0A0A0 right border */
+/* Sort indicators: simple up/down arrows (inherited from base) */
+/* Resize handle: standard cursor (inherited from base) */

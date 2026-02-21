@@ -1,0 +1,96 @@
+/* ToggleButton - Classic (Mac OS 7/8/9 Platinum) structural override */
+
+.toggle-button,
+button {
+    /* Classic Mac Platinum button: 1px black border, subtle bevel */
+    border: 1px solid #000000;
+    background-color: #DDDDDD;
+    box-shadow:
+        inset -1px -1px 0 #999999,
+        inset 1px 1px 0 #FFFFFF;
+    padding: 4px 8px;
+    border-radius: 3px;
+    outline: none;
+}
+
+.toggle-button:hover,
+button:hover {
+    background-color: #EEEEEE;
+}
+
+.toggle-button:active,
+button:active {
+    /* Inverted bevel on press */
+    box-shadow:
+        inset 1px 1px 0 #999999,
+        inset -1px -1px 0 #FFFFFF;
+}
+
+.toggle-button:focus,
+button:focus {
+    /* Classic Mac dotted focus rectangle (CLSC-11) */
+    outline: 1px dotted #000000;
+    outline-offset: -3px;
+}
+
+/* Pressed/toggled state: inverted bevel, slightly darker background */
+:host(.pressed) .toggle-button,
+:host(.pressed) button {
+    background-color: #CCCCCC;
+    box-shadow:
+        inset 1px 1px 0 #999999,
+        inset -1px -1px 0 #FFFFFF;
+}
+
+:host(.pressed) .toggle-button:hover,
+:host(.pressed) button:hover {
+    background-color: #BBBBBB;
+}
+
+:host(.pressed) .toggle-button:active,
+:host(.pressed) button:active {
+    background-color: #AAAAAA;
+}
+
+/* Disabled state: emboss effect (CLSC-10) */
+:host([disabled]) .toggle-button,
+:host([disabled]) button {
+    color: #7F7F7F;
+    text-shadow: 1px 1px 0 #FFFFFF;
+    cursor: not-allowed;
+}
+
+:host([disabled]) .toggle-button:hover,
+:host([disabled]) button:hover,
+:host([disabled]) .toggle-button:active,
+:host([disabled]) button:active {
+    background-color: #DDDDDD;
+    box-shadow:
+        inset -1px -1px 0 #999999,
+        inset 1px 1px 0 #FFFFFF;
+}
+
+:host([disabled].pressed) .toggle-button,
+:host([disabled].pressed) button {
+    background-color: #CCCCCC;
+    color: #7F7F7F;
+    text-shadow: 1px 1px 0 #FFFFFF;
+}
+
+/* Icon and text styling */
+.toggle-button img,
+button img {
+    margin-right: 4px;
+    display: block;
+}
+
+.toggle-button span,
+button span {
+    display: inline-block;
+    line-height: 1;
+}
+
+.toggle-button img:only-child,
+button img:only-child {
+    margin-right: 0;
+}
