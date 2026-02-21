@@ -1,0 +1,99 @@
+/* Badge Dark Theme Override - Variant colors only */
+/* Structural CSS (sizes, dot, pill, positioning, disabled, pulse) inherited from base.css */
+
+/* ----------------------------------------
+   Variants (Filled) - Dark Theme Colors
+   ---------------------------------------- */
+
+/* Default - dark gray */
+.badge,
+:host([variant="default"]) .badge {
+    background-color: #4b5563;
+    color: #f3f4f6;
+    border: 1px solid #6b7280;
+}
+
+/* Primary - lighter blue for dark theme */
+:host([variant="primary"]) .badge {
+    background-color: #3b82f6;
+    color: #ffffff;
+    border: 1px solid #60a5fa;
+}
+
+/* Success - lighter green */
+:host([variant="success"]) .badge {
+    background-color: #10b981;
+    color: #ffffff;
+    border: 1px solid #34d399;
+}
+
+/* Warning - amber */
+:host([variant="warning"]) .badge {
+    background-color: #f59e0b;
+    color: #1f2937;
+    border: 1px solid #fbbf24;
+}
+
+/* Error - red */
+:host([variant="error"]) .badge {
+    background-color: #ef4444;
+    color: #ffffff;
+    border: 1px solid #f87171;
+}
+
+/* Info - cyan blue */
+:host([variant="info"]) .badge {
+    background-color: #06b6d4;
+    color: #ffffff;
+    border: 1px solid #22d3ee;
+}
+
+/* ----------------------------------------
+   Outline Variants - Dark Theme
+   ---------------------------------------- */
+
+:host([outline]) .badge,
+:host([outline][variant="default"]) .badge {
+    background-color: transparent;
+    color: #9ca3af;
+    border: 1px solid #6b7280;
+}
+
+:host([outline][variant="primary"]) .badge {
+    background-color: transparent;
+    color: #60a5fa;
+    border: 1px solid #3b82f6;
+}
+
+:host([outline][variant="success"]) .badge {
+    background-color: transparent;
+    color: #34d399;
+    border: 1px solid #10b981;
+}
+
+:host([outline][variant="warning"]) .badge {
+    background-color: transparent;
+    color: #fbbf24;
+    border: 1px solid #f59e0b;
+}
+
+:host([outline][variant="error"]) .badge {
+    background-color: transparent;
+    color: #f87171;
+    border: 1px solid #ef4444;
+}
+
+:host([outline][variant="info"]) .badge {
+    background-color: transparent;
+    color: #22d3ee;
+    border: 1px solid #06b6d4;
+}
+
+/* ----------------------------------------
+   Focus State
+   ---------------------------------------- */
+
+.badge:focus-visible {
+    outline: 2px solid #60a5fa;
+    outline-offset: 2px;
+}

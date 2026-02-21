@@ -1,0 +1,16 @@
+/* WaffleMenuItem Dark Theme Override - Custom property redefinitions + dark colors */
+/* Structural CSS (display, flex, width, height, padding, gap, cursor, text-overflow) inherited from base.css */
+
+:host {
+    --waffle-item-bg: transparent;
+    --waffle-item-hover-bg: rgba(255, 255, 255, 0.08);
+    --waffle-item-active-bg: rgba(255, 255, 255, 0.12);
+    --waffle-item-label-color: #e8eaed;
+    --waffle-badge-bg: #ea4335;
+    --waffle-badge-color: #ffffff;
+}
+
+.waffle-item:focus {
+    outline: 2px solid #8ab4f8;
+    outline-offset: -2px;
+}

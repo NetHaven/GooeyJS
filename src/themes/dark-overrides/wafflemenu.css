@@ -1,0 +1,40 @@
+/* WaffleMenu Dark Theme Override - Custom property redefinitions + dark colors */
+/* Structural CSS (display, flex, position, width, height, padding, overflow, z-index, cursor, grid) inherited from base.css */
+
+:host {
+    --waffle-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    --waffle-bg: #2d2d2d;
+    --waffle-trigger-bg: transparent;
+    --waffle-trigger-hover-bg: rgba(255, 255, 255, 0.1);
+    --waffle-icon-color: #e8eaed;
+    --waffle-backdrop-bg: rgba(0, 0, 0, 0.3);
+}
+
+.waffle-panel {
+    border: 1px solid #3c4043;
+}
+
+.waffle-trigger:focus {
+    outline: 2px solid #8ab4f8;
+    outline-offset: 2px;
+}
+
+.waffle-header {
+    border-bottom: 1px solid #3c4043;
+}
+
+.waffle-title {
+    color: #e8eaed;
+}
+
+.waffle-close {
+    color: #9aa0a6;
+}
+
+.waffle-close:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.waffle-footer {
+    border-top: 1px solid #3c4043;
+}
