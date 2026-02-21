@@ -195,6 +195,9 @@ export default class Menubar extends UIComponent {
         // Remove document-level listeners to prevent leaks
         document.removeEventListener(MouseEvent.CLICK, this._boundDocumentClickHandler);
         document.removeEventListener(KeyboardEvent.KEY_DOWN, this._boundKeyDownHandler);
+
+        // Call parent cleanup (model unbinding, etc.)
+        super.disconnectedCallback?.();
     }
 
     positionMenu(menu, menuHeader) {

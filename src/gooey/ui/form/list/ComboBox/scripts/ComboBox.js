@@ -438,6 +438,9 @@ export default class ComboBox extends ListBox {
     disconnectedCallback() {
         // Remove document-level listener to prevent leaks
         document.removeEventListener(MouseEvent.CLICK, this._boundDocumentClickHandler);
+
+        // Call parent cleanup (model unbinding, etc.)
+        super.disconnectedCallback?.();
     }
 
     attributeChangedCallback(name, oldValue, newValue) {

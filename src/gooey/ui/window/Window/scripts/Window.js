@@ -106,6 +106,9 @@ export default class Window extends UIComponent {
             this.modalScreen.parentNode.removeChild(this.modalScreen);
             this.modalScreen = null;
         }
+
+        // Call parent cleanup (model unbinding, etc.)
+        super.disconnectedCallback?.();
     }
 
     get constrainViewport() {

@@ -151,6 +151,9 @@ export default class SplitPanel extends Container {
             document.removeEventListener(MouseEvent.MOUSE_MOVE, this._boundMouseMoveHandler);
             document.removeEventListener(MouseEvent.MOUSE_UP, this._boundMouseUpHandler);
         }
+
+        // Call parent cleanup (model unbinding, etc.)
+        super.disconnectedCallback?.();
     }
 
     _onMouseDown(e) {

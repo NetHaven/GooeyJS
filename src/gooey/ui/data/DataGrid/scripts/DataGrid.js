@@ -219,6 +219,9 @@ export default class DataGrid extends UIComponent {
             document.body.style.userSelect = '';
             this._resizing = null;
         }
+
+        // Call parent cleanup (model unbinding, etc.)
+        super.disconnectedCallback?.();
     }
 
     /**
