@@ -1,29 +1,29 @@
 :host {
     display: block;
-    font-family: var(--gooey-richtexteditor-font-family, var(--gooey-font-family, sans-serif));
+    font-family: var(--gooey-richtexteditor-font-family, var(--gooey-font-family));
 }
 
 .richtexteditor-shell {
     display: flex;
     flex-direction: column;
-    background-color: var(--gooey-richtexteditor-bg, var(--gooey-color-surface-raised, #ffffff));
-    border: 1px solid var(--gooey-richtexteditor-border-color, var(--gooey-color-border, #808080));
+    background-color: var(--gooey-richtexteditor-bg, var(--gooey-color-surface-raised));
+    border: 1px solid var(--gooey-richtexteditor-border-color, var(--gooey-color-border));
 }
 
 .richtexteditor-toolbar {
     display: flex;
     gap: 4px;
     padding: 4px;
-    background-color: var(--gooey-richtexteditor-toolbar-bg, var(--gooey-color-surface-hover, #d4d0c8));
-    border-bottom: 1px solid var(--gooey-richtexteditor-toolbar-border-color, var(--gooey-color-border, #808080));
+    background-color: var(--gooey-richtexteditor-toolbar-bg, var(--gooey-color-surface-hover));
+    border-bottom: 1px solid var(--gooey-richtexteditor-toolbar-border-color, var(--gooey-color-border));
 }
 
 .richtexteditor-button {
     min-width: 28px;
     min-height: 24px;
-    border: 1px solid var(--gooey-richtexteditor-button-border-color, var(--gooey-color-border, #808080));
-    background-color: var(--gooey-richtexteditor-button-bg, var(--gooey-color-surface, #c1c0c1));
-    color: var(--gooey-richtexteditor-button-color, var(--gooey-color-text, #000000));
+    border: 1px solid var(--gooey-richtexteditor-button-border-color, var(--gooey-color-border));
+    background-color: var(--gooey-richtexteditor-button-bg, var(--gooey-color-surface));
+    color: var(--gooey-richtexteditor-button-color, var(--gooey-color-text));
     font-weight: 700;
     font-size: 12px;
     line-height: 1;
@@ -31,7 +31,7 @@
 }
 
 .richtexteditor-button:hover {
-    background-color: var(--gooey-richtexteditor-button-bg-hover, var(--gooey-color-surface-hover, #dcd8d0));
+    background-color: var(--gooey-richtexteditor-button-bg-hover, var(--gooey-color-surface-hover));
 }
 
 .richtexteditor-button.is-active {
@@ -41,7 +41,7 @@
 
 .richtexteditor-button:disabled {
     cursor: not-allowed;
-    opacity: var(--gooey-richtexteditor-button-opacity-disabled, var(--gooey-opacity-disabled, 0.5));
+    opacity: var(--gooey-richtexteditor-button-opacity-disabled, var(--gooey-opacity-disabled));
 }
 
 .richtexteditor-content {
@@ -49,11 +49,11 @@
     padding: 8px;
     outline: none;
     overflow: auto;
-    font-size: var(--gooey-richtexteditor-content-font-size, var(--gooey-font-size-md, 14px));
+    font-size: var(--gooey-richtexteditor-content-font-size, var(--gooey-font-size-md));
     line-height: 1.4;
-    color: var(--gooey-richtexteditor-content-color, var(--gooey-color-text, #000000));
+    color: var(--gooey-richtexteditor-content-color, var(--gooey-color-text));
 }
 
 :host([disabled]) .richtexteditor-content {
-    background-color: var(--gooey-richtexteditor-content-bg-disabled, var(--gooey-color-surface-disabled, #f2f2f2));
+    background-color: var(--gooey-richtexteditor-content-bg-disabled, var(--gooey-color-surface-disabled));
 }

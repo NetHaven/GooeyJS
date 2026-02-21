@@ -5,8 +5,8 @@
     align-items: center;
     gap: 0;
     position: relative;
-    border: 1px solid var(--gooey-togglebuttongroup-border-color, var(--gooey-color-border, #808080));
-    background-color: var(--gooey-togglebuttongroup-bg, var(--gooey-color-surface, #c1c0c1));
+    border: 1px solid var(--gooey-togglebuttongroup-border-color, var(--gooey-color-border));
+    background-color: var(--gooey-togglebuttongroup-bg, var(--gooey-color-surface));
 }
 
 .toggle-button-group {
@@ -41,7 +41,7 @@
 
 :host(:not([orientation="vertical"])) ::slotted(gooeyui-togglebutton:not(:last-child)) .toggle-button,
 :host(:not([orientation="vertical"])) ::slotted(gooeyui-togglebutton:not(:last-child)) button {
-    border-right: 1px solid var(--gooey-togglebuttongroup-separator-color, var(--gooey-color-border, #808080));
+    border-right: 1px solid var(--gooey-togglebuttongroup-separator-color, var(--gooey-color-border));
 }
 
 /* Vertical layout */
@@ -69,7 +69,7 @@
 
 :host([orientation="vertical"]) ::slotted(gooeyui-togglebutton:not(:last-child)) .toggle-button,
 :host([orientation="vertical"]) ::slotted(gooeyui-togglebutton:not(:last-child)) button {
-    border-bottom: 1px solid var(--gooey-togglebuttongroup-separator-color, var(--gooey-color-border, #808080));
+    border-bottom: 1px solid var(--gooey-togglebuttongroup-separator-color, var(--gooey-color-border));
 }
 
 /* Spaced layout */
@@ -84,28 +84,28 @@
 }
 
 :host([spaced]) ::slotted(gooeyui-togglebutton) {
-    border: 2px outset var(--gooey-togglebuttongroup-spaced-border-color, var(--gooey-color-surface, #c1c0c1));
+    border: 2px outset var(--gooey-togglebuttongroup-spaced-border-color, var(--gooey-color-surface));
 }
 
 :host([spaced]) ::slotted(gooeyui-togglebutton) .toggle-button,
 :host([spaced]) ::slotted(gooeyui-togglebutton) button {
-    border: 2px outset var(--gooey-togglebuttongroup-spaced-border-color, var(--gooey-color-surface, #c1c0c1));
+    border: 2px outset var(--gooey-togglebuttongroup-spaced-border-color, var(--gooey-color-surface));
     border-radius: 0;
 }
 
 :host([spaced]) ::slotted(gooeyui-togglebutton:not(:last-child)) .toggle-button,
 :host([spaced]) ::slotted(gooeyui-togglebutton:not(:last-child)) button {
-    border-right: 2px outset var(--gooey-togglebuttongroup-spaced-border-color, var(--gooey-color-surface, #c1c0c1));
+    border-right: 2px outset var(--gooey-togglebuttongroup-spaced-border-color, var(--gooey-color-surface));
 }
 
 :host([spaced][orientation="vertical"]) ::slotted(gooeyui-togglebutton:not(:last-child)) .toggle-button,
 :host([spaced][orientation="vertical"]) ::slotted(gooeyui-togglebutton:not(:last-child)) button {
-    border-right: 2px outset var(--gooey-togglebuttongroup-spaced-border-color, var(--gooey-color-surface, #c1c0c1));
-    border-bottom: 2px outset var(--gooey-togglebuttongroup-spaced-border-color, var(--gooey-color-surface, #c1c0c1));
+    border-right: 2px outset var(--gooey-togglebuttongroup-spaced-border-color, var(--gooey-color-surface));
+    border-bottom: 2px outset var(--gooey-togglebuttongroup-spaced-border-color, var(--gooey-color-surface));
 }
 
 /* Disabled state */
 :host([disabled]) {
-    opacity: var(--gooey-togglebuttongroup-opacity-disabled, var(--gooey-opacity-disabled, 0.5));
+    opacity: var(--gooey-togglebuttongroup-opacity-disabled, var(--gooey-opacity-disabled));
     pointer-events: none;
 }

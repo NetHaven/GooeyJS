@@ -2,14 +2,14 @@
 
 :host {
     display: block;
-    font-family: var(--gooey-codeblock-font-family, var(--gooey-font-family-mono, 'Consolas', 'Monaco', 'Courier New', monospace));
-    font-size: var(--gooey-codeblock-font-size, var(--gooey-font-size-md, 14px));
+    font-family: var(--gooey-codeblock-font-family, var(--gooey-font-family-mono));
+    font-size: var(--gooey-codeblock-font-size, var(--gooey-font-size-md));
     line-height: 1.5;
 }
 
 .codeblock-container {
-    border: 1px solid var(--gooey-codeblock-border-color, var(--gooey-color-border-light, #d0d0d0));
-    border-radius: var(--gooey-codeblock-border-radius, var(--gooey-border-radius, 4px));
+    border: 1px solid var(--gooey-codeblock-border-color, var(--gooey-color-border-light));
+    border-radius: var(--gooey-codeblock-border-radius, var(--gooey-border-radius));
     background-color: var(--gooey-codeblock-bg, #f8f8f8);
     overflow: hidden;
 }
@@ -20,13 +20,13 @@
     align-items: center;
     padding: 4px 12px;
     background-color: var(--gooey-codeblock-header-bg, #e8e8e8);
-    border-bottom: 1px solid var(--gooey-codeblock-border-color, var(--gooey-color-border-light, #d0d0d0));
+    border-bottom: 1px solid var(--gooey-codeblock-border-color, var(--gooey-color-border-light));
     min-height: 28px;
 }
 
 .language-label {
     font-size: 12px;
-    color: var(--gooey-codeblock-label-color, var(--gooey-color-text-disabled, #666666));
+    color: var(--gooey-codeblock-label-color, var(--gooey-color-text-disabled));
     text-transform: lowercase;
     font-weight: 500;
 }
@@ -35,20 +35,20 @@
     padding: 4px 12px;
     font-size: 12px;
     font-family: inherit;
-    background-color: var(--gooey-codeblock-copy-bg, var(--gooey-color-surface-raised, #ffffff));
+    background-color: var(--gooey-codeblock-copy-bg, var(--gooey-color-surface-raised));
     border: 1px solid var(--gooey-codeblock-copy-border-color, #c0c0c0);
     border-radius: 3px;
     cursor: pointer;
-    color: var(--gooey-codeblock-copy-color, var(--gooey-color-text-muted, #333333));
+    color: var(--gooey-codeblock-copy-color, var(--gooey-color-text-muted));
 }
 
 .copy-button:hover {
     background-color: var(--gooey-codeblock-copy-bg-hover, #f0f0f0);
-    border-color: #a0a0a0;
+    border-color: var(--gooey-codeblock-copy-border-color, var(--gooey-color-border));
 }
 
 .copy-button:active {
-    background-color: #e0e0e0;
+    background-color: var(--gooey-codeblock-copy-bg-hover, var(--gooey-color-surface-hover));
 }
 
 .copy-button:disabled {
@@ -66,7 +66,7 @@
     flex-direction: column;
     padding: 12px 12px 12px 12px;
     background-color: var(--gooey-codeblock-linenumber-bg, #f0f0f0);
-    border-right: 1px solid var(--gooey-codeblock-border-color, var(--gooey-color-border-light, #d0d0d0));
+    border-right: 1px solid var(--gooey-codeblock-border-color, var(--gooey-color-border-light));
     text-align: right;
     user-select: none;
     color: var(--gooey-codeblock-linenumber-color, #999999);
@@ -83,7 +83,7 @@
     padding: 12px;
     overflow-x: auto;
     background-color: var(--gooey-codeblock-bg, #f8f8f8);
-    color: var(--gooey-codeblock-code-color, var(--gooey-color-text-muted, #333333));
+    color: var(--gooey-codeblock-code-color, var(--gooey-color-text-muted));
 }
 
 .code-content code {
@@ -94,7 +94,7 @@
 
 /* Disabled state */
 :host([disabled]) .codeblock-container {
-    opacity: var(--gooey-codeblock-opacity-disabled, var(--gooey-opacity-disabled, 0.6));
+    opacity: var(--gooey-codeblock-opacity-disabled, var(--gooey-opacity-disabled));
 }
 
 :host([disabled]) .copy-button {
@@ -109,7 +109,7 @@
     padding: 12px;
     overflow-x: auto;
     background-color: var(--gooey-codeblock-bg, #f8f8f8);
-    color: var(--gooey-codeblock-code-color, var(--gooey-color-text-muted, #333333));
+    color: var(--gooey-codeblock-code-color, var(--gooey-color-text-muted));
 }
 
 .code-highlighted code {

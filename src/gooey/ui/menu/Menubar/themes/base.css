@@ -10,15 +10,15 @@
 
 .menuHeader {
     cursor: default;
-    margin-left: var(--gooey-menubar-header-margin, var(--gooey-spacing-lg, 11px));
-    margin-right: var(--gooey-menubar-header-margin, var(--gooey-spacing-lg, 11px));
-    padding-left: var(--gooey-menubar-header-padding, var(--gooey-spacing-sm, 4px));
-    padding-right: var(--gooey-menubar-header-padding, var(--gooey-spacing-sm, 4px));
+    margin-left: var(--gooey-menubar-header-margin, var(--gooey-spacing-lg));
+    margin-right: var(--gooey-menubar-header-margin, var(--gooey-spacing-lg));
+    padding-left: var(--gooey-menubar-header-padding, var(--gooey-spacing-sm));
+    padding-right: var(--gooey-menubar-header-padding, var(--gooey-spacing-sm));
     user-select: none;
 }
 
 .menuHeader[active], .menuHeader:hover {
-    background-color: var(--gooey-menubar-header-active-bg, var(--gooey-color-primary, #010082));
-    color: var(--gooey-menubar-header-active-color, var(--gooey-color-primary-text, white));
+    background-color: var(--gooey-menubar-header-active-bg, var(--gooey-color-primary));
+    color: var(--gooey-menubar-header-active-color, var(--gooey-color-primary-text));
     user-select: none;
 }

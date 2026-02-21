@@ -5,33 +5,33 @@
     position: relative;
     width: 100%;
     height: 100%;
-    background-color: var(--gooey-splitpanel-bg, var(--gooey-color-surface, #c1c0c1));
+    background-color: var(--gooey-splitpanel-bg, var(--gooey-color-surface));
 }
 
 .splitpanel-pane {
     overflow: auto;
-    background-color: var(--gooey-splitpanel-pane-bg, var(--gooey-color-surface, #c1c0c1));
-    border: 1px inset var(--gooey-splitpanel-pane-border-color, var(--gooey-color-surface, #c1c0c1));
+    background-color: var(--gooey-splitpanel-pane-bg, var(--gooey-color-surface));
+    border: 1px inset var(--gooey-splitpanel-pane-border-color, var(--gooey-color-surface));
     display: flex;
     flex-direction: column;
 }
 
 .splitpanel-divider {
-    background-color: var(--gooey-splitpanel-divider-bg, var(--gooey-color-surface, #c1c0c1));
-    border: 1px outset var(--gooey-splitpanel-divider-border-color, var(--gooey-color-surface, #c1c0c1));
+    background-color: var(--gooey-splitpanel-divider-bg, var(--gooey-color-surface));
+    border: 1px outset var(--gooey-splitpanel-divider-border-color, var(--gooey-color-surface));
     user-select: none;
     flex-shrink: 0;
     position: relative;
 }
 
 .splitpanel-divider:hover {
-    background-color: var(--gooey-splitpanel-divider-bg-hover, var(--gooey-color-surface-hover, #d4d0c8));
+    background-color: var(--gooey-splitpanel-divider-bg-hover, var(--gooey-color-surface-hover));
 }
 
 .splitpanel-divider:active,
 :host(.splitpanel-dragging) .splitpanel-divider {
     background-color: var(--gooey-splitpanel-divider-bg-active, #b4b0a8);
-    border: 1px inset var(--gooey-splitpanel-divider-border-color, var(--gooey-color-surface, #c1c0c1));
+    border: 1px inset var(--gooey-splitpanel-divider-border-color, var(--gooey-color-surface));
 }
 
 /* Horizontal orientation (left/right split) */

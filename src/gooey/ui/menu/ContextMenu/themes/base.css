@@ -1,13 +1,13 @@
 :host {
     display: none;
     position: absolute;
-    z-index: var(--gooey-contextmenu-z-index, var(--gooey-z-dropdown, 1000));
+    z-index: var(--gooey-contextmenu-z-index, var(--gooey-z-dropdown));
 }
 
 .ui-ContextMenu {
-    background-color: var(--gooey-contextmenu-bg, var(--gooey-color-surface, #c1c0c1));
-    border: 1px solid var(--gooey-contextmenu-border-color, var(--gooey-color-border, #808080));
-    box-shadow: var(--gooey-contextmenu-shadow, var(--gooey-shadow-sm, 2px 2px 5px rgba(0, 0, 0, 0.3)));
+    background-color: var(--gooey-contextmenu-bg, var(--gooey-color-surface));
+    border: 1px solid var(--gooey-contextmenu-border-color, var(--gooey-color-border));
+    box-shadow: var(--gooey-contextmenu-shadow, var(--gooey-shadow-sm));
     min-width: var(--gooey-contextmenu-min-width, 150px);
     padding: 2px 0;
 }
@@ -30,25 +30,25 @@
 
 ::slotted(ui-MenuItem:hover),
 ::slotted(ui-CheckboxMenuItem:hover) {
-    background-color: var(--gooey-contextmenu-item-hover-bg, var(--gooey-color-primary, #010082));
-    color: var(--gooey-contextmenu-item-hover-color, var(--gooey-color-primary-text, white));
+    background-color: var(--gooey-contextmenu-item-hover-bg, var(--gooey-color-primary));
+    color: var(--gooey-contextmenu-item-hover-color, var(--gooey-color-primary-text));
 }
 
 ::slotted(ui-MenuItem[disabled]),
 ::slotted(ui-CheckboxMenuItem[disabled]) {
-    color: var(--gooey-contextmenu-item-disabled-color, var(--gooey-color-text-disabled, #808080));
+    color: var(--gooey-contextmenu-item-disabled-color, var(--gooey-color-text-disabled));
     cursor: default;
 }
 
 ::slotted(ui-MenuItem[disabled]:hover),
 ::slotted(ui-CheckboxMenuItem[disabled]:hover) {
     background-color: transparent;
-    color: var(--gooey-contextmenu-item-disabled-color, var(--gooey-color-text-disabled, #808080));
+    color: var(--gooey-contextmenu-item-disabled-color, var(--gooey-color-text-disabled));
 }
 
 ::slotted(ui-MenuItemSeparator) {
     height: 1px;
-    background-color: var(--gooey-contextmenu-separator-color, var(--gooey-color-border, #808080));
+    background-color: var(--gooey-contextmenu-separator-color, var(--gooey-color-border));
     margin: 2px 0;
     border: none;
 }

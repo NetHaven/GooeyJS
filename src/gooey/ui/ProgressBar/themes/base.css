@@ -13,16 +13,16 @@
 .progress-bar {
     flex: 1;
     height: 16px;
-    background-color: var(--gooey-progressbar-track-bg, var(--gooey-color-surface-disabled, #f0f0f0));
-    border: 1px inset var(--gooey-progressbar-track-border-color, var(--gooey-color-surface, #c1c0c1));
-    border-radius: var(--gooey-progressbar-border-radius, var(--gooey-border-radius, 2px));
+    background-color: var(--gooey-progressbar-track-bg, var(--gooey-color-surface-disabled));
+    border: 1px inset var(--gooey-progressbar-track-border-color, var(--gooey-color-surface));
+    border-radius: var(--gooey-progressbar-border-radius, var(--gooey-border-radius));
     position: relative;
     overflow: hidden;
 }
 
 .progress-fill {
     height: 100%;
-    background-color: var(--gooey-progressbar-fill-bg, var(--gooey-color-primary, #010082));
+    background-color: var(--gooey-progressbar-fill-bg, var(--gooey-color-primary));
     transition: width 0.3s ease;
     width: 0%;
 }
@@ -34,7 +34,7 @@
 
 .progress-text {
     font-size: var(--gooey-progressbar-text-font-size, 11px);
-    color: var(--gooey-progressbar-text-color, var(--gooey-color-text, #000));
+    color: var(--gooey-progressbar-text-color, var(--gooey-color-text));
     white-space: nowrap;
     min-width: 30px;
     text-align: right;
