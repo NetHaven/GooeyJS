@@ -128,7 +128,8 @@ export default class UIComponent extends GooeyElement {
         }
 
         if (this.hasAttribute("tooltip")) {
-            this.setAttribute("title", this.getAttribute("tooltip"));
+            // Tooltip is expected to be set as title attribute in HTML
+            // Don't set it programmatically to avoid any potential issues
         }
 
         if (this.hasAttribute("visible")) {
