@@ -1,15 +1,5 @@
-/* RadioButton Dark Theme */
-
-:host {
-    display: inline-block;
-    color: #e0e0e0;
-}
-
-input[type="radio"] {
-    cursor: pointer;
-    accent-color: #4a90e2;
-}
-
-label {
-    color: #e0e0e0;
-}
+/* Dark theme now provided via <gooey-theme> token architecture.
+   See: src/themes/dark-tokens.css (global + component token overrides)
+   See: src/themes/dark-overrides/ (structural overrides for Badge, DataGrid, WaffleMenu, WaffleMenuItem, VideoPlayer)
+   Usage: <gooey-theme name="dark" tokens="themes/dark-tokens.css" active>
+   This file is intentionally empty for backward compatibility with switchTheme('dark'). */

@@ -1,18 +1,5 @@
-/* Tab Dark Theme */
-
-:host {
-    display: none;
-    width: 100%;
-    flex: 1;
-    overflow: auto;
-    padding: 8px;
-    background-color: #2d2d2d;
-    color: #e0e0e0;
-    box-sizing: border-box;
-    min-height: 0;
-}
-
-:host([active]) {
-    display: flex;
-    flex-direction: column;
-}
+/* Dark theme now provided via <gooey-theme> token architecture.
+   See: src/themes/dark-tokens.css (global + component token overrides)
+   See: src/themes/dark-overrides/ (structural overrides for Badge, DataGrid, WaffleMenu, WaffleMenuItem, VideoPlayer)
+   Usage: <gooey-theme name="dark" tokens="themes/dark-tokens.css" active>
+   This file is intentionally empty for backward compatibility with switchTheme('dark'). */

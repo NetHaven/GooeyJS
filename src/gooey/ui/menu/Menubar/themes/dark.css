@@ -1,28 +1,5 @@
-/* Menubar Dark Theme */
-
-:host, :host(.ui-Toolbar) {
-    display: block;
-    background-color: #2d2d2d;
-}
-
-:host {
-    display: flex !important;
-    height: 22px;
-    width: 100%;
-}
-
-.menuHeader {
-    cursor: default;
-    margin-left: 11px;
-    margin-right: 11px;
-    padding-left: 4px;
-    padding-right: 4px;
-    user-select: none;
-    color: #e0e0e0;
-}
-
-.menuHeader[active], .menuHeader:hover {
-    background-color: #4a90e2;
-    color: white;
-    user-select: none;
-}
+/* Dark theme now provided via <gooey-theme> token architecture.
+   See: src/themes/dark-tokens.css (global + component token overrides)
+   See: src/themes/dark-overrides/ (structural overrides for Badge, DataGrid, WaffleMenu, WaffleMenuItem, VideoPlayer)
+   Usage: <gooey-theme name="dark" tokens="themes/dark-tokens.css" active>
+   This file is intentionally empty for backward compatibility with switchTheme('dark'). */

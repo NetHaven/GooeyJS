@@ -1,11 +1,5 @@
-/* Panel Dark Theme */
-
-:host {
-    display: block;
-    background-color: #2d2d2d;
-    color: #e0e0e0;
-}
-
-::slotted(*) {
-    /* Child elements use the container's layout system */
-}
+/* Dark theme now provided via <gooey-theme> token architecture.
+   See: src/themes/dark-tokens.css (global + component token overrides)
+   See: src/themes/dark-overrides/ (structural overrides for Badge, DataGrid, WaffleMenu, WaffleMenuItem, VideoPlayer)
+   Usage: <gooey-theme name="dark" tokens="themes/dark-tokens.css" active>
+   This file is intentionally empty for backward compatibility with switchTheme('dark'). */

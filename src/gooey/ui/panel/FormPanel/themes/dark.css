@@ -1,40 +1,5 @@
-/* FormPanel Dark Theme */
-
-:host {
-    display: grid;
-    grid-template-columns: 30% 65% 5%;
-    align-content: space-between;
-    gap: 8px;
-    padding: 8px;
-    width: 100%;
-    background-color: #2d2d2d;
-    color: #e0e0e0;
-}
-
-::slotted(gooeyui-label) {
-    justify-self: end;
-    align-self: start;
-    font-weight: bold;
-    color: #e0e0e0;
-}
-
-::slotted(:not(gooeyui-label):not(.required-indicator)) {
-    justify-self: stretch;
-    align-self: start;
-    width: 100%;
-}
-
-::slotted(.required-indicator),
-::slotted(.form-spacer) {
-    justify-self: start;
-    align-self: start;
-    grid-column: 3;
-}
-
-/* Required indicator for form elements */
-.required-indicator {
-    color: #ff6b6b !important;
-    font-weight: bold !important;
-    margin-left: 4px !important;
-    font-size: 14px !important;
-}
+/* Dark theme now provided via <gooey-theme> token architecture.
+   See: src/themes/dark-tokens.css (global + component token overrides)
+   See: src/themes/dark-overrides/ (structural overrides for Badge, DataGrid, WaffleMenu, WaffleMenuItem, VideoPlayer)
+   Usage: <gooey-theme name="dark" tokens="themes/dark-tokens.css" active>
+   This file is intentionally empty for backward compatibility with switchTheme('dark'). */

@@ -1,28 +1,5 @@
-/* GroupBox Dark Theme */
-
-:host {
-    position: relative;
-    display: block;
-    padding: 8px;
-    margin: 4px;
-}
-
-.ui-GroupBox-content {
-    border: 2px inset #505050;
-    padding: 8px;
-    background-color: #2d2d2d;
-    min-height: 20px;
-}
-
-.ui-GroupBox-text {
-    position: absolute;
-    top: 0;
-    left: 13px;
-    background-color: #2d2d2d;
-    padding: 0 4px;
-    font-size: 11px;
-    line-height: 1;
-    transform: translateY(-50%);
-    display: none;
-    color: #e0e0e0;
-}
+/* Dark theme now provided via <gooey-theme> token architecture.
+   See: src/themes/dark-tokens.css (global + component token overrides)
+   See: src/themes/dark-overrides/ (structural overrides for Badge, DataGrid, WaffleMenu, WaffleMenuItem, VideoPlayer)
+   Usage: <gooey-theme name="dark" tokens="themes/dark-tokens.css" active>
+   This file is intentionally empty for backward compatibility with switchTheme('dark'). */

@@ -1,21 +1,5 @@
-/* AppPanel Dark Theme */
-
-:host {
-    background-color: #2d2d2d;
-    height: 100%;
-    width: 100%;
-    display: grid !important;
-    grid-template-areas:
-        "north north north"
-        "west center east"
-        "south south south";
-    grid-template-rows: auto 1fr auto;
-    grid-template-columns: auto 1fr auto;
-}
-
-/* Border layout region positioning */
-::slotted([region="north"]) { grid-area: north; }
-::slotted([region="south"]) { grid-area: south; }
-::slotted([region="west"]) { grid-area: west; }
-::slotted([region="east"]) { grid-area: east; }
-::slotted([region="center"]) { grid-area: center; }
+/* Dark theme now provided via <gooey-theme> token architecture.
+   See: src/themes/dark-tokens.css (global + component token overrides)
+   See: src/themes/dark-overrides/ (structural overrides for Badge, DataGrid, WaffleMenu, WaffleMenuItem, VideoPlayer)
+   Usage: <gooey-theme name="dark" tokens="themes/dark-tokens.css" active>
+   This file is intentionally empty for backward compatibility with switchTheme('dark'). */

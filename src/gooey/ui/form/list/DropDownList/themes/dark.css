@@ -1,27 +1,5 @@
-/* DropDownList Dark Theme */
-
-:host {
-    display: inline-block;
-}
-
-select {
-    background-color: #1e1e1e;
-    color: #e0e0e0;
-    border: 2px inset #505050;
-}
-
-select:focus {
-    border-color: #4a90e2;
-}
-
-/* Disabled styles for DropDownList */
-:host([disabled]),
-:host([disabled]) select {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-:host([disabled]) select {
-    background-color: #252525;
-    color: #707070;
-}
+/* Dark theme now provided via <gooey-theme> token architecture.
+   See: src/themes/dark-tokens.css (global + component token overrides)
+   See: src/themes/dark-overrides/ (structural overrides for Badge, DataGrid, WaffleMenu, WaffleMenuItem, VideoPlayer)
+   Usage: <gooey-theme name="dark" tokens="themes/dark-tokens.css" active>
+   This file is intentionally empty for backward compatibility with switchTheme('dark'). */
