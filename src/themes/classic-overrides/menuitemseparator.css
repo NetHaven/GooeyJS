@@ -1,0 +1,9 @@
+/* MenuItemSeparator - Classic Mac (Platinum) structural override */
+
+:host {
+    /* Classic Mac separator: single gray horizontal rule */
+    height: 1px;
+    margin: 2px 4px;
+    border: none;
+    border-top: 1px solid #A0A0A0;
+}

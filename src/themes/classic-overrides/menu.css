@@ -1,0 +1,9 @@
+/* Menu - Classic Mac (Platinum) structural override */
+
+:host {
+    /* Classic Mac: 1px black border, white background, 1px drop shadow */
+    border: 1px solid #000000;
+    border-radius: 0;
+    background-color: #FFFFFF;
+    box-shadow: 1px 1px 0 #000000;
+}
