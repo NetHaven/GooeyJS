@@ -1,0 +1,94 @@
+/* ToggleButtonGroup - Janus (Win3.1) structural override */
+
+:host {
+    gap: 0;
+    /* Win3.1 sunken border for group */
+    border-top: 1px solid #808080;
+    border-left: 1px solid #808080;
+    border-right: 1px solid #ffffff;
+    border-bottom: 1px solid #ffffff;
+}
+
+.toggle-button-group {
+    gap: 0;
+}
+
+/* Horizontal layout (default) */
+:host(:not([orientation="vertical"])) ::slotted(gooeyui-togglebutton) {
+    margin: 0;
+    border: none;
+}
+
+:host(:not([orientation="vertical"])) ::slotted(gooeyui-togglebutton) .toggle-button,
+:host(:not([orientation="vertical"])) ::slotted(gooeyui-togglebutton) button {
+    border: none;
+    border-radius: 0;
+    margin: 0;
+}
+
+:host(:not([orientation="vertical"])) ::slotted(gooeyui-togglebutton:not(:last-child)) .toggle-button,
+:host(:not([orientation="vertical"])) ::slotted(gooeyui-togglebutton:not(:last-child)) button {
+    border-right: 1px solid #808080;
+}
+
+/* Vertical layout */
+:host([orientation="vertical"]) ::slotted(gooeyui-togglebutton) {
+    margin: 0;
+    border: none;
+}
+
+:host([orientation="vertical"]) ::slotted(gooeyui-togglebutton) .toggle-button,
+:host([orientation="vertical"]) ::slotted(gooeyui-togglebutton) button {
+    border: none;
+    border-radius: 0;
+    margin: 0;
+}
+
+:host([orientation="vertical"]) ::slotted(gooeyui-togglebutton:not(:last-child)) .toggle-button,
+:host([orientation="vertical"]) ::slotted(gooeyui-togglebutton:not(:last-child)) button {
+    border-bottom: 1px solid #808080;
+}
+
+/* Spaced layout */
+:host([spaced]) {
+    gap: 2px;
+    border: none;
+    background-color: transparent;
+}
+
+:host([spaced]) .toggle-button-group {
+    gap: 2px;
+}
+
+:host([spaced]) ::slotted(gooeyui-togglebutton) {
+    border-top: 1px solid #ffffff;
+    border-left: 1px solid #ffffff;
+    border-right: 1px solid #808080;
+    border-bottom: 1px solid #808080;
+}
+
+:host([spaced]) ::slotted(gooeyui-togglebutton) .toggle-button,
+:host([spaced]) ::slotted(gooeyui-togglebutton) button {
+    border-top: 1px solid #ffffff;
+    border-left: 1px solid #ffffff;
+    border-right: 1px solid #808080;
+    border-bottom: 1px solid #808080;
+    border-radius: 0;
+}
+
+:host([spaced]) ::slotted(gooeyui-togglebutton:not(:last-child)) .toggle-button,
+:host([spaced]) ::slotted(gooeyui-togglebutton:not(:last-child)) button {
+    border-right: 1px solid #808080;
+}
+
+:host([spaced][orientation="vertical"]) ::slotted(gooeyui-togglebutton:not(:last-child)) .toggle-button,
+:host([spaced][orientation="vertical"]) ::slotted(gooeyui-togglebutton:not(:last-child)) button {
+    border-right: 1px solid #808080;
+    border-bottom: 1px solid #808080;
+}
+
+/* Disabled state */
+:host([disabled]) {
+    opacity: 0.6;
+    pointer-events: none;
+}
