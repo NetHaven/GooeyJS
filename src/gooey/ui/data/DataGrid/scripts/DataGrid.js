@@ -82,6 +82,9 @@ export default class DataGrid extends UIComponent {
         this._boundStoreHandler = null;
         this._storeWaitObserver = null;
 
+        // =========== Slot Change Handler ===========
+        this._onSlotChange = this._handleSlotChange.bind(this);
+
         // =========== Event Registration ===========
         this._registerEvents();
 
@@ -178,14 +181,9 @@ export default class DataGrid extends UIComponent {
         this._collectColumns();
 
         // Set up slot change observer for dynamic column changes
-        const slot = this.shadowRoot.querySelector('slot');
-        if (slot) {
-            slot.addEventListener('slotchange', () => {
-                this._collectColumns();
-                this._renderHeaders();
-                this._renderFilterRow();
-                this._renderVisibleRows();
-            });
+        this._slot = this.shadowRoot.querySelector('slot');
+        if (this._slot) {
+            this._slot.addEventListener('slotchange', this._onSlotChange);
         }
 
         // Initial render
@@ -205,6 +203,11 @@ export default class DataGrid extends UIComponent {
     }
 
     disconnectedCallback() {
+        // Clean up slot listener
+        if (this._slot) {
+            this._slot.removeEventListener('slotchange', this._onSlotChange);
+        }
+
         // Clean up store binding
         this._unbindFromStore();
 
@@ -263,6 +266,16 @@ export default class DataGrid extends UIComponent {
         this._columns.forEach(col => {
             col._dataGrid = this;
         });
+    }
+
+    /**
+     * Handle slot change events (bound in constructor)
+     */
+    _handleSlotChange() {
+        this._collectColumns();
+        this._renderHeaders();
+        this._renderFilterRow();
+        this._renderVisibleRows();
     }
 
     /**
