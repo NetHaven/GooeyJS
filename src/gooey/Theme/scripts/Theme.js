@@ -12,9 +12,12 @@ import Logger from '../../logging/Logger.js';
  *
  * Usage:
  * ```html
- * <gooey-theme name="classic" tokens="themes/classic/tokens.css" active>
- *     <gooey-theme-override target="gooeyui-button" href="themes/classic/button.css"></gooey-theme-override>
- *     <gooey-theme-override target="gooeyui-window" href="themes/classic/window.css"></gooey-theme-override>
+ * <gooey-theme name="classic" tokens="themes/classic-tokens.css"
+ *              fonts="themes/classic-fonts"
+ *              font-faces='[{"family":"ChicagoFLF","file":"ChicagoFLF.woff2"},{"family":"Geneva","file":"Geneva.woff2"},{"family":"Monaco","file":"Monaco.woff2"}]'
+ *              active>
+ *     <gooey-theme-override target="gooeyui-button" href="themes/classic-overrides/button.css"></gooey-theme-override>
+ *     <gooey-theme-override target="gooeyui-window" href="themes/classic-overrides/window.css"></gooey-theme-override>
  * </gooey-theme>
  * ```
  *
@@ -23,6 +26,8 @@ import Logger from '../../logging/Logger.js';
  * - tokens: Path to token CSS file with :root custom property overrides
  * - extends: Name of parent theme to inherit tokens from
  * - active: Boolean attribute -- when present, activates this theme
+ * - fonts: Base directory path for theme font files (e.g., "themes/classic-fonts")
+ * - font-faces: JSON array of font descriptors to load via FontFace API
  *
  * Events:
  * - theme-loading: Fired when the theme begins loading token CSS
@@ -120,6 +125,16 @@ export default class Theme extends GooeyElement {
         this.setAttribute('tokens', val);
     }
 
+    /** @returns {string|null} Base directory path for theme font files */
+    get fonts() {
+        return this.getAttribute('fonts');
+    }
+
+    /** @param {string} val Base directory path for theme font files */
+    set fonts(val) {
+        this.setAttribute('fonts', val);
+    }
+
     /** @returns {string|null} Parent theme name (extends is a reserved word) */
     get extends_() {
         return this.getAttribute('extends');
@@ -177,6 +192,12 @@ export default class Theme extends GooeyElement {
                 const cssText = await response.text();
                 this._tokenSheet = new CSSStyleSheet();
                 this._tokenSheet.replaceSync(cssText);
+            }
+
+            // Load theme fonts if specified (on-demand via FontFace API)
+            const fontsPath = this.getAttribute('fonts');
+            if (fontsPath) {
+                await this._loadFonts(fontsPath);
             }
 
             // Collect and load overrides from child gooey-theme-override elements
@@ -257,6 +278,69 @@ export default class Theme extends GooeyElement {
         const name = this.getAttribute('name');
         if (ThemeManager.activeTheme === name) {
             ThemeManager.setTheme('base');
+        }
+    }
+
+    // ---- Font loading ----
+
+    /**
+     * Load theme fonts on-demand via the FontFace API.
+     *
+     * Parses the `font-faces` attribute as a JSON array of font descriptors,
+     * loads each WOFF2 file from the given base directory, and registers
+     * the loaded fonts on `document.fonts` so they are available inside
+     * all Shadow DOM contexts.
+     *
+     * Fonts that are already registered (from a previous activation) are
+     * skipped to ensure idempotent behavior.
+     *
+     * @param {string} fontsPath - Base directory path for font files
+     * @private
+     */
+    async _loadFonts(fontsPath) {
+        const fontsAttr = this.getAttribute('font-faces');
+        if (!fontsAttr) return;
+
+        let fontFaces;
+        try {
+            fontFaces = JSON.parse(fontsAttr);
+        } catch (e) {
+            Logger.warn(
+                { code: "THEME_FONT_PARSE_ERROR" },
+                "Invalid font-faces JSON: %s",
+                e.message
+            );
+            return;
+        }
+
+        for (const { family, file, weight, style } of fontFaces) {
+            // Skip if already registered
+            let exists = false;
+            for (const f of document.fonts) {
+                if (f.family === family) {
+                    exists = true;
+                    break;
+                }
+            }
+            if (exists) continue;
+
+            try {
+                const url = `${fontsPath}/${file}`;
+                const fontFace = new FontFace(family, `url(${url})`, {
+                    weight: weight || 'normal',
+                    style: style || 'normal',
+                    display: 'swap'
+                });
+                const loadedFace = await fontFace.load();
+                document.fonts.add(loadedFace);
+            } catch (err) {
+                Logger.warn(
+                    { code: "THEME_FONT_LOAD_FAILED", family },
+                    "Failed to load font %s: %s",
+                    family,
+                    err.message
+                );
+            }
         }
     }
 
