@@ -1,0 +1,98 @@
+/* TabPanel - Janus (Win3.1) structural override */
+
+:host(.vertical) .tab-strip {
+    border-bottom: none;
+    border-right: 1px solid #808080;
+    width: 120px;
+}
+
+.tab-content {
+    /* Windows 3.1 raised border */
+    border-top: 1px solid #ffffff;
+    border-left: 1px solid #ffffff;
+    border-right: 1px solid #808080;
+    border-bottom: 1px solid #808080;
+    box-shadow: inset -1px -1px 0 #000000;
+}
+
+.tab-header {
+    margin-right: -1px;
+    /* Windows 3.1 raised tab */
+    border-top: 1px solid #ffffff;
+    border-left: 1px solid #ffffff;
+    border-right: 1px solid #808080;
+    border-bottom: none;
+}
+
+:host(.vertical) .tab-header {
+    border-right: none;
+    border-bottom: 1px solid #808080;
+    margin-right: 0;
+    margin-bottom: -1px;
+}
+
+.tab-header:hover {
+    background-color: #d4d4d4;
+}
+
+.tab-header.active {
+    font-weight: bold;
+    z-index: 1;
+    /* Active tab sits on top of content */
+    border-bottom: 1px solid #c0c0c0;
+    margin-bottom: -1px;
+}
+
+:host(.vertical) .tab-header.active {
+    border-bottom: 1px solid #808080;
+    border-right: 1px solid #c0c0c0;
+    margin-right: -1px;
+    margin-bottom: 0;
+}
+
+.tab-header:focus {
+    outline: 1px dotted #000000;
+    outline-offset: -2px;
+}
+
+.tab-close-button {
+    /* Windows 3.1 small button */
+    background-color: #c0c0c0;
+    border-top: 1px solid #ffffff;
+    border-left: 1px solid #ffffff;
+    border-right: 1px solid #808080;
+    border-bottom: 1px solid #808080;
+}
+
+.tab-close-button:hover {
+    background-color: #ff0000;
+    color: #ffffff;
+}
+
+.tab-close-button:active {
+    border-top: 1px solid #808080;
+    border-left: 1px solid #808080;
+    border-right: 1px solid #ffffff;
+    border-bottom: 1px solid #ffffff;
+}
+
+.tab-close-button:focus {
+    outline: 1px dotted #000000;
+}
+
+/* Tab Drag and Drop Styles */
+.tab-header.drag-over-left {
+    border-left: 2px solid #000080;
+}
+
+.tab-header.drag-over-right {
+    border-right: 2px solid #000080;
+}
+
+.tab-header.drag-over-top {
+    border-top: 2px solid #000080;
+}
+
+.tab-header.drag-over-bottom {
+    border-bottom: 2px solid #000080;
+}
