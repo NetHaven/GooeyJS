@@ -34,12 +34,7 @@ export default class TreeItem extends UIComponent {
         this.setAttribute('role', 'treeitem');
         this._contentElement.setAttribute('tabindex', '0');
 
-        // Move any existing child tree items to the proper container
-        existingChildren.forEach(child => {
-            this.addChild(child);
-        });
-
-        // Add valid events
+        // Add valid events (must be before addChild which fires TREE_ITEM_CHILD_ADDED)
         this.addValidEvent(TreeItemEvent.TREE_ITEM_EXPAND);
         this.addValidEvent(TreeItemEvent.TREE_ITEM_COLLAPSE);
         this.addValidEvent(TreeItemEvent.TREE_ITEM_EDIT);
@@ -50,6 +45,11 @@ export default class TreeItem extends UIComponent {
         this.addValidEvent(DragEvent.START);
         this.addValidEvent(DragEvent.END);
         this.addValidEvent(TreeItemEvent.TREE_ITEM_REORDER);
+
+        // Move any existing child tree items to the proper container
+        existingChildren.forEach(child => {
+            this.addChild(child);
+        });
 
         this._setupEventListeners();
         this._updateAttributes();
