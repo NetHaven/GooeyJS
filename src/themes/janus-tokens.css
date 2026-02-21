@@ -1,0 +1,53 @@
+/* GooeyJS Janus (Windows 3.1) Theme Token Overrides */
+/* Applied via: <gooey-theme name="janus" tokens="themes/janus-tokens.css" active> */
+/* This file redefines :root custom properties from styles.css for Win3.1 appearance. */
+/* For structural overrides (chiseled borders, box-shadows), see themes/janus-overrides/ directory. */
+
+:root {
+    /* ===== Surface Colors (Win3.1 Silver) ===== */
+    --gooey-color-surface: #c0c0c0;
+    --gooey-color-surface-hover: #d4d4d4;
+    --gooey-color-surface-active: #c0c0c0;
+    --gooey-color-surface-raised: #ffffff;
+    --gooey-color-surface-sunken: #ffffff;
+    --gooey-color-surface-disabled: #c0c0c0;
+
+    /* ===== Accent / Primary (Win3.1 Navy Blue) ===== */
+    --gooey-color-primary: #000080;
+    --gooey-color-primary-text: #ffffff;
+
+    /* ===== Text Colors ===== */
+    --gooey-color-text: #000000;
+    --gooey-color-text-muted: #808080;
+    --gooey-color-text-disabled: #808080;
+    --gooey-color-text-link: #000080;
+
+    /* ===== Border Colors ===== */
+    --gooey-color-border: #808080;
+    --gooey-color-border-light: #dfdfdf;
+
+    /* ===== Focus (Win3.1 Dotted Outline) ===== */
+    --gooey-color-focus: #000000;
+    --gooey-focus-width: 1px;
+    --gooey-focus-style: dotted;
+    --gooey-focus-offset: -4px;
+
+    /* ===== Typography (Win3.1 MS Sans Serif) ===== */
+    --gooey-font-family: "MS Sans Serif", "Segoe UI", Tahoma, sans-serif;
+    --gooey-font-size-sm: 11px;
+    --gooey-font-size-md: 11px;
+    --gooey-font-size-lg: 11px;
+
+    /* ===== Borders (Win3.1 Flat, No Radius) ===== */
+    --gooey-border-width: 1px;
+    --gooey-border-style: solid;
+    --gooey-border-radius: 0;
+
+    /* ===== Shadows (Win3.1 Hard Pixel Shadows) ===== */
+    --gooey-shadow-sm: 2px 2px 0 #000000;
+    --gooey-shadow-md: 2px 2px 0 #000000;
+    --gooey-shadow-lg: 2px 2px 0 #000000;
+
+    /* ===== Opacity ===== */
+    --gooey-opacity-modal-backdrop: 0.4;
+}
