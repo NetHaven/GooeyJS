@@ -1,0 +1,31 @@
+/* ProgressBar - Janus (Win3.1) structural override */
+
+.progress-bar {
+    height: 16px;
+    background-color: #ffffff;
+    overflow: hidden;
+    /* Windows 3.1 sunken border */
+    border-top: 1px solid #808080;
+    border-left: 1px solid #808080;
+    border-right: 1px solid #ffffff;
+    border-bottom: 1px solid #ffffff;
+    box-shadow: inset 1px 1px 0 #000000;
+}
+
+.progress-fill {
+    background-color: #000080;
+}
+
+.progress-bar.indeterminate .progress-fill {
+    width: 30%;
+    animation: progress-indeterminate-win31 1.5s infinite linear;
+}
+
+.progress-text {
+    color: #000000;
+}
+
+@keyframes progress-indeterminate-win31 {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(333%); }
+}
