@@ -10,7 +10,7 @@
   ],
   "themes": {
     "default": "base",
-    "available": ["base", "dark", "janus", "classic"]
+    "available": ["base", "classic"]
   },
   "tokens": {
     "gooey-menubar-height": {
