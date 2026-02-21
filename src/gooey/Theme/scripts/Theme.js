@@ -14,7 +14,7 @@ import Logger from '../../logging/Logger.js';
  * ```html
  * <gooey-theme name="classic" tokens="themes/classic-tokens.css"
  *              fonts="themes/classic-fonts"
- *              font-faces='[{"family":"ChicagoFLF","file":"ChicagoFLF.woff2"},{"family":"Geneva","file":"Geneva.woff2"},{"family":"Monaco","file":"Monaco.woff2"}]'
+ *              font-faces='[{"family":"Geneva","file":"Geneva.woff2"},{"family":"Monaco","file":"Monaco.woff2"}]'
  *              active>
  *     <gooey-theme-override target="gooeyui-button" href="themes/classic-overrides/button.css"></gooey-theme-override>
  *     <gooey-theme-override target="gooeyui-window" href="themes/classic-overrides/window.css"></gooey-theme-override>
