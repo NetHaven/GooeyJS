@@ -29,6 +29,7 @@ export default class Tree extends UIComponent {
         this.addValidEvent(MouseEvent.CLICK);
         this.addValidEvent(TreeItemEvent.TREE_ITEM_COLLAPSE);
         this.addValidEvent(TreeItemEvent.TREE_ITEM_EXPAND);
+        this.addValidEvent(TreeItemEvent.TREE_ITEM_CHILD_ADDED);
         this.addValidEvent(TreeEvent.SELECTION_CHANGED);
         this.addValidEvent(TreeEvent.ITEM_EXPAND);
         this.addValidEvent(TreeEvent.ITEM_COLLAPSE);
