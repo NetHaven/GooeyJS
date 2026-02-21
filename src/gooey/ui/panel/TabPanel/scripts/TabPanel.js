@@ -108,25 +108,31 @@ export default class TabPanel extends Container {
         if (this._tabs.includes(tab)) {
             return;
         }
-        
+
+        // Guard: Tab element may not yet be upgraded from HTMLElement to Tab class.
+        // If _createTabHeader is not available, Tab's own connectedCallback will call this again after upgrade.
+        if (typeof tab._createTabHeader !== 'function') {
+            return;
+        }
+
         this._tabs.push(tab);
-        
+
         // Create and add tab header
         const tabHeader = tab._createTabHeader();
         tab._tabHeader = tabHeader;
         this._tabStrip.appendChild(tabHeader);
-        
+
         // Set up drag and drop for this tab if enabled
         if (this.draggable) {
             this._setupTabDragAndDrop(tab, tabHeader);
         }
-        
+
         // Tab content will be projected through the slot automatically
         // No need to manually move it with shadow DOM
-        
+
         // Update tab state
         tab._updateActiveState();
-        
+
         // If this is the first tab and no tab is active, make it active
         if (this._tabs.length === 1 && !this._activeTab) {
             this._setActiveTab(tab);
