@@ -5,25 +5,53 @@ import Template from '../../../../util/Template.js';
 export default class Button extends UIComponent {
 	constructor() {
 		super();
-	
+
 		// Activate template into shadow root (created by UIComponent)
 		Template.activate("ui-button", this.shadowRoot);
 		this.button = this.shadowRoot.querySelector("button");
 
-		if (this.hasAttribute("icon")) {
-			this.icon = this.getAttribute("icon");			
-		}
-		
-		if (this.hasAttribute("text")) {
-			this.text = this.getAttribute("text");
-		}
-
-        if (this.hasAttribute("action")) {
-            this.action = this.getAttribute("action");
-        }
-
+		// Note: icon, text, action initialization deferred to connectedCallback
+		// (Custom Elements spec prohibits setAttribute in constructor)
 	}
-	
+
+	connectedCallback() {
+		if (super.connectedCallback) {
+			super.connectedCallback();
+		}
+
+		// Initialize attributes (must be here, not in constructor per Custom Elements spec)
+		if (this.hasAttribute("icon")) {
+			// Apply icon visually without calling setter (which calls setAttribute)
+			const val = this.getAttribute("icon");
+			const slottedIcon = this.querySelector('[slot="icon"]');
+			if (!slottedIcon) {
+				if (!this.image) {
+					this.image = document.createElement("img");
+					this.button.appendChild(this.image);
+					this.image.addEventListener(MouseEvent.CLICK, e=> {
+						if (this.disabled) {
+							e.stopPropagation();
+						}
+					});
+				}
+				this.image.style.display = '';
+				this.image.src = val;
+			}
+		}
+
+		if (this.hasAttribute("text")) {
+			// Apply text visually without calling setter
+			const val = this.getAttribute("text");
+			if (!this.textElement) {
+				this.textElement = document.createElement("span");
+				this.button.appendChild(this.textElement);
+			}
+			this.textElement.textContent = val;
+		}
+
+		// action attribute doesn't need visual initialization
+	}
+
 	get action() {
         return this.getAttribute("action");
     }
