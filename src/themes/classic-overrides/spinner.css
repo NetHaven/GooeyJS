@@ -1,0 +1,56 @@
+/* Spinner - Classic Mac OS 7/8/9 (Platinum) structural override */
+
+input[type="number"] {
+    /* Classic Mac sunken field */
+    border: 1px solid #000000;
+    border-right: none;
+    background-color: #FFFFFF;
+    border-radius: 0;
+    box-shadow: none;
+    -moz-appearance: textfield;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"]:focus {
+    outline: 1px dotted #000000;
+    outline-offset: -3px;
+}
+
+.increment-btn,
+.decrement-btn {
+    cursor: pointer;
+    background-color: #DDDDDD;
+    width: 16px;
+    font-size: 8px;
+    border: 1px solid #000000;
+    /* Platinum subtle raised bevel */
+    box-shadow:
+        inset 1px 1px 0 #FFFFFF,
+        inset -1px -1px 0 #999999;
+}
+
+.increment-btn:active,
+.decrement-btn:active {
+    /* Pressed: inverted bevel */
+    box-shadow:
+        inset -1px -1px 0 #FFFFFF,
+        inset 1px 1px 0 #999999;
+}
+
+:host([disabled]) input[type="number"] {
+    color: #7F7F7F;
+    text-shadow: 1px 1px 0 #FFFFFF;
+    background-color: #DDDDDD;
+}
+
+:host([disabled]) .increment-btn,
+:host([disabled]) .decrement-btn {
+    cursor: not-allowed;
+    color: #7F7F7F;
+    text-shadow: 1px 1px 0 #FFFFFF;
+}
