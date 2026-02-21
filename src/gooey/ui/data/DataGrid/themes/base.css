@@ -4,15 +4,15 @@
     position: relative;
     width: 100%;
     height: 300px;
-    font-family: var(--gooey-datagrid-font-family, var(--gooey-font-family, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif));
+    font-family: var(--gooey-datagrid-font-family, var(--gooey-font-family));
     font-size: var(--gooey-datagrid-font-size, 13px);
     overflow: hidden;
-    border: 1px solid var(--gooey-datagrid-border-color, var(--gooey-color-border, #808080));
+    border: 1px solid var(--gooey-datagrid-border-color, var(--gooey-color-border));
     box-sizing: border-box;
 }
 
 :host([disabled]) {
-    opacity: var(--gooey-datagrid-opacity-disabled, var(--gooey-opacity-disabled, 0.5));
+    opacity: var(--gooey-datagrid-opacity-disabled, var(--gooey-opacity-disabled));
     pointer-events: none;
 }
 
@@ -25,7 +25,7 @@
     flex-direction: column;
     height: 100%;
     width: 100%;
-    background-color: var(--gooey-datagrid-bg, var(--gooey-color-surface-raised, #ffffff));
+    background-color: var(--gooey-datagrid-bg, var(--gooey-color-surface-raised));
 }
 
 .datagrid-container.disabled {
@@ -36,8 +36,8 @@
 .datagrid-header-viewport {
     flex-shrink: 0;
     overflow: hidden;
-    background-color: var(--gooey-datagrid-header-bg, var(--gooey-color-surface-hover, #d4d0c8));
-    border-bottom: 1px solid var(--gooey-datagrid-border-color, var(--gooey-color-border, #808080));
+    background-color: var(--gooey-datagrid-header-bg, var(--gooey-color-surface-hover));
+    border-bottom: 1px solid var(--gooey-datagrid-border-color, var(--gooey-color-border));
 }
 
 .datagrid-header-row {
@@ -50,11 +50,11 @@
     display: flex;
     align-items: center;
     padding: 6px 8px;
-    border-right: 1px solid var(--gooey-datagrid-border-color, var(--gooey-color-border, #808080));
+    border-right: 1px solid var(--gooey-datagrid-border-color, var(--gooey-color-border));
     background: linear-gradient(to bottom, var(--gooey-datagrid-header-gradient-start, #f0f0f0) 0%, var(--gooey-datagrid-header-gradient-end, #d4d0c8) 100%);
     user-select: none;
     position: relative;
-    font-weight: var(--gooey-datagrid-header-font-weight, var(--gooey-font-weight-bold, 600));
+    font-weight: var(--gooey-datagrid-header-font-weight, var(--gooey-font-weight-bold));
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -110,7 +110,7 @@
     flex-shrink: 0;
     overflow: hidden;
     background-color: var(--gooey-datagrid-filter-bg, #f5f5f5);
-    border-bottom: 1px solid var(--gooey-datagrid-border-color, var(--gooey-color-border, #808080));
+    border-bottom: 1px solid var(--gooey-datagrid-border-color, var(--gooey-color-border));
     display: none;
 }
 
@@ -129,7 +129,7 @@
 .datagrid-filter-input {
     width: 100%;
     padding: 3px 6px;
-    border: 1px solid var(--gooey-datagrid-filter-input-border-color, var(--gooey-color-border, #808080));
+    border: 1px solid var(--gooey-datagrid-filter-input-border-color, var(--gooey-color-border));
     font-size: 12px;
     font-family: inherit;
     box-sizing: border-box;
@@ -137,7 +137,7 @@
 
 .datagrid-filter-input:focus {
     outline: none;
-    border-color: var(--gooey-datagrid-filter-focus-color, var(--gooey-color-primary, #0078d7));
+    border-color: var(--gooey-datagrid-filter-focus-color, var(--gooey-color-primary));
 }
 
 /* Body Viewport */
@@ -166,8 +166,8 @@
     flex-direction: row;
     position: absolute;
     width: 100%;
-    border-bottom: 1px solid var(--gooey-datagrid-row-border-color, var(--gooey-color-border-light, #e0e0e0));
-    background-color: var(--gooey-datagrid-row-bg, var(--gooey-color-surface-raised, #ffffff));
+    border-bottom: 1px solid var(--gooey-datagrid-row-border-color, var(--gooey-color-border-light));
+    background-color: var(--gooey-datagrid-row-bg, var(--gooey-color-surface-raised));
     box-sizing: border-box;
 }
 
@@ -176,8 +176,8 @@
 }
 
 .datagrid-row.selected {
-    background-color: var(--gooey-datagrid-selection-bg, var(--gooey-color-primary, #0078d7));
-    color: var(--gooey-datagrid-selection-color, var(--gooey-color-primary-text, #ffffff));
+    background-color: var(--gooey-datagrid-selection-bg, var(--gooey-color-primary));
+    color: var(--gooey-datagrid-selection-color, var(--gooey-color-primary-text));
 }
 
 .datagrid-row.selected:hover {
@@ -194,7 +194,7 @@
 }
 
 .datagrid-row.selected:nth-child(even) {
-    background-color: var(--gooey-datagrid-selection-bg, var(--gooey-color-primary, #0078d7));
+    background-color: var(--gooey-datagrid-selection-bg, var(--gooey-color-primary));
 }
 
 /* Cell Styles */
@@ -210,7 +210,7 @@
 }
 
 .datagrid-cell.selected {
-    outline: 2px solid var(--gooey-datagrid-cell-selected-outline, var(--gooey-color-primary, #0078d7));
+    outline: 2px solid var(--gooey-datagrid-cell-selected-outline, var(--gooey-color-primary));
     outline-offset: -2px;
     background-color: rgba(0, 120, 215, 0.1);
 }
@@ -233,7 +233,7 @@
 .datagrid-cell-editor {
     width: 100%;
     height: 100%;
-    border: 2px solid var(--gooey-datagrid-focus-color, var(--gooey-color-primary, #0078d7));
+    border: 2px solid var(--gooey-datagrid-focus-color, var(--gooey-color-primary));
     padding: 0 6px;
     font: inherit;
     font-size: inherit;
@@ -243,12 +243,12 @@
 
 /* Focus styling */
 :host(:focus) {
-    outline: 2px solid var(--gooey-datagrid-focus-color, var(--gooey-color-primary, #0078d7));
+    outline: 2px solid var(--gooey-datagrid-focus-color, var(--gooey-color-primary));
     outline-offset: -2px;
 }
 
 :host(:focus) .datagrid-container {
-    border-color: var(--gooey-datagrid-focus-color, var(--gooey-color-primary, #0078d7));
+    border-color: var(--gooey-datagrid-focus-color, var(--gooey-color-primary));
 }
 
 /* Scrollbar styling */

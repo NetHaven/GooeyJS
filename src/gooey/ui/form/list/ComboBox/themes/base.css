@@ -3,8 +3,8 @@
     display: inline-block;
     position: relative;
     min-width: var(--gooey-combobox-min-width, 120px);
-    font-family: var(--gooey-combobox-font-family, var(--gooey-font-family, sans-serif));
-    font-size: var(--gooey-combobox-font-size, var(--gooey-font-size-sm, 11px));
+    font-family: var(--gooey-combobox-font-family, var(--gooey-font-family));
+    font-size: var(--gooey-combobox-font-size, var(--gooey-font-size-sm));
 }
 
 .combobox-container {
@@ -15,28 +15,28 @@
 
 .combobox-input {
     flex: 1;
-    border: 2px inset var(--gooey-combobox-input-border-color, var(--gooey-color-border, #c1c0c1));
+    border: 2px inset var(--gooey-combobox-input-border-color, var(--gooey-color-border));
     padding: 2px 4px;
-    font-size: var(--gooey-combobox-font-size, var(--gooey-font-size-sm, 11px));
-    font-family: var(--gooey-combobox-font-family, var(--gooey-font-family, sans-serif));
-    background-color: var(--gooey-combobox-input-bg, var(--gooey-color-surface-raised, white));
+    font-size: var(--gooey-combobox-font-size, var(--gooey-font-size-sm));
+    font-family: var(--gooey-combobox-font-family, var(--gooey-font-family));
+    background-color: var(--gooey-combobox-input-bg, var(--gooey-color-surface-raised));
     border-right: none;
     outline: none;
-    color: var(--gooey-combobox-input-color, var(--gooey-color-text, #000));
+    color: var(--gooey-combobox-input-color, var(--gooey-color-text));
 }
 
 .combobox-input:focus {
-    border-color: var(--gooey-combobox-input-focus-color, var(--gooey-color-primary, #010082));
+    border-color: var(--gooey-combobox-input-focus-color, var(--gooey-color-primary));
 }
 
 .combobox-input[readonly] {
     cursor: pointer;
-    background-color: var(--gooey-combobox-input-bg, var(--gooey-color-surface-raised, white));
+    background-color: var(--gooey-combobox-input-bg, var(--gooey-color-surface-raised));
 }
 
 .combobox-button {
-    border: 2px outset var(--gooey-combobox-button-border-color, var(--gooey-color-border, #c1c0c1));
-    background-color: var(--gooey-combobox-button-bg, var(--gooey-color-surface, #c1c0c1));
+    border: 2px outset var(--gooey-combobox-button-border-color, var(--gooey-color-border));
+    background-color: var(--gooey-combobox-button-bg, var(--gooey-color-surface));
     padding: 2px 6px;
     font-size: 10px;
     cursor: pointer;
@@ -47,13 +47,13 @@
 }
 
 .combobox-button:hover {
-    background-color: var(--gooey-combobox-button-bg-hover, var(--gooey-color-surface-hover, #d4d0c8));
+    background-color: var(--gooey-combobox-button-bg-hover, var(--gooey-color-surface-hover));
 }
 
 .combobox-button:active,
 :host(.dropdown-open) .combobox-button {
-    border: 2px inset var(--gooey-combobox-button-border-color, var(--gooey-color-border, #c1c0c1));
-    background-color: var(--gooey-combobox-button-bg, var(--gooey-color-surface, #c1c0c1));
+    border: 2px inset var(--gooey-combobox-button-border-color, var(--gooey-color-border));
+    background-color: var(--gooey-combobox-button-bg, var(--gooey-color-surface));
 }
 
 .combobox-dropdown {
@@ -62,12 +62,12 @@
     left: 0;
     right: 0;
     z-index: 1000;
-    border: 2px inset var(--gooey-combobox-dropdown-border-color, var(--gooey-color-border, #c1c0c1));
+    border: 2px inset var(--gooey-combobox-dropdown-border-color, var(--gooey-color-border));
     border-top: 1px solid var(--gooey-combobox-dropdown-top-border-color, #808080);
-    background-color: var(--gooey-combobox-dropdown-bg, var(--gooey-color-surface-raised, white));
+    background-color: var(--gooey-combobox-dropdown-bg, var(--gooey-color-surface-raised));
     max-height: 200px;
     overflow-y: auto;
-    box-shadow: var(--gooey-combobox-dropdown-shadow, var(--gooey-shadow-sm, 2px 2px 5px rgba(0, 0, 0, 0.3)));
+    box-shadow: var(--gooey-combobox-dropdown-shadow, var(--gooey-shadow-sm));
 }
 
 .combobox-list {
@@ -76,45 +76,45 @@
     margin: 0;
     padding: 0;
     background: transparent;
-    font-size: var(--gooey-combobox-font-size, var(--gooey-font-size-sm, 11px));
-    font-family: var(--gooey-combobox-font-family, var(--gooey-font-family, sans-serif));
+    font-size: var(--gooey-combobox-font-size, var(--gooey-font-size-sm));
+    font-family: var(--gooey-combobox-font-family, var(--gooey-font-family));
     outline: none;
 }
 
 .combobox-list option {
     padding: 2px 4px;
     cursor: pointer;
-    color: var(--gooey-combobox-option-color, var(--gooey-color-text, #000));
-    background-color: var(--gooey-combobox-option-bg, var(--gooey-color-surface-raised, white));
+    color: var(--gooey-combobox-option-color, var(--gooey-color-text));
+    background-color: var(--gooey-combobox-option-bg, var(--gooey-color-surface-raised));
 }
 
 .combobox-list option:hover {
-    background-color: var(--gooey-combobox-option-bg-hover, var(--gooey-color-surface-hover, #d4d0c8));
+    background-color: var(--gooey-combobox-option-bg-hover, var(--gooey-color-surface-hover));
 }
 
 .combobox-list option:checked {
-    background-color: var(--gooey-combobox-option-selected-bg, var(--gooey-color-primary, #010082));
-    color: var(--gooey-combobox-option-selected-color, var(--gooey-color-primary-text, white));
+    background-color: var(--gooey-combobox-option-selected-bg, var(--gooey-color-primary));
+    color: var(--gooey-combobox-option-selected-color, var(--gooey-color-primary-text));
 }
 
 /* Disabled state */
 :host([disabled]) .combobox-input,
 :host([disabled]) .combobox-button {
-    opacity: var(--gooey-combobox-opacity-disabled, var(--gooey-opacity-disabled, 0.5));
+    opacity: var(--gooey-combobox-opacity-disabled, var(--gooey-opacity-disabled));
     cursor: not-allowed;
 }
 
 :host([disabled]) .combobox-input {
-    background-color: var(--gooey-combobox-bg-disabled, var(--gooey-color-surface, #c1c0c1));
-    color: var(--gooey-combobox-color-disabled, var(--gooey-color-text-disabled, #808080));
+    background-color: var(--gooey-combobox-bg-disabled, var(--gooey-color-surface));
+    color: var(--gooey-combobox-color-disabled, var(--gooey-color-text-disabled));
 }
 
 :host([disabled]) .combobox-button {
-    background-color: var(--gooey-combobox-bg-disabled, var(--gooey-color-surface, #c1c0c1));
-    border: 2px outset var(--gooey-combobox-button-border-color, var(--gooey-color-border, #c1c0c1));
+    background-color: var(--gooey-combobox-bg-disabled, var(--gooey-color-surface));
+    border: 2px outset var(--gooey-combobox-button-border-color, var(--gooey-color-border));
 }
 
 /* Focus states */
 :host(.focused) .combobox-input {
-    border: 2px inset var(--gooey-combobox-input-focus-color, var(--gooey-color-primary, #010082));
+    border: 2px inset var(--gooey-combobox-input-focus-color, var(--gooey-color-primary));
 }

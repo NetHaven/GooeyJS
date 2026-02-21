@@ -1,12 +1,12 @@
 /* Window Base Theme */
 :host {
-    background-color: var(--gooey-window-bg, var(--gooey-color-surface, #c1c0c1));
+    background-color: var(--gooey-window-bg, var(--gooey-color-surface));
     border-style: solid;
-    border-width: var(--gooey-window-border-width, var(--gooey-border-width, 1px));
+    border-width: var(--gooey-window-border-width, var(--gooey-border-width));
     display: none;
     margin: 0;
     position: fixed;
-    z-index: var(--gooey-window-z-index, var(--gooey-z-window, 1500));
+    z-index: var(--gooey-window-z-index, var(--gooey-z-window));
 }
 
 :host([visible=true]) {
@@ -16,10 +16,10 @@
 }
 
 .WindowTitlebar {
-    background: var(--gooey-window-titlebar-bg, var(--gooey-color-primary, #010082));
-    color: var(--gooey-window-titlebar-color, var(--gooey-color-primary-text, white));
+    background: var(--gooey-window-titlebar-bg, var(--gooey-color-primary));
+    color: var(--gooey-window-titlebar-color, var(--gooey-color-primary-text));
     cursor: default;
-    font-weight: var(--gooey-window-titlebar-font-weight, var(--gooey-font-weight-bold, bold));
+    font-weight: var(--gooey-window-titlebar-font-weight, var(--gooey-font-weight-bold));
     height: var(--gooey-window-titlebar-height, 20px);
     text-align: center;
     user-select: none;
@@ -29,14 +29,14 @@
 .WindowContent {
     display: flex;
     flex: 1;
-    margin: var(--gooey-window-content-margin, var(--gooey-spacing-md, 8px));
+    margin: var(--gooey-window-content-margin, var(--gooey-spacing-md));
     min-height: 0px;
 }
 
 .WindowButtonbar {
     display: flex;
     height: 30px;
-    margin: var(--gooey-window-buttonbar-margin, var(--gooey-spacing-lg, 10px));
+    margin: var(--gooey-window-buttonbar-margin, var(--gooey-spacing-lg));
     justify-content: flex-end;
 }
 
@@ -59,7 +59,7 @@
 
 /* Ensure modal windows appear above everything else */
 :host([modal]) {
-    z-index: var(--gooey-window-modal-z-index, var(--gooey-z-modal-window, 1600));
+    z-index: var(--gooey-window-modal-z-index, var(--gooey-z-modal-window));
 }
 
 /* Dialog Alert Styles */
@@ -78,8 +78,8 @@
 
 .DialogAlert-message {
     flex: 1;
-    font-family: var(--gooey-window-font-family, var(--gooey-font-family, sans-serif));
-    font-size: var(--gooey-window-font-size, var(--gooey-font-size-md, 14px));
+    font-family: var(--gooey-window-font-family, var(--gooey-font-family));
+    font-size: var(--gooey-window-font-size, var(--gooey-font-size-md));
     line-height: var(--gooey-line-height, 1.4);
     word-wrap: break-word;
 }
@@ -100,8 +100,8 @@
 
 .DialogInfo-message {
     flex: 1;
-    font-family: var(--gooey-window-font-family, var(--gooey-font-family, sans-serif));
-    font-size: var(--gooey-window-font-size, var(--gooey-font-size-md, 14px));
+    font-family: var(--gooey-window-font-family, var(--gooey-font-family));
+    font-size: var(--gooey-window-font-size, var(--gooey-font-size-md));
     line-height: var(--gooey-line-height, 1.4);
     word-wrap: break-word;
 }
@@ -122,8 +122,8 @@
 
 .DialogConfirm-message {
     flex: 1;
-    font-family: var(--gooey-window-font-family, var(--gooey-font-family, sans-serif));
-    font-size: var(--gooey-window-font-size, var(--gooey-font-size-md, 14px));
+    font-family: var(--gooey-window-font-family, var(--gooey-font-family));
+    font-size: var(--gooey-window-font-size, var(--gooey-font-size-md));
     line-height: var(--gooey-line-height, 1.4);
     word-wrap: break-word;
 }
@@ -150,8 +150,8 @@
 }
 
 .DialogPrompt-message {
-    font-family: var(--gooey-window-font-family, var(--gooey-font-family, sans-serif));
-    font-size: var(--gooey-window-font-size, var(--gooey-font-size-md, 14px));
+    font-family: var(--gooey-window-font-family, var(--gooey-font-family));
+    font-size: var(--gooey-window-font-size, var(--gooey-font-size-md));
     line-height: var(--gooey-line-height, 1.4);
     word-wrap: break-word;
 }

@@ -34,12 +34,12 @@
     justify-content: center;
     gap: 4px;
     box-sizing: border-box;
-    font-family: var(--gooey-badge-font-family, var(--gooey-font-family, sans-serif));
+    font-family: var(--gooey-badge-font-family, var(--gooey-font-family));
     font-weight: 600;
     line-height: 1;
     white-space: nowrap;
     vertical-align: middle;
-    border-radius: var(--gooey-badge-border-radius, var(--gooey-border-radius, 4px));
+    border-radius: var(--gooey-badge-border-radius, var(--gooey-border-radius));
     transition: opacity 0.15s ease;
 }
 
@@ -89,37 +89,37 @@
 
 /* Primary - blue */
 :host([variant="primary"]) .badge {
-    background-color: var(--gooey-badge-primary-bg, var(--gooey-color-primary, #010082));
-    color: var(--gooey-badge-primary-color, var(--gooey-color-primary-text, #ffffff));
-    border: 1px solid var(--gooey-badge-primary-bg, var(--gooey-color-primary, #010082));
+    background-color: var(--gooey-badge-primary-bg, var(--gooey-color-primary));
+    color: var(--gooey-badge-primary-color, var(--gooey-color-primary-text));
+    border: 1px solid var(--gooey-badge-primary-bg, var(--gooey-color-primary));
 }
 
 /* Success - green */
 :host([variant="success"]) .badge {
-    background-color: var(--gooey-badge-success-bg, var(--gooey-color-success, #059669));
+    background-color: var(--gooey-badge-success-bg, var(--gooey-color-success));
     color: var(--gooey-badge-success-color, #ffffff);
-    border: 1px solid var(--gooey-badge-success-bg, var(--gooey-color-success, #059669));
+    border: 1px solid var(--gooey-badge-success-bg, var(--gooey-color-success));
 }
 
 /* Warning - amber/orange */
 :host([variant="warning"]) .badge {
-    background-color: var(--gooey-badge-warning-bg, var(--gooey-color-warning, #d97706));
+    background-color: var(--gooey-badge-warning-bg, var(--gooey-color-warning));
     color: var(--gooey-badge-warning-color, #ffffff);
-    border: 1px solid var(--gooey-badge-warning-bg, var(--gooey-color-warning, #d97706));
+    border: 1px solid var(--gooey-badge-warning-bg, var(--gooey-color-warning));
 }
 
 /* Error - red */
 :host([variant="error"]) .badge {
-    background-color: var(--gooey-badge-error-bg, var(--gooey-color-error, #dc2626));
+    background-color: var(--gooey-badge-error-bg, var(--gooey-color-error));
     color: var(--gooey-badge-error-color, #ffffff);
-    border: 1px solid var(--gooey-badge-error-bg, var(--gooey-color-error, #dc2626));
+    border: 1px solid var(--gooey-badge-error-bg, var(--gooey-color-error));
 }
 
 /* Info - light blue */
 :host([variant="info"]) .badge {
-    background-color: var(--gooey-badge-info-bg, var(--gooey-color-info, #0284c7));
+    background-color: var(--gooey-badge-info-bg, var(--gooey-color-info));
     color: var(--gooey-badge-info-color, #ffffff);
-    border: 1px solid var(--gooey-badge-info-bg, var(--gooey-color-info, #0284c7));
+    border: 1px solid var(--gooey-badge-info-bg, var(--gooey-color-info));
 }
 
 /* ----------------------------------------
@@ -135,32 +135,32 @@
 
 :host([outline][variant="primary"]) .badge {
     background-color: transparent;
-    color: var(--gooey-badge-primary-bg, var(--gooey-color-primary, #010082));
-    border: 1px solid var(--gooey-badge-primary-bg, var(--gooey-color-primary, #010082));
+    color: var(--gooey-badge-primary-bg, var(--gooey-color-primary));
+    border: 1px solid var(--gooey-badge-primary-bg, var(--gooey-color-primary));
 }
 
 :host([outline][variant="success"]) .badge {
     background-color: transparent;
-    color: var(--gooey-badge-success-bg, var(--gooey-color-success, #059669));
-    border: 1px solid var(--gooey-badge-success-bg, var(--gooey-color-success, #059669));
+    color: var(--gooey-badge-success-bg, var(--gooey-color-success));
+    border: 1px solid var(--gooey-badge-success-bg, var(--gooey-color-success));
 }
 
 :host([outline][variant="warning"]) .badge {
     background-color: transparent;
-    color: var(--gooey-badge-warning-bg, var(--gooey-color-warning, #d97706));
-    border: 1px solid var(--gooey-badge-warning-bg, var(--gooey-color-warning, #d97706));
+    color: var(--gooey-badge-warning-bg, var(--gooey-color-warning));
+    border: 1px solid var(--gooey-badge-warning-bg, var(--gooey-color-warning));
 }
 
 :host([outline][variant="error"]) .badge {
     background-color: transparent;
-    color: var(--gooey-badge-error-bg, var(--gooey-color-error, #dc2626));
-    border: 1px solid var(--gooey-badge-error-bg, var(--gooey-color-error, #dc2626));
+    color: var(--gooey-badge-error-bg, var(--gooey-color-error));
+    border: 1px solid var(--gooey-badge-error-bg, var(--gooey-color-error));
 }
 
 :host([outline][variant="info"]) .badge {
     background-color: transparent;
-    color: var(--gooey-badge-info-bg, var(--gooey-color-info, #0284c7));
-    border: 1px solid var(--gooey-badge-info-bg, var(--gooey-color-info, #0284c7));
+    color: var(--gooey-badge-info-bg, var(--gooey-color-info));
+    border: 1px solid var(--gooey-badge-info-bg, var(--gooey-color-info));
 }
 
 /* ----------------------------------------
@@ -285,7 +285,7 @@
 }
 
 :host([disabled]) .badge {
-    opacity: var(--gooey-badge-opacity-disabled, var(--gooey-opacity-disabled, 0.5));
+    opacity: var(--gooey-badge-opacity-disabled, var(--gooey-opacity-disabled));
 }
 
 /* ----------------------------------------
@@ -293,7 +293,7 @@
    ---------------------------------------- */
 
 .badge:focus-visible {
-    outline: 2px solid var(--gooey-badge-focus-ring-color, var(--gooey-color-focus, #005fcc));
+    outline: 2px solid var(--gooey-badge-focus-ring-color, var(--gooey-color-focus));
     outline-offset: 2px;
 }
 

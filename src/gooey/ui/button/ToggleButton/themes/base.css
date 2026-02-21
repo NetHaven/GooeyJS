@@ -11,40 +11,40 @@ button {
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 2px outset var(--gooey-togglebutton-border-color, var(--gooey-color-surface, #c1c0c1));
-    background-color: var(--gooey-togglebutton-bg, var(--gooey-color-surface, #c1c0c1));
+    border: 2px outset var(--gooey-togglebutton-border-color, var(--gooey-color-surface));
+    background-color: var(--gooey-togglebutton-bg, var(--gooey-color-surface));
     padding: 4px 8px;
     cursor: pointer;
     outline: none;
-    font-family: var(--gooey-togglebutton-font-family, var(--gooey-font-family, sans-serif));
+    font-family: var(--gooey-togglebutton-font-family, var(--gooey-font-family));
     font-size: var(--gooey-togglebutton-font-size, 11px);
     min-width: 24px;
     min-height: 24px;
-    color: var(--gooey-togglebutton-color, var(--gooey-color-text, #000));
+    color: var(--gooey-togglebutton-color, var(--gooey-color-text));
 }
 
 .toggle-button:hover,
 button:hover {
-    background-color: var(--gooey-togglebutton-bg-hover, var(--gooey-color-surface-hover, #d4d0c8));
+    background-color: var(--gooey-togglebutton-bg-hover, var(--gooey-color-surface-hover));
 }
 
 .toggle-button:active,
 button:active {
-    border: 2px inset var(--gooey-togglebutton-border-color, var(--gooey-color-surface, #c1c0c1));
-    background-color: var(--gooey-togglebutton-bg, var(--gooey-color-surface, #c1c0c1));
+    border: 2px inset var(--gooey-togglebutton-border-color, var(--gooey-color-surface));
+    background-color: var(--gooey-togglebutton-bg, var(--gooey-color-surface));
 }
 
 .toggle-button:focus,
 button:focus {
-    border: 2px inset var(--gooey-togglebutton-focus-color, var(--gooey-color-primary, #010082));
+    border: 2px inset var(--gooey-togglebutton-focus-color, var(--gooey-color-primary));
 }
 
 /* Pressed state */
 :host(.pressed) .toggle-button,
 :host(.pressed) button {
-    background-color: var(--gooey-togglebutton-pressed-bg, var(--gooey-color-primary, #010082));
-    color: var(--gooey-togglebutton-pressed-color, var(--gooey-color-primary-text, white));
-    border: 2px inset var(--gooey-togglebutton-border-color, var(--gooey-color-surface, #c1c0c1));
+    background-color: var(--gooey-togglebutton-pressed-bg, var(--gooey-color-primary));
+    color: var(--gooey-togglebutton-pressed-color, var(--gooey-color-primary-text));
+    border: 2px inset var(--gooey-togglebutton-border-color, var(--gooey-color-surface));
     box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
 
@@ -61,25 +61,25 @@ button:focus {
 /* Disabled state */
 :host([disabled]) .toggle-button,
 :host([disabled]) button {
-    opacity: var(--gooey-togglebutton-opacity-disabled, var(--gooey-opacity-disabled, 0.5));
+    opacity: var(--gooey-togglebutton-opacity-disabled, var(--gooey-opacity-disabled));
     cursor: not-allowed;
-    background-color: var(--gooey-togglebutton-bg, var(--gooey-color-surface, #c1c0c1));
-    color: var(--gooey-togglebutton-color-disabled, var(--gooey-color-text-disabled, #808080));
-    border: 2px outset var(--gooey-togglebutton-border-color, var(--gooey-color-surface, #c1c0c1));
+    background-color: var(--gooey-togglebutton-bg, var(--gooey-color-surface));
+    color: var(--gooey-togglebutton-color-disabled, var(--gooey-color-text-disabled));
+    border: 2px outset var(--gooey-togglebutton-border-color, var(--gooey-color-surface));
 }
 
 :host([disabled]) .toggle-button:hover,
 :host([disabled]) button:hover,
 :host([disabled]) .toggle-button:active,
 :host([disabled]) button:active {
-    background-color: var(--gooey-togglebutton-bg, var(--gooey-color-surface, #c1c0c1));
-    border: 2px outset var(--gooey-togglebutton-border-color, var(--gooey-color-surface, #c1c0c1));
+    background-color: var(--gooey-togglebutton-bg, var(--gooey-color-surface));
+    border: 2px outset var(--gooey-togglebutton-border-color, var(--gooey-color-surface));
 }
 
 :host([disabled].pressed) .toggle-button,
 :host([disabled].pressed) button {
-    background-color: var(--gooey-togglebutton-pressed-bg-disabled, var(--gooey-color-border, #808080));
-    color: var(--gooey-togglebutton-pressed-color-disabled, var(--gooey-color-surface, #c1c0c1));
+    background-color: var(--gooey-togglebutton-pressed-bg-disabled, var(--gooey-color-border));
+    color: var(--gooey-togglebutton-pressed-color-disabled, var(--gooey-color-surface));
 }
 
 /* Icon and text styling */

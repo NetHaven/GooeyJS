@@ -4,7 +4,7 @@
     display: inline-block;
     position: relative;
     user-select: none;
-    margin: var(--gooey-button-margin, var(--gooey-spacing-xs, 2px));
+    margin: var(--gooey-button-margin, var(--gooey-spacing-xs));
     /* Allow parent context to override sizing via CSS custom properties */
     height: var(--gooey-button-height, var(--button-height, auto));
     width: var(--gooey-button-width, var(--button-width, auto));
@@ -14,34 +14,34 @@ button {
     display: flex;
     align-items: center;
     justify-content: center;
-    border: var(--gooey-button-border-width, var(--gooey-border-width, 2px)) outset var(--gooey-button-border-color, var(--gooey-color-surface, #c1c0c1));
-    background-color: var(--gooey-button-bg, var(--gooey-color-surface, #c1c0c1));
+    border: var(--gooey-button-border-width, var(--gooey-border-width)) outset var(--gooey-button-border-color, var(--gooey-color-surface));
+    background-color: var(--gooey-button-bg, var(--gooey-color-surface));
     cursor: pointer;
-    font-family: var(--gooey-button-font-family, var(--gooey-font-family, sans-serif));
-    font-size: var(--gooey-button-font-size, var(--gooey-font-size-sm, 10px));
-    min-width: var(--gooey-button-min-width, var(--gooey-control-min-width, 24px));
-    min-height: var(--gooey-button-min-height, var(--gooey-control-min-height, 24px));
-    color: var(--gooey-button-color, var(--gooey-color-text, #000));
+    font-family: var(--gooey-button-font-family, var(--gooey-font-family));
+    font-size: var(--gooey-button-font-size, var(--gooey-font-size-sm));
+    min-width: var(--gooey-button-min-width, var(--gooey-control-min-width));
+    min-height: var(--gooey-button-min-height, var(--gooey-control-min-height));
+    color: var(--gooey-button-color, var(--gooey-color-text));
     height: 100%;
     width: 100%;
 }
 
 button:hover {
-    background-color: var(--gooey-button-bg-hover, var(--gooey-color-surface-hover, #d4d0c8));
+    background-color: var(--gooey-button-bg-hover, var(--gooey-color-surface-hover));
 }
 
 button:active {
-    border: var(--gooey-button-border-width, var(--gooey-border-width, 2px)) inset var(--gooey-button-border-color, var(--gooey-color-surface, #c1c0c1));
-    background-color: var(--gooey-button-bg-active, var(--gooey-color-surface-active, #c1c0c1));
+    border: var(--gooey-button-border-width, var(--gooey-border-width)) inset var(--gooey-button-border-color, var(--gooey-color-surface));
+    background-color: var(--gooey-button-bg-active, var(--gooey-color-surface-active));
 }
 
 button:focus {
-    border: var(--gooey-button-border-width, var(--gooey-border-width, 2px)) inset var(--gooey-button-focus-color, var(--gooey-color-primary, #010082));
+    border: var(--gooey-button-border-width, var(--gooey-border-width)) inset var(--gooey-button-focus-color, var(--gooey-color-primary));
 }
 
 /* Keyboard-only focus indicator for accessibility */
 button:focus-visible {
-    outline: var(--gooey-focus-width, 2px) var(--gooey-focus-style, solid) var(--gooey-button-focus-ring-color, var(--gooey-color-focus, #005fcc));
+    outline: var(--gooey-focus-width, 2px) var(--gooey-focus-style, solid) var(--gooey-button-focus-ring-color, var(--gooey-color-focus));
     outline-offset: var(--gooey-focus-offset, 2px);
 }
 
@@ -49,20 +49,20 @@ button:focus-visible {
 :host([disabled]) button {
     opacity: var(--gooey-opacity-disabled, 0.5);
     cursor: not-allowed;
-    background-color: var(--gooey-button-bg, var(--gooey-color-surface, #c1c0c1));
-    color: var(--gooey-button-color-disabled, var(--gooey-color-text-disabled, #808080));
-    border: var(--gooey-button-border-width, var(--gooey-border-width, 2px)) outset var(--gooey-button-border-color, var(--gooey-color-surface, #c1c0c1));
+    background-color: var(--gooey-button-bg, var(--gooey-color-surface));
+    color: var(--gooey-button-color-disabled, var(--gooey-color-text-disabled));
+    border: var(--gooey-button-border-width, var(--gooey-border-width)) outset var(--gooey-button-border-color, var(--gooey-color-surface));
 }
 
 :host([disabled]) button:hover,
 :host([disabled]) button:active {
-    background-color: var(--gooey-button-bg, var(--gooey-color-surface, #c1c0c1));
-    border: var(--gooey-button-border-width, var(--gooey-border-width, 2px)) outset var(--gooey-button-border-color, var(--gooey-color-surface, #c1c0c1));
+    background-color: var(--gooey-button-bg, var(--gooey-color-surface));
+    border: var(--gooey-button-border-width, var(--gooey-border-width)) outset var(--gooey-button-border-color, var(--gooey-color-surface));
 }
 
 /* Icon and text styling */
 button img {
-    margin-right: var(--gooey-button-icon-gap, var(--gooey-spacing-sm, 4px));
+    margin-right: var(--gooey-button-icon-gap, var(--gooey-spacing-sm));
     display: block;
 }
 

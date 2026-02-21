@@ -15,7 +15,7 @@
 .tab-strip {
     display: flex;
     flex-direction: row;
-    background-color: var(--gooey-tabpanel-strip-bg, var(--gooey-color-surface, #c1c0c1));
+    background-color: var(--gooey-tabpanel-strip-bg, var(--gooey-color-surface));
     overflow-x: auto;
     flex-shrink: 0;
 }
@@ -23,7 +23,7 @@
 :host(.vertical) .tab-strip {
     flex-direction: column;
     border-bottom: none;
-    border-right: 1px solid var(--gooey-tabpanel-strip-border-color, var(--gooey-color-border, #808080));
+    border-right: 1px solid var(--gooey-tabpanel-strip-border-color, var(--gooey-color-border));
     overflow-x: visible;
     overflow-y: auto;
     width: 150px;
@@ -33,8 +33,8 @@
     flex: 1;
     overflow: hidden;
     position: relative;
-    background-color: var(--gooey-tabpanel-content-bg, var(--gooey-color-surface, #c1c0c1));
-    border: 1px solid var(--gooey-tabpanel-content-border-color, var(--gooey-color-text, black));
+    background-color: var(--gooey-tabpanel-content-bg, var(--gooey-color-surface));
+    border: 1px solid var(--gooey-tabpanel-content-border-color, var(--gooey-color-text));
     display: flex;
     min-height: 0;
 }
@@ -43,14 +43,14 @@
     display: flex;
     align-items: center;
     padding: 6px 12px;
-    border: 1px solid var(--gooey-tabpanel-header-border-color, var(--gooey-color-border, #808080));
+    border: 1px solid var(--gooey-tabpanel-header-border-color, var(--gooey-color-border));
     border-bottom: none;
     border-radius: 6px 6px 0 0;
     background-color: var(--gooey-tabpanel-header-bg, #b8b5b2);
     cursor: pointer;
     user-select: none;
     font-size: var(--gooey-tabpanel-header-font-size, 11px);
-    font-family: var(--gooey-tabpanel-header-font-family, var(--gooey-font-family, sans-serif));
+    font-family: var(--gooey-tabpanel-header-font-family, var(--gooey-font-family));
     margin-right: -1px;
     position: relative;
     min-width: 0;
@@ -61,7 +61,7 @@
 
 :host(.vertical) .tab-header {
     border-right: none;
-    border-bottom: 1px solid var(--gooey-tabpanel-header-border-color, var(--gooey-color-border, #808080));
+    border-bottom: 1px solid var(--gooey-tabpanel-header-border-color, var(--gooey-color-border));
     margin-right: 0;
     margin-bottom: -1px;
     justify-content: flex-start;
@@ -69,34 +69,34 @@
 }
 
 .tab-header:hover {
-    background-color: var(--gooey-tabpanel-header-bg-hover, var(--gooey-color-surface-hover, #d4d0c8));
-    color: var(--gooey-tabpanel-header-color-hover, var(--gooey-color-text-muted, #333333));
+    background-color: var(--gooey-tabpanel-header-bg-hover, var(--gooey-color-surface-hover));
+    color: var(--gooey-tabpanel-header-color-hover, var(--gooey-color-text-muted));
 }
 
 .tab-header.active {
-    background-color: var(--gooey-tabpanel-header-active-bg, var(--gooey-color-surface-raised, #ffffff));
-    border-bottom: 1px solid var(--gooey-tabpanel-header-active-bg, var(--gooey-color-surface-raised, #ffffff));
+    background-color: var(--gooey-tabpanel-header-active-bg, var(--gooey-color-surface-raised));
+    border-bottom: 1px solid var(--gooey-tabpanel-header-active-bg, var(--gooey-color-surface-raised));
     border-color: var(--gooey-tabpanel-header-active-border-color, #4a90e2);
     border-width: 2px;
-    color: var(--gooey-tabpanel-header-active-color, var(--gooey-color-text, #000000));
+    color: var(--gooey-tabpanel-header-active-color, var(--gooey-color-text));
     font-weight: 600;
     z-index: 1;
     box-shadow: var(--gooey-tabpanel-header-active-shadow, 0 -2px 4px rgba(74, 144, 226, 0.3));
 }
 
 :host(.vertical) .tab-header.active {
-    background-color: var(--gooey-tabpanel-header-active-bg, var(--gooey-color-surface-raised, #ffffff));
-    border-bottom: 1px solid var(--gooey-tabpanel-header-border-color, var(--gooey-color-border, #808080));
-    border-right: 1px solid var(--gooey-tabpanel-header-active-bg, var(--gooey-color-surface-raised, #ffffff));
+    background-color: var(--gooey-tabpanel-header-active-bg, var(--gooey-color-surface-raised));
+    border-bottom: 1px solid var(--gooey-tabpanel-header-border-color, var(--gooey-color-border));
+    border-right: 1px solid var(--gooey-tabpanel-header-active-bg, var(--gooey-color-surface-raised));
     border-color: var(--gooey-tabpanel-header-active-border-color, #4a90e2);
     border-width: 2px;
-    color: var(--gooey-tabpanel-header-active-color, var(--gooey-color-text, #000000));
+    color: var(--gooey-tabpanel-header-active-color, var(--gooey-color-text));
     font-weight: 600;
     box-shadow: -2px 0 4px rgba(74, 144, 226, 0.3);
 }
 
 .tab-header:focus {
-    outline: 2px solid var(--gooey-tabpanel-header-focus-color, var(--gooey-color-primary, #010082));
+    outline: 2px solid var(--gooey-tabpanel-header-focus-color, var(--gooey-color-primary));
     outline-offset: -2px;
 }
 
@@ -130,12 +130,12 @@
 }
 
 .tab-close-button:hover {
-    background-color: var(--gooey-tabpanel-close-bg-hover, var(--gooey-color-error, #e81123));
+    background-color: var(--gooey-tabpanel-close-bg-hover, var(--gooey-color-error));
     color: var(--gooey-tabpanel-close-color-hover, white);
 }
 
 .tab-close-button:focus {
-    outline: 1px solid var(--gooey-tabpanel-header-focus-color, var(--gooey-color-primary, #010082));
+    outline: 1px solid var(--gooey-tabpanel-header-focus-color, var(--gooey-color-primary));
     outline-offset: 1px;
 }
 
@@ -149,17 +149,17 @@
 }
 
 .tab-header.drag-over-left {
-    border-left: 3px solid var(--gooey-tabpanel-drag-indicator-color, var(--gooey-color-primary, #010082));
+    border-left: 3px solid var(--gooey-tabpanel-drag-indicator-color, var(--gooey-color-primary));
 }
 
 .tab-header.drag-over-right {
-    border-right: 3px solid var(--gooey-tabpanel-drag-indicator-color, var(--gooey-color-primary, #010082));
+    border-right: 3px solid var(--gooey-tabpanel-drag-indicator-color, var(--gooey-color-primary));
 }
 
 .tab-header.drag-over-top {
-    border-top: 3px solid var(--gooey-tabpanel-drag-indicator-color, var(--gooey-color-primary, #010082));
+    border-top: 3px solid var(--gooey-tabpanel-drag-indicator-color, var(--gooey-color-primary));
 }
 
 .tab-header.drag-over-bottom {
-    border-bottom: 3px solid var(--gooey-tabpanel-drag-indicator-color, var(--gooey-color-primary, #010082));
+    border-bottom: 3px solid var(--gooey-tabpanel-drag-indicator-color, var(--gooey-color-primary));
 }
