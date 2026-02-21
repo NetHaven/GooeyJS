@@ -19,12 +19,17 @@ export default class GooeyJS {
 
     /**
      * Promise that resolves when all components are registered and ready.
-     * Rejects if initialization fails.
+     * Rejects if any component fails to load, with error.failures containing details.
      * @type {Promise<GooeyJS>}
      * @example
-     * await GooeyJS.ready;
-     * // or
-     * GooeyJS.ready.then(() => { ... }).catch(err => { ... });
+     * try {
+     *     const instance = await GooeyJS.ready;
+     *     // All components loaded successfully
+     *     console.log('Failures:', instance.loadFailures); // []
+     * } catch (error) {
+     *     // One or more components failed to load
+     *     console.error('Failed components:', error.failures);
+     * }
      */
     static get ready() {
         if (!GooeyJS._readyPromise) {
@@ -64,6 +69,9 @@ export default class GooeyJS {
             ]
         }]
 
+        // Track component load failures
+        this.loadFailures = [];
+
         // Initialize logging system before component loading
         Logger.configure({
             level: "info",
@@ -75,7 +83,7 @@ export default class GooeyJS {
 
         // Start async component registration and track completion
         this.createElements().then(() => {
-            // Resolve the ready promise
+            // Resolve the ready promise with instance (all components loaded successfully)
             if (GooeyJS._readyResolve) {
                 GooeyJS._readyResolve(this);
                 GooeyJS._readyResolve = null;
@@ -83,16 +91,26 @@ export default class GooeyJS {
             }
             // Dispatch ready event for event-based consumers
             document.dispatchEvent(new CustomEvent('gooeyjs-ready', {
-                detail: { instance: this }
+                detail: {
+                    instance: this,
+                    loadFailures: []
+                }
             }));
         }).catch(error => {
-            Logger.fatal(error, { code: "GOOEY_INIT_FAILED" }, "GooeyJS initialization failed");
-            // Reject the ready promise to prevent infinite hang
+            Logger.fatal(error, { code: "GOOEY_INIT_FAILED" }, "GooeyJS initialization failed: %s", error.message);
+            // Reject the ready promise with detailed failure information
             if (GooeyJS._readyReject) {
                 GooeyJS._readyReject(error);
                 GooeyJS._readyResolve = null;
                 GooeyJS._readyReject = null;
             }
+            // Also dispatch error event for event-based error handling
+            document.dispatchEvent(new CustomEvent('gooeyjs-error', {
+                detail: {
+                    error: error,
+                    failures: error.failures || []
+                }
+            }));
         });
 
         linkEl = document.createElement('link');
@@ -175,6 +193,8 @@ export default class GooeyJS {
     }
 
     async createElements() {
+        const failures = [];
+
         for (const component of this.components) {
             // Convert dot-separated package name to folder path (e.g., "gooey.ui.button" -> "gooey/ui/button")
             const pkgPath = component.pkg.replace(/\./g, '/');
@@ -248,9 +268,27 @@ export default class GooeyJS {
 
                     Logger.debug({ code: "COMPONENT_REGISTERED", tagName: meta.fullTagName, module: modulePath }, "Registered %s from %s", meta.fullTagName, modulePath);
                 } catch (error) {
+                    const failureInfo = {
+                        pkg: component.pkg,
+                        name: element.name,
+                        component: `${component.pkg}.${element.name}`,
+                        error: error
+                    };
+                    failures.push(failureInfo);
                     Logger.error(error, { code: "COMPONENT_LOAD_FAILED", pkg: component.pkg, name: element.name }, "Failed to load component %s.%s", component.pkg, element.name);
                 }
             }
+        }
+
+        // Store failures on instance for inspection
+        this.loadFailures = failures;
+
+        // If any components failed to load, reject with detailed error
+        if (failures.length > 0) {
+            const failedComponents = failures.map(f => f.component).join(', ');
+            const error = new Error(`Failed to load ${failures.length} component(s): ${failedComponents}`);
+            error.failures = failures;
+            throw error;
         }
     }
 
