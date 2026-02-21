@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GooeyJS Theme Verification</title>
+    <link rel="stylesheet" href="../styles.css">
+    <script type="module" src="../GooeyJS.js"></script>
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: var(--gooey-color-background, #f5f5f5);
+            color: var(--gooey-color-text, #333);
+        }
+
+        .theme-bar {
+            position: sticky;
+            top: 0;
+            z-index: 9999;
+            background: white;
+            padding: 10px 20px;
+            border-bottom: 2px solid #ccc;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .theme-bar label {
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .theme-bar select {
+            padding: 4px 8px;
+            font-size: 14px;
+        }
+
+        #component-count {
+            color: #666;
+            font-size: 13px;
+        }
+
+        #error-log {
+            color: #cc0000;
+            font-size: 12px;
+            margin-left: auto;
+        }
+
+        .page-content {
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            margin: 0 0 20px 0;
+            font-size: 20px;
+            color: #333;
+        }
+
+        .section {
+            margin-bottom: 30px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 16px;
+        }
+
+        .section h2 {
+            margin: 0 0 12px 0;
+            font-size: 16px;
+            color: #555;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 6px;
+        }
+
+        .component-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .component-box {
+            border: 1px dashed #ccc;
+            padding: 8px;
+            border-radius: 4px;
+            min-width: 150px;
+        }
+
+        .component-box .box-label {
+            font-size: 11px;
+            color: #888;
+            margin-bottom: 4px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Theme Switcher Bar -->
+<div class="theme-bar">
+    <label>Theme:</label>
+    <select id="theme-switcher">
+        <option value="">Base (default)</option>
+        <option value="dark">Dark</option>
+        <option value="janus">Janus (Win 3.1)</option>
+        <option value="classic">Classic (Mac OS 7/8/9)</option>
+    </select>
+    <span id="component-count">(loading...)</span>
+    <span id="error-log"></span>
+</div>
+
+<!-- ========================================= -->
+<!-- Theme Declarations                        -->
+<!-- ========================================= -->
+
+<!-- Dark Theme -->
+<gooey-theme name="dark" tokens="../themes/dark-tokens.css">
+    <gooey-theme-override target="gooeyui-badge" href="../themes/dark-overrides/badge.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-datagrid" href="../themes/dark-overrides/datagrid.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-videoplayer" href="../themes/dark-overrides/videoplayer.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-wafflemenu" href="../themes/dark-overrides/wafflemenu.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-wafflemenuitem" href="../themes/dark-overrides/wafflemenuitem.css"></gooey-theme-override>
+</gooey-theme>
+
+<!-- Janus Theme (Win 3.1) -->
+<gooey-theme name="janus" tokens="../themes/janus-tokens.css">
+    <gooey-theme-override target="gooeyui-accordionpanel" href="../themes/janus-overrides/accordionpanel.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-apppanel" href="../themes/janus-overrides/apppanel.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-badge" href="../themes/janus-overrides/badge.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-button" href="../themes/janus-overrides/button.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-checkbox" href="../themes/janus-overrides/checkbox.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-checkboxmenuitem" href="../themes/janus-overrides/checkboxmenuitem.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-codeblock" href="../themes/janus-overrides/codeblock.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-colorpicker" href="../themes/janus-overrides/colorpicker.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-combobox" href="../themes/janus-overrides/combobox.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-contextmenu" href="../themes/janus-overrides/contextmenu.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-datagrid" href="../themes/janus-overrides/datagrid.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-datepicker" href="../themes/janus-overrides/datepicker.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-dropdownlist" href="../themes/janus-overrides/dropdownlist.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-floatingpane" href="../themes/janus-overrides/floatingpane.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-formpanel" href="../themes/janus-overrides/formpanel.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-groupbox" href="../themes/janus-overrides/groupbox.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-label" href="../themes/janus-overrides/label.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-listbox" href="../themes/janus-overrides/listbox.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-menu" href="../themes/janus-overrides/menu.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-menubar" href="../themes/janus-overrides/menubar.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-menuitem" href="../themes/janus-overrides/menuitem.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-menuitemseparator" href="../themes/janus-overrides/menuitemseparator.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-passwordfield" href="../themes/janus-overrides/passwordfield.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-progressbar" href="../themes/janus-overrides/progressbar.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-radiobutton" href="../themes/janus-overrides/radiobutton.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-richtexteditor" href="../themes/janus-overrides/richtexteditor.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-spinner" href="../themes/janus-overrides/spinner.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-splitpanel" href="../themes/janus-overrides/splitpanel.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-tabpanel" href="../themes/janus-overrides/tabpanel.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-textarea" href="../themes/janus-overrides/textarea.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-textfield" href="../themes/janus-overrides/textfield.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-timepicker" href="../themes/janus-overrides/timepicker.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-togglebutton" href="../themes/janus-overrides/togglebutton.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-togglebuttongroup" href="../themes/janus-overrides/togglebuttongroup.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-toolbar" href="../themes/janus-overrides/toolbar.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-toolbarseparator" href="../themes/janus-overrides/toolbarseparator.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-tree" href="../themes/janus-overrides/tree.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-treeitem" href="../themes/janus-overrides/treeitem.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-wafflemenu" href="../themes/janus-overrides/wafflemenu.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-wafflemenuitem" href="../themes/janus-overrides/wafflemenuitem.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-window" href="../themes/janus-overrides/window.css"></gooey-theme-override>
+</gooey-theme>
+
+<!-- Classic Theme (Mac OS 7/8/9) -->
+<gooey-theme name="classic" tokens="../themes/classic-tokens.css"
+             fonts="../themes/classic-fonts"
+             font-faces='[{"family":"ChicagoFLF","file":"ChicagoFLF.woff2"},{"family":"Geneva","file":"Geneva.woff2"},{"family":"Monaco","file":"Monaco.woff2"}]'>
+    <gooey-theme-override target="gooeyui-accordionpanel" href="../themes/classic-overrides/accordionpanel.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-apppanel" href="../themes/classic-overrides/apppanel.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-badge" href="../themes/classic-overrides/badge.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-breadcrumb" href="../themes/classic-overrides/breadcrumb.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-breadcrumbitem" href="../themes/classic-overrides/breadcrumbitem.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-button" href="../themes/classic-overrides/button.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-checkbox" href="../themes/classic-overrides/checkbox.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-checkboxmenuitem" href="../themes/classic-overrides/checkboxmenuitem.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-codeblock" href="../themes/classic-overrides/codeblock.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-colorpicker" href="../themes/classic-overrides/colorpicker.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-combobox" href="../themes/classic-overrides/combobox.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-contextmenu" href="../themes/classic-overrides/contextmenu.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-datagrid" href="../themes/classic-overrides/datagrid.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-datagridcolumn" href="../themes/classic-overrides/datagridcolumn.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-datepicker" href="../themes/classic-overrides/datepicker.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-dropdownlist" href="../themes/classic-overrides/dropdownlist.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-floatingpane" href="../themes/classic-overrides/floatingpane.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-formpanel" href="../themes/classic-overrides/formpanel.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-groupbox" href="../themes/classic-overrides/groupbox.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-hamburgermenu" href="../themes/classic-overrides/hamburgermenu.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-label" href="../themes/classic-overrides/label.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-listbox" href="../themes/classic-overrides/listbox.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-menu" href="../themes/classic-overrides/menu.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-menubar" href="../themes/classic-overrides/menubar.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-menuitem" href="../themes/classic-overrides/menuitem.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-menuitemseparator" href="../themes/classic-overrides/menuitemseparator.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-passwordfield" href="../themes/classic-overrides/passwordfield.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-progressbar" href="../themes/classic-overrides/progressbar.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-radiobutton" href="../themes/classic-overrides/radiobutton.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-richtexteditor" href="../themes/classic-overrides/richtexteditor.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-spinner" href="../themes/classic-overrides/spinner.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-splitpanel" href="../themes/classic-overrides/splitpanel.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-tab" href="../themes/classic-overrides/tab.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-tabpanel" href="../themes/classic-overrides/tabpanel.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-textarea" href="../themes/classic-overrides/textarea.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-textfield" href="../themes/classic-overrides/textfield.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-timepicker" href="../themes/classic-overrides/timepicker.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-toast" href="../themes/classic-overrides/toast.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-togglebutton" href="../themes/classic-overrides/togglebutton.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-togglebuttongroup" href="../themes/classic-overrides/togglebuttongroup.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-toolbar" href="../themes/classic-overrides/toolbar.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-toolbarseparator" href="../themes/classic-overrides/toolbarseparator.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-tree" href="../themes/classic-overrides/tree.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-treeitem" href="../themes/classic-overrides/treeitem.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-videoplayer" href="../themes/classic-overrides/videoplayer.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-wafflemenu" href="../themes/classic-overrides/wafflemenu.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-wafflemenuitem" href="../themes/classic-overrides/wafflemenuitem.css"></gooey-theme-override>
+    <gooey-theme-override target="gooeyui-window" href="../themes/classic-overrides/window.css"></gooey-theme-override>
+</gooey-theme>
+
+<!-- ========================================= -->
+<!-- Dynamic Component Loading                 -->
+<!-- ========================================= -->
+
+<!-- Data components -->
+<gooey-component href="gooey/data/Store"></gooey-component>
+<gooey-component href="gooey/data/Data"></gooey-component>
+
+<!-- Buttons -->
+<gooey-component href="gooey/ui/button/Button"></gooey-component>
+<gooey-component href="gooey/ui/button/ToggleButton"></gooey-component>
+<gooey-component href="gooey/ui/button/ToggleButtonGroup"></gooey-component>
+
+<!-- Form - Text -->
+<gooey-component href="gooey/ui/form/text/TextField"></gooey-component>
+<gooey-component href="gooey/ui/form/text/PasswordField"></gooey-component>
+<gooey-component href="gooey/ui/form/text/TextArea"></gooey-component>
+<gooey-component href="gooey/ui/form/text/RichTextEditor"></gooey-component>
+
+<!-- Form - Selection -->
+<gooey-component href="gooey/ui/form/Checkbox"></gooey-component>
+<gooey-component href="gooey/ui/form/RadioButton"></gooey-component>
+<gooey-component href="gooey/ui/form/RadioButtonGroup"></gooey-component>
+<gooey-component href="gooey/ui/form/list/ComboBox"></gooey-component>
+<gooey-component href="gooey/ui/form/list/DropDownList"></gooey-component>
+<gooey-component href="gooey/ui/form/list/ListBox"></gooey-component>
+
+<!-- Form - Date/Number -->
+<gooey-component href="gooey/ui/form/DatePicker"></gooey-component>
+<gooey-component href="gooey/ui/form/TimePicker"></gooey-component>
+<gooey-component href="gooey/ui/form/Spinner"></gooey-component>
+
+<!-- Display -->
+<gooey-component href="gooey/ui/Label"></gooey-component>
+<gooey-component href="gooey/ui/Badge"></gooey-component>
+<gooey-component href="gooey/ui/ProgressBar"></gooey-component>
+<gooey-component href="gooey/ui/CodeBlock"></gooey-component>
+<gooey-component href="gooey/ui/ColorPicker"></gooey-component>
+<gooey-component href="gooey/ui/notification/Toast"></gooey-component>
+<gooey-component href="gooey/ui/media/VideoPlayer"></gooey-component>
+
+<!-- Menus -->
+<gooey-component href="gooey/ui/menu/Menu"></gooey-component>
+<gooey-component href="gooey/ui/menu/MenuItem"></gooey-component>
+<gooey-component href="gooey/ui/menu/MenuItemSeparator"></gooey-component>
+<gooey-component href="gooey/ui/menu/Menubar"></gooey-component>
+<gooey-component href="gooey/ui/menu/ContextMenu"></gooey-component>
+<gooey-component href="gooey/ui/menu/HamburgerMenu"></gooey-component>
+<gooey-component href="gooey/ui/menu/CheckboxMenuItem"></gooey-component>
+<gooey-component href="gooey/ui/menu/WaffleMenu"></gooey-component>
+<gooey-component href="gooey/ui/menu/WaffleMenuItem"></gooey-component>
+
+<!-- Panels -->
+<gooey-component href="gooey/ui/panel/Panel"></gooey-component>
+<gooey-component href="gooey/ui/panel/AppPanel"></gooey-component>
+<gooey-component href="gooey/ui/panel/FormPanel"></gooey-component>
+<gooey-component href="gooey/ui/panel/GroupBox"></gooey-component>
+<gooey-component href="gooey/ui/panel/AccordionPanel"></gooey-component>
+<gooey-component href="gooey/ui/panel/SplitPanel"></gooey-component>
+<gooey-component href="gooey/ui/panel/TabPanel"></gooey-component>
+<gooey-component href="gooey/ui/panel/Tab"></gooey-component>
+
+<!-- Navigation -->
+<gooey-component href="gooey/ui/Tree"></gooey-component>
+<gooey-component href="gooey/ui/TreeItem"></gooey-component>
+<gooey-component href="gooey/ui/navigation/Breadcrumb"></gooey-component>
+<gooey-component href="gooey/ui/navigation/BreadcrumbItem"></gooey-component>
+
+<!-- Data Grid -->
+<gooey-component href="gooey/ui/data/DataGrid"></gooey-component>
+<gooey-component href="gooey/ui/data/DataGridColumn"></gooey-component>
+
+<!-- Layout -->
+<gooey-component href="gooey/ui/window/Window"></gooey-component>
+<gooey-component href="gooey/ui/window/FloatingPane"></gooey-component>
+<gooey-component href="gooey/ui/toolbar/Toolbar"></gooey-component>
+<gooey-component href="gooey/ui/toolbar/ToolbarSeparator"></gooey-component>
+
+<!-- ========================================= -->
+<!-- Page Content                              -->
+<!-- ========================================= -->
+<div class="page-content">
+    <h1>GooeyJS Theme Verification - All Visual Components</h1>
+
+    <!-- ===== BUTTONS ===== -->
+    <div class="section">
+        <h2>Buttons</h2>
+        <div class="component-row">
+            <div class="component-box">
+                <div class="box-label">Button (normal)</div>
+                <gooeyui-button text="Click Me"></gooeyui-button>
+            </div>
+            <div class="component-box">
+                <div class="box-label">Button (with icon)</div>
+                <gooeyui-button text="Save" icon="save"></gooeyui-button>
+            </div>
+            <div class="component-box">
+                <div class="box-label">Button (disabled)</div>
+                <gooeyui-button text="Disabled" disabled></gooeyui-button>
+            </div>
+        </div>
+        <div class="component-row">
+            <div class="component-box">
+                <div class="box-label">ToggleButton (normal)</div>
+                <gooeyui-togglebutton text="Toggle"></gooeyui-togglebutton>
+            </div>
+            <div class="component-box">
+                <div class="box-label">ToggleButton (pressed)</div>
+                <gooeyui-togglebutton text="Pressed" pressed></gooeyui-togglebutton>
+            </div>
+            <div class="component-box">
+                <div class="box-label">ToggleButton (disabled)</div>
+                <gooeyui-togglebutton text="Disabled" disabled></gooeyui-togglebutton>
+            </div>
+        </div>
+        <div class="component-row">
+            <div class="component-box">
+                <div class="box-label">ToggleButtonGroup</div>
+                <gooeyui-togglebuttongroup>
+                    <gooeyui-togglebutton text="One"></gooeyui-togglebutton>
+                    <gooeyui-togglebutton text="Two" pressed></gooeyui-togglebutton>
+                    <gooeyui-togglebutton text="Three"></gooeyui-togglebutton>
+                </gooeyui-togglebuttongroup>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== FORM - TEXT ===== -->
+    <div class="section">
+        <h2>Form - Text Inputs</h2>
+        <div class="component-row">
+            <div class="component-box">
+                <div class="box-label">TextField</div>
+                <gooeyui-textfield placeholder="Enter text..."></gooeyui-textfield>
+            </div>
+            <div class="component-box">
+                <div class="box-label">TextField (disabled)</div>
+                <gooeyui-textfield placeholder="Disabled" disabled></gooeyui-textfield>
+            </div>
+        </div>
+        <div class="component-row">
+            <div class="component-box">
+                <div class="box-label">PasswordField</div>
+                <gooeyui-passwordfield placeholder="Password..."></gooeyui-passwordfield>
+            </div>
+            <div class="component-box">
+                <div class="box-label">PasswordField (disabled)</div>
+                <gooeyui-passwordfield placeholder="Disabled" disabled></gooeyui-passwordfield>
+            </div>
+        </div>
+        <div class="component-row">
+            <div class="component-box">
+                <div class="box-label">TextArea</div>
+                <gooeyui-textarea placeholder="Multi-line text..." rows="3"></gooeyui-textarea>
+            </div>
+            <div class="component-box">
+                <div class="box-label">TextArea (disabled)</div>
+                <gooeyui-textarea placeholder="Disabled" rows="3" disabled></gooeyui-textarea>
+            </div>
+        </div>
+        <div class="component-row">
+            <div class="component-box" style="min-width: 400px;">
+                <div class="box-label">RichTextEditor</div>
+                <gooeyui-richtexteditor height="120"></gooeyui-richtexteditor>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== FORM - SELECTION ===== -->
+    <div class="section">
+        <h2>Form - Selection Controls</h2>
+        <div class="component-row">
+            <div class="component-box">
+                <div class="box-label">Checkbox (unchecked)</div>
+                <gooeyui-checkbox text="Option A"></gooeyui-checkbox>
+            </div>
+            <div class="component-box">
+                <div class="box-label">Checkbox (checked)</div>
+                <gooeyui-checkbox text="Option B" checked></gooeyui-checkbox>
+            </div>
+            <div class="component-box">
+                <div class="box-label">Checkbox (disabled)</div>
+                <gooeyui-checkbox text="Disabled" disabled></gooeyui-checkbox>
+            </div>
+        </div>
+        <div class="component-row">
+            <div class="component-box">
+                <div class="box-label">RadioButton</div>
+                <gooeyui-radiobuttongroup>
+                    <gooeyui-radiobutton text="Choice 1" name="demo-radio" checked></gooeyui-radiobutton>
+                    <gooeyui-radiobutton text="Choice 2" name="demo-radio"></gooeyui-radiobutton>
+                    <gooeyui-radiobutton text="Choice 3" name="demo-radio" disabled></gooeyui-radiobutton>
+                </gooeyui-radiobuttongroup>
+            </div>
+        </div>
+        <div class="component-row">
+            <div class="component-box">
+                <div class="box-label">ComboBox</div>
+                <gooeyui-combobox placeholder="Type or select...">
+                    <option value="apple">Apple</option>
+                    <option value="banana">Banana</option>
+                    <option value="cherry">Cherry</option>
+                </gooeyui-combobox>
+            </div>
+            <div class="component-box">
+                <div class="box-label">DropDownList</div>
+                <gooeyui-dropdownlist>
+                    <option value="">-- Select --</option>
+                    <option value="red">Red</option>
+                    <option value="green">Green</option>
+                    <option value="blue">Blue</option>
+                </gooeyui-dropdownlist>
+            </div>
+            <div class="component-box">
+                <div class="box-label">ListBox</div>
+                <gooeyui-listbox>
+                    <option value="item1">Item One</option>
+                    <option value="item2">Item Two</option>
+                    <option value="item3">Item Three</option>
+                    <option value="item4">Item Four</option>
+                </gooeyui-listbox>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== FORM - DATE/NUMBER ===== -->
+    <div class="section">
+        <h2>Form - Date/Number</h2>
+        <div class="component-row">
+            <div class="component-box">
+                <div class="box-label">DatePicker</div>
+                <gooeyui-datepicker></gooeyui-datepicker>
+            </div>
+            <div class="component-box">
+                <div class="box-label">DatePicker (disabled)</div>
+                <gooeyui-datepicker disabled></gooeyui-datepicker>
+            </div>
+        </div>
+        <div class="component-row">
+            <div class="component-box">
+                <div class="box-label">TimePicker</div>
+                <gooeyui-timepicker></gooeyui-timepicker>
+            </div>
+            <div class="component-box">
+                <div class="box-label">TimePicker (disabled)</div>
+                <gooeyui-timepicker disabled></gooeyui-timepicker>
+            </div>
+        </div>
+        <div class="component-row">
+            <div class="component-box">
+                <div class="box-label">Spinner</div>
+                <gooeyui-spinner></gooeyui-spinner>
+            </div>
+            <div class="component-box">
+                <div class="box-label">Spinner (disabled)</div>
+                <gooeyui-spinner disabled></gooeyui-spinner>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== DISPLAY ===== -->
+    <div class="section">
+        <h2>Display Components</h2>
+        <div class="component-row">
+            <div class="component-box">
+                <div class="box-label">Label</div>
+                <gooeyui-label text="Hello World"></gooeyui-label>
+            </div>
+            <div class="component-box">
+                <div class="box-label">Label (with icon)</div>
+                <gooeyui-label text="With Icon" icon="info"></gooeyui-label>
+            </div>
+        </div>
+        <div class="component-row">
+            <div class="component-box">
+                <div class="box-label">Badge (default)</div>
+                <gooeyui-badge text="Default"></gooeyui-badge>
+            </div>
+            <div class="component-box">
+                <div class="box-label">Badge (primary)</div>
+                <gooeyui-badge text="Primary" variant="primary"></gooeyui-badge>
+            </div>
+            <div class="component-box">
+                <div class="box-label">Badge (success)</div>
+                <gooeyui-badge text="Success" variant="success"></gooeyui-badge>
+            </div>
+            <div class="component-box">
+                <div class="box-label">Badge (warning)</div>
+                <gooeyui-badge text="Warning" variant="warning"></gooeyui-badge>
+            </div>
+            <div class="component-box">
+                <div class="box-label">Badge (danger)</div>
+                <gooeyui-badge text="Danger" variant="danger"></gooeyui-badge>
+            </div>
+        </div>
+        <div class="component-row">
+            <div class="component-box">
+                <div class="box-label">Badge (outline)</div>
+                <gooeyui-badge text="Outline" mode="outline"></gooeyui-badge>
+            </div>
+            <div class="component-box">
+                <div class="box-label">Badge (dot)</div>
+                <gooeyui-badge dot variant="danger"></gooeyui-badge>
+            </div>
+            <div class="component-box">
+                <div class="box-label">Badge (pill)</div>
+                <gooeyui-badge text="42" pill variant="primary"></gooeyui-badge>
+            </div>
+        </div>
+        <div class="component-row">
+            <div class="component-box" style="min-width: 300px;">
+                <div class="box-label">ProgressBar</div>
+                <gooeyui-progressbar value="65"></gooeyui-progressbar>
+            </div>
+            <div class="component-box" style="min-width: 300px;">
+                <div class="box-label">ProgressBar (disabled)</div>
+                <gooeyui-progressbar value="40" disabled></gooeyui-progressbar>
+            </div>
+        </div>
+        <div class="component-row">
+            <div class="component-box" style="min-width: 500px;">
+                <div class="box-label">CodeBlock</div>
+                <gooeyui-codeblock language="javascript">function hello() {
+    const message = "Hello, World!";
+    console.log(message);
+    return true;
+}</gooeyui-codeblock>
+            </div>
+        </div>
+        <div class="component-row">
+            <div class="component-box">
+                <div class="box-label">ColorPicker</div>
+                <gooeyui-colorpicker></gooeyui-colorpicker>
+            </div>
+        </div>
+        <div class="component-row">
+            <div class="component-box">
+                <div class="box-label">Toast (click to show)</div>
+                <gooeyui-button text="Show Info Toast" id="toast-info-btn"></gooeyui-button>
+                <gooeyui-button text="Show Success Toast" id="toast-success-btn"></gooeyui-button>
+                <gooeyui-button text="Show Warning Toast" id="toast-warning-btn"></gooeyui-button>
+                <gooeyui-button text="Show Error Toast" id="toast-error-btn"></gooeyui-button>
+            </div>
+        </div>
+        <div class="component-row">
+            <div class="component-box" style="min-width: 400px;">
+                <div class="box-label">VideoPlayer</div>
+                <gooeyui-videoplayer width="380" height="220"></gooeyui-videoplayer>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MENUS ===== -->
+    <div class="section">
+        <h2>Menus</h2>
+        <div class="component-row">
+            <div class="component-box" style="min-width: 200px;">
+                <div class="box-label">Menubar</div>
+                <gooeyui-menubar>
+                    <gooeyui-menu text="File">
+                        <gooeyui-menuitem text="New"></gooeyui-menuitem>
+                        <gooeyui-menuitem text="Open"></gooeyui-menuitem>
+                        <gooeyui-menuitemseparator></gooeyui-menuitemseparator>
+                        <gooeyui-menuitem text="Save"></gooeyui-menuitem>
+                        <gooeyui-menuitem text="Save As..."></gooeyui-menuitem>
+                        <gooeyui-menuitemseparator></gooeyui-menuitemseparator>
+                        <gooeyui-menuitem text="Exit"></gooeyui-menuitem>
+                    </gooeyui-menu>
+                    <gooeyui-menu text="Edit">
+                        <gooeyui-menuitem text="Undo"></gooeyui-menuitem>
+                        <gooeyui-menuitem text="Redo"></gooeyui-menuitem>
+                        <gooeyui-menuitemseparator></gooeyui-menuitemseparator>
+                        <gooeyui-menuitem text="Cut"></gooeyui-menuitem>
+                        <gooeyui-menuitem text="Copy"></gooeyui-menuitem>
+                        <gooeyui-menuitem text="Paste"></gooeyui-menuitem>
+                    </gooeyui-menu>
+                    <gooeyui-menu text="View">
+                        <gooeyui-checkboxmenuitem text="Sidebar" checked></gooeyui-checkboxmenuitem>
+                        <gooeyui-checkboxmenuitem text="Statusbar"></gooeyui-checkboxmenuitem>
+                        <gooeyui-menuitemseparator></gooeyui-menuitemseparator>
+                        <gooeyui-menuitem text="Full Screen"></gooeyui-menuitem>
+                    </gooeyui-menu>
+                </gooeyui-menubar>
+            </div>
+        </div>
+        <div class="component-row">
+            <div class="component-box">
+                <div class="box-label">HamburgerMenu</div>
+                <gooeyui-hamburgermenu>
+                    <gooeyui-menuitem text="Home"></gooeyui-menuitem>
+                    <gooeyui-menuitem text="Settings"></gooeyui-menuitem>
+                    <gooeyui-menuitem text="About"></gooeyui-menuitem>
+                </gooeyui-hamburgermenu>
+            </div>
+            <div class="component-box">
+                <div class="box-label">WaffleMenu</div>
+                <gooeyui-wafflemenu>
+                    <gooeyui-wafflemenuitem text="Mail" icon="mail"></gooeyui-wafflemenuitem>
+                    <gooeyui-wafflemenuitem text="Calendar" icon="calendar"></gooeyui-wafflemenuitem>
+                    <gooeyui-wafflemenuitem text="People" icon="people"></gooeyui-wafflemenuitem>
+                    <gooeyui-wafflemenuitem text="Tasks" icon="tasks"></gooeyui-wafflemenuitem>
+                </gooeyui-wafflemenu>
+            </div>
+        </div>
+        <div class="component-row">
+            <div class="component-box">
+                <div class="box-label">ContextMenu (right-click on this box)</div>
+                <div id="context-target" style="width: 200px; height: 80px; background: #eee; display: flex; align-items: center; justify-content: center; border: 1px solid #ccc;">
+                    Right-click here
+                </div>
+                <gooeyui-contextmenu target="context-target">
+                    <gooeyui-menuitem text="Copy"></gooeyui-menuitem>
+                    <gooeyui-menuitem text="Paste"></gooeyui-menuitem>
+                    <gooeyui-menuitemseparator></gooeyui-menuitemseparator>
+                    <gooeyui-menuitem text="Delete"></gooeyui-menuitem>
+                </gooeyui-contextmenu>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== PANELS ===== -->
+    <div class="section">
+        <h2>Panels</h2>
+        <div class="component-row">
+            <div class="component-box" style="min-width: 250px;">
+                <div class="box-label">Panel</div>
+                <gooeyui-panel height="80">
+                    <gooeyui-label text="Panel content"></gooeyui-label>
+                </gooeyui-panel>
+            </div>
+            <div class="component-box" style="min-width: 250px;">
+                <div class="box-label">AppPanel</div>
+                <gooeyui-apppanel text="App Panel Title" height="80">
+                    <gooeyui-label text="AppPanel content"></gooeyui-label>
+                </gooeyui-apppanel>
+            </div>
+        </div>
+        <div class="component-row">
+            <div class="component-box" style="min-width: 300px;">
+                <div class="box-label">FormPanel</div>
+                <gooeyui-formpanel text="User Details">
+                    <gooeyui-textfield placeholder="Name"></gooeyui-textfield>
+                    <gooeyui-textfield placeholder="Email"></gooeyui-textfield>
+                </gooeyui-formpanel>
+            </div>
+            <div class="component-box" style="min-width: 250px;">
+                <div class="box-label">GroupBox</div>
+                <gooeyui-groupbox text="Settings">
+                    <gooeyui-checkbox text="Enable feature A"></gooeyui-checkbox>
+                    <gooeyui-checkbox text="Enable feature B" checked></gooeyui-checkbox>
+                </gooeyui-groupbox>
+            </div>
+        </div>
+        <div class="component-row">
+            <div class="component-box" style="min-width: 400px;">
+                <div class="box-label">AccordionPanel</div>
+                <gooeyui-accordionpanel>
+                    <gooeyui-panel text="Section 1">
+                        <gooeyui-label text="Content of section 1"></gooeyui-label>
+                    </gooeyui-panel>
+                    <gooeyui-panel text="Section 2">
+                        <gooeyui-label text="Content of section 2"></gooeyui-label>
+                    </gooeyui-panel>
+                    <gooeyui-panel text="Section 3">
+                        <gooeyui-label text="Content of section 3"></gooeyui-label>
+                    </gooeyui-panel>
+                </gooeyui-accordionpanel>
+            </div>
+        </div>
+        <div class="component-row">
+            <div class="component-box" style="min-width: 500px;">
+                <div class="box-label">SplitPanel</div>
+                <gooeyui-splitpanel height="120">
+                    <gooeyui-panel text="Left">
+                        <gooeyui-label text="Left pane content"></gooeyui-label>
+                    </gooeyui-panel>
+                    <gooeyui-panel text="Right">
+                        <gooeyui-label text="Right pane content"></gooeyui-label>
+                    </gooeyui-panel>
+                </gooeyui-splitpanel>
+            </div>
+        </div>
+        <div class="component-row">
+            <div class="component-box" style="min-width: 400px;">
+                <div class="box-label">TabPanel</div>
+                <gooeyui-tabpanel height="150">
+                    <gooeyui-tab text="Tab 1">
+                        <gooeyui-label text="Content of Tab 1"></gooeyui-label>
+                    </gooeyui-tab>
+                    <gooeyui-tab text="Tab 2">
+                        <gooeyui-label text="Content of Tab 2"></gooeyui-label>
+                    </gooeyui-tab>
+                    <gooeyui-tab text="Tab 3">
+                        <gooeyui-label text="Content of Tab 3"></gooeyui-label>
+                    </gooeyui-tab>
+                </gooeyui-tabpanel>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== NAVIGATION ===== -->
+    <div class="section">
+        <h2>Navigation</h2>
+        <div class="component-row">
+            <div class="component-box" style="min-width: 300px;">
+                <div class="box-label">Tree</div>
+                <gooeyui-tree>
+                    <gooeyui-treeitem text="Documents">
+                        <gooeyui-treeitem text="Work">
+                            <gooeyui-treeitem text="Report.doc"></gooeyui-treeitem>
+                            <gooeyui-treeitem text="Budget.xlsx"></gooeyui-treeitem>
+                        </gooeyui-treeitem>
+                        <gooeyui-treeitem text="Personal">
+                            <gooeyui-treeitem text="Photos"></gooeyui-treeitem>
+                        </gooeyui-treeitem>
+                    </gooeyui-treeitem>
+                    <gooeyui-treeitem text="Downloads">
+                        <gooeyui-treeitem text="file.zip"></gooeyui-treeitem>
+                    </gooeyui-treeitem>
+                </gooeyui-tree>
+            </div>
+        </div>
+        <div class="component-row">
+            <div class="component-box" style="min-width: 400px;">
+                <div class="box-label">Breadcrumb</div>
+                <gooeyui-breadcrumb>
+                    <gooeyui-breadcrumbitem text="Home" href="#"></gooeyui-breadcrumbitem>
+                    <gooeyui-breadcrumbitem text="Products" href="#"></gooeyui-breadcrumbitem>
+                    <gooeyui-breadcrumbitem text="Category" href="#"></gooeyui-breadcrumbitem>
+                    <gooeyui-breadcrumbitem text="Item"></gooeyui-breadcrumbitem>
+                </gooeyui-breadcrumb>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== DATA ===== -->
+    <div class="section">
+        <h2>Data Grid</h2>
+
+        <gooeydata-store id="verifyStore">
+            <gooeydata-data data-id="1" data-name="Alice Johnson" data-email="alice@example.com" data-dept="Engineering" data-status="Active"></gooeydata-data>
+            <gooeydata-data data-id="2" data-name="Bob Smith" data-email="bob@example.com" data-dept="Marketing" data-status="Active"></gooeydata-data>
+            <gooeydata-data data-id="3" data-name="Carol Davis" data-email="carol@example.com" data-dept="Sales" data-status="On Leave"></gooeydata-data>
+            <gooeydata-data data-id="4" data-name="Dan Wilson" data-email="dan@example.com" data-dept="Engineering" data-status="Active"></gooeydata-data>
+            <gooeydata-data data-id="5" data-name="Eve Brown" data-email="eve@example.com" data-dept="HR" data-status="Remote"></gooeydata-data>
+        </gooeydata-store>
+
+        <div class="component-row">
+            <div class="component-box" style="min-width: 700px;">
+                <div class="box-label">DataGrid (with Store binding)</div>
+                <gooeyui-datagrid store="verifyStore" height="200" selectionmode="single-row">
+                    <gooeyui-datagridcolumn field="id" header="ID" width="60"></gooeyui-datagridcolumn>
+                    <gooeyui-datagridcolumn field="name" header="Name" width="160" sortable></gooeyui-datagridcolumn>
+                    <gooeyui-datagridcolumn field="email" header="Email" width="200" sortable></gooeyui-datagridcolumn>
+                    <gooeyui-datagridcolumn field="dept" header="Department" width="120" sortable></gooeyui-datagridcolumn>
+                    <gooeyui-datagridcolumn field="status" header="Status" width="100" sortable></gooeyui-datagridcolumn>
+                </gooeyui-datagrid>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== LAYOUT ===== -->
+    <div class="section">
+        <h2>Window and Toolbar</h2>
+        <div class="component-row">
+            <div class="component-box" style="min-width: 400px;">
+                <div class="box-label">Toolbar</div>
+                <gooeyui-toolbar>
+                    <gooeyui-button text="New"></gooeyui-button>
+                    <gooeyui-button text="Open"></gooeyui-button>
+                    <gooeyui-toolbarseparator></gooeyui-toolbarseparator>
+                    <gooeyui-button text="Save"></gooeyui-button>
+                    <gooeyui-button text="Delete"></gooeyui-button>
+                </gooeyui-toolbar>
+            </div>
+        </div>
+        <div class="component-row">
+            <div class="component-box" style="min-width: 500px;">
+                <div class="box-label">Window</div>
+                <gooeyui-window text="Sample Window" width="480" height="200">
+                    <gooeyui-label text="Window content goes here."></gooeyui-label>
+                    <gooeyui-button text="OK"></gooeyui-button>
+                </gooeyui-window>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ========================================= -->
+<!-- Scripts                                   -->
+<!-- ========================================= -->
+<script type="module">
+    // Component load counter
+    let loaded = 0;
+    let errors = 0;
+
+    // Listen on each gooey-component element for loaded/error events
+    function setupComponentListeners() {
+        document.querySelectorAll('gooey-component').forEach(comp => {
+            comp.addEventListener('component-loaded', () => {
+                loaded++;
+                document.getElementById('component-count').textContent =
+                    `(${loaded} components loaded${errors > 0 ? ', ' + errors + ' errors' : ''})`;
+            });
+            comp.addEventListener('component-error', (event, detail) => {
+                errors++;
+                const errorLog = document.getElementById('error-log');
+                errorLog.textContent += `Error: ${detail?.error || 'unknown'} `;
+                document.getElementById('component-count').textContent =
+                    `(${loaded} components loaded, ${errors} errors)`;
+            });
+        });
+    }
+
+    // Theme switcher
+    function switchTheme(name) {
+        const themes = document.querySelectorAll('gooey-theme');
+        if (!name) {
+            // Revert to base: deactivate all themes
+            themes.forEach(t => t.active = false);
+        } else {
+            themes.forEach(t => {
+                t.active = (t.getAttribute('name') === name);
+            });
+        }
+    }
+
+    // Bind theme switcher
+    document.getElementById('theme-switcher').addEventListener('change', (e) => {
+        switchTheme(e.target.value);
+    });
+
+    // Toast buttons
+    document.addEventListener('gooeyjs-ready', () => {
+        // Setup component listeners after GooeyJS core is ready
+        // (gooey-component elements are now defined)
+        setupComponentListeners();
+
+        // Wait a moment for dynamic components to start loading, then set up toast buttons
+        setTimeout(() => {
+            const infoBtn = document.getElementById('toast-info-btn');
+            const successBtn = document.getElementById('toast-success-btn');
+            const warningBtn = document.getElementById('toast-warning-btn');
+            const errorBtn = document.getElementById('toast-error-btn');
+
+            if (infoBtn) {
+                infoBtn.addEventListener('click', () => {
+                    const toast = document.createElement('gooeyui-toast');
+                    toast.setAttribute('text', 'This is an info toast message');
+                    toast.setAttribute('type', 'info');
+                    toast.setAttribute('duration', '3000');
+                    document.body.appendChild(toast);
+                });
+            }
+            if (successBtn) {
+                successBtn.addEventListener('click', () => {
+                    const toast = document.createElement('gooeyui-toast');
+                    toast.setAttribute('text', 'Operation completed successfully!');
+                    toast.setAttribute('type', 'success');
+                    toast.setAttribute('duration', '3000');
+                    document.body.appendChild(toast);
+                });
+            }
+            if (warningBtn) {
+                warningBtn.addEventListener('click', () => {
+                    const toast = document.createElement('gooeyui-toast');
+                    toast.setAttribute('text', 'Warning: Please check your input');
+                    toast.setAttribute('type', 'warning');
+                    toast.setAttribute('duration', '3000');
+                    document.body.appendChild(toast);
+                });
+            }
+            if (errorBtn) {
+                errorBtn.addEventListener('click', () => {
+                    const toast = document.createElement('gooeyui-toast');
+                    toast.setAttribute('text', 'Error: Something went wrong');
+                    toast.setAttribute('type', 'error');
+                    toast.setAttribute('duration', '3000');
+                    document.body.appendChild(toast);
+                });
+            }
+        }, 2000);
+    });
+</script>
+
+</body>
+</html>
