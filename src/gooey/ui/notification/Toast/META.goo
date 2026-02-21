@@ -9,7 +9,7 @@
   ],
   "themes": {
     "default": "base",
-    "available": ["base", "dark"]
+    "available": ["base", "dark", "classic"]
   },
   "tokens": {
     "gooey-toast-font-family": {

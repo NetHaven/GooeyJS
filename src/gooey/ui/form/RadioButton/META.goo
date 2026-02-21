@@ -9,7 +9,7 @@
   ],
   "themes": {
     "default": "base",
-    "available": ["base", "dark", "janus"]
+    "available": ["base", "dark", "janus", "classic"]
   },
   "tokens": {
     "gooey-radiobutton-focus-ring-color": {

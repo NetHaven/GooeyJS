@@ -7,7 +7,7 @@
   "templates": [],
   "themes": {
     "default": "base",
-    "available": ["base", "dark", "janus"]
+    "available": ["base", "dark", "janus", "classic"]
   },
   "tokens": {},
   "attributes": {
