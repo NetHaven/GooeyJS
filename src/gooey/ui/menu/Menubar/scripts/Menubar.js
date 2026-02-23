@@ -204,10 +204,23 @@ export default class Menubar extends UIComponent {
         // Use setTimeout to ensure DOM is fully rendered and positioned
         setTimeout(() => {
             const box = menuHeader.getBoundingClientRect();
-            const left = box.left + 1;
+            // getBoundingClientRect() returns viewport-relative coords, but position: absolute
+            // is relative to the nearest positioned ancestor. Use offsetParent to calculate
+            // the correct offset, which handles scrolled pages correctly.
+            const offsetParent = menu.offsetParent;
+            let refTop = 0;
+            let refLeft = 0;
+            if (offsetParent) {
+                const parentRect = offsetParent.getBoundingClientRect();
+                refTop = parentRect.top;
+                refLeft = parentRect.left;
+            } else {
+                refTop = -window.scrollY;
+                refLeft = -window.scrollX;
+            }
             menu.style.position = 'absolute';
-            menu.style.top = box.bottom + 'px';
-            menu.style.left = left + 'px';
+            menu.style.top = (box.bottom - refTop) + 'px';
+            menu.style.left = (box.left - refLeft) + 'px';
             menu.style.zIndex = '1000';
         }, 0);
     }
