@@ -11,6 +11,13 @@ export default class ComboBox extends ListBox {
     constructor() {
         super();
 
+        // ListBox's constructor activated "ui-ListBox" (a <select multiple>) and moved
+        // light-DOM <option> elements into it. Save those options, then remove the
+        // ListBox template element so the ComboBox template is the only visible content.
+        const listBoxSelect = this.listBox;
+        const existingOptions = Array.from(listBoxSelect.options);
+        listBoxSelect.remove();
+
         Template.activate("ui-ComboBox", this.shadowRoot);
 
         // Create the combo box structure
@@ -20,6 +27,11 @@ export default class ComboBox extends ListBox {
         this._dropdownButton = this.shadowRoot.querySelector('button.combobox-button');
         this._dropdownContainer = this.shadowRoot.querySelector('div.combobox-dropdown');
         this._dropdownContainer.style.display = 'none';
+
+        // Move options from the old ListBox select to the ComboBox's internal select
+        existingOptions.forEach(option => {
+            this.listBox.appendChild(option);
+        });
 
         // Update formElement reference for FormElement functionality
         this.formElement = this._textInput;

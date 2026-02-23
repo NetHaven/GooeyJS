@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TabPanel Component Example - GooeyJS</title>
+    <script type="module" src="../src/GooeyJS.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            color: #555;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+        }
+
+        .description {
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .example-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .controls {
+            margin-bottom: 15px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 8px 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        gooeyui-tabpanel {
+            width: 100%;
+            height: 300px;
+        }
+
+        .log {
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+        }
+
+        .log-entry {
+            padding: 2px 0;
+            color: #333;
+        }
+
+        .log-entry.success {
+            color: #28a745;
+        }
+
+        .log-entry.error {
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <h1>TabPanel Component Example</h1>
+    <p class="description">GooeyJS TabPanel with dynamic Tab loading</p>
+
+    <h2>1. Basic TabPanel (HTML-defined tabs)</h2>
+    <p class="description">
+        This demonstrates the race condition fix. The TabPanel and Tab elements are defined in HTML but may not be upgraded in the right order.
+        The fix ensures TabPanel doesn't call Tab methods before Tab is upgraded.
+    </p>
+    <div class="example-container">
+        <!-- Load TabPanel and Tab dynamically -->
+        <gooey-component href="gooey/ui/panel/TabPanel"></gooey-component>
+        <gooey-component href="gooey/ui/panel/Tab"></gooey-component>
+
+        <gooeyui-tabpanel id="tabpanel1">
+            <gooeyui-tab name="Tab 1" text="First Tab">
+                <p>This is the content of the first tab.</p>
+            </gooeyui-tab>
+            <gooeyui-tab name="Tab 2" text="Second Tab">
+                <p>This is the content of the second tab.</p>
+            </gooeyui-tab>
+            <gooeyui-tab name="Tab 3" text="Third Tab">
+                <p>This is the content of the third tab.</p>
+            </gooeyui-tab>
+        </gooeyui-tabpanel>
+
+        <div class="log" id="log1">
+            <div class="log-entry">Waiting for TabPanel to load...</div>
+        </div>
+    </div>
+
+    <h2>2. Dynamic Tab Management</h2>
+    <p class="description">
+        Add or remove tabs programmatically. This tests that the race condition guard works
+        when tabs are added dynamically after the TabPanel is already upgraded.
+    </p>
+    <div class="example-container">
+        <div class="controls">
+            <button onclick="addTab()">Add Tab</button>
+            <button onclick="removeLastTab()">Remove Last Tab</button>
+            <button onclick="getActiveTab()">Get Active Tab</button>
+        </div>
+
+        <gooeyui-tabpanel id="tabpanel2">
+            <gooeyui-tab name="Initial Tab" text="Start Here">
+                <p>Initial tab content.</p>
+            </gooeyui-tab>
+        </gooeyui-tabpanel>
+
+        <div class="log" id="log2">
+            <div class="log-entry">TabPanel ready for dynamic operations...</div>
+        </div>
+    </div>
+
+    <script>
+        let tabCounter = 1;
+        let addTabCounter = 2;
+
+        function log(elementId, message, isError = false) {
+            const logElement = document.getElementById(elementId);
+            const entry = document.createElement('div');
+            entry.className = 'log-entry' + (isError ? ' error' : ' success');
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logElement.appendChild(entry);
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+
+        // Monitor TabPanel 1 for successful loading and tab changes
+        document.addEventListener('DOMContentLoaded', () => {
+            const tabpanel1 = document.getElementById('tabpanel1');
+
+            // Wait a bit for components to upgrade
+            setTimeout(() => {
+                if (tabpanel1 && tabpanel1.tagName === 'GOOEYUI-TABPANEL') {
+                    log('log1', 'TabPanel loaded successfully!');
+
+                    // Check if tabs were added properly
+                    const tabs = tabpanel1.tabs;
+                    log('log1', `Found ${tabs.length} tabs`);
+
+                    // Listen for tab changes
+                    tabpanel1.addEventListener('tab-change', (e) => {
+                        const activeTab = e.detail.activeTab;
+                        if (activeTab) {
+                            log('log1', `Active tab changed to: ${activeTab.name}`);
+                        }
+                    });
+                } else {
+                    log('log1', 'TabPanel not ready yet', true);
+                }
+            }, 100);
+        });
+
+        function addTab() {
+            const tabpanel = document.getElementById('tabpanel2');
+            if (tabpanel && typeof tabpanel.addTab === 'function') {
+                const tabName = `Tab ${addTabCounter}`;
+                const tab = tabpanel.addTab(tabName, `<p>Content for ${tabName}</p>`);
+                addTabCounter++;
+                log('log2', `Added tab: ${tabName}`);
+            } else {
+                log('log2', 'TabPanel not ready', true);
+            }
+        }
+
+        function removeLastTab() {
+            const tabpanel = document.getElementById('tabpanel2');
+            if (tabpanel && typeof tabpanel.removeTab === 'function') {
+                const tabs = tabpanel.tabs;
+                if (tabs.length > 1) {
+                    const lastTab = tabs[tabs.length - 1];
+                    tabpanel.removeTab(lastTab);
+                    log('log2', `Removed tab: ${lastTab.name}`);
+                } else {
+                    log('log2', 'Cannot remove the last tab', true);
+                }
+            }
+        }
+
+        function getActiveTab() {
+            const tabpanel = document.getElementById('tabpanel2');
+            if (tabpanel) {
+                const activeTab = tabpanel.activeTab;
+                if (activeTab) {
+                    log('log2', `Active tab is: ${activeTab.name}`);
+                } else {
+                    log('log2', 'No active tab', true);
+                }
+            }
+        }
+    </script>
+</body>
+</html>

@@ -70,8 +70,6 @@ export default class UIComponent extends GooeyElement {
         this.addValidEvent(DragEvent.END);
         this.addValidEvent(DragEvent.DROP);
 
-        this.classList.add("ui-Component");
-
         // Note: All attribute initialization deferred to connectedCallback
         // to fully comply with Custom Elements spec and avoid "Operation is not supported" errors
     }
@@ -114,6 +112,12 @@ export default class UIComponent extends GooeyElement {
 
         if (super.connectedCallback) {
             super.connectedCallback();
+        }
+
+        // Apply base host class in connectedCallback (mutating class in constructor
+        // can throw "Operation is not supported" for programmatic createElement()).
+        if (!this.classList.contains("ui-Component")) {
+            this.classList.add("ui-Component");
         }
 
         // Apply initial attribute values (moved from constructor per Custom Elements spec)

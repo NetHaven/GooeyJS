@@ -4,17 +4,62 @@
 
 .spinner-container {
     display: flex;
-    align-items: center;
+    align-items: stretch;
 }
 
 input[type="number"] {
     flex: 1;
     min-width: 60px;
+    border: 2px inset var(--gooey-color-border);
+    padding: 2px 4px;
+    font-size: var(--gooey-font-size-sm);
+    font-family: var(--gooey-font-family);
+    background-color: var(--gooey-color-surface-raised);
+    color: var(--gooey-color-text);
+    outline: none;
+    border-right: none;
+    -moz-appearance: textfield;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.spinner-buttons {
+    display: flex;
+    flex-direction: column;
 }
 
 .increment-btn,
 .decrement-btn {
+    border: 2px outset var(--gooey-color-border);
+    background-color: var(--gooey-color-surface);
     cursor: pointer;
+    padding: 0 4px;
+    font-size: 6px;
+    line-height: 1;
+    flex: 1;
+    min-width: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    outline: none;
+}
+
+.increment-btn {
+    border-bottom: 1px solid var(--gooey-color-border);
+}
+
+.increment-btn:hover,
+.decrement-btn:hover {
+    background-color: var(--gooey-color-surface-hover);
+}
+
+.increment-btn:active,
+.decrement-btn:active {
+    border-style: inset;
 }
 
 :host([disabled]) input[type="number"],
@@ -22,4 +67,14 @@ input[type="number"] {
 :host([disabled]) .decrement-btn {
     cursor: not-allowed;
     opacity: var(--gooey-spinner-opacity-disabled, var(--gooey-opacity-disabled));
+}
+
+:host([disabled]) input[type="number"] {
+    background-color: var(--gooey-color-surface);
+    color: var(--gooey-color-text-disabled);
+}
+
+:host([disabled]) .increment-btn,
+:host([disabled]) .decrement-btn {
+    background-color: var(--gooey-color-surface);
 }

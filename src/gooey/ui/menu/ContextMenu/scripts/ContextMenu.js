@@ -6,7 +6,7 @@ import ContextMenuManager from './ContextMenuManager.js';
 export default class ContextMenu extends UIComponent {
     constructor() {
         super();
-        
+
         // Store existing children (menu items) before clearing
         const existingChildren = Array.from(this.children);
 
@@ -22,35 +22,40 @@ export default class ContextMenu extends UIComponent {
         existingChildren.forEach(child => {
             this._contextMenuElement.appendChild(child);
         });
-        
-        this.visible = false;
-        this.active = false;
-        
-        // Position the context menu absolutely
+
+        // Set inline styles directly (avoid setAttribute in constructor per Custom Elements spec)
         this.style.position = 'absolute';
         this.style.zIndex = '1000';
-        
-        // Hide by default
         this.style.display = 'none';
-        
+
         // Create unique ID for debugging
         this._instanceId = Math.random().toString(36).substr(2, 9);
-        
+
         // Add valid events
         this.addValidEvent(ContextMenuEvent.CONTEXT_MENU_SHOW);
         this.addValidEvent(ContextMenuEvent.CONTEXT_MENU_HIDE);
         this.addValidEvent(MouseEvent.CLICK);
     }
-    
+
     connectedCallback() {
+        super.connectedCallback();
+
+        // Defer attribute initialization to connectedCallback per Custom Elements spec
+        if (!this._initialized) {
+            this._initialized = true;
+            this.visible = false;
+            this.active = false;
+        }
+
         ContextMenuManager.registerInstance(this);
     }
-    
+
     disconnectedCallback() {
         // Don't unregister if we're just moving to document.body for positioning
         if (!this._isMovingToBody) {
             ContextMenuManager.unregisterInstance(this);
         }
+        super.disconnectedCallback();
     }
     
     showAt(x, y) {
@@ -146,23 +151,23 @@ export default class ContextMenu extends UIComponent {
         const rect = this.getBoundingClientRect();
         const viewportWidth = window.innerWidth;
         const viewportHeight = window.innerHeight;
-        
+
         // Adjust horizontal position if menu goes off-screen
         if (rect.right > viewportWidth) {
-            this.style.left = (viewportWidth - rect.width - 10) + 'px';
+            this.style.left = (window.scrollX + viewportWidth - rect.width - 10) + 'px';
         }
-        
+
         // Adjust vertical position if menu goes off-screen
         if (rect.bottom > viewportHeight) {
-            this.style.top = (viewportHeight - rect.height - 10) + 'px';
+            this.style.top = (window.scrollY + viewportHeight - rect.height - 10) + 'px';
         }
-        
+
         // Ensure menu doesn't go above or to the left of viewport
         if (rect.left < 0) {
-            this.style.left = '10px';
+            this.style.left = (window.scrollX + 10) + 'px';
         }
         if (rect.top < 0) {
-            this.style.top = '10px';
+            this.style.top = (window.scrollY + 10) + 'px';
         }
     }
     

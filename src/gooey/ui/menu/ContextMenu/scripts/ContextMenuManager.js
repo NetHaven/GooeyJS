@@ -39,24 +39,30 @@ const ContextMenuManager = {
     },
     
     _handleContextMenu: (event) => {
-        // Check each instance to see if the event target is within its parent
+        // Check each instance to see if the event target is within its target element
         for (const instance of ContextMenuManager.instances) {
-            if (instance.parentElement && instance.parentElement.contains(event.target)) {
+            // Resolve target: use 'target' attribute (element ID) if set, otherwise use parentElement
+            const targetId = instance.getAttribute('target');
+            const targetElement = targetId
+                ? document.getElementById(targetId)
+                : instance.parentElement;
+
+            if (targetElement && targetElement.contains(event.target)) {
                 event.preventDefault();
                 event.stopPropagation();
-                
+
                 // Hide any currently active menu
                 if (ContextMenuManager.activeMenu && ContextMenuManager.activeMenu !== instance) {
                     ContextMenuManager.activeMenu._hideMenu();
                 }
-                
+
                 // Show this menu
                 ContextMenuManager.activeMenu = instance;
-                instance._showAtPosition(event.clientX, event.clientY);
+                instance._showAtPosition(event.pageX, event.pageY);
                 return; // Exit early - only one menu should respond
             }
         }
-        
+
         // If no instance matched, hide any active menu
         if (ContextMenuManager.activeMenu) {
             ContextMenuManager.activeMenu._hideMenu();
