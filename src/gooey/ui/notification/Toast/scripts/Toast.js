@@ -174,9 +174,9 @@ export default class Toast extends UIComponent {
         }
 
         // Make toast focusable for keyboard-triggered timer pause
-        // Must be done here, not in constructor (Custom Elements spec)
+        // Set via direct property instead of setAttribute to avoid potential issues
         if (!this.hasAttribute('tabindex')) {
-            this.setAttribute('tabindex', '0');
+            this.tabIndex = 0;
         }
     }
 
