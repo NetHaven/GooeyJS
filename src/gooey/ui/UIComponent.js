@@ -518,9 +518,12 @@ export default class UIComponent extends GooeyElement {
 
         if (val) {
             this.setAttribute("visible", "true");
+            // Clear inline display override so the component's CSS controls the value
+            this.style.display = '';
         }
         else {
             this.setAttribute("visible", "false");
+            this.style.display = 'none';
         }
 
         // Fire visibility change events only if element is connected to DOM

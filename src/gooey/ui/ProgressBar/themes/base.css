@@ -40,6 +40,11 @@
     text-align: right;
 }
 
+/* Disabled state */
+:host([disabled]) {
+    opacity: var(--gooey-progressbar-opacity-disabled, var(--gooey-opacity-disabled, 0.5));
+}
+
 @keyframes progress-indeterminate {
     0% { transform: translateX(-100%); }
     100% { transform: translateX(333%); }

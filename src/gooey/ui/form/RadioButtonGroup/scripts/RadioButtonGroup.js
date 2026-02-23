@@ -14,16 +14,8 @@ export default class RadioButtonGroup extends UIComponent {
         // MutationObserver for dynamically added radio buttons
         this._observer = null;
 
-        // Note: ARIA role will be set in connectedCallback (Custom Elements spec)
-
         // ARIA: Set up label if provided
         this._setupAriaLabel();
-
-        // Assign group name to existing radio buttons
-        this._assignGroupName();
-
-        // Watch for dynamically added radio buttons
-        this._observeRadioButtons();
 
         // Set up mutation observer to watch for radio button changes
         this._setupSelectionHandling();
@@ -35,8 +27,17 @@ export default class RadioButtonGroup extends UIComponent {
             this.setAttribute('role', 'radiogroup');
         }
 
-        // Call parent setup if exists
         super.connectedCallback?.();
+
+        // Wait for RadioButton custom element to be defined before assigning group names.
+        // Child gooeyui-radiobutton elements may not be upgraded yet during dynamic loading,
+        // so their shadowRoot would be null and we can't reach the internal <input>.
+        customElements.whenDefined('gooeyui-radiobutton').then(() => {
+            this._assignGroupName();
+        });
+
+        // Watch for dynamically added radio buttons
+        this._observeRadioButtons();
     }
 
     disconnectedCallback() {
@@ -115,11 +116,7 @@ export default class RadioButtonGroup extends UIComponent {
             mutations.forEach(mutation => {
                 mutation.addedNodes.forEach(node => {
                     if (node.matches && node.matches('gooeyui-radiobutton')) {
-                        // Input lives in shadow DOM, not light DOM
-                        const input = node.shadowRoot?.querySelector('input[type="radio"]');
-                        if (input) {
-                            input.name = this._groupName;
-                        }
+                        this._assignNameToRadioButton(node);
                     }
                 });
             });
@@ -129,5 +126,20 @@ export default class RadioButtonGroup extends UIComponent {
             childList: true,
             subtree: true
         });
+    }
+
+    _assignNameToRadioButton(radioButton) {
+        const input = radioButton.shadowRoot?.querySelector('input[type="radio"]');
+        if (input) {
+            input.name = this._groupName;
+        } else {
+            // Element may not be upgraded yet — wait for it
+            customElements.whenDefined('gooeyui-radiobutton').then(() => {
+                const input = radioButton.shadowRoot?.querySelector('input[type="radio"]');
+                if (input) {
+                    input.name = this._groupName;
+                }
+            });
+        }
     }
 }
