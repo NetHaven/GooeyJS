@@ -1,0 +1,136 @@
+/* VideoPlayer Dark Theme Override - Slider, button, control colors + high contrast */
+/* VideoPlayer is inherently dark-first; most base.css custom properties have null fallbacks */
+
+/* Controls container dark chrome */
+.controls-container {
+    background: rgba(0, 0, 0, 0.95);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Slider (progress bar + volume) styling */
+.progress-bar,
+.volume-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+    cursor: pointer;
+    outline: none;
+}
+
+.progress-bar::-webkit-slider-thumb,
+.volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    background: #3b82f6;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.1s ease, background 0.15s ease;
+    box-shadow: 0 0 4px rgba(59, 130, 246, 0.5);
+}
+
+.progress-bar::-webkit-slider-thumb:hover,
+.volume-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+    background: #60a5fa;
+}
+
+.progress-bar::-moz-range-thumb,
+.volume-slider::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    background: #3b82f6;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 4px rgba(59, 130, 246, 0.5);
+}
+
+.progress-bar::-webkit-slider-runnable-track,
+.volume-slider::-webkit-slider-runnable-track {
+    height: 5px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+}
+
+.progress-bar::-moz-range-track,
+.volume-slider::-moz-range-track {
+    height: 5px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+}
+
+/* Button dark colors */
+button {
+    color: #e5e5e5;
+}
+
+button:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+button:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+}
+
+button:focus-visible {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+}
+
+button:disabled {
+    opacity: 0.4;
+}
+
+button:disabled:hover {
+    background: transparent;
+    color: #e5e5e5;
+}
+
+/* Time display */
+.time-display {
+    color: #a3a3a3;
+}
+
+/* High Contrast Support */
+@media (prefers-contrast: high) {
+    .controls-container {
+        background: black;
+        border: 2px solid white;
+    }
+
+    button {
+        border: 2px solid currentColor;
+    }
+
+    button:focus {
+        outline: 3px solid yellow;
+        outline-offset: 2px;
+    }
+
+    .progress-bar,
+    .volume-slider {
+        border: 1px solid white;
+    }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+    .controls-container {
+        transition: none;
+    }
+
+    .progress-bar::-webkit-slider-thumb,
+    .volume-slider::-webkit-slider-thumb {
+        transition: none;
+    }
+
+    button {
+        transition: none;
+    }
+}

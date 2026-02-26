@@ -14,7 +14,7 @@ export default class ThemeEvent extends Event {
     /** Fired when a theme is fully loaded and ready */
     static THEME_READY = "theme-ready";
 
-    /** Fired when a theme begins loading token CSS */
+    /** Fired when a theme begins loading CSS */
     static LOADING = "theme-loading";
 
     /** Fired when a theme is fully loaded and ready */

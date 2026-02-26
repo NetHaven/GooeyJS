@@ -1,5 +1,12 @@
-/* Classic theme now provided via <gooey-theme> token architecture.
-   See: src/themes/classic-tokens.css (global token overrides)
-   See: src/themes/classic-overrides/ (structural overrides)
-   Usage: <gooey-theme name="classic" tokens="themes/classic-tokens.css" active>
-   This file is intentionally empty for backward compatibility with switchTheme('classic'). */
+/* ToolbarSeparator - Classic Mac (OS 7/8/9) structural override */
+/* Simple vertical line separator */
+
+:host {
+    margin: 2px 4px;
+    width: 1px;
+    height: 24px;
+    border-left: 1px solid #A0A0A0;
+    border-right: none;
+    border-top: none;
+    border-bottom: none;
+}

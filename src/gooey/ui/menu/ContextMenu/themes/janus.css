@@ -1,0 +1,46 @@
+/* ContextMenu - Janus structural override */
+
+.ui-ContextMenu {
+    /* raised menu border + drop shadow */
+    border-top: 1px solid #ffffff;
+    border-left: 1px solid #ffffff;
+    border-right: 1px solid #808080;
+    border-bottom: 1px solid #808080;
+    box-shadow:
+        inset -1px -1px 0 #000000,
+        2px 2px 0 #000000;
+}
+
+/* Nested MenuItem styles within ContextMenu */
+::slotted(ui-MenuItem),
+::slotted(ui-CheckboxMenuItem) {
+    padding: 2px 12px;
+    border: none;
+    background: none;
+}
+
+::slotted(ui-MenuItem:hover),
+::slotted(ui-CheckboxMenuItem:hover) {
+    background-color: #000080;
+    color: #ffffff;
+}
+
+::slotted(ui-MenuItem[disabled]),
+::slotted(ui-CheckboxMenuItem[disabled]) {
+    color: #808080;
+}
+
+::slotted(ui-MenuItem[disabled]:hover),
+::slotted(ui-CheckboxMenuItem[disabled]:hover) {
+    background-color: transparent;
+    color: #808080;
+}
+
+/* Separator - etched line */
+::slotted(ui-MenuItemSeparator) {
+    height: 2px;
+    margin: 2px 4px;
+    border: none;
+    border-top: 1px solid #808080;
+    border-bottom: 1px solid #ffffff;
+}

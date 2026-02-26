@@ -1,5 +1,27 @@
-/* Classic theme now provided via <gooey-theme> token architecture.
-   See: src/themes/classic-tokens.css (global token overrides)
-   See: src/themes/classic-overrides/ (structural overrides)
-   Usage: <gooey-theme name="classic" tokens="themes/classic-tokens.css" active>
-   This file is intentionally empty for backward compatibility with switchTheme('classic'). */
+/* DropDownList - Classic structural override */
+
+select {
+    background-color: #DDDDDD;
+    cursor: pointer;
+    /* Classic Mac border */
+    border: 1px solid #000000;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+select:focus {
+    outline: 1px dotted #000000;
+    outline-offset: -2px;
+}
+
+/* Disabled state */
+:host([disabled]),
+:host([disabled]) select {
+    cursor: not-allowed;
+}
+
+:host([disabled]) select {
+    background-color: #DDDDDD;
+    color: #7F7F7F;
+    text-shadow: 1px 1px 0 #FFFFFF;
+}

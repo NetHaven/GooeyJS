@@ -1,5 +1,9 @@
-/* Classic theme now provided via <gooey-theme> token architecture.
-   See: src/themes/classic-tokens.css (global token overrides)
-   See: src/themes/classic-overrides/ (structural overrides)
-   Usage: <gooey-theme name="classic" tokens="themes/classic-tokens.css" active>
-   This file is intentionally empty for backward compatibility with switchTheme('classic'). */
+/* Label - Classic Mac (OS 7/8/9) structural override */
+/* Mostly handled by theme CSS (font-family, font-size, color). */
+/* Only disabled emboss effect needed as structural override. */
+
+/* Disabled: Classic Mac emboss effect (CLSC-10) */
+:host([disabled]) {
+    color: #7F7F7F;
+    text-shadow: 1px 1px 0 #FFFFFF;
+}

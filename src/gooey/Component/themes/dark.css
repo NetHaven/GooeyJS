@@ -1,5 +1,5 @@
-/* Dark theme now provided via <gooey-theme> token architecture.
-   See: src/themes/dark-tokens.css (global + component token overrides)
-   See: src/themes/dark-overrides/ (structural overrides for Badge, DataGrid, WaffleMenu, WaffleMenuItem, VideoPlayer)
-   Usage: <gooey-theme name="dark" tokens="themes/dark-tokens.css" active>
+/* Dark theme now provided via <gooey-theme> theme architecture.
+   See: src/themes/dark.css (global + component theme overrides)
+   See: each component's themes/dark.css file (structural overrides)
+   Usage: <gooey-theme name="dark" href="themes/dark.css" active>
    This file is intentionally empty for backward compatibility with switchTheme('dark'). */

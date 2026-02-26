@@ -1,5 +1,23 @@
-/* Classic theme now provided via <gooey-theme> token architecture.
-   See: src/themes/classic-tokens.css (global token overrides)
-   See: src/themes/classic-overrides/ (structural overrides)
-   Usage: <gooey-theme name="classic" tokens="themes/classic-tokens.css" active>
-   This file is intentionally empty for backward compatibility with switchTheme('classic'). */
+/* Menubar - Classic Mac (Platinum) structural override */
+
+:host {
+    /* Classic Mac menu bar: Platinum gray with black bottom border */
+    background-color: #DDDDDD;
+    border-bottom: 1px solid #000000;
+}
+
+.menuHeader {
+    padding: 2px 8px;
+}
+
+/* Active/open menu header: inverted blue selection (CLSC-07) */
+.menuHeader[active], .menuHeader:hover {
+    background-color: #0000A5;
+    color: #FFFFFF;
+}
+
+/* Disabled menu header: emboss effect (CLSC-10) */
+.menuHeader[disabled] {
+    color: #7F7F7F;
+    text-shadow: 1px 1px 0 #FFFFFF;
+}

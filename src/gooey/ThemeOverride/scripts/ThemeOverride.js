@@ -10,9 +10,9 @@ import Logger from '../../logging/Logger.js';
  *
  * Usage:
  * ```html
- * <gooey-theme name="classic" tokens="themes/classic/tokens.css" active>
- *     <gooey-theme-override target="gooeyui-button" href="themes/classic/button.css"></gooey-theme-override>
- *     <gooey-theme-override target="gooeyui-window" href="themes/classic/window.css"></gooey-theme-override>
+ * <gooey-theme name="classic" href="themes/classic.css" active>
+ *     <gooey-theme-override target="gooeyui-button" href="gooey/ui/button/Button/themes/classic.css"></gooey-theme-override>
+ *     <gooey-theme-override target="gooeyui-window" href="gooey/ui/window/Window/themes/classic.css"></gooey-theme-override>
  * </gooey-theme>
  * ```
  *

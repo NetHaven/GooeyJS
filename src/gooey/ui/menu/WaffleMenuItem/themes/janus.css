@@ -1,0 +1,28 @@
+/* WaffleMenuItem - Janus structural override */
+/* Uses component-scoped --waffle-item-* custom properties, not global --gooey-* custom properties */
+
+:host {
+    --waffle-item-size: 96px;
+    --waffle-item-icon-size: 48px;
+    --waffle-item-bg: transparent;
+    --waffle-item-hover-bg: #e6e6e6;
+    --waffle-item-active-bg: #d9d9d9;
+    --waffle-item-label-color: #333333;
+    --waffle-item-border-radius: 4px;
+    --waffle-badge-bg: #cc0000;
+    --waffle-badge-color: #ffffff;
+}
+
+.waffle-item:hover {
+    border-color: #cccccc;
+}
+
+.waffle-item:focus {
+    outline: none;
+    border-color: #0066cc;
+    box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.3);
+}
+
+.waffle-item-image {
+    border-radius: 4px;
+}

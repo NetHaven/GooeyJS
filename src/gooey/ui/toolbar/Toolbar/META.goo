@@ -9,7 +9,7 @@
   ],
   "themes": {
     "default": "base",
-    "available": ["base", "classic"]
+    "available": ["base", "classic", "janus"]
   },
   "tokens": {
     "gooey-toolbar-margin": {

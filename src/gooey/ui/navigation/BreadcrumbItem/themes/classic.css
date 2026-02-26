@@ -1,5 +1,39 @@
-/* Classic theme now provided via <gooey-theme> token architecture.
-   See: src/themes/classic-tokens.css (global token overrides)
-   See: src/themes/classic-overrides/ (structural overrides)
-   Usage: <gooey-theme name="classic" tokens="themes/classic-tokens.css" active>
-   This file is intentionally empty for backward compatibility with switchTheme('classic'). */
+/* BreadcrumbItem - Classic Mac (OS 7/8/9) structural override */
+/* Kill link transitions (CLSC-13), Classic Mac colors (CLSC-09) */
+
+:host {
+    transition: none !important;
+}
+
+/* Link - flat, no transitions */
+.breadcrumb-link {
+    border-radius: 0;
+    transition: none !important;
+    color: #0000A5;
+}
+
+.breadcrumb-link:hover {
+    text-decoration: underline;
+    background-color: transparent;
+    color: #0000A5;
+}
+
+.breadcrumb-link:active {
+    background-color: transparent;
+}
+
+.breadcrumb-link:focus {
+    outline: 1px dotted #000000;
+    outline-offset: -3px;
+}
+
+/* Active/current item */
+:host([active]) .breadcrumb-link {
+    color: #000000;
+}
+
+/* Disabled: Classic Mac emboss (CLSC-10) */
+:host([disabled]) .breadcrumb-link {
+    color: #7F7F7F;
+    text-shadow: 1px 1px 0 #FFFFFF;
+}

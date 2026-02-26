@@ -1,5 +1,31 @@
-/* Classic theme now provided via <gooey-theme> token architecture.
-   See: src/themes/classic-tokens.css (global token overrides)
-   See: src/themes/classic-overrides/ (structural overrides)
-   Usage: <gooey-theme name="classic" tokens="themes/classic-tokens.css" active>
-   This file is intentionally empty for backward compatibility with switchTheme('classic'). */
+/* TextArea - Classic structural override */
+
+textarea {
+    /* Classic Mac sunken field */
+    border: 1px solid #000000;
+    background-color: #FFFFFF;
+    padding: 2px 4px;
+    border-radius: 0;
+    box-shadow: none;
+    resize: both;
+}
+
+textarea:focus {
+    outline: 1px dotted #000000;
+    outline-offset: -3px;
+}
+
+textarea:disabled {
+    color: #7F7F7F;
+    text-shadow: 1px 1px 0 #FFFFFF;
+    background-color: #DDDDDD;
+    cursor: not-allowed;
+}
+
+textarea::placeholder {
+    color: #7F7F7F;
+}
+
+textarea:read-only {
+    background-color: #DDDDDD;
+}

@@ -1,5 +1,52 @@
-/* Classic theme now provided via <gooey-theme> token architecture.
-   See: src/themes/classic-tokens.css (global token overrides)
-   See: src/themes/classic-overrides/ (structural overrides)
-   Usage: <gooey-theme name="classic" tokens="themes/classic-tokens.css" active>
-   This file is intentionally empty for backward compatibility with switchTheme('classic'). */
+/* Checkbox - Classic structural override */
+
+input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 12px;
+    height: 12px;
+    background-color: #FFFFFF;
+    border: 1px solid #000000;
+    border-radius: 0;
+    cursor: pointer;
+    margin: 0;
+    margin-right: 4px;
+    position: relative;
+    box-shadow: none;
+}
+
+input[type="checkbox"]:checked {
+    background-color: #FFFFFF;
+}
+
+input[type="checkbox"]:checked::after {
+    content: "";
+    position: absolute;
+    left: 1px;
+    top: 0px;
+    width: 4px;
+    height: 8px;
+    border: solid #000000;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+input[type="checkbox"]:focus {
+    outline: 1px dotted #000000;
+    outline-offset: 3px;
+}
+
+:host([disabled]) input[type="checkbox"] {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+:host([disabled]) input[type="checkbox"]:checked::after {
+    border-color: #7F7F7F;
+}
+
+/* Disabled label emboss effect */
+:host([disabled]) .CheckboxLabel {
+    color: #7F7F7F;
+    text-shadow: 1px 1px 0 #FFFFFF;
+}

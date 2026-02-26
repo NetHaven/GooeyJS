@@ -1,0 +1,69 @@
+/* TreeItem - Janus structural override */
+
+.ui-TreeItem-content {
+    padding: 1px 4px;
+}
+
+.ui-TreeItem-content:hover {
+    background-color: #c0c0c0;
+}
+
+/* Selected state - navy blue */
+:host(.selected) .ui-TreeItem-content {
+    background-color: #000080;
+    color: #ffffff;
+}
+
+.ui-TreeItem-expander {
+    width: 14px;
+    height: 14px;
+    font-size: 10px;
+    margin-right: 2px;
+    font-family: monospace;
+}
+
+.ui-TreeItem-icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 4px;
+}
+
+/* Tree lines - dotted connecting lines */
+.ui-TreeItem-children {
+    border-left: 1px dotted #808080;
+    margin-left: 7px;
+}
+
+/* Focus state */
+:host(:focus) {
+    outline: 1px dotted #000000;
+    outline-offset: -1px;
+}
+
+/* Drag and Drop */
+.ui-TreeItem-content[draggable="true"] {
+    cursor: grab;
+}
+
+.ui-TreeItem-content[draggable="true"]:active {
+    cursor: grabbing;
+}
+
+.ui-TreeItem-content.drop-before {
+    border-top: 2px solid #000080;
+}
+
+.ui-TreeItem-content.drop-after {
+    border-bottom: 2px solid #000080;
+}
+
+.ui-TreeItem-content.drop-inside {
+    background-color: rgba(0, 0, 128, 0.2);
+    border: 1px dashed #000080;
+}
+
+.ui-TreeItem-content.drop-invalid {
+    background-color: rgba(255, 0, 0, 0.1);
+    border: 1px dashed #ff0000;
+    cursor: not-allowed;
+}

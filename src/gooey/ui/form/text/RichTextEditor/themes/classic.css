@@ -1,5 +1,57 @@
-/* Classic theme now provided via <gooey-theme> token architecture.
-   See: src/themes/classic-tokens.css (global token overrides)
-   See: src/themes/classic-overrides/ (structural overrides)
-   Usage: <gooey-theme name="classic" tokens="themes/classic-tokens.css" active>
-   This file is intentionally empty for backward compatibility with switchTheme('classic'). */
+/* RichTextEditor - Classic structural override */
+
+.richtexteditor-shell {
+    background-color: #FFFFFF;
+    /* Classic Mac sunken border */
+    border: 1px solid #000000;
+    box-shadow: none;
+}
+
+.richtexteditor-toolbar {
+    background-color: #DDDDDD;
+    border-bottom: 1px solid #000000;
+}
+
+.richtexteditor-button {
+    background-color: #DDDDDD;
+    cursor: pointer;
+    border: 1px solid #000000;
+    /* Platinum subtle raised bevel */
+    box-shadow:
+        inset 1px 1px 0 #FFFFFF,
+        inset -1px -1px 0 #999999;
+    transition: none;
+}
+
+.richtexteditor-button:hover {
+    background-color: #EEEEEE;
+    transition: none;
+}
+
+.richtexteditor-button.is-active {
+    background-color: #0000A5;
+    color: #FFFFFF;
+    border-style: inset;
+    /* Pressed: inverted bevel */
+    box-shadow:
+        inset -1px -1px 0 #FFFFFF,
+        inset 1px 1px 0 #999999;
+    transition: none;
+}
+
+.richtexteditor-button:disabled {
+    cursor: not-allowed;
+    color: #7F7F7F;
+    text-shadow: 1px 1px 0 #FFFFFF;
+    transition: none;
+}
+
+.richtexteditor-content {
+    background-color: #FFFFFF;
+}
+
+:host([disabled]) .richtexteditor-content {
+    background-color: #DDDDDD;
+    color: #7F7F7F;
+    text-shadow: 1px 1px 0 #FFFFFF;
+}

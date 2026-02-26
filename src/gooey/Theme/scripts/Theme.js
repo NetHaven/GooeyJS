@@ -6,31 +6,36 @@ import Logger from '../../logging/Logger.js';
 /**
  * Declarative theme registration and activation component.
  *
- * A non-visual component that loads token CSS, collects structural overrides
- * from child `<gooey-theme-override>` elements, and registers the complete
+ * A non-visual component that loads theme CSS, auto-discovers per-component
+ * overrides from ComponentRegistry metadata, and registers the complete
  * theme configuration with ThemeManager.
+ *
+ * Per-component overrides are automatically discovered from META.goo
+ * `themes.available` declarations. Explicit `<gooey-theme-override>` children
+ * are optional and only needed for non-standard CSS file paths (they take
+ * precedence over auto-discovered overrides for the same component).
  *
  * Usage:
  * ```html
- * <gooey-theme name="classic" tokens="themes/classic-tokens.css"
- *              fonts="themes/classic-fonts"
- *              font-faces='[{"family":"Geneva","file":"Geneva.woff2"},{"family":"Monaco","file":"Monaco.woff2"}]'
- *              active>
- *     <gooey-theme-override target="gooeyui-button" href="themes/classic-overrides/button.css"></gooey-theme-override>
- *     <gooey-theme-override target="gooeyui-window" href="themes/classic-overrides/window.css"></gooey-theme-override>
+ * <!-- Standard: overrides auto-discovered from META.goo -->
+ * <gooey-theme name="classic" href="themes/classic.css" active></gooey-theme>
+ *
+ * <!-- With explicit override for non-standard path -->
+ * <gooey-theme name="custom" href="themes/custom.css" active>
+ *     <gooey-theme-override target="gooeyui-button" href="custom/button-override.css"></gooey-theme-override>
  * </gooey-theme>
  * ```
  *
  * Attributes:
  * - name: Theme identifier (e.g., "classic", "dark")
- * - tokens: Path to token CSS file with :root custom property overrides
- * - extends: Name of parent theme to inherit tokens from
+ * - href: Path to theme CSS file with :root custom property overrides
+ * - extends: Name of parent theme to inherit from
  * - active: Boolean attribute -- when present, activates this theme
  * - fonts: Base directory path for theme font files (e.g., "themes/classic-fonts")
  * - font-faces: JSON array of font descriptors to load via FontFace API
  *
  * Events:
- * - theme-loading: Fired when the theme begins loading token CSS
+ * - theme-loading: Fired when the theme begins loading CSS
  * - theme-loaded: Fired when the theme is fully loaded and registered
  * - theme-error: Fired when theme loading fails
  *
@@ -47,8 +52,8 @@ export default class Theme extends GooeyElement {
         /** @type {boolean} Whether theme has finished loading */
         this._loaded = false;
 
-        /** @type {CSSStyleSheet|null} CSSStyleSheet for this theme's tokens */
-        this._tokenSheet = null;
+        /** @type {CSSStyleSheet|null} CSSStyleSheet for this theme's custom properties */
+        this._themeSheet = null;
 
         /** @type {Map<string, CSSStyleSheet>} target tagName -> CSSStyleSheet from child overrides */
         this._overrides = new Map();
@@ -115,14 +120,14 @@ export default class Theme extends GooeyElement {
         this.setAttribute('name', val);
     }
 
-    /** @returns {string|null} Token CSS file path */
-    get tokens() {
-        return this.getAttribute('tokens');
+    /** @returns {string|null} Theme CSS file path */
+    get href() {
+        return this.getAttribute('href');
     }
 
-    /** @param {string} val Token CSS file path */
-    set tokens(val) {
-        this.setAttribute('tokens', val);
+    /** @param {string} val Theme CSS file path */
+    set href(val) {
+        this.setAttribute('href', val);
     }
 
     /** @returns {string|null} Base directory path for theme font files */
@@ -157,7 +162,13 @@ export default class Theme extends GooeyElement {
     // ---- Theme registration ----
 
     /**
-     * Load token CSS, collect overrides, and register with ThemeManager.
+     * Load theme CSS, auto-discover and collect overrides, and register
+     * with ThemeManager.
+     *
+     * Override collection uses three phases:
+     * 1. Auto-discover from ComponentRegistry metadata (META.goo themes.available)
+     * 2. Collect explicit `<gooey-theme-override>` children
+     * 3. Merge: explicit overrides take precedence over auto-discovered
      *
      * If the `active` attribute is set, activation happens at the end
      * of this method after loading completes (avoids race conditions).
@@ -166,7 +177,7 @@ export default class Theme extends GooeyElement {
      */
     async _registerTheme() {
         const name = this.getAttribute('name');
-        const tokensPath = this.tokens;
+        const themePath = this.href;
 
         if (!name) {
             Logger.warn(
@@ -178,20 +189,20 @@ export default class Theme extends GooeyElement {
 
         this.fireEvent(ThemeEvent.LOADING, {
             name,
-            tokens: tokensPath,
+            href: themePath,
             component: this
         });
 
         try {
-            // Load token CSS if provided
-            if (tokensPath) {
-                const response = await fetch(tokensPath);
+            // Load theme CSS if provided
+            if (themePath) {
+                const response = await fetch(themePath);
                 if (!response.ok) {
-                    throw new Error(`Token CSS not found: ${tokensPath} (HTTP ${response.status})`);
+                    throw new Error(`Theme CSS not found: ${themePath} (HTTP ${response.status})`);
                 }
                 const cssText = await response.text();
-                this._tokenSheet = new CSSStyleSheet();
-                this._tokenSheet.replaceSync(cssText);
+                this._themeSheet = new CSSStyleSheet();
+                this._themeSheet.replaceSync(cssText);
             }
 
             // Load theme fonts if specified (on-demand via FontFace API)
@@ -200,18 +211,28 @@ export default class Theme extends GooeyElement {
                 await this._loadFonts(fontsPath);
             }
 
-            // Collect and load overrides from child gooey-theme-override elements
+            // Phase 1: Auto-discover overrides from ComponentRegistry metadata
+            const autoDiscovered = await ThemeManager.discoverOverrides(name);
+
+            // Phase 2: Collect explicit overrides from child gooey-theme-override elements
+            const explicitOverrides = new Map();
             const overrideEls = this.querySelectorAll(':scope > gooey-theme-override');
             for (const el of overrideEls) {
                 if (el.target && el.href) {
                     const sheet = await el.loadCSS();
-                    this._overrides.set(el.target.toLowerCase(), sheet);
+                    explicitOverrides.set(el.target.toLowerCase(), sheet);
                 }
+            }
+
+            // Phase 3: Merge (auto-discovered first, then explicit wins for same target)
+            this._overrides = new Map(autoDiscovered);
+            for (const [tagName, sheet] of explicitOverrides) {
+                this._overrides.set(tagName, sheet);
             }
 
             // Register with ThemeManager
             ThemeManager.registerThemeConfig(this.getAttribute('name'), {
-                tokenSheet: this._tokenSheet,
+                themeSheet: this._themeSheet,
                 overrides: this._overrides,
                 extends: this.getAttribute('extends') || null
             });
@@ -220,7 +241,7 @@ export default class Theme extends GooeyElement {
 
             this.fireEvent(ThemeEvent.LOADED, {
                 name,
-                tokens: tokensPath,
+                href: themePath,
                 component: this
             });
 
@@ -403,7 +424,7 @@ export default class Theme extends GooeyElement {
             // Re-register config with updated overrides
             if (this._loaded) {
                 ThemeManager.registerThemeConfig(this.getAttribute('name'), {
-                    tokenSheet: this._tokenSheet,
+                    themeSheet: this._themeSheet,
                     overrides: this._overrides,
                     extends: this.getAttribute('extends') || null
                 });
@@ -440,7 +461,7 @@ export default class Theme extends GooeyElement {
         // Re-register config with updated overrides
         if (this._loaded) {
             ThemeManager.registerThemeConfig(this.getAttribute('name'), {
-                tokenSheet: this._tokenSheet,
+                themeSheet: this._themeSheet,
                 overrides: this._overrides,
                 extends: this.getAttribute('extends') || null
             });

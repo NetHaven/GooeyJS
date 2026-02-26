@@ -1,10 +1,10 @@
-/* GooeyJS Janus (Windows 3.1) Theme Token Overrides */
-/* Applied via: <gooey-theme name="janus" tokens="themes/janus-tokens.css" active> */
-/* This file redefines :root custom properties from styles.css for Win3.1 appearance. */
-/* For structural overrides (chiseled borders, box-shadows), see themes/janus-overrides/ directory. */
+/* GooeyJS Janus Theme Overrides */
+/* Applied via: <gooey-theme name="janus" href="themes/janus.css" active> */
+/* This file redefines :root custom properties from styles.css for the Janus theme. */
+/* For structural overrides (chiseled borders, box-shadows), see each component's themes/janus.css file. */
 
 :root {
-    /* ===== Surface Colors (Win3.1 Silver) ===== */
+    /* ===== Surface Colors (Silver) ===== */
     --gooey-color-surface: #c0c0c0;
     --gooey-color-surface-hover: #d4d4d4;
     --gooey-color-surface-active: #c0c0c0;
@@ -12,7 +12,7 @@
     --gooey-color-surface-sunken: #ffffff;
     --gooey-color-surface-disabled: #c0c0c0;
 
-    /* ===== Accent / Primary (Win3.1 Navy Blue) ===== */
+    /* ===== Accent / Primary (Navy Blue) ===== */
     --gooey-color-primary: #000080;
     --gooey-color-primary-text: #ffffff;
 
@@ -26,24 +26,24 @@
     --gooey-color-border: #808080;
     --gooey-color-border-light: #dfdfdf;
 
-    /* ===== Focus (Win3.1 Dotted Outline) ===== */
+    /* ===== Focus (Dotted Outline) ===== */
     --gooey-color-focus: #000000;
     --gooey-focus-width: 1px;
     --gooey-focus-style: dotted;
     --gooey-focus-offset: -4px;
 
-    /* ===== Typography (Win3.1 MS Sans Serif) ===== */
+    /* ===== Typography (MS Sans Serif) ===== */
     --gooey-font-family: "MS Sans Serif", "Segoe UI", Tahoma, sans-serif;
     --gooey-font-size-sm: 11px;
     --gooey-font-size-md: 11px;
     --gooey-font-size-lg: 11px;
 
-    /* ===== Borders (Win3.1 Flat, No Radius) ===== */
+    /* ===== Borders (Flat, No Radius) ===== */
     --gooey-border-width: 1px;
     --gooey-border-style: solid;
     --gooey-border-radius: 0;
 
-    /* ===== Shadows (Win3.1 Hard Pixel Shadows) ===== */
+    /* ===== Shadows (Hard Pixel Shadows) ===== */
     --gooey-shadow-sm: 2px 2px 0 #000000;
     --gooey-shadow-md: 2px 2px 0 #000000;
     --gooey-shadow-lg: 2px 2px 0 #000000;

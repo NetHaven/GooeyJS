@@ -143,21 +143,21 @@ export default class GooeyJS {
     /**
      * Register a theme programmatically (THEME-06)
      * @param {string} name - Theme name
-     * @param {Object} config - { tokens: string (CSS path), extends?: string, overrides?: Object (tagName -> CSS path) }
+     * @param {Object} config - { href: string (CSS path), extends?: string, overrides?: Object (tagName -> CSS path) }
      * @returns {Promise<void>}
      */
     static async registerTheme(name, config) {
-        let tokenSheet = null;
+        let themeSheet = null;
 
-        // Load token CSS if provided
-        if (config.tokens) {
-            const response = await fetch(config.tokens);
+        // Load theme CSS if provided
+        if (config.href) {
+            const response = await fetch(config.href);
             if (!response.ok) {
-                throw new Error(`Token CSS not found: ${config.tokens} (HTTP ${response.status})`);
+                throw new Error(`Theme CSS not found: ${config.href} (HTTP ${response.status})`);
             }
             const cssText = await response.text();
-            tokenSheet = new CSSStyleSheet();
-            tokenSheet.replaceSync(cssText);
+            themeSheet = new CSSStyleSheet();
+            themeSheet.replaceSync(cssText);
         }
 
         // Load override CSS files if provided
@@ -177,7 +177,7 @@ export default class GooeyJS {
         }
 
         ThemeManager.registerThemeConfig(name, {
-            tokenSheet,
+            themeSheet,
             overrides,
             extends: config.extends || null
         });

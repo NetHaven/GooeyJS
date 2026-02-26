@@ -1,5 +1,26 @@
-/* Classic theme now provided via <gooey-theme> token architecture.
-   See: src/themes/classic-tokens.css (global token overrides)
-   See: src/themes/classic-overrides/ (structural overrides)
-   Usage: <gooey-theme name="classic" tokens="themes/classic-tokens.css" active>
-   This file is intentionally empty for backward compatibility with switchTheme('classic'). */
+/* Tree - Classic structural override */
+
+.ui-Tree {
+    background-color: #FFFFFF;
+    border: 1px solid #000000;
+    border-radius: 0;
+}
+
+/* Classic Mac scrollbar styling */
+.ui-Tree::-webkit-scrollbar {
+    width: 16px;
+    height: 16px;
+}
+
+.ui-Tree::-webkit-scrollbar-track {
+    background: #DDDDDD;
+}
+
+.ui-Tree::-webkit-scrollbar-thumb {
+    background: #AAAAAA;
+    border: 1px solid #000000;
+}
+
+.ui-Tree::-webkit-scrollbar-thumb:hover {
+    background: #999999;
+}

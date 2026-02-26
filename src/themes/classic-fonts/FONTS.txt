@@ -3,7 +3,7 @@ Classic Mac Theme Font Files
 
 These WOFF2 files are PLACEHOLDERS that should be replaced with actual font files.
 The placeholder files have valid WOFF2 headers but contain no glyph data.
-The Classic theme's font fallback chains in classic-tokens.css will activate
+The Classic theme's font fallback chains in classic.css will activate
 gracefully when these placeholders fail to load:
 
   --gooey-font-family: "ChicagoFLF", "Chicago", Geneva, sans-serif;

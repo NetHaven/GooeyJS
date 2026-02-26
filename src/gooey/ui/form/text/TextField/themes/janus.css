@@ -1,0 +1,28 @@
+/* TextField - Janus structural override */
+
+input[type='text'] {
+    /* sunken border */
+    border-top: 1px solid #808080;
+    border-left: 1px solid #808080;
+    border-right: 1px solid #ffffff;
+    border-bottom: 1px solid #ffffff;
+    box-shadow: inset 1px 1px 0 #000000;
+}
+
+input[type='text']:focus {
+    outline: none;
+}
+
+input[type='text']:disabled {
+    background-color: #c0c0c0;
+    color: #808080;
+    cursor: not-allowed;
+}
+
+input[type='text']::placeholder {
+    color: #808080;
+}
+
+input[type='text']:read-only {
+    background-color: #c0c0c0;
+}

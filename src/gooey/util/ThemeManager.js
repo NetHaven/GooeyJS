@@ -1,17 +1,19 @@
 import Logger from '../logging/Logger.js';
 import ThemeEvent from '../events/ThemeEvent.js';
+import MetaLoader from './MetaLoader.js';
+import ComponentRegistry from './ComponentRegistry.js';
 
 /**
- * Singleton theme manager for GooeyJS design token architecture.
+ * Singleton theme manager for GooeyJS theme architecture.
  *
  * Manages active theme state, registered theme definitions, a lazily-created
- * token CSSStyleSheet for runtime overrides, and WeakRef-based tracking of
+ * CSSStyleSheet for runtime overrides, and WeakRef-based tracking of
  * live UIComponent instances for theme broadcast.
  *
  * This is a static-only class following the ComponentRegistry pattern --
  * no instantiation needed.
  *
- * Phase 22: Foundation (registerTheme, registerInstance, getTokenSheet, getLiveInstances)
+ * Phase 22: Foundation (registerTheme, registerInstance, getThemeSheet, getLiveInstances)
  * Phase 23: Theme switching engine (registerThemeConfig, setTheme, applyThemeToInstance,
  *           extends chain resolution, sheet removal)
  */
@@ -26,22 +28,22 @@ export default class ThemeManager {
      * Registered themes: name -> definition.
      *
      * Each definition may have:
-     * - Phase 22 format: { tokensCSS: string }
-     * - Phase 23 format: { tokenSheet: CSSStyleSheet|null, overrides: Map, extends: string|null }
+     * - Phase 22 format: { themeCSS: string }
+     * - Phase 23 format: { themeSheet: CSSStyleSheet|null, overrides: Map, extends: string|null }
      * - Both fields may coexist (backward compat).
      *
      * @type {Map<string, object>}
      */
     static _themes = new Map();
 
-    /** @type {CSSStyleSheet|null} Lazily created stylesheet for runtime token overrides */
-    static _tokenSheet = null;
+    /** @type {CSSStyleSheet|null} Lazily created stylesheet for runtime theme overrides */
+    static _themeSheet = null;
 
     /** @type {Set<WeakRef>} WeakRef set tracking live UIComponent instances */
     static _instances = new Set();
 
-    /** @type {CSSStyleSheet[]} Token sheets currently on document.adoptedStyleSheets (for removal) */
-    static _activeTokenSheets = [];
+    /** @type {CSSStyleSheet[]} Theme sheets currently on document.adoptedStyleSheets (for removal) */
+    static _activeThemeSheets = [];
 
     /** @type {Map<string, CSSStyleSheet>} Active structural overrides: tagName -> CSSStyleSheet */
     static _activeOverrides = new Map();
@@ -60,22 +62,22 @@ export default class ThemeManager {
     // ---- Theme registration ----
 
     /**
-     * Register a theme with its token CSS content (Phase 22 API).
+     * Register a theme with its CSS content (Phase 22 API).
      *
      * Kept for backward compatibility. Stores the CSS text in the theme
      * definition. The CSSStyleSheet is created lazily during setTheme()
      * if needed.
      *
      * @param {string} name - Theme name (e.g., 'base', 'dark', 'classic')
-     * @param {string} tokensCSSText - CSS text containing :root token overrides
+     * @param {string} themeCSSText - CSS text containing :root custom property overrides
      */
-    static registerTheme(name, tokensCSSText) {
+    static registerTheme(name, themeCSSText) {
         const existing = this._themes.get(name);
         if (existing) {
-            existing.tokensCSS = tokensCSSText;
+            existing.themeCSS = themeCSSText;
             this._themes.set(name, existing);
         } else {
-            this._themes.set(name, { tokensCSS: tokensCSSText });
+            this._themes.set(name, { themeCSS: themeCSSText });
         }
         Logger.debug({ code: "THEME_REGISTERED", name }, "Theme registered: %s", name);
     }
@@ -84,7 +86,7 @@ export default class ThemeManager {
      * Register a theme with a full config object (Phase 23 API).
      *
      * Config properties:
-     * - tokenSheet {CSSStyleSheet|null} - Pre-created token stylesheet
+     * - themeSheet {CSSStyleSheet|null} - Pre-created theme stylesheet
      * - overrides {Map<string, CSSStyleSheet>} - Per-component structural overrides
      * - extends {string|null} - Name of parent theme to extend
      *
@@ -93,7 +95,7 @@ export default class ThemeManager {
      */
     static registerThemeConfig(name, config) {
         const existing = this._themes.get(name) || {};
-        existing.tokenSheet = config.tokenSheet || null;
+        existing.themeSheet = config.themeSheet || null;
         existing.overrides = config.overrides || new Map();
         existing.extends = config.extends || null;
         this._themes.set(name, existing);
@@ -115,8 +117,8 @@ export default class ThemeManager {
     /**
      * Set the active theme (THEME-07, THEME-08).
      *
-     * Removes the current theme's token sheets and structural overrides,
-     * then applies the new theme's tokens globally via document.adoptedStyleSheets
+     * Removes the current theme's sheets and structural overrides,
+     * then applies the new theme globally via document.adoptedStyleSheets
      * and structural overrides to all live component shadow roots.
      *
      * Passing 'base' reverts to the default theme (removes all theme sheets).
@@ -149,31 +151,31 @@ export default class ThemeManager {
         // 5. Resolve extends chain (ancestor-first order)
         const chain = this._resolveExtendsChain(name);
 
-        // 6. Collect token sheets from all themes in chain (ancestor first)
-        const tokenSheets = [];
+        // 6. Collect theme sheets from all themes in chain (ancestor first)
+        const themeSheets = [];
         for (const themeName of chain) {
             const def = this._themes.get(themeName);
             if (!def) continue;
 
-            if (def.tokenSheet) {
-                tokenSheets.push(def.tokenSheet);
-            } else if (def.tokensCSS) {
+            if (def.themeSheet) {
+                themeSheets.push(def.themeSheet);
+            } else if (def.themeCSS) {
                 // Phase 22 format: create CSSStyleSheet from CSS text and cache it
                 const sheet = new CSSStyleSheet();
-                sheet.replaceSync(def.tokensCSS);
-                def.tokenSheet = sheet;
-                tokenSheets.push(sheet);
+                sheet.replaceSync(def.themeCSS);
+                def.themeSheet = sheet;
+                themeSheets.push(sheet);
             }
         }
 
-        // 7. Append token sheets to document.adoptedStyleSheets (preserve existing non-theme sheets)
-        if (tokenSheets.length > 0) {
+        // 7. Append theme sheets to document.adoptedStyleSheets (preserve existing non-theme sheets)
+        if (themeSheets.length > 0) {
             document.adoptedStyleSheets = [
                 ...document.adoptedStyleSheets,
-                ...tokenSheets
+                ...themeSheets
             ];
         }
-        this._activeTokenSheets = tokenSheets;
+        this._activeThemeSheets = themeSheets;
 
         // 8. Collect overrides from all themes in chain (child overrides win for same target)
         const overrideMap = new Map();
@@ -212,13 +214,44 @@ export default class ThemeManager {
      * Called from UIComponent constructor for late-constructed components
      * (THEME-10). If the active theme is 'base', this is a no-op.
      *
+     * If the component's override isn't in _activeOverrides (e.g., component
+     * loaded after theme activation), checks ComponentRegistry to see if it
+     * supports the active theme and loads CSS on-demand.
+     *
      * @param {HTMLElement} instance - UIComponent instance to apply theme to
      */
-    static applyThemeToInstance(instance) {
+    static async applyThemeToInstance(instance) {
         if (this._activeTheme === 'base') return;
 
         const tagName = instance.tagName.toLowerCase();
-        const overrideSheet = this._activeOverrides.get(tagName);
+        let overrideSheet = this._activeOverrides.get(tagName);
+
+        // On-demand discovery for late-loading components
+        if (!overrideSheet) {
+            const meta = ComponentRegistry.getMeta(tagName);
+            const componentPath = ComponentRegistry.getComponentPath(tagName);
+
+            if (meta && componentPath) {
+                const availableThemes = meta.themes?.available || [];
+                if (availableThemes.includes(this._activeTheme)) {
+                    try {
+                        const cssResult = await MetaLoader.loadThemeCSS(componentPath, this._activeTheme);
+                        if (cssResult && cssResult.sheet) {
+                            overrideSheet = cssResult.sheet;
+                            this._activeOverrides.set(tagName, overrideSheet);
+                        }
+                    } catch (error) {
+                        Logger.warn(
+                            error,
+                            { code: "THEME_LATE_OVERRIDE_FAILED", tagName, theme: this._activeTheme },
+                            "Failed to load theme override for late-loading '%s': %s",
+                            tagName, error.message
+                        );
+                    }
+                }
+            }
+        }
+
         if (overrideSheet && instance.shadowRoot) {
             instance.shadowRoot.adoptedStyleSheets = [
                 ...instance.shadowRoot.adoptedStyleSheets,
@@ -230,21 +263,21 @@ export default class ThemeManager {
     // ---- Private: sheet management ----
 
     /**
-     * Remove the active theme's token sheets from document.adoptedStyleSheets.
+     * Remove the active theme's sheets from document.adoptedStyleSheets.
      *
-     * Filters out only the sheets tracked in _activeTokenSheets (by reference),
+     * Filters out only the sheets tracked in _activeThemeSheets (by reference),
      * preserving any non-theme sheets that other code may have added.
      *
      * @private
      */
     static _removeActiveThemeSheets() {
-        if (this._activeTokenSheets.length === 0) return;
+        if (this._activeThemeSheets.length === 0) return;
 
-        const sheetsToRemove = new Set(this._activeTokenSheets);
+        const sheetsToRemove = new Set(this._activeThemeSheets);
         document.adoptedStyleSheets = document.adoptedStyleSheets.filter(
             s => !sheetsToRemove.has(s)
         );
-        this._activeTokenSheets = [];
+        this._activeThemeSheets = [];
     }
 
     /**
@@ -309,22 +342,78 @@ export default class ThemeManager {
         return chain;
     }
 
-    // ---- Token CSSStyleSheet ----
+    // ---- Auto-discovery ----
 
     /**
-     * Get the token CSSStyleSheet, creating it lazily on first access.
+     * Auto-discover theme overrides from ComponentRegistry metadata.
      *
-     * This sheet is intended for runtime token overrides via
+     * Iterates all registered components, checks if they declare the given
+     * theme in their META.goo themes.available array, and loads the CSS
+     * for matching components via MetaLoader (with caching).
+     *
+     * @param {string} themeName - Theme name to discover overrides for (e.g., 'classic')
+     * @returns {Promise<Map<string, CSSStyleSheet>>} tagName -> CSSStyleSheet
+     */
+    static async discoverOverrides(themeName) {
+        const overrides = new Map();
+        const tagNames = ComponentRegistry.getRegisteredTagNames();
+
+        const loadPromises = tagNames.map(async (tagName) => {
+            const meta = ComponentRegistry.getMeta(tagName);
+            const componentPath = ComponentRegistry.getComponentPath(tagName);
+            if (!meta || !componentPath) return null;
+
+            const availableThemes = meta.themes?.available || [];
+            if (!availableThemes.includes(themeName)) return null;
+
+            try {
+                const cssResult = await MetaLoader.loadThemeCSS(componentPath, themeName);
+                if (cssResult && cssResult.sheet) {
+                    return { tagName, sheet: cssResult.sheet };
+                }
+            } catch (error) {
+                Logger.warn(
+                    error,
+                    { code: "THEME_AUTO_DISCOVER_FAILED", tagName, theme: themeName },
+                    "Failed to auto-discover theme '%s' for '%s': %s",
+                    themeName, tagName, error.message
+                );
+            }
+            return null;
+        });
+
+        const results = await Promise.all(loadPromises);
+        for (const result of results) {
+            if (result) {
+                overrides.set(result.tagName, result.sheet);
+            }
+        }
+
+        Logger.debug(
+            { code: "THEME_OVERRIDES_DISCOVERED", theme: themeName, count: overrides.size },
+            "Auto-discovered %d theme overrides for '%s'",
+            overrides.size, themeName
+        );
+
+        return overrides;
+    }
+
+    // ---- Theme CSSStyleSheet ----
+
+    /**
+     * Get the theme CSSStyleSheet, creating it lazily on first access.
+     *
+     * This sheet is intended for runtime theme overrides via
      * document.adoptedStyleSheets. It is created empty and populated
      * when a theme is applied.
      *
-     * @returns {CSSStyleSheet} Shared constructable stylesheet for token overrides
+     * @returns {CSSStyleSheet} Shared constructable stylesheet for theme overrides
      */
-    static getTokenSheet() {
-        if (!this._tokenSheet) {
-            this._tokenSheet = new CSSStyleSheet();
+    static getThemeSheet() {
+        if (!this._themeSheet) {
+            this._themeSheet = new CSSStyleSheet();
         }
-        return this._tokenSheet;
+        return this._themeSheet;
     }
 
     // ---- Instance tracking ----

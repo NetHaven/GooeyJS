@@ -1,9 +1,0 @@
-/* FloatingPane - Classic (Mac OS 7/8/9 Platinum) structural override */
-
-:host {
-    background-color: #DDDDDD;
-    /* Classic Mac Platinum bevel frame */
-    border: 1px solid #000000;
-    /* Classic Mac 1px drop shadow */
-    box-shadow: 1px 1px 0 #000000;
-}

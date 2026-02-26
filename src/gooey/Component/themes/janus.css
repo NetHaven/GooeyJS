@@ -1,5 +1,5 @@
-/* Janus theme now provided via <gooey-theme> token architecture.
-   See: src/themes/janus-tokens.css (global token overrides)
-   See: src/themes/janus-overrides/ (structural overrides)
-   Usage: <gooey-theme name="janus" tokens="themes/janus-tokens.css" active>
+/* Janus theme now provided via <gooey-theme> theme architecture.
+   See: src/themes/janus.css (global theme overrides)
+   See: each component's themes/janus.css file (structural overrides)
+   Usage: <gooey-theme name="janus" href="themes/janus.css" active>
    This file is intentionally empty for backward compatibility with switchTheme('janus'). */

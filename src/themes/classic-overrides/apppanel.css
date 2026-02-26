@@ -1,7 +1,0 @@
-/* AppPanel - Classic Mac (OS 7/8/9) structural override */
-/* Mostly token-covered (background-color, font-family, font-size). */
-/* Minimal structural override for Classic Mac appearance. */
-
-:host {
-    background-color: #DDDDDD;
-}

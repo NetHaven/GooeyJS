@@ -9,7 +9,7 @@
   ],
   "themes": {
     "default": "base",
-    "available": ["base", "classic"]
+    "available": ["base", "classic", "dark", "janus"]
   },
   "tokens": {
     "gooey-datagrid-font-family": {

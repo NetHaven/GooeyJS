@@ -1,5 +1,9 @@
-/* Classic theme now provided via <gooey-theme> token architecture.
-   See: src/themes/classic-tokens.css (global token overrides)
-   See: src/themes/classic-overrides/ (structural overrides)
-   Usage: <gooey-theme name="classic" tokens="themes/classic-tokens.css" active>
-   This file is intentionally empty for backward compatibility with switchTheme('classic'). */
+/* Menu - Classic Mac (Platinum) structural override */
+
+:host {
+    /* Classic Mac: 1px black border, white background, 1px drop shadow */
+    border: 1px solid #000000;
+    border-radius: 0;
+    background-color: #FFFFFF;
+    box-shadow: 1px 1px 0 #000000;
+}

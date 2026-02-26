@@ -1,7 +1,7 @@
-/* GooeyJS Dark Theme Token Overrides */
-/* Applied via: <gooey-theme name="dark" tokens="themes/dark-tokens.css" active> */
+/* GooeyJS Dark Theme Overrides */
+/* Applied via: <gooey-theme name="dark" href="themes/dark.css" active> */
 /* This file redefines :root custom properties from styles.css for dark mode. */
-/* For structural overrides, see themes/dark-overrides/ directory. */
+/* For structural overrides, see each component's themes/dark.css file. */
 
 :root {
     /* Dark mode color scheme for native form controls */
@@ -59,7 +59,7 @@
     --gooey-syntax-entity: #d7ba7d;
     --gooey-syntax-doctype: #6a9955;
 
-    /* ===== Component-Specific Dark Tokens ===== */
+    /* ===== Component-Specific Dark Overrides ===== */
 
     /* --- DataGrid --- */
     --gooey-datagrid-header-gradient-start: #3c3c3c;

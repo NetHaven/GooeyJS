@@ -1,5 +1,114 @@
-/* Classic theme now provided via <gooey-theme> token architecture.
-   See: src/themes/classic-tokens.css (global token overrides)
-   See: src/themes/classic-overrides/ (structural overrides)
-   Usage: <gooey-theme name="classic" tokens="themes/classic-tokens.css" active>
-   This file is intentionally empty for backward compatibility with switchTheme('classic'). */
+/* VideoPlayer - Classic Mac (OS 7/8/9) structural override */
+/* Platinum controls, killed animations (CLSC-13), flat styling (CLSC-09) */
+
+/* Controls container - Platinum gray */
+.controls-container {
+    background: #DDDDDD;
+    border-top: 1px solid #000000;
+    transition: none !important;
+}
+
+/* Buttons - Platinum bevel style */
+button {
+    background: #DDDDDD;
+    border: 1px solid #000000;
+    box-shadow: 1px 1px 0 #FFFFFF inset, -1px -1px 0 #A0A0A0 inset;
+    color: #000000;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 0;
+    transition: none !important;
+}
+
+button:hover {
+    background: #EEEEEE;
+}
+
+button:active {
+    box-shadow: -1px -1px 0 #FFFFFF inset, 1px 1px 0 #A0A0A0 inset;
+}
+
+button:focus {
+    outline: 1px dotted #000000;
+    outline-offset: -3px;
+}
+
+button:focus:not(:focus-visible) {
+    outline: none;
+}
+
+button:focus-visible {
+    outline: 1px dotted #000000;
+    outline-offset: -3px;
+}
+
+button:disabled {
+    color: #7F7F7F;
+    text-shadow: 1px 1px 0 #FFFFFF;
+    cursor: not-allowed;
+}
+
+button:disabled:hover {
+    background: #DDDDDD;
+}
+
+/* Progress bar and volume slider - flat Classic Mac */
+.progress-bar,
+.volume-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 4px;
+    background: #A0A0A0;
+    border: 1px solid #000000;
+    border-radius: 0;
+    cursor: pointer;
+    outline: none;
+}
+
+.progress-bar::-webkit-slider-thumb,
+.volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    background: #DDDDDD;
+    border: 1px solid #000000;
+    border-radius: 0;
+    cursor: pointer;
+    transition: none !important;
+}
+
+.progress-bar::-webkit-slider-thumb:hover,
+.volume-slider::-webkit-slider-thumb:hover {
+    transform: none;
+    background: #EEEEEE;
+}
+
+.progress-bar::-moz-range-thumb,
+.volume-slider::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    background: #DDDDDD;
+    border: 1px solid #000000;
+    border-radius: 0;
+    cursor: pointer;
+}
+
+.progress-bar::-webkit-slider-runnable-track,
+.volume-slider::-webkit-slider-runnable-track {
+    height: 4px;
+    background: #A0A0A0;
+    border-radius: 0;
+}
+
+.progress-bar::-moz-range-track,
+.volume-slider::-moz-range-track {
+    height: 4px;
+    background: #A0A0A0;
+    border-radius: 0;
+}
+
+/* Time display */
+.time-display {
+    color: #000000;
+}

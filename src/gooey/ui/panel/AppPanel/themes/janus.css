@@ -1,0 +1,21 @@
+/* AppPanel - Janus structural override */
+/* Mostly handled by theme CSS (background-color, font-family, font-size).
+   Grid layout and slotted region positioning reproduced for structural completeness. */
+
+:host {
+    background-color: #c0c0c0;
+    display: grid !important;
+    grid-template-areas:
+        "north north north"
+        "west center east"
+        "south south south";
+    grid-template-rows: auto 1fr auto;
+    grid-template-columns: auto 1fr auto;
+}
+
+/* Border layout region positioning */
+::slotted([region="north"]) { grid-area: north; }
+::slotted([region="south"]) { grid-area: south; }
+::slotted([region="west"]) { grid-area: west; }
+::slotted([region="east"]) { grid-area: east; }
+::slotted([region="center"]) { grid-area: center; }

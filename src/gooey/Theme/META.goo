@@ -11,7 +11,7 @@
     },
     "attributes": {
         "name": { "type": "STRING", "default": null },
-        "tokens": { "type": "STRING", "default": null },
+        "href": { "type": "STRING", "default": null },
         "extends": { "type": "STRING", "default": null },
         "active": { "type": "BOOLEAN", "default": false }
     }

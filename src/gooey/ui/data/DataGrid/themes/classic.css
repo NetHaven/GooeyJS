@@ -1,5 +1,186 @@
-/* Classic theme now provided via <gooey-theme> token architecture.
-   See: src/themes/classic-tokens.css (global token overrides)
-   See: src/themes/classic-overrides/ (structural overrides)
-   Usage: <gooey-theme name="classic" tokens="themes/classic-tokens.css" active>
-   This file is intentionally empty for backward compatibility with switchTheme('classic'). */
+/* DataGrid - Classic structural override */
+
+:host {
+    border: 1px solid #000000;
+    border-radius: 0;
+}
+
+:host([disabled]) {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+/* Disabled state - emboss effect on text */
+:host([disabled]) .datagrid-container {
+    color: #A0A0A0;
+    text-shadow: 1px 1px 0 #FFFFFF;
+}
+
+.datagrid-container {
+    background-color: #FFFFFF;
+    color: #000000;
+}
+
+/* Header Viewport */
+.datagrid-header-viewport {
+    background-color: #DDDDDD;
+    border-bottom: 1px solid #000000;
+}
+
+/* Column headers - flat, no gradients */
+.datagrid-column-header {
+    padding: 4px 8px;
+    border-right: 1px solid #A0A0A0;
+    background: #DDDDDD;
+    font-weight: bold;
+    color: #000000;
+    min-height: 24px;
+}
+
+.datagrid-column-header:hover {
+    background: #EEEEEE;
+}
+
+.datagrid-column-header.sorted {
+    background: #CCCCCC;
+}
+
+.sort-indicator {
+    color: #000000;
+}
+
+/* Column Resize Handle */
+.column-resize-handle:hover {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+/* Filter Viewport */
+.datagrid-filter-viewport {
+    background-color: #DDDDDD;
+    border-bottom: 1px solid #000000;
+}
+
+.datagrid-filter-cell {
+    padding: 4px;
+    border-right: 1px solid #A0A0A0;
+}
+
+.datagrid-filter-input {
+    padding: 2px 4px;
+    border: 1px solid #000000;
+    border-radius: 0;
+    background-color: #FFFFFF;
+    color: #000000;
+    font-size: 12px;
+}
+
+.datagrid-filter-input:focus {
+    outline: none;
+    border-color: #0000A5;
+}
+
+.datagrid-filter-input::placeholder {
+    color: #A0A0A0;
+}
+
+/* Row Styles - 1px #A0A0A0 grid lines */
+.datagrid-row {
+    border-bottom: 1px solid #A0A0A0;
+    background-color: #FFFFFF;
+    transition: none;
+}
+
+.datagrid-row:hover {
+    background-color: #EEEEEE;
+}
+
+.datagrid-row.selected {
+    background-color: #0000A5;
+    color: #FFFFFF;
+}
+
+.datagrid-row.selected:hover {
+    background-color: #0000CC;
+}
+
+/* Alternating row colors */
+.datagrid-row:nth-child(even) {
+    background-color: #F5F5F5;
+}
+
+.datagrid-row:nth-child(even):hover {
+    background-color: #EEEEEE;
+}
+
+.datagrid-row.selected:nth-child(even) {
+    background-color: #0000A5;
+}
+
+/* Cell Styles */
+.datagrid-cell {
+    padding: 0 8px;
+    border-right: 1px solid #A0A0A0;
+}
+
+.datagrid-cell.selected {
+    outline: 1px solid #0000A5;
+    outline-offset: -1px;
+    background-color: rgba(0, 0, 165, 0.1);
+}
+
+.datagrid-row.selected .datagrid-cell.selected {
+    outline-color: #FFFFFF;
+    background-color: transparent;
+}
+
+/* Cell Editing */
+.datagrid-cell.editing {
+    padding: 0;
+    background-color: #FFFFFF;
+}
+
+.datagrid-row.selected .datagrid-cell.editing {
+    color: #000000;
+}
+
+.datagrid-cell-editor {
+    border: 1px solid #0000A5;
+    border-radius: 0;
+    background-color: #FFFFFF;
+    color: #000000;
+}
+
+/* Focus styling */
+:host(:focus) {
+    outline: 1px dotted #000000;
+    outline-offset: -1px;
+    box-shadow: none;
+}
+
+/* Classic Mac scrollbar styling */
+.datagrid-body-viewport::-webkit-scrollbar {
+    width: 16px;
+    height: 16px;
+}
+
+.datagrid-body-viewport::-webkit-scrollbar-track {
+    background: #DDDDDD;
+}
+
+.datagrid-body-viewport::-webkit-scrollbar-thumb {
+    background: #AAAAAA;
+    border: 1px solid #000000;
+}
+
+.datagrid-body-viewport::-webkit-scrollbar-thumb:hover {
+    background: #999999;
+}
+
+.datagrid-body-viewport::-webkit-scrollbar-corner {
+    background: #DDDDDD;
+}
+
+/* Hidden slot container */
+.datagrid-columns-slot {
+    display: none !important;
+}

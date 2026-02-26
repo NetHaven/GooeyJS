@@ -1,0 +1,70 @@
+/* Toolbar - Janus structural override */
+
+:host {
+    /* toolbar border */
+    border-bottom: 1px solid #808080;
+    box-shadow: 0 1px 0 #ffffff;
+
+    /* Button sizing variables */
+    --button-height: 32px;
+    --button-width: 32px;
+    --button-line-height: 32px;
+}
+
+/* Button size variants */
+:host([buttonsize='tiny']) {
+    --button-height: 24px;
+    --button-width: 24px;
+    --button-line-height: 24px;
+}
+
+:host([buttonsize='small']) {
+    --button-height: 28px;
+    --button-width: 28px;
+    --button-line-height: 28px;
+}
+
+:host([buttonsize='medium']) {
+    --button-height: 32px;
+    --button-width: 32px;
+    --button-line-height: 32px;
+}
+
+:host([buttonsize='large']) {
+    --button-height: 48px;
+    --button-width: 48px;
+    --button-line-height: 48px;
+}
+
+:host([buttonsize='xlarge']) {
+    --button-height: 64px;
+    --button-width: 64px;
+    --button-line-height: 64px;
+}
+
+/* Apply button sizing to child components */
+::slotted(ui-button) {
+    height: var(--button-height);
+    width: var(--button-width);
+}
+
+::slotted(ui-togglebutton) {
+    height: var(--button-height);
+    width: var(--button-width);
+}
+
+::slotted(ui-colorpicker) {
+    height: var(--button-height);
+    width: var(--button-width);
+}
+
+::slotted(ui-dropdownlist) {
+    height: var(--button-height);
+    line-height: var(--button-line-height);
+}
+
+/* Button elements inside toolbar */
+button {
+    height: 100%;
+    width: 100%;
+}

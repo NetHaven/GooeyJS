@@ -1,7 +1,7 @@
-/* GooeyJS Classic (Mac OS 7/8/9) Theme Token Overrides */
-/* Applied via: <gooey-theme name="classic" tokens="themes/classic-tokens.css" active> */
-/* This file redefines :root custom properties from styles.css for Classic Mac Platinum appearance. */
-/* For structural overrides, see themes/classic-overrides/ directory. */
+/* GooeyJS Classic Theme Overrides */
+/* Applied via: <gooey-theme name="classic" href="themes/classic.css" active> */
+/* This file redefines :root custom properties from styles.css for the Classic Platinum appearance. */
+/* For structural overrides, see each component's themes/classic.css file. */
 /* For bitmap fonts (Chicago, Geneva, Monaco), see themes/classic-fonts/ directory. */
 
 :root {
