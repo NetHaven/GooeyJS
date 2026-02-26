@@ -118,14 +118,29 @@ export default class Component extends Observable {
 
             // Load templates BEFORE defining custom element
             // (constructors need templates available when triggered by define())
+            // Templates are required by default - component registration fails if template load fails
+            // Future enhancement: support "optional": true flag in META.goo template definitions for non-critical templates
             if (meta.templates && meta.templates.length > 0) {
                 for (const template of meta.templates) {
                     const templatePath = `${this._href}/templates/${template.file}`;
                     try {
                         await Template.load(templatePath, template.id);
                         Logger.debug({ code: "TEMPLATE_LOADED", templateId: template.id, file: templatePath }, "Loaded template %s from %s", template.id, templatePath);
-                    } catch {
-                        Logger.debug({ code: "TEMPLATE_LOAD_FAILED", templateId: template.id, file: templatePath }, "Failed to load template %s from %s", template.id, templatePath);
+                    } catch (templateError) {
+                        // Templates are required - fail component registration
+                        Logger.error(
+                            templateError,
+                            { code: "TEMPLATE_LOAD_FAILED", href: this._href, templateId: template.id },
+                            "Failed to load required template: %s",
+                            templatePath
+                        );
+                        this.fireEvent(ComponentEvent.ERROR, {
+                            error: `Template load failed: ${templateError.message}`,
+                            templateId: template.id,
+                            href: this._href,
+                            component: this
+                        });
+                        throw templateError; // Propagate to prevent partial registration
                     }
                 }
             }

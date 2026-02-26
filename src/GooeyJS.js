@@ -237,16 +237,28 @@ export default class GooeyJS {
 
                     // Load templates BEFORE defining custom element
                     // (constructors need templates available when triggered by define())
+                    // Templates are required by default - component registration fails if template load fails
+                    // Future enhancement: support "optional": true flag in META.goo template definitions for non-critical templates
                     if (meta.templates && meta.templates.length > 0) {
                         for (const template of meta.templates) {
+                            const templatePath = `${fullComponentPath}/templates/${template.file}`;
                             try {
-                                await Template.load(
-                                    `${fullComponentPath}/templates/${template.file}`,
-                                    template.id
-                                );
+                                await Template.load(templatePath, template.id);
                                 Logger.debug({ code: "TEMPLATE_LOADED", templateId: template.id, file: template.file }, "Loaded template %s from %s", template.id, template.file);
                             } catch (templateError) {
-                                Logger.warn(templateError, { code: "TEMPLATE_LOAD_FAILED", templateId: template.id }, "Failed to load template %s", template.id);
+                                Logger.error(
+                                    templateError,
+                                    { code: "TEMPLATE_LOAD_FAILED", component: meta.fullTagName, templateId: template.id },
+                                    "Template load failed for %s",
+                                    meta.fullTagName
+                                );
+                                failures.push({
+                                    component: meta.fullTagName,
+                                    error: `Template load failed: ${templateError.message}`,
+                                    phase: 'template'
+                                });
+                                // Skip component registration - continue to next component
+                                throw templateError;
                             }
                         }
                     }
