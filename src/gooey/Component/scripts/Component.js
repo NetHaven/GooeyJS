@@ -181,8 +181,14 @@ export default class Component extends Observable {
         return this._meta?.name;
     }
 
-    get tagName() {
-        return this._meta?.fullTagName;
+    /**
+     * Get the component's registered tag name from its META.goo
+     * (Native tagName returns uppercase element name for DOM compatibility)
+     * @returns {string|null} The component tag name or null if not loaded
+     */
+    get componentTagName() {
+        if (!this._meta) return null;
+        return this._meta.fullTagName || this._meta.tagName;
     }
 
     get loaded() {
