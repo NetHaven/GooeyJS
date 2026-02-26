@@ -30,6 +30,11 @@ export default class Component extends Observable {
             super.connectedCallback();
         }
 
+        // Guard: Don't reload if already loaded (prevents repeated fetch/import on re-attach)
+        if (this._loaded) {
+            return;
+        }
+
         // Load component when added to DOM
         this.loadComponent();
     }
