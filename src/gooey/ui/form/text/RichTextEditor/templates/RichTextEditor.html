@@ -1,38 +1,14 @@
 <template id="ui-RichTextEditor">
-    <div class="richtexteditor-shell">
-        <div class="richtexteditor-toolbar" part="toolbar">
-            <button class="richtexteditor-button" type="button" aria-label="Bold (Ctrl+B)" data-command="bold">
-                <img src="text_bold32.png" alt="Bold">
-            </button>
-            <button class="richtexteditor-button" type="button" aria-label="Italic (Ctrl+I)" data-command="italic">
-                <img src="text_italics32.png" alt="Italic">
-            </button>
-            <button class="richtexteditor-button" type="button" aria-label="Underline (Ctrl+U)" data-command="underline">
-                <img src="text_underlined32.png" alt="Underline">
-            </button>
-            <button class="richtexteditor-button" type="button" aria-label="Strikethrough" data-command="strikeThrough">
-                <s>S</s>
-            </button>
-            <button class="richtexteditor-button" type="button" aria-label="Subscript" data-command="subscript">
-                <img src="text_subscript32.png" alt="Subscript">
-            </button>
-            <button class="richtexteditor-button" type="button" aria-label="Superscript" data-command="superscript">
-                <img src="text_superscript32.png" alt="Superscript">
-            </button>
-            <button class="richtexteditor-button" type="button" aria-label="Left align" data-command="justifyLeft">
-                <img src="text_align_left32.png" alt="Left Align">
-            </button>
-            <button class="richtexteditor-button" type="button" aria-label="Center align" data-command="justifyCenter">
-                <img src="text_align_center32.png" alt="Center Align">
-            </button>
-            <button class="richtexteditor-button" type="button" aria-label="Right align" data-command="justifyRight">
-                <img src="text_align_right32.png" alt="Right Align">
-            </button>
-            <button class="richtexteditor-button" type="button" aria-label="Justify" data-command="justifyFull">
-                <img src="text_align_justified32.png" alt="Justify">
-            </button>
+    <div class="rte-shell">
+        <div class="rte-toolbar" part="toolbar">
+            <!-- Toolbar will be populated by RTEToolbar component in Phase 41 -->
+            <!-- For now, empty placeholder that is hidden by default -->
         </div>
-        <div class="richtexteditor-content" contenteditable="true" role="textbox" tabindex="0" aria-multiline="true" spellcheck="true" part="content">
+        <slot></slot>
+        <div class="rte-editor-area" part="editor-area">
+            <textarea class="rte-input-sink" aria-hidden="true" tabindex="-1" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
+            <div class="rte-content" role="textbox" aria-multiline="true" tabindex="0" part="content"></div>
+            <div class="rte-selection" aria-hidden="true"></div>
         </div>
     </div>
 </template>

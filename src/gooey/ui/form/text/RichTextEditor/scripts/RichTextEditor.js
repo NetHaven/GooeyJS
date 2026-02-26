@@ -1,16 +1,22 @@
-﻿import TextElement from '../../TextElement.js';
+import TextElement from '../../TextElement.js';
 import RichTextEditorEvent from '../../../../../events/form/text/RichTextEditorEvent.js';
 import TextElementEvent from '../../../../../events/form/text/TextElementEvent.js';
 import FormElementEvent from '../../../../../events/form/FormElementEvent.js';
-import MouseEvent from '../../../../../events/MouseEvent.js';
-import KeyboardEvent from '../../../../../events/KeyboardEvent.js';
 import Template from '../../../../../util/Template.js';
-import GooeyJS from '../../../../../../GooeyJS.js';
 import Logger from '../../../../../logging/Logger.js';
 
+import Schema from './model/Schema.js';
+import Node, { Mark } from './model/Node.js';
+import { Selection } from './model/Position.js';
+import EditorState from './state/EditorState.js';
+import { baseKeymap, keymap, insertText, toggleMark } from './state/Commands.js';
+import EditorView from './view/EditorView.js';
+import InputHandler from './view/InputHandler.js';
+import SelectionManager from './view/SelectionManager.js';
+
 /**
- * Sanitize HTML to prevent XSS attacks
- * Removes script tags, event handlers, and javascript: URLs
+ * Sanitize HTML to prevent XSS attacks.
+ * Removes script tags, event handlers, and javascript: URLs.
  * @param {string} html - Raw HTML string
  * @returns {string} Sanitized HTML
  */
@@ -47,6 +53,40 @@ function sanitizeHTML(html) {
     return temp.innerHTML;
 }
 
+/**
+ * Mark mapping from tag names to mark types for HTML parsing.
+ */
+const TAG_TO_MARK = {
+    strong: 'bold',
+    b: 'bold',
+    em: 'italic',
+    i: 'italic',
+    u: 'underline',
+    s: 'strikethrough',
+    del: 'strikethrough',
+    code: 'code',
+    sub: 'subscript',
+    sup: 'superscript'
+};
+
+/**
+ * Block-level tag names for HTML parsing.
+ */
+const BLOCK_TAGS = new Set([
+    'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+    'blockquote', 'pre', 'ul', 'ol', 'li',
+    'table', 'tr', 'td', 'th', 'hr', 'div'
+]);
+
+/**
+ * RichTextEditor component - model-driven architecture.
+ *
+ * Uses EditorView for DOM rendering, hidden textarea for keyboard input,
+ * and custom selection overlays for cursor/highlight display. Replaces
+ * the previous contenteditable/execCommand approach entirely.
+ *
+ * Extends TextElement, preserving the component hierarchy and public API.
+ */
 export default class RichTextEditor extends TextElement {
     constructor() {
         super();
@@ -54,19 +94,59 @@ export default class RichTextEditor extends TextElement {
         Template.activate("ui-RichTextEditor", this.shadowRoot);
         this.classList.add('ui-RichTextEditor');
 
-        this._buttons = {};
         this._previousValue = '';
 
-        this._handleInputBound = this._handleInput.bind(this);
-        this._handleFocusBound = this._handleFocus.bind(this);
-        this._handleBlurBound = this._handleBlur.bind(this);
-        this._handleKeyDownBound = this._handleKeyDown.bind(this);
-        this._selectionChangeBound = this._handleSelectionChange.bind(this);
+        // Query new template DOM elements
+        this._shell = this.shadowRoot.querySelector('.rte-shell');
+        this._toolbar = this.shadowRoot.querySelector('.rte-toolbar');
+        this._editorArea = this.shadowRoot.querySelector('.rte-editor-area');
+        this._inputSink = this.shadowRoot.querySelector('.rte-input-sink');
+        this._content = this.shadowRoot.querySelector('.rte-content');
+        this._selectionLayer = this.shadowRoot.querySelector('.rte-selection');
 
-        this._fixImagePaths();
-        this._createLayout();
+        // Set up TextElement compatibility
+        this.textElement = this._content;
+        this.formElement = this._content;
+
+        // Create Schema
+        this._schema = Schema.default();
+
+        // Create initial EditorState
+        this._state = EditorState.create(this._schema, null);
+
+        // Build the resolved keymap (platform-aware Mod- resolution)
+        const resolvedKeymap = keymap({
+            ...baseKeymap,
+            'Mod-b': toggleMark('bold'),
+            'Mod-i': toggleMark('italic'),
+            'Mod-u': toggleMark('underline')
+        });
+
+        // Create EditorView
+        this._view = new EditorView(this._content, this._state, this._schema);
+
+        // Create InputHandler
+        this._inputHandler = new InputHandler(this._inputSink, this._view, resolvedKeymap);
+
+        // Create SelectionManager
+        this._selectionManager = new SelectionManager(this._selectionLayer, this._view);
+
+        // Wire dispatch: view dispatches transactions through the component
+        this._view.dispatch = (tr) => this._dispatch(tr);
+
+        // Register events
         this._registerEvents();
 
+        // Handle focus via click on editor area or content
+        this._handleEditorClickBound = this._handleEditorClick.bind(this);
+        this._handleInputFocusBound = this._handleInputFocus.bind(this);
+        this._handleInputBlurBound = this._handleInputBlur.bind(this);
+
+        this._editorArea.addEventListener('mousedown', this._handleEditorClickBound);
+        this._inputSink.addEventListener('focus', this._handleInputFocusBound);
+        this._inputSink.addEventListener('blur', this._handleInputBlurBound);
+
+        // Initialize from value attribute if present
         if (this.hasAttribute('value')) {
             this.value = this.getAttribute('value');
         }
@@ -80,16 +160,40 @@ export default class RichTextEditor extends TextElement {
         if (super.connectedCallback) {
             super.connectedCallback();
         }
-        document.addEventListener('selectionchange', this._selectionChangeBound);
+
         this._syncDisabledState();
-        this._updateButtonStates();
+
+        // Render initial state if view exists
+        if (this._view && this._state) {
+            this._view.updateState(this._state);
+            this._selectionManager.update(this._state.selection);
+        }
     }
 
     disconnectedCallback() {
         if (super.disconnectedCallback) {
             super.disconnectedCallback();
         }
-        document.removeEventListener('selectionchange', this._selectionChangeBound);
+
+        // Clean up view layer
+        if (this._view) {
+            this._view.destroy();
+        }
+        if (this._inputHandler) {
+            this._inputHandler.destroy();
+        }
+        if (this._selectionManager) {
+            this._selectionManager.destroy();
+        }
+
+        // Remove event listeners
+        if (this._editorArea) {
+            this._editorArea.removeEventListener('mousedown', this._handleEditorClickBound);
+        }
+        if (this._inputSink) {
+            this._inputSink.removeEventListener('focus', this._handleInputFocusBound);
+            this._inputSink.removeEventListener('blur', this._handleInputBlurBound);
+        }
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -99,53 +203,153 @@ export default class RichTextEditor extends TextElement {
             this._syncDisabledState();
         }
 
+        if (name === 'readonly') {
+            this._syncReadOnlyState();
+        }
+
         if (name === 'value' && newValue !== oldValue && newValue !== this.value) {
             this.value = newValue ?? '';
         }
     }
 
+    // =========================================================================
+    // Public API
+    // =========================================================================
+
+    /**
+     * Get the editor content as an HTML string.
+     * Serializes the document model to HTML.
+     * @returns {string}
+     */
     get value() {
-        return this._content ? this._content.innerHTML : '';
-    }
-
-    set value(val) {
-        if (!this._content) {
-            return;
+        if (!this._state || !this._state.doc) {
+            return '';
         }
-        this._content.innerHTML = sanitizeHTML(val ?? '');
-        this._updateButtonStates();
+        return this._serializeToHTML(this._state.doc);
     }
 
+    /**
+     * Set the editor content from an HTML string.
+     * Parses HTML into a document model and updates the view.
+     * @param {string} val
+     */
+    set value(val) {
+        if (!this._schema) return;
+
+        const doc = this._parseHTML(val);
+        const selection = Selection.cursor(1);
+        this._state = new EditorState(doc, selection, [], [], this._schema);
+
+        if (this._view) {
+            this._view.updateState(this._state);
+        }
+        if (this._selectionManager) {
+            this._selectionManager.update(this._state.selection);
+        }
+    }
+
+    /**
+     * Get disabled state.
+     * @returns {boolean}
+     */
     get disabled() {
         return super.disabled;
     }
 
+    /**
+     * Set disabled state.
+     * @param {boolean} val
+     */
     set disabled(val) {
         super.disabled = val;
         this._syncDisabledState();
     }
 
-    _createLayout() {
-        this._shell = this.shadowRoot.querySelector('div.richtexteditor-shell');
-
-        this._toolbar = this.shadowRoot.querySelector('div.richtexteditor-toolbar');
-
-        let buttons = Array.from(this._toolbar.querySelectorAll("button"));
-        buttons.forEach((button) => {
-            const command = button.dataset.command;
-            button.addEventListener(MouseEvent.CLICK, (event) => {
-                event.preventDefault();
-                this._execCommand(command, event);
-            });
-            this._buttons[command] = button;
-        });
-
-        this._content = this.shadowRoot.querySelector('div.richtexteditor-content');
-
-        this.textElement = this._content;
-        this.formElement = this._content;
+    /**
+     * Get the current EditorState (for programmatic access).
+     * @returns {import('./state/EditorState.js').default}
+     */
+    get editorState() {
+        return this._state;
     }
 
+    /**
+     * Get the EditorView (for programmatic access).
+     * @returns {import('./view/EditorView.js').default}
+     */
+    get editorView() {
+        return this._view;
+    }
+
+    /**
+     * Get the Schema (for programmatic access).
+     * @returns {import('./model/Schema.js').default}
+     */
+    get schema() {
+        return this._schema;
+    }
+
+    // =========================================================================
+    // Dispatch
+    // =========================================================================
+
+    /**
+     * Apply a transaction to produce a new state and update the view.
+     *
+     * @param {import('./state/Transaction.js').default} tr - Transaction to apply
+     * @private
+     */
+    _dispatch(tr) {
+        const oldState = this._state;
+        this._state = this._state.apply(tr);
+
+        // Update view with new state
+        if (this._view) {
+            this._view.updateState(this._state);
+        }
+
+        // Update selection overlays
+        if (this._selectionManager) {
+            this._selectionManager.update(this._state.selection);
+        }
+
+        // Update hidden textarea position near cursor for IME
+        if (this._inputHandler && this._view) {
+            const coords = this._view.coordsAtPos(this._state.selection.head);
+            if (coords) {
+                this._inputHandler.updatePosition(coords);
+            }
+        }
+
+        // Fire events
+        this.fireEvent(RichTextEditorEvent.MODEL_CHANGED, {
+            value: this.value,
+            state: this._state
+        });
+
+        this.fireEvent(TextElementEvent.INPUT, {
+            value: this.value,
+            state: this._state
+        });
+
+        // Track selection changes
+        if (!oldState.selection.eq(this._state.selection)) {
+            this.fireEvent(RichTextEditorEvent.TEXT_CURSOR_MOVE, {
+                value: this.value,
+                anchor: this._state.selection.anchor,
+                head: this._state.selection.head
+            });
+        }
+    }
+
+    // =========================================================================
+    // Events
+    // =========================================================================
+
+    /**
+     * Register all valid events for the Observable system.
+     * @private
+     */
     _registerEvents() {
         this.addValidEvent(TextElementEvent.INPUT);
         this.addValidEvent(TextElementEvent.CHANGE);
@@ -154,31 +358,57 @@ export default class RichTextEditor extends TextElement {
         this.addValidEvent(RichTextEditorEvent.MODEL_CHANGED);
         this.addValidEvent(RichTextEditorEvent.EDITOR_ACTION);
         this.addValidEvent(RichTextEditorEvent.TEXT_CURSOR_MOVE);
-
-        this._content.addEventListener('input', this._handleInputBound);
-        this._content.addEventListener(FormElementEvent.FOCUS, this._handleFocusBound);
-        this._content.addEventListener(FormElementEvent.BLUR, this._handleBlurBound);
-        this._content.addEventListener(KeyboardEvent.KEY_DOWN, this._handleKeyDownBound);
     }
 
-    _handleInput(event) {
-        this._emitModelChange(event);
+    // =========================================================================
+    // Focus handling
+    // =========================================================================
+
+    /**
+     * Handle clicks on the editor area to focus the hidden textarea.
+     *
+     * @param {MouseEvent} event
+     * @private
+     */
+    _handleEditorClick(event) {
+        // Only focus if clicking directly on the editor area or content
+        // (not on selection layer which has pointer-events: none)
+        if (this.disabled) return;
+
+        this._inputHandler.focus();
     }
 
-    _handleFocus(event) {
+    /**
+     * Handle focus on the hidden textarea.
+     *
+     * @param {FocusEvent} event
+     * @private
+     */
+    _handleInputFocus(event) {
         this._previousValue = this.value;
+        this._shell.classList.add('rte-focused');
+
         this.fireEvent(FormElementEvent.FOCUS, {
             value: this.value,
             originalEvent: event
         });
     }
 
-    _handleBlur(event) {
+    /**
+     * Handle blur on the hidden textarea.
+     *
+     * @param {FocusEvent} event
+     * @private
+     */
+    _handleInputBlur(event) {
+        this._shell.classList.remove('rte-focused');
+
         this.fireEvent(FormElementEvent.BLUR, {
             value: this.value,
             originalEvent: event
         });
 
+        // Fire CHANGE event if value changed since focus
         if (this.value !== this._previousValue) {
             this.fireEvent(TextElementEvent.CHANGE, {
                 value: this.value,
@@ -189,113 +419,518 @@ export default class RichTextEditor extends TextElement {
         }
     }
 
-    _handleKeyDown(event) {
-        if (!event.ctrlKey && !event.metaKey) {
-            return;
-        }
+    // =========================================================================
+    // State synchronization
+    // =========================================================================
 
-        const key = event.key.toLowerCase();
-        if (key === 'b' || key === 'i' || key === 'u') {
-            event.preventDefault();
-            const command = key === 'b' ? 'bold' : key === 'i' ? 'italic' : 'underline';
-            this._execCommand(command, event);
-        }
-    }
-
-    _handleSelectionChange() {
-        const selection = document.getSelection();
-        if (!selection || selection.rangeCount === 0) {
-            return;
-        }
-
-        if (!this.contains(selection.anchorNode) || !this.contains(selection.focusNode)) {
-            return;
-        }
-
-        this._updateButtonStates();
-
-        this.fireEvent(RichTextEditorEvent.TEXT_CURSOR_MOVE, {
-            value: this.value,
-            anchorOffset: selection.anchorOffset,
-            focusOffset: selection.focusOffset,
-            originalEvent: selection
-        });
-    }
-
-    _execCommand(command, originalEvent) {
-        if (this.disabled) {
-            return;
-        }
-
-        this._content.focus();
-
-        try {
-            document.execCommand(command, false, null);
-        } catch (error) {
-            Logger.warn({ code: "RICH_TEXT_COMMAND_ERROR", command, err: error }, "Rich text command error: %s", command);
-        }
-
-        this._updateButtonStates();
-
-        this.fireEvent(RichTextEditorEvent.EDITOR_ACTION, {
-            command,
-            active: this._buttons[command]?.classList.contains('is-active') || false,
-            originalEvent
-        });
-
-        this._emitModelChange(originalEvent);
-    }
-
-    _emitModelChange(originalEvent) {
-        const payload = {
-            value: this.value,
-            originalEvent
-        };
-
-        this.fireEvent(TextElementEvent.INPUT, payload);
-        this.fireEvent(RichTextEditorEvent.MODEL_CHANGED, payload);
-    }
-
-    _updateButtonStates() {
-        Object.entries(this._buttons).forEach(([command, button]) => {
-            let isActive = false;
-            try {
-                isActive = document.queryCommandState(command);
-            } catch {
-                isActive = false;
-            }
-            button.classList.toggle('is-active', !!isActive);
-            button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
-        });
-    }
-
+    /**
+     * Synchronize disabled state with the view layer.
+     * @private
+     */
     _syncDisabledState() {
         const disabled = this.disabled;
-        if (!this._content) {
-            return;
-        }
+        if (!this._content) return;
 
-        this._content.setAttribute('contenteditable', disabled ? 'false' : 'true');
         this._content.setAttribute('aria-disabled', disabled ? 'true' : 'false');
 
-        Object.values(this._buttons).forEach((button) => {
-            button.disabled = disabled;
-        });
+        if (this._inputHandler) {
+            this._inputHandler.disabled = disabled;
+        }
+
+        if (disabled && this._inputSink) {
+            this._inputSink.setAttribute('disabled', '');
+        } else if (this._inputSink) {
+            this._inputSink.removeAttribute('disabled');
+        }
     }
 
-    _fixImagePaths() {
-        // Fix all image paths to be absolute based on GooeyJS location
-        const images = this.shadowRoot.querySelectorAll('img[src]');
-        const basePath = GooeyJS.basePath;
+    /**
+     * Synchronize read-only state with the input handler.
+     * @private
+     */
+    _syncReadOnlyState() {
+        const readOnly = this.readOnly;
 
-        images.forEach(img => {
-            const src = img.getAttribute('src');
-            // Check if the path is relative and starts with 'gooey/'
-            if (src && src.startsWith('gooey/')) {
-                // Convert to absolute path based on GooeyJS location
-                const absoluteSrc = `${basePath}/${src}`;
-                img.setAttribute('src', absoluteSrc);
+        if (this._inputHandler) {
+            this._inputHandler.readOnly = readOnly;
+        }
+
+        if (this._content) {
+            this._content.setAttribute('aria-readonly', readOnly ? 'true' : 'false');
+        }
+    }
+
+    // =========================================================================
+    // HTML serialization (model -> HTML)
+    // =========================================================================
+
+    /**
+     * Serialize a document model to an HTML string.
+     *
+     * @param {import('./model/Node.js').default} doc - Document root node
+     * @returns {string}
+     * @private
+     */
+    _serializeToHTML(doc) {
+        if (!doc.children || doc.children.length === 0) {
+            return '';
+        }
+
+        return doc.children.map(child => this._serializeNode(child)).join('');
+    }
+
+    /**
+     * Serialize a single node to HTML.
+     *
+     * @param {import('./model/Node.js').default} node
+     * @returns {string}
+     * @private
+     */
+    _serializeNode(node) {
+        if (node.type === 'text') {
+            return this._serializeTextNode(node);
+        }
+
+        const spec = this._schema.nodes[node.type];
+        if (!spec || !spec.toDOM) {
+            // Unknown node type — serialize children only
+            if (node.children) {
+                return node.children.map(c => this._serializeNode(c)).join('');
             }
-        });
+            return '';
+        }
+
+        const domSpec = spec.toDOM(node);
+        return this._specToHTML(domSpec, node);
+    }
+
+    /**
+     * Convert a toDOM spec to an HTML string.
+     *
+     * @param {Array} spec - DOM spec from schema
+     * @param {import('./model/Node.js').default} node - Source model node
+     * @returns {string}
+     * @private
+     */
+    _specToHTML(spec, node) {
+        if (!Array.isArray(spec)) return '';
+
+        const tagName = spec[0];
+        let attrs = '';
+        let startIdx = 1;
+
+        // Check if second element is attrs object
+        if (spec.length > 1 && spec[1] !== null && typeof spec[1] === 'object' && !Array.isArray(spec[1]) && spec[1] !== 0) {
+            for (const [key, value] of Object.entries(spec[1])) {
+                if (value !== undefined && value !== null) {
+                    attrs += ` ${key}="${this._escapeAttr(String(value))}"`;
+                }
+            }
+            startIdx = 2;
+        }
+
+        // Void elements (no closing tag)
+        const voidElements = new Set(['br', 'hr', 'img', 'input']);
+        if (voidElements.has(tagName)) {
+            return `<${tagName}${attrs}>`;
+        }
+
+        let inner = '';
+
+        for (let i = startIdx; i < spec.length; i++) {
+            const entry = spec[i];
+
+            if (entry === 0) {
+                // Render children
+                if (node && node.children) {
+                    inner += node.children.map(c => this._serializeNode(c)).join('');
+                }
+            } else if (Array.isArray(entry)) {
+                // Nested spec
+                inner += this._specToHTML(entry, node);
+            }
+        }
+
+        return `<${tagName}${attrs}>${inner}</${tagName}>`;
+    }
+
+    /**
+     * Serialize a text node with mark wrapping.
+     *
+     * @param {import('./model/Node.js').default} textNode
+     * @returns {string}
+     * @private
+     */
+    _serializeTextNode(textNode) {
+        let html = this._escapeHTML(textNode.text);
+
+        // Wrap in mark elements from innermost to outermost
+        for (const mark of textNode.marks) {
+            const markSpec = this._schema.marks[mark.type];
+            if (markSpec && markSpec.toDOM) {
+                const domSpec = markSpec.toDOM(mark);
+                html = this._wrapInSpec(domSpec, html);
+            }
+        }
+
+        return html;
+    }
+
+    /**
+     * Wrap content in a mark's DOM spec.
+     *
+     * @param {Array} spec - Mark DOM spec
+     * @param {string} content - Inner HTML content
+     * @returns {string}
+     * @private
+     */
+    _wrapInSpec(spec, content) {
+        if (!Array.isArray(spec)) return content;
+
+        const tagName = spec[0];
+        let attrs = '';
+
+        if (spec.length > 1 && spec[1] !== null && typeof spec[1] === 'object' && !Array.isArray(spec[1]) && spec[1] !== 0) {
+            for (const [key, value] of Object.entries(spec[1])) {
+                if (value !== undefined && value !== null) {
+                    attrs += ` ${key}="${this._escapeAttr(String(value))}"`;
+                }
+            }
+        }
+
+        return `<${tagName}${attrs}>${content}</${tagName}>`;
+    }
+
+    /**
+     * Escape HTML special characters.
+     *
+     * @param {string} str
+     * @returns {string}
+     * @private
+     */
+    _escapeHTML(str) {
+        return str
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+    }
+
+    /**
+     * Escape an attribute value.
+     *
+     * @param {string} str
+     * @returns {string}
+     * @private
+     */
+    _escapeAttr(str) {
+        return str
+            .replace(/&/g, '&amp;')
+            .replace(/"/g, '&quot;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+    }
+
+    // =========================================================================
+    // HTML parsing (HTML -> model)
+    // =========================================================================
+
+    /**
+     * Parse an HTML string into a document model.
+     *
+     * @param {string} html - HTML string
+     * @returns {import('./model/Node.js').default} Document node
+     * @private
+     */
+    _parseHTML(html) {
+        if (!html) {
+            // Empty document with one empty paragraph
+            const para = this._schema.node('paragraph', null, []);
+            return this._schema.node('document', null, [para]);
+        }
+
+        const sanitized = sanitizeHTML(html);
+
+        // Parse into a temporary DOM element
+        const temp = document.createElement('div');
+        temp.innerHTML = sanitized;
+
+        // Walk the DOM to build the model tree
+        const blocks = this._parseDOMChildren(temp, 'block');
+
+        if (blocks.length === 0) {
+            // No block content — wrap any inline content in a paragraph
+            const inlines = this._parseDOMChildren(temp, 'inline');
+            if (inlines.length > 0) {
+                const para = this._schema.node('paragraph', null, inlines);
+                return this._schema.node('document', null, [para]);
+            }
+            // Truly empty
+            const para = this._schema.node('paragraph', null, []);
+            return this._schema.node('document', null, [para]);
+        }
+
+        return this._schema.node('document', null, blocks);
+    }
+
+    /**
+     * Parse DOM children into model nodes.
+     *
+     * @param {Element} el - Parent DOM element
+     * @param {string} context - 'block' or 'inline'
+     * @returns {import('./model/Node.js').default[]}
+     * @private
+     */
+    _parseDOMChildren(el, context) {
+        const nodes = [];
+        let pendingInlines = [];
+
+        const flushInlines = () => {
+            if (pendingInlines.length > 0 && context === 'block') {
+                // Wrap loose inline content in a paragraph
+                try {
+                    const para = this._schema.node('paragraph', null, pendingInlines);
+                    nodes.push(para);
+                } catch (e) {
+                    // Skip invalid content
+                }
+                pendingInlines = [];
+            } else if (pendingInlines.length > 0) {
+                nodes.push(...pendingInlines);
+                pendingInlines = [];
+            }
+        };
+
+        for (const child of el.childNodes) {
+            if (child.nodeType === 3) {
+                // Text node
+                const text = child.textContent;
+                if (text && text.trim().length > 0) {
+                    try {
+                        const textNode = this._schema.text(text);
+                        pendingInlines.push(textNode);
+                    } catch (e) {
+                        // Skip empty text
+                    }
+                }
+                continue;
+            }
+
+            if (child.nodeType !== 1) continue; // Only process element nodes
+
+            const tag = child.tagName.toLowerCase();
+
+            if (BLOCK_TAGS.has(tag)) {
+                flushInlines();
+                const blockNode = this._parseDOMElement(child);
+                if (blockNode) {
+                    nodes.push(blockNode);
+                }
+            } else {
+                // Inline element — parse and add to pending
+                const inlineNodes = this._parseInlineElement(child, []);
+                pendingInlines.push(...inlineNodes);
+            }
+        }
+
+        flushInlines();
+        return nodes;
+    }
+
+    /**
+     * Parse a block-level DOM element into a model node.
+     *
+     * @param {Element} el
+     * @returns {import('./model/Node.js').default|null}
+     * @private
+     */
+    _parseDOMElement(el) {
+        const tag = el.tagName.toLowerCase();
+
+        try {
+            switch (tag) {
+                case 'p':
+                case 'div': {
+                    const children = this._parseInlineChildren(el, []);
+                    return this._schema.node('paragraph', null, children);
+                }
+                case 'h1': case 'h2': case 'h3':
+                case 'h4': case 'h5': case 'h6': {
+                    const level = parseInt(tag.charAt(1), 10);
+                    const children = this._parseInlineChildren(el, []);
+                    return this._schema.node('heading', { level }, children);
+                }
+                case 'blockquote': {
+                    const blocks = this._parseDOMChildren(el, 'block');
+                    if (blocks.length === 0) {
+                        const para = this._schema.node('paragraph', null, []);
+                        return this._schema.node('blockquote', null, [para]);
+                    }
+                    return this._schema.node('blockquote', null, blocks);
+                }
+                case 'ul': {
+                    const items = this._parseListItems(el);
+                    if (items.length === 0) return null;
+                    return this._schema.node('bulletList', null, items);
+                }
+                case 'ol': {
+                    const items = this._parseListItems(el);
+                    if (items.length === 0) return null;
+                    const start = el.getAttribute('start');
+                    return this._schema.node('orderedList',
+                        { start: start ? parseInt(start, 10) : 1 }, items);
+                }
+                case 'li': {
+                    const blocks = this._parseDOMChildren(el, 'block');
+                    if (blocks.length === 0) {
+                        const inlines = this._parseInlineChildren(el, []);
+                        const para = this._schema.node('paragraph', null, inlines);
+                        return this._schema.node('listItem', null, [para]);
+                    }
+                    return this._schema.node('listItem', null, blocks);
+                }
+                case 'pre': {
+                    const text = el.textContent || '';
+                    const codeEl = el.querySelector('code');
+                    let language = null;
+                    if (codeEl) {
+                        const langClass = Array.from(codeEl.classList)
+                            .find(c => c.startsWith('language-'));
+                        if (langClass) {
+                            language = langClass.replace('language-', '');
+                        }
+                    }
+                    if (text) {
+                        const textNode = this._schema.text(text);
+                        return this._schema.node('codeBlock', { language }, [textNode]);
+                    }
+                    return this._schema.node('codeBlock', { language }, []);
+                }
+                case 'hr':
+                    return this._schema.node('horizontalRule', null, null);
+                default:
+                    // Fallback: treat as paragraph
+                    const children = this._parseInlineChildren(el, []);
+                    return this._schema.node('paragraph', null, children);
+            }
+        } catch (e) {
+            Logger.warn({ code: "RTE_PARSE_ERROR", tag, err: e },
+                "Failed to parse element: %s", tag);
+            return null;
+        }
+    }
+
+    /**
+     * Parse list item children.
+     *
+     * @param {Element} listEl
+     * @returns {import('./model/Node.js').default[]}
+     * @private
+     */
+    _parseListItems(listEl) {
+        const items = [];
+        for (const child of listEl.children) {
+            if (child.tagName.toLowerCase() === 'li') {
+                const item = this._parseDOMElement(child);
+                if (item) items.push(item);
+            }
+        }
+        return items;
+    }
+
+    /**
+     * Parse inline children of an element.
+     *
+     * @param {Element} el
+     * @param {object[]} marks - Active marks from parent elements
+     * @returns {import('./model/Node.js').default[]}
+     * @private
+     */
+    _parseInlineChildren(el, marks) {
+        const nodes = [];
+
+        for (const child of el.childNodes) {
+            if (child.nodeType === 3) {
+                const text = child.textContent;
+                if (text && text.length > 0) {
+                    try {
+                        const textNode = this._schema.text(text, marks.length > 0 ? marks : null);
+                        nodes.push(textNode);
+                    } catch (e) {
+                        // Skip empty text
+                    }
+                }
+            } else if (child.nodeType === 1) {
+                const inlineNodes = this._parseInlineElement(child, marks);
+                nodes.push(...inlineNodes);
+            }
+        }
+
+        return nodes;
+    }
+
+    /**
+     * Parse an inline DOM element, accumulating marks.
+     *
+     * @param {Element} el
+     * @param {object[]} parentMarks - Marks from ancestor elements
+     * @returns {import('./model/Node.js').default[]}
+     * @private
+     */
+    _parseInlineElement(el, parentMarks) {
+        const tag = el.tagName.toLowerCase();
+
+        // Check if this tag represents a mark
+        const markType = TAG_TO_MARK[tag];
+        let marks = [...parentMarks];
+
+        if (markType) {
+            marks.push(Mark.create(markType));
+        } else if (tag === 'a') {
+            const href = el.getAttribute('href');
+            if (href) {
+                marks.push(Mark.create('link', {
+                    href,
+                    title: el.getAttribute('title') || null,
+                    target: el.getAttribute('target') || null
+                }));
+            }
+        } else if (tag === 'span') {
+            // Check for style-based marks
+            const style = el.getAttribute('style') || '';
+            if (style.includes('color:') && !style.includes('background-color:')) {
+                const colorMatch = style.match(/(?:^|;)\s*color:\s*([^;]+)/);
+                if (colorMatch) {
+                    marks.push(Mark.create('textColor', { color: colorMatch[1].trim() }));
+                }
+            }
+            if (style.includes('background-color:')) {
+                const bgMatch = style.match(/background-color:\s*([^;]+)/);
+                if (bgMatch) {
+                    marks.push(Mark.create('backgroundColor', { color: bgMatch[1].trim() }));
+                }
+            }
+            if (style.includes('font-size:')) {
+                const sizeMatch = style.match(/font-size:\s*([^;]+)/);
+                if (sizeMatch) {
+                    marks.push(Mark.create('fontSize', { size: sizeMatch[1].trim() }));
+                }
+            }
+            if (style.includes('font-family:')) {
+                const familyMatch = style.match(/font-family:\s*([^;]+)/);
+                if (familyMatch) {
+                    marks.push(Mark.create('fontFamily', { family: familyMatch[1].trim() }));
+                }
+            }
+        } else if (tag === 'br') {
+            // Hard break — return as a hardBreak node
+            try {
+                return [this._schema.node('hardBreak', null, null)];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        // Parse children with accumulated marks
+        return this._parseInlineChildren(el, marks);
     }
 }
