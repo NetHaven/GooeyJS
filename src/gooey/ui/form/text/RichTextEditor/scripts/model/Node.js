@@ -184,8 +184,10 @@ export default class Node {
             this.children = null;
         } else {
             this.text = null;
-            /** @type {Node[]} */
-            this.children = Object.freeze(children ? [...children] : []);
+            /** @type {Node[]|null} */
+            this.children = children !== null && children !== undefined
+                ? Object.freeze([...children])
+                : null;
         }
 
         Object.freeze(this);
@@ -202,10 +204,11 @@ export default class Node {
         if (this.type === "text") {
             return this.text.length;
         }
-        if (!this.children || this.children.length === 0) {
-            // Leaf non-text node (e.g., horizontalRule, hardBreak, image)
+        if (this.children === null) {
+            // True leaf node (e.g., horizontalRule, hardBreak, image)
             return 1;
         }
+        // Container node: opening + children sizes + closing
         let size = 0;
         for (const child of this.children) {
             size += child.nodeSize;
@@ -219,7 +222,7 @@ export default class Node {
      */
     get contentSize() {
         if (this.type === "text") return this.text.length;
-        if (!this.children) return 0;
+        if (this.children === null) return 0;
         let size = 0;
         for (const child of this.children) {
             size += child.nodeSize;
@@ -240,7 +243,7 @@ export default class Node {
      * @returns {boolean}
      */
     get isLeaf() {
-        return this.type !== "text" && (!this.children || this.children.length === 0);
+        return this.type !== "text" && this.children === null;
     }
 
     /**
@@ -421,7 +424,7 @@ export default class Node {
 
             if (childEnd > from && contentStart < to) {
                 const descend = callback(child, contentStart, this, i);
-                if (descend !== false && child.children && child.children.length > 0) {
+                if (descend !== false && child.children !== null && child.children.length > 0) {
                     // Descend into container child: content starts at contentStart + 1
                     child.nodesBetween(from, to, callback, contentStart + 1);
                 }
@@ -507,8 +510,8 @@ function _resolve(node, pos, absPos, path) {
                     return new ResolvedPos(absPos + pos, textPath, node, pos);
                 }
 
-                if (child.children && child.children.length > 0) {
-                    // Position falls within a container child
+                if (child.children !== null) {
+                    // Position falls within a container child (may be empty)
                     // pos - offset is the offset into the child (including opening boundary)
                     const intoChild = pos - offset;
                     if (intoChild === 0) {

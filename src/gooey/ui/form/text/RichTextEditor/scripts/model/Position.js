@@ -219,8 +219,8 @@ export default class Position {
                     // Cannot descend into text node
                     return pos;
                 }
-                if (child.children && child.children.length > 0) {
-                    // Enter the container: +1 for opening boundary
+                if (child.children !== null) {
+                    // Enter the container (may be empty): +1 for opening boundary
                     pos += 1;
                     current = child;
                 } else {
@@ -263,7 +263,7 @@ export default class Position {
                         return path;
                     }
 
-                    if (child.children && child.children.length > 0) {
+                    if (child.children !== null) {
                         if (remaining === 0) {
                             // Position is right at the opening boundary -- don't descend
                             return path;
