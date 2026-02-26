@@ -89,22 +89,45 @@ export default class Theme extends GooeyElement {
         super.disconnectedCallback?.();
     }
 
-    attributeChangedCallback(name, oldValue, newValue) {
+    async attributeChangedCallback(name, oldValue, newValue) {
         // Guard against infinite recursion
         if (oldValue === newValue) return;
 
-        super.attributeChangedCallback?.(name, oldValue, newValue);
+        if (super.attributeChangedCallback) {
+            super.attributeChangedCallback(name, oldValue, newValue);
+        }
 
-        switch (name) {
-            case 'active':
-                if (newValue !== null) {
-                    // Attribute added: activate this theme
-                    this._activate();
-                } else {
-                    // Attribute removed: deactivate this theme
-                    this._deactivate();
-                }
-                break;
+        try {
+            switch (name) {
+                case 'active':
+                    if (newValue !== null) {
+                        // Attribute added: activate this theme
+                        await this._activate();
+                    } else {
+                        // Attribute removed: deactivate this theme
+                        await this._deactivate();
+                    }
+                    break;
+                case 'name':
+                    // Name changed while active - switch to new theme
+                    if (this.hasAttribute('active')) {
+                        await this._activate();
+                    }
+                    break;
+            }
+        } catch (error) {
+            Logger.error(
+                error,
+                { code: "THEME_ACTIVATION_FAILED", theme: newValue || this.getAttribute('name') },
+                "Failed to activate theme: %s",
+                error.message
+            );
+            // Fire ThemeEvent.ERROR
+            this.fireEvent(ThemeEvent.ERROR, {
+                error: error.message,
+                theme: newValue || this.getAttribute('name'),
+                component: this
+            });
         }
     }
 
