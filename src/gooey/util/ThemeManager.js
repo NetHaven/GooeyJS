@@ -123,6 +123,9 @@ export default class ThemeManager {
      *
      * Passing 'base' reverts to the default theme (removes all theme sheets).
      *
+     * Uses atomic staging pattern: builds complete theme configuration
+     * before mutating any state, preventing inconsistent state on failure.
+     *
      * @param {string} name - Theme name to activate ('base' to revert)
      * @throws {Error} If the theme is not registered
      */
@@ -130,70 +133,73 @@ export default class ThemeManager {
         // No-op if already active
         if (name === this._activeTheme) return;
 
-        // 1. Remove current theme sheets from document.adoptedStyleSheets
-        this._removeActiveThemeSheets();
+        // Stage: Build new theme configuration before mutating state
+        const stagedConfig = {
+            name,
+            themeSheets: [],
+            overrides: new Map()
+        };
 
-        // 2. Remove current theme's structural overrides from all live shadow roots
-        this._removeAllOverrides();
-
-        // 3. Revert to base: just clean up and return
-        if (name === 'base') {
-            this._activeTheme = 'base';
-            return;
-        }
-
-        // 4. Validate theme exists
-        const themeDef = this._themes.get(name);
-        if (!themeDef) {
+        // Validate theme exists (before any state changes)
+        if (name !== 'base' && !this._themes.has(name)) {
             throw new Error(`Theme "${name}" is not registered`);
         }
 
-        // 5. Resolve extends chain (ancestor-first order)
-        const chain = this._resolveExtendsChain(name);
+        // Build extends chain and collect theme sheets (staging only)
+        if (name !== 'base') {
+            const chain = this._resolveExtendsChain(name);
 
-        // 6. Collect theme sheets from all themes in chain (ancestor first)
-        const themeSheets = [];
-        for (const themeName of chain) {
-            const def = this._themes.get(themeName);
-            if (!def) continue;
+            // Collect theme sheets from all themes in chain (ancestor first)
+            for (const themeName of chain) {
+                const def = this._themes.get(themeName);
+                if (!def) continue;
 
-            if (def.themeSheet) {
-                themeSheets.push(def.themeSheet);
-            } else if (def.themeCSS) {
-                // Phase 22 format: create CSSStyleSheet from CSS text and cache it
-                const sheet = new CSSStyleSheet();
-                sheet.replaceSync(def.themeCSS);
-                def.themeSheet = sheet;
-                themeSheets.push(sheet);
+                if (def.themeSheet) {
+                    stagedConfig.themeSheets.push(def.themeSheet);
+                } else if (def.themeCSS) {
+                    // Phase 22 format: create CSSStyleSheet from CSS text and cache it
+                    const sheet = new CSSStyleSheet();
+                    sheet.replaceSync(def.themeCSS);
+                    def.themeSheet = sheet;
+                    stagedConfig.themeSheets.push(sheet);
+                }
             }
-        }
 
-        // 7. Append theme sheets to document.adoptedStyleSheets (preserve existing non-theme sheets)
-        if (themeSheets.length > 0) {
-            document.adoptedStyleSheets = [
-                ...document.adoptedStyleSheets,
-                ...themeSheets
-            ];
-        }
-        this._activeThemeSheets = themeSheets;
-
-        // 8. Collect overrides from all themes in chain (child overrides win for same target)
-        const overrideMap = new Map();
-        for (const themeName of chain) {
-            const def = this._themes.get(themeName);
-            if (def && def.overrides) {
-                for (const [tagName, sheet] of def.overrides) {
-                    overrideMap.set(tagName, sheet);
+            // Collect overrides from all themes in chain (child overrides win for same target)
+            for (const themeName of chain) {
+                const def = this._themes.get(themeName);
+                if (def && def.overrides) {
+                    for (const [tagName, sheet] of def.overrides) {
+                        stagedConfig.overrides.set(tagName, sheet);
+                    }
                 }
             }
         }
 
-        // 9. Apply overrides to all live instances
-        if (overrideMap.size > 0) {
+        // Commit: Only after successful staging, swap active theme
+        // Remove current theme sheets and overrides
+        this._removeActiveThemeSheets();
+        this._removeAllOverrides();
+
+        // Update active theme state
+        this._activeTheme = stagedConfig.name;
+        this._activeThemeSheets = stagedConfig.themeSheets;
+        this._activeOverrides = stagedConfig.overrides;
+
+        // Apply to document
+        if (this._activeThemeSheets.length > 0) {
+            document.adoptedStyleSheets = [
+                ...document.adoptedStyleSheets,
+                ...this._activeThemeSheets
+            ];
+        }
+
+        // Apply overrides to all live instances
+        if (this._activeOverrides.size > 0) {
             const liveInstances = this.getLiveInstances();
             for (const instance of liveInstances) {
                 const tagName = instance.tagName.toLowerCase();
-                const overrideSheet = overrideMap.get(tagName);
+                const overrideSheet = this._activeOverrides.get(tagName);
                 if (overrideSheet && instance.shadowRoot) {
                     instance.shadowRoot.adoptedStyleSheets = [
                         ...instance.shadowRoot.adoptedStyleSheets,
@@ -203,9 +209,7 @@ export default class ThemeManager {
             }
         }
 
-        // 10. Store active overrides and update active theme
-        this._activeOverrides = overrideMap;
-        this._activeTheme = name;
+        Logger.info({ code: "THEME_CHANGED", theme: name }, "Theme changed to: %s", name);
     }
 
     /**
