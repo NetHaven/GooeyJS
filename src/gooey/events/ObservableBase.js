@@ -271,11 +271,12 @@ export default class ObservableBase {
             return;
         }
 
-        this.eventListenerList[eventName].forEach((eventListener, index) => {
-            if (eventListener === listener) {
-                this.eventListenerList[eventName].splice(index, 1);
+        // Iterate backwards to safely remove all matching listeners while iterating
+        for (let i = this.eventListenerList[eventName].length - 1; i >= 0; i--) {
+            if (this.eventListenerList[eventName][i] === listener) {
+                this.eventListenerList[eventName].splice(i, 1);
             }
-        });
+        }
     }
 
     resumeEvents() {
