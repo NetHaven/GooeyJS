@@ -2,7 +2,7 @@
 
 :host {
     display: block;
-    background-color: var(--gooey-panel-bg, transparent);
+    background-color: var(--gooey-panel-bg, var(--gooey-color-surface));
 }
 
 ::slotted(*) {

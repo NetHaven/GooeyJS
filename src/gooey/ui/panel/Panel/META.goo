@@ -13,8 +13,8 @@
   },
   "tokens": {
     "gooey-panel-bg": {
-      "description": "Panel background color (transparent by default)",
-      "fallback": null,
+      "description": "Panel background color",
+      "fallback": "gooey-color-surface",
       "category": "color"
     }
   },
