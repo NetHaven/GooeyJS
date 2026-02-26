@@ -360,4 +360,9 @@ export default class GooeyJS {
 
 }
 
-window.addEventListener('load', () => GooeyJS.init());
+// Auto-initialize when DOM is ready
+if (document.readyState === 'complete') {
+    GooeyJS.init();
+} else {
+    document.addEventListener('DOMContentLoaded', () => GooeyJS.init());
+}
