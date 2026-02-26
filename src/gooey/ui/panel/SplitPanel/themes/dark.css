@@ -1,0 +1,6 @@
+/* SplitPanel - Dark theme tokens */
+
+/* SplitPanel-specific tokens for dark theme */
+:host {
+    --gooey-splitpanel-divider-bg-active: #4a90e2;
+}

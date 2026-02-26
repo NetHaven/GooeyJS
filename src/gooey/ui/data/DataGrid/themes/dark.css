@@ -1,5 +1,22 @@
 /* DataGrid Dark Theme Override - Scrollbar, cell editor, filter, selection colors */
-/* Row colors, header gradients, selection bg handled by component custom properties in dark.css */
+
+/* DataGrid-specific tokens for dark theme */
+:host {
+    --gooey-datagrid-header-gradient-start: #3c3c3c;
+    --gooey-datagrid-header-gradient-end: #2d2d2d;
+    --gooey-datagrid-header-hover-gradient-start: #4a4a4a;
+    --gooey-datagrid-header-hover-gradient-end: #3c3c3c;
+    --gooey-datagrid-header-sorted-gradient-start: #264f78;
+    --gooey-datagrid-header-sorted-gradient-end: #1e3a5f;
+    --gooey-datagrid-row-hover-bg: #2a2d2e;
+    --gooey-datagrid-row-alt-bg: #252526;
+    --gooey-datagrid-selection-bg: #094771;
+    --gooey-datagrid-selection-hover-bg: #0a5a8c;
+    --gooey-datagrid-filter-bg: #252526;
+    --gooey-datagrid-scrollbar-track: #1e1e1e;
+    --gooey-datagrid-scrollbar-thumb: #424242;
+    --gooey-datagrid-scrollbar-thumb-hover: #4f4f4f;
+}
 
 /* Scrollbar styling */
 .datagrid-body-viewport::-webkit-scrollbar {

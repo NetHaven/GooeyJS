@@ -1,0 +1,6 @@
+/* FormPanel - Dark theme tokens */
+
+/* FormPanel-specific tokens for dark theme */
+:host {
+    --gooey-formpanel-required-color: #ff6b6b;
+}

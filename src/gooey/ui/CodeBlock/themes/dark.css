@@ -1,0 +1,29 @@
+/* CodeBlock - Dark theme tokens and overrides */
+
+/* CodeBlock-specific tokens for dark theme */
+:host {
+    /* Component tokens */
+    --gooey-codeblock-bg: #1e1e1e;
+    --gooey-codeblock-header-bg: #2d2d2d;
+    --gooey-codeblock-linenumber-bg: #252526;
+    --gooey-codeblock-linenumber-color: #858585;
+    --gooey-codeblock-copy-bg: #3c3c3c;
+    --gooey-codeblock-copy-color: #d4d4d4;
+    --gooey-codeblock-copy-border-color: #505050;
+    --gooey-codeblock-copy-bg-hover: #4a4a4a;
+    --gooey-codeblock-label-color: #9d9d9d;
+    --gooey-codeblock-code-color: #d4d4d4;
+
+    /* Syntax highlighting tokens */
+    --gooey-syntax-keyword: #569cd6;
+    --gooey-syntax-string: #ce9178;
+    --gooey-syntax-number: #b5cea8;
+    --gooey-syntax-comment: #6a9955;
+    --gooey-syntax-tag-name: #569cd6;
+    --gooey-syntax-attr-name: #9cdcfe;
+    --gooey-syntax-attr-value: #ce9178;
+    --gooey-syntax-punctuation: #808080;
+    --gooey-syntax-operator: #d4d4d4;
+    --gooey-syntax-entity: #d7ba7d;
+    --gooey-syntax-doctype: #6a9955;
+}

@@ -1,0 +1,7 @@
+/* TabPanel - Dark theme tokens */
+
+/* TabPanel-specific tokens for dark theme */
+:host {
+    --gooey-tabpanel-header-active-border-color: #4a90e2;
+    --gooey-tabpanel-header-active-shadow: 0 -2px 4px rgba(74, 144, 226, 0.3);
+}
