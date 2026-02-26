@@ -186,12 +186,9 @@ export default class ThemeManager {
         this._activeThemeSheets = stagedConfig.themeSheets;
         this._activeOverrides = stagedConfig.overrides;
 
-        // Apply to document
+        // Apply to document using compatibility helper
         if (this._activeThemeSheets.length > 0) {
-            document.adoptedStyleSheets = [
-                ...document.adoptedStyleSheets,
-                ...this._activeThemeSheets
-            ];
+            this._applyStylesheet(document, this._activeThemeSheets);
         }
 
         // Apply overrides to all live instances
@@ -201,10 +198,7 @@ export default class ThemeManager {
                 const tagName = instance.tagName.toLowerCase();
                 const overrideSheet = this._activeOverrides.get(tagName);
                 if (overrideSheet && instance.shadowRoot) {
-                    instance.shadowRoot.adoptedStyleSheets = [
-                        ...instance.shadowRoot.adoptedStyleSheets,
-                        overrideSheet
-                    ];
+                    this._applyStylesheet(instance.shadowRoot, overrideSheet);
                 }
             }
         }
@@ -257,14 +251,44 @@ export default class ThemeManager {
         }
 
         if (overrideSheet && instance.shadowRoot) {
-            instance.shadowRoot.adoptedStyleSheets = [
-                ...instance.shadowRoot.adoptedStyleSheets,
-                overrideSheet
-            ];
+            this._applyStylesheet(instance.shadowRoot, overrideSheet);
         }
     }
 
     // ---- Private: sheet management ----
+
+    /**
+     * Apply stylesheet to shadow root or document with browser compatibility fallback.
+     *
+     * Modern browsers: Use adoptedStyleSheets (constructable stylesheets)
+     * Older browsers: Fall back to <style> element injection
+     *
+     * @param {ShadowRoot|Document} root - Target shadow root or document
+     * @param {CSSStyleSheet|CSSStyleSheet[]} sheets - Stylesheet(s) to apply
+     * @private
+     */
+    static _applyStylesheet(root, sheets) {
+        const sheetArray = Array.isArray(sheets) ? sheets : [sheets];
+
+        // Try constructable stylesheets first (modern browsers)
+        if ('adoptedStyleSheets' in root) {
+            try {
+                root.adoptedStyleSheets = [...root.adoptedStyleSheets, ...sheetArray];
+                return;
+            } catch (e) {
+                Logger.warn({ code: "ADOPTED_STYLESHEETS_FAILED" }, "adoptedStyleSheets failed, falling back to <style>");
+            }
+        }
+
+        // Fallback: Inject <style> elements
+        for (const sheet of sheetArray) {
+            const style = document.createElement('style');
+            // Extract CSS text from CSSStyleSheet
+            const cssText = Array.from(sheet.cssRules).map(rule => rule.cssText).join('\n');
+            style.textContent = cssText;
+            root.appendChild(style);
+        }
+    }
 
     /**
      * Remove the active theme's sheets from document.adoptedStyleSheets.
