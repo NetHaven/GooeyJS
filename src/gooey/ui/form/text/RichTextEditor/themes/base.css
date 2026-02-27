@@ -342,7 +342,7 @@
 
 .rte-content figcaption {
     font-size: 0.85em;
-    color: var(--gooey-richtexteditor-caption-color, var(--gooey-color-text-secondary, #666666));
+    color: var(--gooey-richtexteditor-caption-color, var(--gooey-color-text-secondary));
     text-align: center;
     padding: 4px 0;
     font-style: italic;
@@ -364,15 +364,15 @@
     position: relative;
     margin: 8px 0;
     max-width: 100%;
-    border: 1px solid var(--gooey-richtexteditor-embed-border, var(--gooey-color-border, #cccccc));
+    border: 1px solid var(--gooey-richtexteditor-embed-border, var(--gooey-color-border));
     border-radius: 4px;
     padding: 8px;
-    background: var(--gooey-richtexteditor-embed-bg, var(--gooey-color-surface-alt, #f5f5f5));
+    background: var(--gooey-richtexteditor-embed-bg, var(--gooey-color-surface-alt));
 }
 
 .rte-content .rte-embed-label {
     display: block;
-    color: var(--gooey-richtexteditor-embed-color, var(--gooey-color-text-secondary, #666666));
+    color: var(--gooey-richtexteditor-embed-color, var(--gooey-color-text-secondary));
     font-size: 0.85em;
     word-break: break-all;
 }
@@ -384,7 +384,7 @@
 .rte-resize-overlay {
     position: absolute;
     pointer-events: none;
-    border: 2px solid var(--gooey-color-primary, #0078d7);
+    border: 2px solid var(--gooey-richtexteditor-resize-border, var(--gooey-color-primary));
     box-sizing: border-box;
     z-index: 10;
 }
@@ -393,8 +393,8 @@
     position: absolute;
     width: 8px;
     height: 8px;
-    background: var(--gooey-color-primary, #0078d7);
-    border: 1px solid var(--gooey-color-surface, #ffffff);
+    background: var(--gooey-richtexteditor-resize-handle-bg, var(--gooey-color-primary));
+    border: 1px solid var(--gooey-richtexteditor-resize-handle-border, var(--gooey-color-surface));
     pointer-events: all;
     box-sizing: border-box;
 }
@@ -404,11 +404,14 @@
 .rte-resize-handle-sw { bottom: -4px; left: -4px; cursor: sw-resize; }
 .rte-resize-handle-se { bottom: -4px; right: -4px; cursor: se-resize; }
 
-/* Selected media highlight */
+/* =========================================================================
+ * Selected Media Highlight
+ * ========================================================================= */
+
 .rte-content img.rte-media-selected,
 .rte-content .rte-video.rte-media-selected,
 .rte-content .rte-embed.rte-media-selected {
-    outline: 2px solid var(--gooey-color-primary, #0078d7);
+    outline: 2px solid var(--gooey-richtexteditor-media-selected-outline, var(--gooey-color-primary));
     outline-offset: 2px;
 }
 
@@ -421,8 +424,8 @@
     display: flex;
     gap: 2px;
     padding: 4px;
-    background: var(--gooey-color-surface, #ffffff);
-    border: 1px solid var(--gooey-color-border, #cccccc);
+    background: var(--gooey-richtexteditor-popover-bg, var(--gooey-color-surface));
+    border: 1px solid var(--gooey-richtexteditor-popover-border, var(--gooey-color-border));
     border-radius: 4px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     z-index: 11;
@@ -439,17 +442,17 @@
     border-radius: 3px;
     cursor: pointer;
     font-size: 12px;
-    color: var(--gooey-color-text, #333333);
+    color: var(--gooey-richtexteditor-popover-color, var(--gooey-color-text));
     background: transparent;
 }
 
 .rte-media-align-btn:hover {
-    background: var(--gooey-color-surface-hover, #e8e8e8);
-    border-color: var(--gooey-color-border, #cccccc);
+    background: var(--gooey-richtexteditor-popover-hover-bg, var(--gooey-color-surface-hover));
+    border-color: var(--gooey-richtexteditor-popover-hover-border, var(--gooey-color-border));
 }
 
 .rte-media-align-btn.active {
-    background: var(--gooey-color-primary, #0078d7);
-    color: var(--gooey-color-on-primary, #ffffff);
-    border-color: var(--gooey-color-primary, #0078d7);
+    background: var(--gooey-richtexteditor-popover-active-bg, var(--gooey-color-primary));
+    color: var(--gooey-richtexteditor-popover-active-color, var(--gooey-color-on-primary));
+    border-color: var(--gooey-richtexteditor-popover-active-bg, var(--gooey-color-primary));
 }
