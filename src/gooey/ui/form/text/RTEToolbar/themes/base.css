@@ -1,0 +1,120 @@
+:host {
+    display: inline-block;
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.rte-toolbar-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    padding: 4px;
+    background: var(--gooey-rte-toolbar-bg, var(--gooey-color-surface));
+    border-bottom: 1px solid var(--gooey-rte-toolbar-border-color, var(--gooey-color-border));
+    box-sizing: border-box;
+}
+
+:host([position="left"]) .rte-toolbar-container,
+:host([position="right"]) .rte-toolbar-container {
+    flex-direction: column;
+    border-bottom: none;
+}
+
+:host([position="left"]) .rte-toolbar-container {
+    border-right: 1px solid var(--gooey-rte-toolbar-border-color, var(--gooey-color-border));
+}
+
+:host([position="right"]) .rte-toolbar-container {
+    border-left: 1px solid var(--gooey-rte-toolbar-border-color, var(--gooey-color-border));
+}
+
+:host([position="bottom"]) .rte-toolbar-container {
+    border-bottom: none;
+    border-top: 1px solid var(--gooey-rte-toolbar-border-color, var(--gooey-color-border));
+}
+
+:host([sticky]) {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.rte-toolbar-items {
+    display: contents;
+}
+
+.rte-toolbar-group {
+    display: flex;
+    gap: 2px;
+    align-items: center;
+}
+
+.rte-toolbar-separator {
+    width: 1px;
+    height: 20px;
+    background: var(--gooey-rte-toolbar-border-color, var(--gooey-color-border));
+    margin: 0 4px;
+    flex-shrink: 0;
+}
+
+.rte-tb-btn {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    cursor: pointer;
+    color: var(--gooey-rte-toolbar-btn-color, var(--gooey-color-text));
+    background: transparent;
+    padding: 0;
+    flex-shrink: 0;
+}
+
+.rte-tb-btn:hover {
+    background: var(--gooey-rte-toolbar-btn-hover-bg, var(--gooey-color-surface-hover));
+    border-color: var(--gooey-rte-toolbar-btn-hover-border, var(--gooey-color-border));
+}
+
+.rte-tb-btn.active {
+    background: var(--gooey-rte-toolbar-btn-active-bg, var(--gooey-color-primary));
+    color: var(--gooey-rte-toolbar-btn-active-color, var(--gooey-color-on-primary));
+}
+
+.rte-tb-btn:disabled {
+    opacity: var(--gooey-opacity-disabled, 0.5);
+    cursor: not-allowed;
+}
+
+.rte-tb-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+.rte-tb-dropdown {
+    appearance: none;
+    -webkit-appearance: none;
+    padding: 2px 20px 2px 6px;
+    border: 1px solid var(--gooey-rte-toolbar-border-color, var(--gooey-color-border));
+    border-radius: 3px;
+    font-family: inherit;
+    font-size: 12px;
+    color: var(--gooey-rte-toolbar-btn-color, var(--gooey-color-text));
+    background: var(--gooey-rte-toolbar-bg, var(--gooey-color-surface));
+    min-width: 80px;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23888'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 4px center;
+}
+
+.rte-tb-dropdown:hover {
+    border-color: var(--gooey-rte-toolbar-btn-hover-border, var(--gooey-color-border));
+}
+
+:host([disabled]) .rte-toolbar-container {
+    opacity: 0.5;
+    pointer-events: none;
+}

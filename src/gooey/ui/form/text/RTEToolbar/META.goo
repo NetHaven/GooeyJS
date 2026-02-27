@@ -1,0 +1,30 @@
+{
+  "MetaGooVersion": "1.0",
+  "name": "RTEToolbar",
+  "prefix": "gooeyui",
+  "tagName": "rte-toolbar",
+  "script": "RTEToolbar.js",
+  "templates": [
+    { "id": "ui-RTEToolbar", "file": "RTEToolbar.html" }
+  ],
+  "themes": {
+    "default": "base",
+    "available": ["base"]
+  },
+  "attributes": {
+    "editor": { "type": "STRING", "default": null },
+    "group": { "type": "STRING", "default": null },
+    "layout": { "type": "STRING", "default": "full" },
+    "position": {
+      "type": "ENUM",
+      "default": "top",
+      "values": ["TOP", "BOTTOM", "LEFT", "RIGHT"]
+    },
+    "sticky": { "type": "BOOLEAN", "default": false },
+    "height": { "type": "STRING", "default": null },
+    "width": { "type": "STRING", "default": null },
+    "visible": { "type": "BOOLEAN", "default": true },
+    "disabled": { "type": "BOOLEAN", "default": false },
+    "tooltip": { "type": "STRING", "default": null }
+  }
+}
