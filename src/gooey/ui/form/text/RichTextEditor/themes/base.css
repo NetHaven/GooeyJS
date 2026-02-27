@@ -766,3 +766,89 @@
     box-sizing: border-box;
     flex: 1;
 }
+
+/* =========================================================================
+ * Placeholder
+ * ========================================================================= */
+
+.rte-placeholder {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    color: var(--gooey-richtexteditor-placeholder-color, var(--gooey-color-text-secondary, #999));
+    opacity: 0.6;
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-select: none;
+    font-style: italic;
+    font-size: var(--gooey-richtexteditor-content-font-size, var(--gooey-font-size-md));
+    line-height: 1.4;
+}
+
+/* =========================================================================
+ * Status Bar (character/word count)
+ * ========================================================================= */
+
+.rte-status-bar {
+    display: flex;
+    justify-content: flex-end;
+    gap: 16px;
+    padding: 4px 8px;
+    font-size: 11px;
+    color: var(--gooey-richtexteditor-status-color, var(--gooey-color-text-secondary, #666));
+    border-top: 1px solid var(--gooey-richtexteditor-status-border, var(--gooey-color-border, #cccccc));
+    background: var(--gooey-richtexteditor-status-bg, var(--gooey-color-surface, #ffffff));
+    font-family: var(--gooey-font-family, sans-serif);
+}
+
+.rte-char-count,
+.rte-word-count {
+    white-space: nowrap;
+}
+
+/* =========================================================================
+ * Air Toolbar (floating toolbar on text selection)
+ * ========================================================================= */
+
+.rte-air-toolbar {
+    position: absolute;
+    z-index: 50;
+    display: none;
+    gap: 2px;
+    padding: 4px 6px;
+    background: var(--gooey-richtexteditor-popover-bg, var(--gooey-color-surface, #ffffff));
+    border: 1px solid var(--gooey-richtexteditor-popover-border, var(--gooey-color-border, #cccccc));
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    font-family: var(--gooey-font-family, sans-serif);
+}
+
+.rte-air-toolbar .rte-tb-btn {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+    color: var(--gooey-richtexteditor-popover-color, var(--gooey-color-text, #333));
+}
+
+.rte-air-toolbar .rte-tb-btn:hover {
+    background: var(--gooey-color-surface-hover, #f0f0f0);
+    border-color: var(--gooey-color-border, #cccccc);
+}
+
+.rte-air-toolbar .rte-tb-btn.active {
+    background: var(--gooey-color-primary, #0078d7);
+    color: var(--gooey-color-on-primary, #ffffff);
+    border-color: var(--gooey-color-primary, #0078d7);
+}
+
+.rte-air-toolbar .rte-tb-btn svg {
+    width: 14px;
+    height: 14px;
+}

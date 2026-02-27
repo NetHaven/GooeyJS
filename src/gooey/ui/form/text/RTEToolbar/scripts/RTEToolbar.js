@@ -401,6 +401,7 @@ export default class RTEToolbar extends UIComponent {
 
         // Render toolbar items and sync state
         this._renderLayout();
+        this._renderStatusBar();
         this.update();
     }
 
@@ -1089,6 +1090,9 @@ export default class RTEToolbar extends UIComponent {
                 }
             }
         }
+
+        // Update character/word count in status bar
+        this._updateCounts();
     }
 
     // =========================================================================
@@ -1132,5 +1136,66 @@ export default class RTEToolbar extends UIComponent {
     render() {
         this._renderLayout();
         this.update();
+    }
+
+    // =========================================================================
+    // Status Bar (character/word counts)
+    // =========================================================================
+
+    /**
+     * Render a status bar section showing character and word counts.
+     * Only renders if the bound editor has CharacterCountPlugin active.
+     * @private
+     */
+    _renderStatusBar() {
+        // Remove existing status bar
+        if (this._statusBarEl) {
+            this._statusBarEl.remove();
+            this._statusBarEl = null;
+        }
+
+        if (!this._editor) return;
+
+        // Check if editor has CharacterCountPlugin active
+        const ccPlugin = this._editor._pluginManager
+            ? this._editor._pluginManager.getPlugin('characterCount')
+            : null;
+        if (!ccPlugin) return;
+
+        // Create status bar element
+        this._statusBarEl = document.createElement('div');
+        this._statusBarEl.className = 'rte-toolbar-status';
+
+        this._tbCharCount = document.createElement('span');
+        this._tbCharCount.className = 'rte-toolbar-status-item';
+
+        this._tbWordCount = document.createElement('span');
+        this._tbWordCount.className = 'rte-toolbar-status-item';
+
+        this._statusBarEl.appendChild(this._tbCharCount);
+        this._statusBarEl.appendChild(this._tbWordCount);
+
+        // Append after the toolbar items container
+        if (this._toolbarContainer) {
+            this._toolbarContainer.appendChild(this._statusBarEl);
+        }
+    }
+
+    /**
+     * Update character/word count display in the toolbar status bar.
+     * @private
+     */
+    _updateCounts() {
+        if (!this._statusBarEl || !this._editor) return;
+
+        const charCount = this._editor.getLength ? this._editor.getLength() : 0;
+        const wordCount = this._editor.getWordCount ? this._editor.getWordCount() : 0;
+
+        if (this._tbCharCount) {
+            this._tbCharCount.textContent = charCount + ' chars';
+        }
+        if (this._tbWordCount) {
+            this._tbWordCount.textContent = wordCount + (wordCount === 1 ? ' word' : ' words');
+        }
     }
 }

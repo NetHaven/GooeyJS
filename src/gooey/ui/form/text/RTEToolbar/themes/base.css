@@ -195,3 +195,22 @@
     opacity: 0.5;
     pointer-events: none;
 }
+
+/* =========================================================================
+ * Toolbar Status Bar (character/word counts)
+ * ========================================================================= */
+
+.rte-toolbar-status {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-left: auto;
+    padding: 0 8px;
+    font-size: 11px;
+    color: var(--gooey-rte-toolbar-status-color, var(--gooey-color-text-secondary, #666));
+    white-space: nowrap;
+}
+
+.rte-toolbar-status-item {
+    white-space: nowrap;
+}

@@ -10,6 +10,7 @@ import Node, { Mark } from './model/Node.js';
 import { Selection } from './model/Position.js';
 import EditorState from './state/EditorState.js';
 import { baseKeymap, keymap, toggleMark, setMark, clearFormatting, markActive, getActiveMarks, setBlockType, heading, paragraph, wrapInBlockquote, toggleCodeBlock, insertHorizontalRule, setAlignment, increaseIndent, decreaseIndent, setLineHeight, toggleBulletList, toggleOrderedList, toggleChecklist, listIndent, listOutdent, _isInTable } from './state/Commands.js';
+import { ICONS } from './Icons.js';
 import EditorView from './view/EditorView.js';
 import InputHandler from './view/InputHandler.js';
 import SelectionManager from './view/SelectionManager.js';
@@ -302,6 +303,21 @@ export default class RichTextEditor extends TextElement {
         this._content = this.shadowRoot.querySelector('.rte-content');
         this._selectionLayer = this.shadowRoot.querySelector('.rte-selection');
 
+        // Create status bar for character/word count display
+        this._statusBar = document.createElement('div');
+        this._statusBar.className = 'rte-status-bar';
+        this._statusBar.style.display = 'none';
+        this._charCountSpan = document.createElement('span');
+        this._charCountSpan.className = 'rte-char-count';
+        this._wordCountSpan = document.createElement('span');
+        this._wordCountSpan.className = 'rte-word-count';
+        this._statusBar.appendChild(this._charCountSpan);
+        this._statusBar.appendChild(this._wordCountSpan);
+        this._shell.appendChild(this._statusBar);
+
+        // Air toolbar reference (floating toolbar shown on text selection)
+        this._airToolbar = null;
+
         // Set up TextElement compatibility
         this.textElement = this._content;
         this.formElement = this._content;
@@ -327,6 +343,8 @@ export default class RichTextEditor extends TextElement {
         this._search = this._pluginManager.getPlugin('search');
         this._tablePlugin = this._pluginManager.getPlugin('table');
         this._imagePlugin = this._pluginManager.getPlugin('image');
+        this._characterCountPlugin = this._pluginManager.getPlugin('characterCount');
+        this._placeholderPlugin = this._pluginManager.getPlugin('placeholder');
 
         // Build the resolved keymap from plugin contributions + baseKeymap
         const pluginKeymaps = this._pluginManager.collectKeymaps();
@@ -408,6 +426,9 @@ export default class RichTextEditor extends TextElement {
             this._selectionManager.update(this._state.selection);
         }
 
+        // Initialize character/word count display
+        this._updateCounts();
+
         // Fire READY event once editor is fully initialized and connected
         this.fireEvent(RichTextEditorEvent.READY, { value: this.value });
     }
@@ -452,6 +473,12 @@ export default class RichTextEditor extends TextElement {
         this._hideLinkPopover();
         this._hideTableContextMenu();
         this._closeDialog();
+
+        // Clean up air toolbar
+        if (this._airToolbar) {
+            this._airToolbar.remove();
+            this._airToolbar = null;
+        }
 
         // Clean up internal toolbar
         if (this._internalToolbar) {
@@ -673,6 +700,21 @@ export default class RichTextEditor extends TextElement {
     getLength() {
         if (!this._state || !this._state.doc) return 0;
         return this._getTextLength(this._state.doc);
+    }
+
+    /**
+     * Get the word count of the editor content.
+     * Delegates to CharacterCountPlugin if available, otherwise counts manually.
+     * @returns {number}
+     */
+    getWordCount() {
+        if (this._characterCountPlugin) {
+            return this._characterCountPlugin.getWordCount();
+        }
+        // Fallback: get plain text via getText and count words
+        const text = this._getPlainText(this._state.doc);
+        if (!text || text.trim().length === 0) return 0;
+        return text.trim().split(/\s+/).length;
     }
 
     /**
@@ -1858,7 +1900,13 @@ export default class RichTextEditor extends TextElement {
 
             // Update link popover based on cursor position
             this._updateLinkPopover();
+
+            // Check air toolbar visibility based on selection
+            this._checkAirToolbar();
         }
+
+        // Update character/word count display
+        this._updateCounts();
     }
 
     // =========================================================================
@@ -1984,6 +2032,9 @@ export default class RichTextEditor extends TextElement {
      */
     _handleInputBlur(event) {
         this._shell.classList.remove('rte-focused');
+
+        // Hide air toolbar on blur
+        this._hideAirToolbar();
 
         this.fireEvent(FormElementEvent.BLUR, {
             value: this.value,
@@ -3034,6 +3085,11 @@ export default class RichTextEditor extends TextElement {
                 this._internalToolbar.style.display = '';
             }
         }
+
+        // Hide air toolbar when air mode is turned off
+        if (!this.airMode) {
+            this._hideAirToolbar();
+        }
     }
 
     /**
@@ -3058,6 +3114,196 @@ export default class RichTextEditor extends TextElement {
             if (placeholderPlugin && typeof placeholderPlugin.setPlaceholderText === 'function') {
                 placeholderPlugin.setPlaceholderText(text || '');
             }
+        }
+    }
+
+    /**
+     * Update character and word count display in the status bar.
+     * Called after each dispatch to keep counts current.
+     * @private
+     */
+    _updateCounts() {
+        if (!this._statusBar) return;
+
+        const charCount = this.getLength();
+        const wordCount = this.getWordCount();
+        const ml = this.maxLength;
+
+        // Update character count display
+        if (ml >= 0) {
+            this._charCountSpan.textContent = charCount + ' / ' + ml + ' characters';
+        } else {
+            this._charCountSpan.textContent = charCount + ' characters';
+        }
+
+        // Update word count display
+        this._wordCountSpan.textContent = wordCount + ' ' + (wordCount === 1 ? 'word' : 'words');
+
+        // Show status bar once counts are initialized
+        this._statusBar.style.display = '';
+    }
+
+    /**
+     * Extract plain text from a document node tree.
+     * Adds spaces between block-level elements.
+     *
+     * @param {object} node - Document node
+     * @returns {string}
+     * @private
+     */
+    _getPlainText(node) {
+        if (!node) return '';
+        if (node.type === 'text') return node.text || '';
+        if (!node.children || node.children.length === 0) return '';
+
+        const parts = [];
+        for (const child of node.children) {
+            const childText = this._getPlainText(child);
+            if (childText) parts.push(childText);
+        }
+
+        // Block-level nodes get space-separated
+        const blockTypes = new Set([
+            'doc', 'paragraph', 'heading', 'blockquote', 'codeBlock',
+            'bulletList', 'orderedList', 'listItem', 'table',
+            'tableRow', 'tableCell', 'tableHeaderCell'
+        ]);
+        return parts.join(blockTypes.has(node.type) ? ' ' : '');
+    }
+
+    // =========================================================================
+    // Air Toolbar (floating toolbar on text selection)
+    // =========================================================================
+
+    /**
+     * Show the air toolbar (floating formatting toolbar) above the current selection.
+     * Creates the toolbar element if it doesn't exist, positions it near the selection.
+     *
+     * @param {{ top: number, left: number, bottom: number }} coords - Selection coordinates
+     * @private
+     */
+    _showAirToolbar(coords) {
+        if (!coords) return;
+
+        // Create the air toolbar element if it doesn't exist
+        if (!this._airToolbar) {
+            this._airToolbar = document.createElement('div');
+            this._airToolbar.className = 'rte-air-toolbar';
+            this._airToolbar.setAttribute('role', 'toolbar');
+            this._airToolbar.setAttribute('aria-label', 'Formatting toolbar');
+
+            // Compact button set: bold, italic, underline, strikethrough, link, heading
+            const airItems = [
+                { name: 'bold', icon: 'bold', label: 'Bold', markType: 'bold' },
+                { name: 'italic', icon: 'italic', label: 'Italic', markType: 'italic' },
+                { name: 'underline', icon: 'underline', label: 'Underline', markType: 'underline' },
+                { name: 'strikethrough', icon: 'strikethrough', label: 'Strikethrough', markType: 'strikethrough' },
+                { name: 'link', icon: 'link', label: 'Link', action: 'link' },
+                { name: 'heading', icon: 'heading', label: 'Heading', action: 'heading' }
+            ];
+
+            for (const item of airItems) {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'rte-tb-btn';
+                btn.innerHTML = ICONS[item.icon] || '';
+                btn.title = item.label;
+                btn.setAttribute('aria-label', item.label);
+
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    if (item.markType) {
+                        this.formatText(item.markType);
+                    } else if (item.action === 'link') {
+                        this._handleLinkCommand(this._state, (tr) => this._dispatch(tr));
+                    } else if (item.action === 'heading') {
+                        // Toggle between paragraph and heading level 2
+                        const blockType = this.getBlockType();
+                        if (blockType === 'heading') {
+                            this.setBlockType('paragraph');
+                        } else {
+                            this.setBlockType('heading', { level: 2 });
+                        }
+                    }
+
+                    // Update air toolbar button states
+                    this._updateAirToolbarState();
+                });
+
+                this._airToolbar.appendChild(btn);
+            }
+
+            this._editorArea.appendChild(this._airToolbar);
+        }
+
+        // Position above the selection
+        const editorRect = this._editorArea.getBoundingClientRect();
+        const toolbarHeight = 36; // Approximate height of the air toolbar
+        const topPos = coords.top - editorRect.top - toolbarHeight - 6;
+        const leftPos = Math.max(0, coords.left - editorRect.left);
+
+        this._airToolbar.style.top = Math.max(0, topPos) + 'px';
+        this._airToolbar.style.left = leftPos + 'px';
+        this._airToolbar.style.display = 'flex';
+
+        // Update button states
+        this._updateAirToolbarState();
+    }
+
+    /**
+     * Hide the air toolbar.
+     * @private
+     */
+    _hideAirToolbar() {
+        if (this._airToolbar) {
+            this._airToolbar.style.display = 'none';
+        }
+    }
+
+    /**
+     * Update the active/inactive state of air toolbar buttons.
+     * @private
+     */
+    _updateAirToolbarState() {
+        if (!this._airToolbar || !this._state) return;
+
+        const buttons = this._airToolbar.querySelectorAll('.rte-tb-btn');
+        const markNames = ['bold', 'italic', 'underline', 'strikethrough', 'link'];
+
+        buttons.forEach((btn, i) => {
+            if (i < markNames.length) {
+                const isActive = markActive(this._state, markNames[i]);
+                btn.classList.toggle('active', isActive);
+                btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+            } else {
+                // Heading button
+                const isHeading = this.getBlockType() === 'heading';
+                btn.classList.toggle('active', isHeading);
+                btn.setAttribute('aria-pressed', isHeading ? 'true' : 'false');
+            }
+        });
+    }
+
+    /**
+     * Check if the current selection is a non-empty range (text is selected)
+     * and show/hide the air toolbar accordingly. Called from _dispatch.
+     * @private
+     */
+    _checkAirToolbar() {
+        if (!this.airMode) return;
+
+        const { anchor, head, empty } = this._state.selection;
+        if (!empty && anchor !== head) {
+            // Text is selected — show air toolbar
+            const coords = this._view.coordsAtPos(Math.min(anchor, head));
+            if (coords) {
+                this._showAirToolbar(coords);
+            }
+        } else {
+            // Cursor only, no range — hide air toolbar
+            this._hideAirToolbar();
         }
     }
 
