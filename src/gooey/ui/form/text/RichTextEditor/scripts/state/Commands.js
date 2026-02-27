@@ -1209,6 +1209,494 @@ export function setLineHeight(value) {
 
 
 // ============================================================================
+// List commands
+// ============================================================================
+
+/**
+ * Check if the cursor is inside a list structure.
+ *
+ * @param {object} state - EditorState
+ * @returns {{ listType: string, listPos: number, listIndex: number, listItemPos: number, listItemIndex: number }|null}
+ * @private
+ */
+function _isInList(state) {
+    const { from } = state.selection;
+    const doc = state.doc;
+    if (!doc.children) return null;
+
+    let accum = 0;
+    for (let i = 0; i < doc.children.length; i++) {
+        const child = doc.children[i];
+        const childEnd = accum + child.nodeSize;
+
+        if (from >= accum && from <= childEnd) {
+            if (child.type === "bulletList" || child.type === "orderedList") {
+                // Find the list item containing the position
+                const liInfo = _findListItemInList(child, from, accum);
+                return {
+                    listType: child.type,
+                    listPos: accum,
+                    listIndex: i,
+                    listItemPos: liInfo ? liInfo.pos : accum + 1,
+                    listItemIndex: liInfo ? liInfo.index : 0
+                };
+            }
+        }
+
+        accum = childEnd;
+    }
+    return null;
+}
+
+
+/**
+ * Find the list item containing a position within a list node.
+ *
+ * @param {object} listNode - bulletList or orderedList node
+ * @param {number} pos - Document position
+ * @param {number} listStart - Start position of the list in the document
+ * @returns {{ pos: number, index: number, node: object }|null}
+ * @private
+ */
+function _findListItemInList(listNode, pos, listStart) {
+    if (!listNode.children) return null;
+
+    let accum = listStart + 1; // +1 for list opening boundary
+    for (let i = 0; i < listNode.children.length; i++) {
+        const li = listNode.children[i];
+        const liEnd = accum + li.nodeSize;
+
+        if (pos >= accum && pos <= liEnd) {
+            return { pos: accum, index: i, node: li };
+        }
+
+        accum = liEnd;
+    }
+    return null;
+}
+
+
+/**
+ * Toggle a bullet list on the current selection.
+ *
+ * - If not in a list: wraps current block(s) in bulletList > listItem
+ * - If in a bulletList: unwraps (lifts content out)
+ * - If in an orderedList: converts to bulletList
+ *
+ * @param {object} state - EditorState
+ * @param {function|null} dispatch - Dispatch function or null for can-execute check
+ * @returns {boolean}
+ */
+export function toggleBulletList(state, dispatch) {
+    return _toggleList(state, dispatch, "bulletList");
+}
+
+
+/**
+ * Toggle an ordered list on the current selection.
+ *
+ * - If not in a list: wraps current block(s) in orderedList > listItem
+ * - If in an orderedList: unwraps (lifts content out)
+ * - If in a bulletList: converts to orderedList
+ *
+ * @param {object} state - EditorState
+ * @param {function|null} dispatch - Dispatch function or null for can-execute check
+ * @returns {boolean}
+ */
+export function toggleOrderedList(state, dispatch) {
+    return _toggleList(state, dispatch, "orderedList");
+}
+
+
+/**
+ * Toggle a checklist (bullet list with checked attributes on list items).
+ *
+ * - If not in a list: wraps in bulletList with listItems having checked: false
+ * - If already a checklist (listItem has checked !== null): unwraps
+ * - If in a regular list: adds checked attribute to list items
+ *
+ * @param {object} state - EditorState
+ * @param {function|null} dispatch - Dispatch function or null for can-execute check
+ * @returns {boolean}
+ */
+export function toggleChecklist(state, dispatch) {
+    const listInfo = _isInList(state);
+
+    if (listInfo) {
+        // Check if current list items have checked attribute (it's a checklist)
+        const doc = state.doc;
+        const listNode = doc.children[listInfo.listIndex];
+        const hasChecked = listNode.children && listNode.children.some(
+            li => li.attrs.checked !== null && li.attrs.checked !== undefined
+        );
+
+        if (hasChecked) {
+            // Already a checklist — unwrap
+            if (dispatch) {
+                const tr = state.transaction;
+                const { from } = state.selection;
+
+                // Extract content from list items and replace the list
+                const blocks = [];
+                for (const li of listNode.children) {
+                    if (li.children) {
+                        blocks.push(...li.children);
+                    }
+                }
+                const listEnd = listInfo.listPos + listNode.nodeSize;
+                tr.replaceRange(listInfo.listPos, listEnd, blocks);
+                tr.setSelection(Selection.cursor(Math.min(from, tr.doc.contentSize)));
+                dispatch(tr);
+            }
+            return true;
+        }
+
+        // In a regular list — convert to checklist by adding checked attrs
+        if (dispatch) {
+            const tr = state.transaction;
+            let accum = listInfo.listPos + 1; // skip list opening
+            for (const li of listNode.children) {
+                tr.setNodeAttrs(accum, { checked: false });
+                accum += li.nodeSize;
+            }
+            dispatch(tr);
+        }
+        return true;
+    }
+
+    // Not in a list — wrap in bullet list with checked items
+    if (dispatch) {
+        const { from } = state.selection;
+        const blockInfo = _findBlockInDoc(state.doc, from);
+        if (!blockInfo) return false;
+
+        const tr = state.transaction;
+        const block = state.doc.children[blockInfo.blockIndex];
+        const blockEnd = blockInfo.blockPos + block.nodeSize;
+
+        // Create: bulletList > listItem(checked: false) > [block content]
+        const listItem = new Node("listItem", { checked: false, align: null, indent: 0 }, [block]);
+        const bulletList = new Node("bulletList", null, [listItem]);
+        tr.replaceRange(blockInfo.blockPos, blockEnd, [bulletList]);
+
+        // Position cursor inside the list item
+        tr.setSelection(Selection.cursor(blockInfo.blockPos + 3 + (block.children ? 0 : 0)));
+        dispatch(tr);
+    }
+    return true;
+}
+
+
+/**
+ * Internal: toggle a list type on the current selection.
+ *
+ * @param {object} state - EditorState
+ * @param {function|null} dispatch - Dispatch function
+ * @param {string} targetType - "bulletList" or "orderedList"
+ * @returns {boolean}
+ * @private
+ */
+function _toggleList(state, dispatch, targetType) {
+    const listInfo = _isInList(state);
+
+    if (listInfo) {
+        if (listInfo.listType === targetType) {
+            // Already in the target list type — unwrap
+            if (dispatch) {
+                const tr = state.transaction;
+                const { from } = state.selection;
+                const doc = state.doc;
+                const listNode = doc.children[listInfo.listIndex];
+
+                // Extract the content blocks from all list items
+                const blocks = [];
+                for (const li of listNode.children) {
+                    if (li.children) {
+                        blocks.push(...li.children);
+                    }
+                }
+
+                const listEnd = listInfo.listPos + listNode.nodeSize;
+                tr.replaceRange(listInfo.listPos, listEnd, blocks);
+                tr.setSelection(Selection.cursor(Math.min(from, tr.doc.contentSize)));
+                dispatch(tr);
+            }
+            return true;
+        }
+
+        // In a different list type — convert
+        if (dispatch) {
+            const tr = state.transaction;
+            const attrs = targetType === "orderedList" ? { start: 1 } : null;
+            tr.setBlockType(listInfo.listPos, targetType, attrs);
+            dispatch(tr);
+        }
+        return true;
+    }
+
+    // Not in a list — wrap current block in a list
+    if (dispatch) {
+        const { from } = state.selection;
+        const blockInfo = _findBlockInDoc(state.doc, from);
+        if (!blockInfo) return false;
+
+        const tr = state.transaction;
+        const block = state.doc.children[blockInfo.blockIndex];
+        const blockEnd = blockInfo.blockPos + block.nodeSize;
+
+        // Create: listType > listItem > [block]
+        const listItem = new Node("listItem", { align: null, indent: 0 }, [block]);
+        const attrs = targetType === "orderedList" ? { start: 1 } : null;
+        const listNode = new Node(targetType, attrs, [listItem]);
+        tr.replaceRange(blockInfo.blockPos, blockEnd, [listNode]);
+
+        // Position cursor inside the list
+        const $from = state.doc.resolve(from);
+        const relOffset = $from.parentOffset;
+        // list opening (1) + listItem opening (1) + block opening (1) + relOffset
+        tr.setSelection(Selection.cursor(blockInfo.blockPos + 3 + relOffset));
+        dispatch(tr);
+    }
+    return true;
+}
+
+
+/**
+ * Indent the current list item (Tab in list context).
+ *
+ * Nests the current list item into a sub-list inside the previous sibling.
+ *
+ * @param {object} state - EditorState
+ * @param {function|null} dispatch - Dispatch function or null for can-execute check
+ * @returns {boolean}
+ */
+export function listIndent(state, dispatch) {
+    const listInfo = _isInList(state);
+    if (!listInfo) return false;
+
+    // Cannot indent the first item (no previous sibling)
+    if (listInfo.listItemIndex <= 0) return false;
+
+    const doc = state.doc;
+    const listNode = doc.children[listInfo.listIndex];
+
+    // Check nesting depth (max 6 levels)
+    // For simplicity, count list nesting by checking parent structure
+    if (!listNode.children) return false;
+
+    if (dispatch) {
+        const tr = state.transaction;
+        const { from } = state.selection;
+        const currentItem = listNode.children[listInfo.listItemIndex];
+        const prevItem = listNode.children[listInfo.listItemIndex - 1];
+
+        // Create a sub-list of the same type containing the current item
+        const subList = new Node(listInfo.listType, null, [currentItem]);
+
+        // New previous item: original children + sub-list
+        const newPrevChildren = [...(prevItem.children || []), subList];
+        const newPrevItem = prevItem.copy(newPrevChildren);
+
+        // Rebuild the list without the current item, with modified prev item
+        const newListChildren = [...listNode.children];
+        newListChildren[listInfo.listItemIndex - 1] = newPrevItem;
+        newListChildren.splice(listInfo.listItemIndex, 1);
+
+        const newList = listNode.copy(newListChildren);
+
+        // Replace the list in the document
+        const newDocChildren = [...doc.children];
+        newDocChildren[listInfo.listIndex] = newList;
+        const newDoc = doc.copy(newDocChildren);
+
+        // Use replaceRange to swap the list
+        const listEnd = listInfo.listPos + listNode.nodeSize;
+        tr.replaceRange(listInfo.listPos, listEnd, [newList]);
+
+        // Try to maintain cursor position
+        tr.setSelection(Selection.cursor(Math.min(from + 2, tr.doc.contentSize)));
+        dispatch(tr);
+    }
+    return true;
+}
+
+
+/**
+ * Outdent the current list item (Shift-Tab in list context).
+ *
+ * If at top level: lifts content out of the list.
+ * If nested: moves the item up one level.
+ *
+ * @param {object} state - EditorState
+ * @param {function|null} dispatch - Dispatch function or null for can-execute check
+ * @returns {boolean}
+ */
+export function listOutdent(state, dispatch) {
+    const listInfo = _isInList(state);
+    if (!listInfo) return false;
+
+    if (dispatch) {
+        const tr = state.transaction;
+        const { from } = state.selection;
+        const doc = state.doc;
+        const listNode = doc.children[listInfo.listIndex];
+
+        // At top level: lift content out of the list entirely
+        const currentItem = listNode.children[listInfo.listItemIndex];
+        const blocks = currentItem.children || [];
+
+        if (listNode.children.length === 1) {
+            // Only one item — replace the entire list with the content blocks
+            const listEnd = listInfo.listPos + listNode.nodeSize;
+            tr.replaceRange(listInfo.listPos, listEnd, blocks);
+        } else {
+            // Multiple items — remove just this item and insert content after the list
+            const newListChildren = [...listNode.children];
+            newListChildren.splice(listInfo.listItemIndex, 1);
+            const newList = listNode.copy(newListChildren);
+
+            const listEnd = listInfo.listPos + listNode.nodeSize;
+            tr.replaceRange(listInfo.listPos, listEnd, [newList, ...blocks]);
+        }
+
+        tr.setSelection(Selection.cursor(Math.min(from, tr.doc.contentSize)));
+        dispatch(tr);
+    }
+    return true;
+}
+
+
+/**
+ * Split the current list item at the cursor (Enter in list context).
+ *
+ * If the list item is empty: lift out of the list instead.
+ * Otherwise: creates two list items from the split.
+ *
+ * @param {object} state - EditorState
+ * @param {function|null} dispatch - Dispatch function or null for can-execute check
+ * @returns {boolean}
+ */
+export function splitListItem(state, dispatch) {
+    const listInfo = _isInList(state);
+    if (!listInfo) return false;
+
+    const doc = state.doc;
+    const listNode = doc.children[listInfo.listIndex];
+    const currentItem = listNode.children[listInfo.listItemIndex];
+
+    // Check if the list item is empty (or has just an empty paragraph)
+    const isEmpty = !currentItem.children ||
+        currentItem.children.length === 0 ||
+        (currentItem.children.length === 1 &&
+         currentItem.children[0].type === "paragraph" &&
+         currentItem.children[0].contentSize === 0);
+
+    if (isEmpty) {
+        // Empty list item — lift out of list (standard behavior)
+        return listOutdent(state, dispatch);
+    }
+
+    if (dispatch) {
+        const tr = state.transaction;
+        const { from } = state.selection;
+
+        // Find the paragraph within the list item and split it
+        if (!currentItem.children || currentItem.children.length === 0) return false;
+
+        const innerBlock = currentItem.children[0]; // First block in list item
+        const $from = doc.resolve(from);
+        const offset = $from.parentOffset;
+
+        // Split the inner block's children
+        const allChildren = innerBlock.children || [];
+        const leftChildren = [];
+        const rightChildren = [];
+
+        let childAccum = 0;
+        for (let i = 0; i < allChildren.length; i++) {
+            const child = allChildren[i];
+            const childSize = child.nodeSize;
+            const childEnd = childAccum + childSize;
+
+            if (childEnd <= offset) {
+                leftChildren.push(child);
+            } else if (childAccum >= offset) {
+                rightChildren.push(child);
+            } else if (child.type === "text") {
+                const splitAt = offset - childAccum;
+                const leftText = child.text.slice(0, splitAt);
+                const rightText = child.text.slice(splitAt);
+                if (leftText) leftChildren.push(new Node("text", child.attrs, null, child.marks, leftText));
+                if (rightText) rightChildren.push(new Node("text", child.attrs, null, child.marks, rightText));
+            } else {
+                rightChildren.push(child);
+            }
+
+            childAccum += childSize;
+        }
+
+        // Create two list items
+        const leftBlock = innerBlock.copy(leftChildren);
+        const rightBlock = innerBlock.copy(rightChildren);
+
+        const leftItem = new Node("listItem", { ...currentItem.attrs }, [leftBlock, ...currentItem.children.slice(1)]);
+        const rightItem = new Node("listItem", { align: null, indent: 0 }, [rightBlock]);
+
+        // Rebuild the list with the split items
+        const newListChildren = [...listNode.children];
+        newListChildren.splice(listInfo.listItemIndex, 1, leftItem, rightItem);
+        const newList = listNode.copy(newListChildren);
+
+        // Replace the list in the document
+        const listEnd = listInfo.listPos + listNode.nodeSize;
+        tr.replaceRange(listInfo.listPos, listEnd, [newList]);
+
+        // Set cursor to start of the new (right) list item
+        // Calculate: listPos + list opening + left items sizes + right item opening + block opening
+        let cursorPos = listInfo.listPos + 1; // list opening
+        for (let i = 0; i < listInfo.listItemIndex; i++) {
+            cursorPos += listNode.children[i].nodeSize;
+        }
+        cursorPos += leftItem.nodeSize + 1 + 1; // after left item + li opening + block opening
+        tr.setSelection(Selection.cursor(Math.min(cursorPos, tr.doc.contentSize)));
+
+        dispatch(tr);
+    }
+    return true;
+}
+
+
+/**
+ * Lift content out of list on Backspace at start of first list item.
+ *
+ * Only triggers when cursor is at position 0 within a list item's content.
+ *
+ * @param {object} state - EditorState
+ * @param {function|null} dispatch - Dispatch function or null for can-execute check
+ * @returns {boolean}
+ */
+export function liftListItem(state, dispatch) {
+    const listInfo = _isInList(state);
+    if (!listInfo) return false;
+
+    const { from } = state.selection;
+    const $from = state.doc.resolve(from);
+
+    // Only trigger at start of block content within a list item
+    if ($from.parentOffset !== 0) return false;
+
+    // Only lift the first list item (at start)
+    if (listInfo.listItemIndex !== 0) {
+        // For non-first items at start of content: join with previous item
+        return false;
+    }
+
+    // Lift first list item out of list
+    return listOutdent(state, dispatch);
+}
+
+
+// ============================================================================
 // Helper utilities
 // ============================================================================
 
