@@ -289,6 +289,11 @@ export default class RichTextEditor extends TextElement {
         // Internal toolbar reference (created when toolbar="full")
         this._internalToolbar = null;
 
+        // Active dialog, link popover, and context menu references
+        this._activeDialog = null;
+        this._activeLinkPopover = null;
+        this._activeContextMenu = null;
+
         // Query new template DOM elements
         this._shell = this.shadowRoot.querySelector('.rte-shell');
         this._toolbar = this.shadowRoot.querySelector('.rte-toolbar');
@@ -356,10 +361,13 @@ export default class RichTextEditor extends TextElement {
         this._handleEditorClickBound = this._handleEditorClick.bind(this);
         this._handleInputFocusBound = this._handleInputFocus.bind(this);
         this._handleInputBlurBound = this._handleInputBlur.bind(this);
+        this._handleContextMenuBound = this._handleContextMenu.bind(this);
+        this._handleDocClickBound = this._handleDocClick.bind(this);
 
         this._editorArea.addEventListener('mousedown', this._handleEditorClickBound);
         this._inputSink.addEventListener('focus', this._handleInputFocusBound);
         this._inputSink.addEventListener('blur', this._handleInputBlurBound);
+        this._content.addEventListener('contextmenu', this._handleContextMenuBound);
 
         // Initialize from value attribute if present
         if (this.hasAttribute('value')) {
@@ -436,6 +444,14 @@ export default class RichTextEditor extends TextElement {
             this._inputSink.removeEventListener('focus', this._handleInputFocusBound);
             this._inputSink.removeEventListener('blur', this._handleInputBlurBound);
         }
+        if (this._content) {
+            this._content.removeEventListener('contextmenu', this._handleContextMenuBound);
+        }
+
+        // Clean up popover/context menu
+        this._hideLinkPopover();
+        this._hideTableContextMenu();
+        this._closeDialog();
 
         // Clean up internal toolbar
         if (this._internalToolbar) {
@@ -1839,6 +1855,9 @@ export default class RichTextEditor extends TextElement {
                 mediaType: mediaInfo ? mediaInfo.type : null,
                 mediaAttrs: mediaInfo ? { ...mediaInfo.node.attrs } : null
             });
+
+            // Update link popover based on cursor position
+            this._updateLinkPopover();
         }
     }
 
@@ -2607,6 +2626,274 @@ export default class RichTextEditor extends TextElement {
 
         // Close button just closes dialog
         handle.onSubmit(() => handle.close());
+    }
+
+    // =========================================================================
+    // Link Popover
+    // =========================================================================
+
+    /**
+     * Show a link popover near the specified link element.
+     *
+     * @param {object} linkMark - Link mark with attrs { href, title, target }
+     * @param {{ top: number, left: number }} coords - Position coordinates relative to editor
+     * @private
+     */
+    _showLinkPopover(linkMark, coords) {
+        // Don't show while a dialog is open
+        if (this._activeDialog) return;
+
+        // Remove existing popover
+        this._hideLinkPopover();
+
+        const href = (linkMark.attrs && linkMark.attrs.href) || '';
+        const popover = document.createElement('div');
+        popover.className = 'rte-link-popover';
+
+        // URL display
+        const urlSpan = document.createElement('span');
+        urlSpan.className = 'rte-link-popover-url';
+        urlSpan.textContent = href.length > 40 ? href.slice(0, 37) + '...' : href;
+        urlSpan.title = href;
+        popover.appendChild(urlSpan);
+
+        // Edit button
+        const editBtn = document.createElement('button');
+        editBtn.type = 'button';
+        editBtn.textContent = 'Edit';
+        editBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this._hideLinkPopover();
+            this._showLinkDialog(linkMark.attrs);
+        });
+        popover.appendChild(editBtn);
+
+        // Open button
+        const openBtn = document.createElement('button');
+        openBtn.type = 'button';
+        openBtn.textContent = 'Open';
+        openBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (href) {
+                window.open(href, '_blank', 'noopener');
+            }
+        });
+        popover.appendChild(openBtn);
+
+        // Unlink button
+        const unlinkBtn = document.createElement('button');
+        unlinkBtn.type = 'button';
+        unlinkBtn.textContent = 'Unlink';
+        unlinkBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this._hideLinkPopover();
+            this.removeFormat('link');
+        });
+        popover.appendChild(unlinkBtn);
+
+        // Position relative to editor area
+        if (coords) {
+            const editorRect = this._editorArea.getBoundingClientRect();
+            popover.style.top = (coords.top - editorRect.top + 20) + 'px';
+            popover.style.left = Math.max(0, coords.left - editorRect.left) + 'px';
+        }
+
+        this._editorArea.appendChild(popover);
+        this._activeLinkPopover = popover;
+
+        // Close on click outside (deferred to avoid immediate close)
+        requestAnimationFrame(() => {
+            this.shadowRoot.addEventListener('mousedown', this._handleDocClickBound);
+        });
+    }
+
+    /**
+     * Hide the active link popover.
+     * @private
+     */
+    _hideLinkPopover() {
+        if (this._activeLinkPopover) {
+            if (this._activeLinkPopover.parentNode) {
+                this._activeLinkPopover.parentNode.removeChild(this._activeLinkPopover);
+            }
+            this._activeLinkPopover = null;
+            this.shadowRoot.removeEventListener('mousedown', this._handleDocClickBound);
+        }
+    }
+
+    /**
+     * Handle document clicks to dismiss popover and context menu.
+     * @param {MouseEvent} e
+     * @private
+     */
+    _handleDocClick(e) {
+        // Close link popover if clicking outside it
+        if (this._activeLinkPopover && !this._activeLinkPopover.contains(e.target)) {
+            this._hideLinkPopover();
+        }
+        // Close context menu if clicking outside it
+        if (this._activeContextMenu && !this._activeContextMenu.contains(e.target)) {
+            this._hideTableContextMenu();
+        }
+    }
+
+    /**
+     * Check for link mark at cursor and show/hide popover accordingly.
+     * Called from the dispatch method after TEXT_CURSOR_MOVE.
+     * @private
+     */
+    _updateLinkPopover() {
+        const activeMarks = getActiveMarks(this._state);
+        const linkMark = activeMarks.find(m => m.type === 'link');
+
+        if (linkMark) {
+            // Show popover if not already showing
+            if (!this._activeLinkPopover) {
+                const coords = this._view.coordsAtPos(this._state.selection.head);
+                if (coords) {
+                    this._showLinkPopover(linkMark, coords);
+                }
+            }
+        } else {
+            // Hide popover if no link mark
+            this._hideLinkPopover();
+        }
+    }
+
+    // =========================================================================
+    // Table Context Menu
+    // =========================================================================
+
+    /**
+     * Handle contextmenu events on the editor content area.
+     *
+     * @param {MouseEvent} event
+     * @private
+     */
+    _handleContextMenu(event) {
+        // Check if the click target is inside a table cell
+        const cell = event.target.closest('td, th');
+        if (!cell) return; // Allow default browser context menu outside tables
+
+        // Verify we are actually inside a table context in the model
+        const tableInfo = _isInTable(this._state);
+        if (!tableInfo) return;
+
+        event.preventDefault();
+        this._showTableContextMenu(event, tableInfo);
+    }
+
+    /**
+     * Show a context menu for table operations.
+     *
+     * @param {MouseEvent} event - Mouse event for positioning
+     * @param {object} tableContext - Table context info from _isInTable
+     * @private
+     */
+    _showTableContextMenu(event, tableContext) {
+        this._hideTableContextMenu();
+
+        const menu = document.createElement('div');
+        menu.className = 'rte-table-context-menu';
+
+        const items = [
+            { label: 'Insert Row Above', action: () => this.addRowBefore() },
+            { label: 'Insert Row Below', action: () => this.addRowAfter() },
+            { label: 'Insert Column Left', action: () => this.addColumnBefore() },
+            { label: 'Insert Column Right', action: () => this.addColumnAfter() },
+            { separator: true },
+            { label: 'Delete Row', action: () => this.deleteRow() },
+            { label: 'Delete Column', action: () => this.deleteColumn() },
+            { separator: true },
+            { label: 'Merge Cells', action: () => this.mergeCells(), disabled: false },
+            { label: 'Split Cell', action: () => this.splitCell(), disabled: false },
+            { separator: true },
+            { label: 'Toggle Header Row', action: () => this.toggleHeaderRow() },
+            { label: 'Toggle Header Column', action: () => this.toggleHeaderColumn() },
+            { separator: true },
+            { label: 'Delete Table', action: () => this.deleteTable() }
+        ];
+
+        for (const item of items) {
+            if (item.separator) {
+                const sep = document.createElement('div');
+                sep.className = 'rte-context-separator';
+                menu.appendChild(sep);
+                continue;
+            }
+
+            const el = document.createElement('div');
+            el.className = 'rte-context-item' + (item.disabled ? ' disabled' : '');
+            el.textContent = item.label;
+
+            if (!item.disabled) {
+                el.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this._hideTableContextMenu();
+                    item.action();
+                });
+            }
+
+            menu.appendChild(el);
+        }
+
+        // Position at mouse coordinates relative to editor area
+        const editorRect = this._editorArea.getBoundingClientRect();
+        menu.style.position = 'absolute';
+        menu.style.top = (event.clientY - editorRect.top) + 'px';
+        menu.style.left = (event.clientX - editorRect.left) + 'px';
+
+        this._editorArea.appendChild(menu);
+        this._activeContextMenu = menu;
+
+        // Close on click outside (deferred)
+        requestAnimationFrame(() => {
+            this.shadowRoot.addEventListener('mousedown', this._handleDocClickBound);
+        });
+    }
+
+    /**
+     * Hide the active table context menu.
+     * @private
+     */
+    _hideTableContextMenu() {
+        if (this._activeContextMenu) {
+            if (this._activeContextMenu.parentNode) {
+                this._activeContextMenu.parentNode.removeChild(this._activeContextMenu);
+            }
+            this._activeContextMenu = null;
+            this.shadowRoot.removeEventListener('mousedown', this._handleDocClickBound);
+        }
+    }
+
+    // =========================================================================
+    // Source Edit Toggle
+    // =========================================================================
+
+    /**
+     * Toggle between WYSIWYG and source editing mode.
+     * Delegates to the SourceEditPlugin.
+     * Fires MODE_CHANGE event.
+     */
+    toggleSourceEdit() {
+        const sourcePlugin = this._pluginManager.getPlugin('sourceEdit');
+        if (!sourcePlugin) return;
+
+        sourcePlugin.toggle();
+
+        const isSource = sourcePlugin.isSourceMode;
+        this.fireEvent(RichTextEditorEvent.MODE_CHANGE, {
+            mode: isSource ? 'source' : 'wysiwyg'
+        });
+    }
+
+    /**
+     * Check if the editor is in source editing mode.
+     * @returns {boolean}
+     */
+    get isSourceMode() {
+        const sourcePlugin = this._pluginManager.getPlugin('sourceEdit');
+        return sourcePlugin ? sourcePlugin.isSourceMode : false;
     }
 
     // =========================================================================

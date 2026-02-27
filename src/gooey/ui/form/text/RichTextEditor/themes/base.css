@@ -662,3 +662,107 @@
     background: var(--gooey-color-surface-hover, #f0f0f0);
     border-color: var(--gooey-color-border, #cccccc);
 }
+
+/* =========================================================================
+ * Link Popover
+ * ========================================================================= */
+
+.rte-link-popover {
+    position: absolute;
+    z-index: 30;
+    background: var(--gooey-richtexteditor-popover-bg, var(--gooey-color-surface, #ffffff));
+    border: 1px solid var(--gooey-richtexteditor-popover-border, var(--gooey-color-border, #cccccc));
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    padding: 6px 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    max-width: 350px;
+    font-family: var(--gooey-font-family, sans-serif);
+}
+
+.rte-link-popover-url {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--gooey-color-text-secondary, #666);
+    flex: 1;
+}
+
+.rte-link-popover button {
+    padding: 2px 8px;
+    border: 1px solid var(--gooey-richtexteditor-popover-border, var(--gooey-color-border, #cccccc));
+    border-radius: 2px;
+    background: var(--gooey-richtexteditor-popover-bg, var(--gooey-color-surface, #ffffff));
+    cursor: pointer;
+    font-size: 12px;
+    white-space: nowrap;
+    color: var(--gooey-color-text, #333);
+}
+
+.rte-link-popover button:hover {
+    background: var(--gooey-color-surface-hover, #f0f0f0);
+}
+
+/* =========================================================================
+ * Table Context Menu
+ * ========================================================================= */
+
+.rte-table-context-menu {
+    position: absolute;
+    z-index: 50;
+    background: var(--gooey-richtexteditor-popover-bg, var(--gooey-color-surface, #ffffff));
+    border: 1px solid var(--gooey-richtexteditor-popover-border, var(--gooey-color-border, #cccccc));
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    padding: 4px 0;
+    min-width: 180px;
+    font-family: var(--gooey-font-family, sans-serif);
+}
+
+.rte-context-item {
+    padding: 6px 16px;
+    cursor: pointer;
+    font-size: 13px;
+    white-space: nowrap;
+    color: var(--gooey-color-text, #333);
+}
+
+.rte-context-item:hover {
+    background: var(--gooey-color-surface-hover, #f0f0f0);
+}
+
+.rte-context-item.disabled {
+    opacity: var(--gooey-opacity-disabled, 0.5);
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.rte-context-separator {
+    height: 1px;
+    background: var(--gooey-richtexteditor-popover-border, var(--gooey-color-border, #cccccc));
+    margin: 4px 8px;
+}
+
+/* =========================================================================
+ * Source Edit Mode
+ * ========================================================================= */
+
+.rte-source-textarea {
+    width: 100%;
+    height: 100%;
+    min-height: 160px;
+    border: none;
+    outline: none;
+    resize: none;
+    padding: 8px;
+    font-family: monospace;
+    font-size: var(--gooey-richtexteditor-content-font-size, var(--gooey-font-size-md));
+    line-height: 1.4;
+    color: var(--gooey-richtexteditor-content-color, var(--gooey-color-text));
+    background: var(--gooey-richtexteditor-bg, var(--gooey-color-surface-raised));
+    box-sizing: border-box;
+    flex: 1;
+}

@@ -67,6 +67,17 @@ export default class SourceEditPlugin {
         } else {
             this._enterSourceMode();
         }
+
+        // Notify editor of mode change for toolbar state updates
+        if (this._editor && typeof this._editor.fireEvent === 'function') {
+            try {
+                this._editor.fireEvent('modeChange', {
+                    mode: this._isSourceMode ? 'source' : 'wysiwyg'
+                });
+            } catch (e) {
+                // Ignore if event not registered
+            }
+        }
     }
 
     /**
