@@ -90,7 +90,17 @@ export default class ImagePlugin {
      */
     toolbarItems() {
         return [
-            { name: 'insertImage', type: 'button', command: insertImage, label: 'Insert Image', icon: 'image' }
+            {
+                name: 'insertImage',
+                type: 'button',
+                command: () => {
+                    if (this._editor && typeof this._editor._showImageDialog === 'function') {
+                        this._editor._showImageDialog();
+                    }
+                },
+                label: 'Insert Image',
+                icon: 'image'
+            }
         ];
     }
 

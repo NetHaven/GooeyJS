@@ -1,10 +1,10 @@
 /**
  * SpecialCharactersPlugin provides a toolbar button for inserting special characters.
  *
- * The command opens a dialog (placeholder implementation -- full UI comes in Phase 41).
- * For now, the command inserts a character using a simple window.prompt() fallback.
+ * The command opens the editor's special characters dialog, which shows
+ * categorized character grids for browsing and inserting symbols.
  *
- * Uses init(editor) to store the editor reference for the insert command.
+ * Uses init(editor) to store the editor reference for the dialog command.
  */
 
 
@@ -38,7 +38,7 @@ export default class SpecialCharactersPlugin {
                 type: "button",
                 label: "Special Characters",
                 icon: "specialCharacters",
-                command: () => this._insertSpecialCharacter()
+                command: () => this._openSpecialCharsDialog()
             }
         ];
     }
@@ -55,58 +55,18 @@ export default class SpecialCharactersPlugin {
     // =========================================================================
 
     /**
-     * Prompt the user for a special character and insert it at the cursor.
+     * Open the special characters dialog on the editor.
      *
-     * This is a placeholder implementation using window.prompt().
-     * Phase 41 will provide a proper character picker dialog UI.
+     * Delegates to the editor's _showSpecialCharsDialog method which
+     * provides a full categorized character picker UI.
      *
      * @private
      */
-    _insertSpecialCharacter() {
+    _openSpecialCharsDialog() {
         if (!this._editor) return;
 
-        const char = window.prompt("Enter special character:");
-        if (!char) return;
-
-        const state = this._editor._state;
-        if (!state) return;
-
-        const tr = state.transaction;
-        const { from, to } = state.selection;
-
-        // Replace selection (or insert at cursor) with the character
-        tr.replaceWith(from, to, state.schema
-            ? state.schema.text(char)
-            : _createTextNode(char)
-        );
-
-        if (typeof this._editor._dispatch === "function") {
-            this._editor._dispatch(tr);
+        if (typeof this._editor._showSpecialCharsDialog === "function") {
+            this._editor._showSpecialCharsDialog();
         }
     }
-}
-
-
-// =============================================================================
-// Private helpers
-// =============================================================================
-
-/**
- * Create a plain text node (fallback when schema is not available).
- * @param {string} text
- * @returns {object}
- */
-function _createTextNode(text) {
-    return Object.freeze({
-        type: "text",
-        text,
-        attrs: Object.freeze({}),
-        marks: Object.freeze([]),
-        children: null,
-        get nodeSize() { return text.length; },
-        get contentSize() { return text.length; },
-        get isText() { return true; },
-        get isLeaf() { return false; },
-        get textContent() { return text; }
-    });
 }

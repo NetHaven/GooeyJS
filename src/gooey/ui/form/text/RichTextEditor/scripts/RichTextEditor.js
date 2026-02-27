@@ -1254,6 +1254,27 @@ export default class RichTextEditor extends TextElement {
     }
 
     // =========================================================================
+    // Text Insertion API
+    // =========================================================================
+
+    /**
+     * Insert plain text at the current cursor position.
+     *
+     * @param {string} text - Text to insert
+     * @returns {boolean} Whether the insertion succeeded
+     */
+    insertText(text) {
+        if (!text || !this._state) return false;
+        const { from, to } = this._state.selection;
+        const tr = this._state.transaction;
+        const textNode = this._schema.text(text);
+        tr.replaceWith(from, to, textNode);
+        tr.setSelection(Selection.cursor(from + text.length));
+        this._dispatch(tr);
+        return true;
+    }
+
+    // =========================================================================
     // Clipboard API
     // =========================================================================
 
@@ -1829,8 +1850,7 @@ export default class RichTextEditor extends TextElement {
      * Handle the Mod-K link command.
      *
      * If link is active on selection: removes the link (unlink).
-     * If no selection (cursor): prompts for URL and link text, inserts linked text.
-     * If selection exists without link: prompts for URL, wraps selection in link.
+     * Otherwise: opens the link dialog for URL entry.
      *
      * @param {object} state - EditorState
      * @param {function} dispatch - Dispatch function
@@ -1852,47 +1872,18 @@ export default class RichTextEditor extends TextElement {
         }
 
         if (isActive && empty) {
-            // Cursor inside a link -- for now, treat as unlink is not possible
-            // without knowing the link boundaries. Return false.
-            return false;
-        }
-
-        // Link NOT active -- prompt for URL
-        const url = window.prompt('Enter URL:');
-        if (url === null) return false; // User cancelled
-
-        // XSS prevention: reject dangerous URL schemes
-        const trimmedUrl = url.trim().toLowerCase();
-        if (trimmedUrl.startsWith('javascript:') ||
-            trimmedUrl.startsWith('vbscript:') ||
-            trimmedUrl.startsWith('data:text/html')) {
-            window.alert('Invalid URL scheme');
-            return false;
-        }
-
-        if (empty) {
-            // No selection: prompt for link text, insert linked text
-            const text = window.prompt('Enter link text:', url);
-            if (text === null || text.length === 0) return false;
-
-            if (dispatch) {
-                const tr = state.transaction;
-                const linkMark = Mark.create('link', { href: url, title: null, target: null });
-                tr.insertText(text, from);
-                tr.addMark(from, from + text.length, linkMark);
-                tr.setSelection(Selection.cursor(from + text.length));
-                dispatch(tr);
+            // Cursor inside a link -- detect existing link attrs from active marks
+            const activeMarks = getActiveMarks(state);
+            const linkMark = activeMarks.find(m => m.type === 'link');
+            if (linkMark && linkMark.attrs) {
+                this._showLinkDialog(linkMark.attrs);
+                return true;
             }
-            return true;
+            return false;
         }
 
-        // Selection exists: wrap in link
-        if (dispatch) {
-            const tr = state.transaction;
-            const linkMark = Mark.create('link', { href: url, title: null, target: null });
-            tr.addMark(from, to, linkMark);
-            dispatch(tr);
-        }
+        // Link NOT active -- open dialog
+        this._showLinkDialog();
         return true;
     }
 
@@ -2074,6 +2065,548 @@ export default class RichTextEditor extends TextElement {
             accum = childEnd;
         }
         return null;
+    }
+
+    // =========================================================================
+    // Dialog System
+    // =========================================================================
+
+    /**
+     * Create a modal dialog inside the editor's shadow DOM.
+     *
+     * @param {object} config - Dialog configuration
+     * @param {string} config.title - Dialog title text
+     * @param {function} [config.renderBody] - Function receiving body container div
+     * @param {string} [config.submitLabel='OK'] - Submit button label
+     * @param {boolean} [config.showCancel=true] - Whether to show Cancel button
+     * @returns {{ element: HTMLElement, body: HTMLElement, close: function, onSubmit: function }}
+     * @private
+     */
+    _createDialog(config) {
+        // Close any existing dialog
+        this._closeDialog();
+
+        const overlay = document.createElement('div');
+        overlay.className = 'rte-dialog-overlay';
+
+        const dialog = document.createElement('div');
+        dialog.className = 'rte-dialog';
+        dialog.setAttribute('role', 'dialog');
+        dialog.setAttribute('aria-modal', 'true');
+        dialog.setAttribute('aria-label', config.title || 'Dialog');
+
+        // Header
+        const header = document.createElement('div');
+        header.className = 'rte-dialog-header';
+        const titleEl = document.createElement('span');
+        titleEl.className = 'rte-dialog-title';
+        titleEl.textContent = config.title || '';
+        header.appendChild(titleEl);
+        const closeBtn = document.createElement('button');
+        closeBtn.className = 'rte-dialog-close';
+        closeBtn.type = 'button';
+        closeBtn.textContent = '\u00D7';
+        closeBtn.setAttribute('aria-label', 'Close');
+        header.appendChild(closeBtn);
+        dialog.appendChild(header);
+
+        // Body
+        const body = document.createElement('div');
+        body.className = 'rte-dialog-body';
+        dialog.appendChild(body);
+
+        // Footer
+        const footer = document.createElement('div');
+        footer.className = 'rte-dialog-footer';
+        let submitCallback = null;
+
+        if (config.showCancel !== false) {
+            const cancelBtn = document.createElement('button');
+            cancelBtn.className = 'secondary';
+            cancelBtn.type = 'button';
+            cancelBtn.textContent = 'Cancel';
+            cancelBtn.addEventListener('click', () => close());
+            footer.appendChild(cancelBtn);
+        }
+
+        const submitBtn = document.createElement('button');
+        submitBtn.className = 'primary';
+        submitBtn.type = 'button';
+        submitBtn.textContent = config.submitLabel || 'OK';
+        submitBtn.addEventListener('click', () => {
+            if (submitCallback) submitCallback();
+        });
+        footer.appendChild(submitBtn);
+        dialog.appendChild(footer);
+
+        overlay.appendChild(dialog);
+
+        // Render custom body content
+        if (config.renderBody) {
+            config.renderBody(body);
+        }
+
+        // Focus trap
+        const _trapFocus = (e) => {
+            if (e.key !== 'Tab') return;
+            const focusable = dialog.querySelectorAll(
+                'button, input, select, textarea, [tabindex]:not([tabindex="-1"])'
+            );
+            if (focusable.length === 0) return;
+            const first = focusable[0];
+            const last = focusable[focusable.length - 1];
+            if (e.shiftKey) {
+                if (document.activeElement === first || this.shadowRoot.activeElement === first) {
+                    e.preventDefault();
+                    last.focus();
+                }
+            } else {
+                if (document.activeElement === last || this.shadowRoot.activeElement === last) {
+                    e.preventDefault();
+                    first.focus();
+                }
+            }
+        };
+
+        // Escape to close
+        const _handleKeydown = (e) => {
+            if (e.key === 'Escape') {
+                e.stopPropagation();
+                close();
+            }
+            _trapFocus(e);
+        };
+
+        // Click backdrop to close
+        overlay.addEventListener('mousedown', (e) => {
+            if (e.target === overlay) close();
+        });
+
+        dialog.addEventListener('keydown', _handleKeydown);
+
+        // Store reference and mount
+        this._activeDialog = { overlay, dialog, cleanup: _handleKeydown };
+        this._shell.appendChild(overlay);
+
+        // Focus first input or submit button
+        requestAnimationFrame(() => {
+            const firstInput = dialog.querySelector('input, select, textarea');
+            if (firstInput) {
+                firstInput.focus();
+            } else {
+                submitBtn.focus();
+            }
+        });
+
+        const close = () => this._closeDialog();
+
+        return {
+            element: dialog,
+            body,
+            close,
+            onSubmit: (fn) => { submitCallback = fn; }
+        };
+    }
+
+    /**
+     * Close the active dialog and return focus to the editor.
+     * @private
+     */
+    _closeDialog() {
+        if (this._activeDialog) {
+            const { overlay, dialog, cleanup } = this._activeDialog;
+            dialog.removeEventListener('keydown', cleanup);
+            if (overlay.parentNode) {
+                overlay.parentNode.removeChild(overlay);
+            }
+            this._activeDialog = null;
+        }
+        // Return focus to editor
+        if (this._inputHandler) {
+            this._inputHandler.focus();
+        }
+    }
+
+    /**
+     * Show the link dialog for inserting or editing a link.
+     *
+     * @param {object} [existingAttrs] - Existing link attributes for editing
+     * @private
+     */
+    _showLinkDialog(existingAttrs) {
+        const isEdit = !!(existingAttrs && existingAttrs.href);
+        let urlInput, titleInput, targetSelect;
+
+        const handle = this._createDialog({
+            title: isEdit ? 'Edit Link' : 'Insert Link',
+            renderBody: (body) => {
+                // URL field
+                const urlLabel = document.createElement('label');
+                urlLabel.textContent = 'URL';
+                urlInput = document.createElement('input');
+                urlInput.type = 'text';
+                urlInput.placeholder = 'https://example.com';
+                urlInput.required = true;
+                urlInput.value = (existingAttrs && existingAttrs.href) || '';
+                urlLabel.appendChild(urlInput);
+                body.appendChild(urlLabel);
+
+                // Title field
+                const titleLabel = document.createElement('label');
+                titleLabel.textContent = 'Title';
+                titleInput = document.createElement('input');
+                titleInput.type = 'text';
+                titleInput.placeholder = 'Link title (optional)';
+                titleInput.value = (existingAttrs && existingAttrs.title) || '';
+                titleLabel.appendChild(titleInput);
+                body.appendChild(titleLabel);
+
+                // Target field
+                const targetLabel = document.createElement('label');
+                targetLabel.textContent = 'Target';
+                targetSelect = document.createElement('select');
+                const options = [
+                    { value: '', label: 'Same Window' },
+                    { value: '_blank', label: 'New Tab' },
+                    { value: '_self', label: '_self' },
+                    { value: '_parent', label: '_parent' },
+                    { value: '_top', label: '_top' }
+                ];
+                for (const opt of options) {
+                    const el = document.createElement('option');
+                    el.value = opt.value;
+                    el.textContent = opt.label;
+                    targetSelect.appendChild(el);
+                }
+                targetSelect.value = (existingAttrs && existingAttrs.target) || '';
+                targetLabel.appendChild(targetSelect);
+                body.appendChild(targetLabel);
+
+                // Submit on Enter in URL or title inputs
+                urlInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') { e.preventDefault(); submitLink(); }
+                });
+                titleInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') { e.preventDefault(); submitLink(); }
+                });
+            }
+        });
+
+        const submitLink = () => {
+            const href = urlInput.value.trim();
+            if (!href) return;
+
+            // XSS prevention
+            const decoded = _decodeHTMLEntities(href);
+            if (DANGEROUS_URL_RE.test(decoded)) {
+                urlInput.setCustomValidity('Invalid URL scheme');
+                urlInput.reportValidity();
+                return;
+            }
+
+            const attrs = {
+                href,
+                title: titleInput.value.trim() || null,
+                target: targetSelect.value || null
+            };
+
+            this.formatText('link', attrs);
+            handle.close();
+        };
+
+        handle.onSubmit(submitLink);
+    }
+
+    /**
+     * Show the image dialog for inserting an image via URL.
+     * @private
+     */
+    _showImageDialog() {
+        let urlInput, altInput, widthInput, heightInput, previewEl;
+
+        const handle = this._createDialog({
+            title: 'Insert Image',
+            renderBody: (body) => {
+                // URL field
+                const urlLabel = document.createElement('label');
+                urlLabel.textContent = 'Image URL';
+                urlInput = document.createElement('input');
+                urlInput.type = 'text';
+                urlInput.placeholder = 'https://example.com/image.png';
+                urlInput.required = true;
+                urlLabel.appendChild(urlInput);
+                body.appendChild(urlLabel);
+
+                // Alt text field
+                const altLabel = document.createElement('label');
+                altLabel.textContent = 'Alt Text';
+                altInput = document.createElement('input');
+                altInput.type = 'text';
+                altInput.placeholder = 'Image description';
+                altLabel.appendChild(altInput);
+                body.appendChild(altLabel);
+
+                // Dimensions row
+                const dimRow = document.createElement('div');
+                dimRow.style.cssText = 'display:flex;gap:12px;';
+
+                const widthLabel = document.createElement('label');
+                widthLabel.textContent = 'Width';
+                widthLabel.style.flex = '1';
+                widthInput = document.createElement('input');
+                widthInput.type = 'number';
+                widthInput.placeholder = 'auto';
+                widthInput.min = '1';
+                widthLabel.appendChild(widthInput);
+                dimRow.appendChild(widthLabel);
+
+                const heightLabel = document.createElement('label');
+                heightLabel.textContent = 'Height';
+                heightLabel.style.flex = '1';
+                heightInput = document.createElement('input');
+                heightInput.type = 'number';
+                heightInput.placeholder = 'auto';
+                heightInput.min = '1';
+                heightLabel.appendChild(heightInput);
+                dimRow.appendChild(heightLabel);
+
+                body.appendChild(dimRow);
+
+                // Preview area
+                previewEl = document.createElement('div');
+                previewEl.className = 'rte-dialog-preview';
+                previewEl.style.cssText = 'margin-top:8px;min-height:60px;border:1px dashed var(--gooey-color-border,#ccc);border-radius:3px;display:flex;align-items:center;justify-content:center;overflow:hidden;';
+                previewEl.textContent = 'Image preview';
+                body.appendChild(previewEl);
+
+                // Live preview on URL input
+                urlInput.addEventListener('input', () => {
+                    const src = urlInput.value.trim();
+                    if (src) {
+                        const img = document.createElement('img');
+                        img.style.cssText = 'max-width:100%;max-height:120px;';
+                        img.alt = 'Preview';
+                        img.onload = () => {
+                            previewEl.textContent = '';
+                            previewEl.appendChild(img);
+                        };
+                        img.onerror = () => {
+                            previewEl.textContent = 'Could not load image';
+                        };
+                        img.src = src;
+                    } else {
+                        previewEl.textContent = 'Image preview';
+                    }
+                });
+
+                urlInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') { e.preventDefault(); submitImage(); }
+                });
+            }
+        });
+
+        const submitImage = () => {
+            const src = urlInput.value.trim();
+            if (!src) return;
+
+            const attrs = {};
+            const alt = altInput.value.trim();
+            if (alt) attrs.alt = alt;
+            const w = widthInput.value.trim();
+            if (w) attrs.width = w;
+            const h = heightInput.value.trim();
+            if (h) attrs.height = h;
+
+            this.insertImage(src, attrs);
+            handle.close();
+        };
+
+        handle.onSubmit(submitImage);
+    }
+
+    /**
+     * Show the table dialog with a visual grid picker.
+     * @private
+     */
+    _showTableDialog() {
+        let gridCells = [];
+        let hoverRows = 0, hoverCols = 0;
+        let rowsInput, colsInput, sizeLabel;
+        const GRID_SIZE = 10;
+
+        const handle = this._createDialog({
+            title: 'Insert Table',
+            submitLabel: 'Insert',
+            renderBody: (body) => {
+                // Grid picker
+                const gridContainer = document.createElement('div');
+                gridContainer.className = 'rte-table-grid';
+                gridCells = [];
+                for (let r = 0; r < GRID_SIZE; r++) {
+                    for (let c = 0; c < GRID_SIZE; c++) {
+                        const cell = document.createElement('div');
+                        cell.className = 'rte-table-grid-cell';
+                        cell.dataset.row = r;
+                        cell.dataset.col = c;
+                        cell.addEventListener('mouseenter', () => {
+                            hoverRows = r + 1;
+                            hoverCols = c + 1;
+                            updateGridHighlight();
+                            rowsInput.value = hoverRows;
+                            colsInput.value = hoverCols;
+                        });
+                        cell.addEventListener('click', () => {
+                            submitTable(r + 1, c + 1);
+                        });
+                        gridContainer.appendChild(cell);
+                        gridCells.push(cell);
+                    }
+                }
+                body.appendChild(gridContainer);
+
+                // Size label
+                sizeLabel = document.createElement('div');
+                sizeLabel.className = 'rte-table-grid-label';
+                sizeLabel.style.cssText = 'text-align:center;margin:6px 0;font-size:13px;color:var(--gooey-color-text-secondary,#666);';
+                sizeLabel.textContent = '0 \u00D7 0';
+                body.appendChild(sizeLabel);
+
+                // Manual inputs
+                const inputRow = document.createElement('div');
+                inputRow.style.cssText = 'display:flex;gap:12px;margin-top:8px;';
+
+                const rowsLabel = document.createElement('label');
+                rowsLabel.textContent = 'Rows';
+                rowsLabel.style.flex = '1';
+                rowsInput = document.createElement('input');
+                rowsInput.type = 'number';
+                rowsInput.min = '1';
+                rowsInput.max = '50';
+                rowsInput.value = '3';
+                rowsLabel.appendChild(rowsInput);
+                inputRow.appendChild(rowsLabel);
+
+                const colsLabel = document.createElement('label');
+                colsLabel.textContent = 'Columns';
+                colsLabel.style.flex = '1';
+                colsInput = document.createElement('input');
+                colsInput.type = 'number';
+                colsInput.min = '1';
+                colsInput.max = '20';
+                colsInput.value = '3';
+                colsLabel.appendChild(colsInput);
+                inputRow.appendChild(colsLabel);
+
+                body.appendChild(inputRow);
+
+                // Reset grid on mouse leave
+                gridContainer.addEventListener('mouseleave', () => {
+                    hoverRows = 0;
+                    hoverCols = 0;
+                    updateGridHighlight();
+                    sizeLabel.textContent = '0 \u00D7 0';
+                });
+            }
+        });
+
+        const updateGridHighlight = () => {
+            for (const cell of gridCells) {
+                const r = parseInt(cell.dataset.row, 10);
+                const c = parseInt(cell.dataset.col, 10);
+                if (r < hoverRows && c < hoverCols) {
+                    cell.classList.add('highlighted');
+                } else {
+                    cell.classList.remove('highlighted');
+                }
+            }
+            if (hoverRows > 0 && hoverCols > 0) {
+                sizeLabel.textContent = `${hoverRows} \u00D7 ${hoverCols}`;
+            }
+        };
+
+        const submitTable = (rows, cols) => {
+            const r = rows || parseInt(rowsInput.value, 10) || 3;
+            const c = cols || parseInt(colsInput.value, 10) || 3;
+            this.insertTable(
+                Math.max(1, Math.min(50, r)),
+                Math.max(1, Math.min(20, c))
+            );
+            handle.close();
+        };
+
+        handle.onSubmit(() => submitTable());
+    }
+
+    /**
+     * Show the special characters dialog with categorized character grids.
+     * @private
+     */
+    _showSpecialCharsDialog() {
+        const CATEGORIES = {
+            'Common': '\u00A9 \u00AE \u2122 \u00A7 \u00B6 \u2020 \u2021 \u2022 \u2026 \u2014 \u2013 \u2018 \u2019 \u201C \u201D \u00AB \u00BB \u00B0 \u00B1 \u00D7 \u00F7 \u00AC \u00A2 \u00A3 \u00A5 \u20AC \u00A4',
+            'Arrows': '\u2190 \u2191 \u2192 \u2193 \u2194 \u2195 \u21D0 \u21D1 \u21D2 \u21D3 \u21D4 \u21B5 \u2197 \u2198 \u2196 \u2199 \u27A1 \u2B05 \u2B06 \u2B07',
+            'Math': '\u2200 \u2203 \u2205 \u2207 \u2208 \u2209 \u220B \u220F \u2211 \u221A \u221E \u2227 \u2228 \u2229 \u222A \u222B \u2234 \u2245 \u2248 \u2260 \u2261 \u2264 \u2265 \u2282 \u2283',
+            'Currency': '\u0024 \u20AC \u00A3 \u00A5 \u00A2 \u20A3 \u20B9 \u20A9 \u20BD \u20BA \u20B1 \u20AB \u20AA \u20BF',
+            'Greek': '\u0391 \u0392 \u0393 \u0394 \u0395 \u0396 \u0397 \u0398 \u0399 \u039A \u039B \u039C \u039D \u039E \u039F \u03A0 \u03A1 \u03A3 \u03A4 \u03A5 \u03A6 \u03A7 \u03A8 \u03A9 \u03B1 \u03B2 \u03B3 \u03B4 \u03B5 \u03B6 \u03B7 \u03B8 \u03B9 \u03BA \u03BB \u03BC \u03BD \u03BE \u03BF \u03C0 \u03C1 \u03C3 \u03C4 \u03C5 \u03C6 \u03C7 \u03C8 \u03C9',
+            'Emoji': '\u2764 \u2605 \u2606 \u2714 \u2718 \u260E \u2709 \u270E \u270F \u2702 \u2660 \u2663 \u2665 \u2666 \u266A \u266B \u263A \u2639 \u2602 \u2603'
+        };
+
+        let activeCategory = 'Common';
+        let charGrid;
+        let categoryContainer;
+
+        const handle = this._createDialog({
+            title: 'Special Characters',
+            showCancel: false,
+            submitLabel: 'Close',
+            renderBody: (body) => {
+                // Category tabs
+                categoryContainer = document.createElement('div');
+                categoryContainer.className = 'rte-char-categories';
+                for (const cat of Object.keys(CATEGORIES)) {
+                    const btn = document.createElement('button');
+                    btn.className = 'rte-char-category' + (cat === activeCategory ? ' active' : '');
+                    btn.type = 'button';
+                    btn.textContent = cat;
+                    btn.addEventListener('click', () => {
+                        activeCategory = cat;
+                        renderCharGrid();
+                        // Update active category button
+                        for (const b of categoryContainer.children) {
+                            b.classList.toggle('active', b.textContent === cat);
+                        }
+                    });
+                    categoryContainer.appendChild(btn);
+                }
+                body.appendChild(categoryContainer);
+
+                // Character grid
+                charGrid = document.createElement('div');
+                charGrid.className = 'rte-char-grid';
+                body.appendChild(charGrid);
+            }
+        });
+
+        const renderCharGrid = () => {
+            charGrid.textContent = '';
+            const chars = CATEGORIES[activeCategory].split(' ').filter(Boolean);
+            for (const ch of chars) {
+                const cell = document.createElement('div');
+                cell.className = 'rte-char-cell';
+                cell.textContent = ch;
+                cell.title = `U+${ch.codePointAt(0).toString(16).toUpperCase().padStart(4, '0')}`;
+                cell.addEventListener('click', () => {
+                    this.insertText(ch);
+                });
+                charGrid.appendChild(cell);
+            }
+        };
+
+        // Initial render
+        renderCharGrid();
+
+        // Close button just closes dialog
+        handle.onSubmit(() => handle.close());
     }
 
     // =========================================================================

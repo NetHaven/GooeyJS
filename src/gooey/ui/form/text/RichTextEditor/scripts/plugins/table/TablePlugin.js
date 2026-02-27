@@ -182,7 +182,17 @@ export default class TablePlugin {
      */
     toolbarItems() {
         return [
-            { name: 'insertTable', type: 'button', command: insertTable(3, 3), label: 'Insert Table', icon: 'table' }
+            {
+                name: 'insertTable',
+                type: 'button',
+                command: () => {
+                    if (this._editor && typeof this._editor._showTableDialog === 'function') {
+                        this._editor._showTableDialog();
+                    }
+                },
+                label: 'Insert Table',
+                icon: 'table'
+            }
         ];
     }
 

@@ -456,3 +456,209 @@
     color: var(--gooey-richtexteditor-popover-active-color, var(--gooey-color-on-primary));
     border-color: var(--gooey-richtexteditor-popover-active-bg, var(--gooey-color-primary));
 }
+
+/* =========================================================================
+ * Dialog System
+ * ========================================================================= */
+
+.rte-dialog-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.rte-dialog {
+    background: var(--gooey-richtexteditor-dialog-bg, var(--gooey-color-surface, #ffffff));
+    border: 1px solid var(--gooey-richtexteditor-dialog-border, var(--gooey-color-border, #cccccc));
+    border-radius: 6px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    min-width: 300px;
+    max-width: 500px;
+    max-height: 80%;
+    overflow: auto;
+    font-family: var(--gooey-font-family, sans-serif);
+    font-size: 13px;
+    color: var(--gooey-richtexteditor-dialog-color, var(--gooey-color-text, #333));
+}
+
+.rte-dialog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--gooey-richtexteditor-dialog-border, var(--gooey-color-border, #cccccc));
+}
+
+.rte-dialog-title {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.rte-dialog-close {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+    padding: 2px 6px;
+    color: var(--gooey-color-text-secondary, #666);
+    border-radius: 3px;
+}
+
+.rte-dialog-close:hover {
+    background: var(--gooey-color-surface-hover, #f0f0f0);
+}
+
+.rte-dialog-body {
+    padding: 16px;
+}
+
+.rte-dialog-footer {
+    padding: 12px 16px;
+    border-top: 1px solid var(--gooey-richtexteditor-dialog-border, var(--gooey-color-border, #cccccc));
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.rte-dialog label {
+    display: block;
+    margin-bottom: 12px;
+    font-size: 13px;
+    color: var(--gooey-color-text, #333);
+}
+
+.rte-dialog input,
+.rte-dialog select {
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid var(--gooey-color-border, #cccccc);
+    border-radius: 3px;
+    font-size: 13px;
+    font-family: inherit;
+    margin-top: 4px;
+    outline: none;
+    box-sizing: border-box;
+    background: var(--gooey-color-surface, #ffffff);
+    color: var(--gooey-color-text, #333);
+}
+
+.rte-dialog input:focus,
+.rte-dialog select:focus {
+    border-color: var(--gooey-color-primary, #0078d7);
+    box-shadow: 0 0 0 1px var(--gooey-color-primary, #0078d7);
+}
+
+.rte-dialog button.primary {
+    background: var(--gooey-color-primary, #0078d7);
+    color: var(--gooey-color-on-primary, #ffffff);
+    border: none;
+    padding: 6px 16px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.rte-dialog button.primary:hover {
+    opacity: 0.9;
+}
+
+.rte-dialog button.secondary {
+    background: var(--gooey-color-surface, #ffffff);
+    color: var(--gooey-color-text, #333);
+    border: 1px solid var(--gooey-color-border, #cccccc);
+    padding: 6px 16px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.rte-dialog button.secondary:hover {
+    background: var(--gooey-color-surface-hover, #f0f0f0);
+}
+
+/* =========================================================================
+ * Table Grid Picker
+ * ========================================================================= */
+
+.rte-table-grid {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 1px;
+}
+
+.rte-table-grid-cell {
+    width: 20px;
+    height: 20px;
+    border: 1px solid var(--gooey-color-border, #cccccc);
+    cursor: pointer;
+    border-radius: 1px;
+}
+
+.rte-table-grid-cell:hover {
+    border-color: var(--gooey-color-primary, #0078d7);
+}
+
+.rte-table-grid-cell.highlighted {
+    background: var(--gooey-color-primary, #0078d7);
+    opacity: 0.3;
+}
+
+/* =========================================================================
+ * Special Characters Grid
+ * ========================================================================= */
+
+.rte-char-categories {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+}
+
+.rte-char-category {
+    padding: 4px 8px;
+    border: 1px solid var(--gooey-color-border, #cccccc);
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 12px;
+    background: var(--gooey-color-surface, #ffffff);
+    color: var(--gooey-color-text, #333);
+}
+
+.rte-char-category:hover {
+    background: var(--gooey-color-surface-hover, #f0f0f0);
+}
+
+.rte-char-category.active {
+    background: var(--gooey-color-primary, #0078d7);
+    color: var(--gooey-color-on-primary, #ffffff);
+    border-color: var(--gooey-color-primary, #0078d7);
+}
+
+.rte-char-grid {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 2px;
+}
+
+.rte-char-cell {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid transparent;
+    border-radius: 2px;
+    cursor: pointer;
+    font-size: 18px;
+    user-select: none;
+}
+
+.rte-char-cell:hover {
+    background: var(--gooey-color-surface-hover, #f0f0f0);
+    border-color: var(--gooey-color-border, #cccccc);
+}

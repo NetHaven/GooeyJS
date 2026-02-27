@@ -18,7 +18,11 @@ export default class LinkPlugin {
         return [{
             name: 'link',
             type: 'button',
-            command: toggleLink,
+            command: () => {
+                if (this._editor && typeof this._editor._handleLinkCommand === 'function') {
+                    this._editor._handleLinkCommand(this._editor._state, (tr) => this._editor._dispatch(tr));
+                }
+            },
             isActive: (state) => markActive(state, 'link'),
             label: 'Link',
             icon: 'link'
