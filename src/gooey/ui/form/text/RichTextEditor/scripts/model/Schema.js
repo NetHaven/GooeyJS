@@ -473,15 +473,103 @@ export default class Schema {
                         alt: { default: "" },
                         title: { default: null },
                         width: { default: null },
+                        height: { default: null },
+                        align: { default: null },
+                        caption: { default: null }
+                    },
+                    toDOM: (node) => {
+                        const imgAttrs = {};
+                        if (node.attrs.src) imgAttrs.src = node.attrs.src;
+                        if (node.attrs.alt) imgAttrs.alt = node.attrs.alt;
+                        if (node.attrs.title) imgAttrs.title = node.attrs.title;
+                        if (node.attrs.width) imgAttrs.width = node.attrs.width;
+                        if (node.attrs.height) imgAttrs.height = node.attrs.height;
+
+                        const alignStyle = _buildAlignStyle(node.attrs.align);
+
+                        if (node.attrs.caption) {
+                            const figureAttrs = { class: "rte-media-figure" };
+                            if (alignStyle) figureAttrs.style = alignStyle;
+                            return ["figure", figureAttrs, ["img", imgAttrs], ["figcaption", {}, node.attrs.caption]];
+                        }
+
+                        if (alignStyle) {
+                            return ["div", { class: "rte-media-wrapper", style: alignStyle }, ["img", imgAttrs]];
+                        }
+
+                        return ["img", imgAttrs];
+                    }
+                },
+                video: {
+                    group: "block",
+                    attrs: {
+                        src: {},
+                        provider: { default: null },
+                        width: { default: null },
+                        height: { default: null },
+                        title: { default: null }
+                    },
+                    toDOM: (node) => {
+                        const width = node.attrs.width || "560";
+                        const height = node.attrs.height || "315";
+                        const title = node.attrs.title || "";
+
+                        if (node.attrs.provider === "youtube") {
+                            const videoId = _extractYouTubeId(node.attrs.src);
+                            const embedUrl = `https://www.youtube.com/embed/${videoId}`;
+                            return ["div", { class: "rte-media-wrapper rte-video" }, ["iframe", {
+                                src: embedUrl,
+                                width,
+                                height,
+                                title,
+                                frameborder: "0",
+                                allowfullscreen: "",
+                                allow: "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            }]];
+                        }
+
+                        if (node.attrs.provider === "vimeo") {
+                            const videoId = _extractVimeoId(node.attrs.src);
+                            const embedUrl = `https://player.vimeo.com/video/${videoId}`;
+                            return ["div", { class: "rte-media-wrapper rte-video" }, ["iframe", {
+                                src: embedUrl,
+                                width,
+                                height,
+                                title,
+                                frameborder: "0",
+                                allowfullscreen: "",
+                                allow: "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            }]];
+                        }
+
+                        // Direct video
+                        return ["div", { class: "rte-media-wrapper rte-video" }, ["video", {
+                            src: node.attrs.src,
+                            width,
+                            height,
+                            controls: "true",
+                            title: title || undefined
+                        }]];
+                    }
+                },
+                embed: {
+                    group: "block",
+                    attrs: {
+                        url: {},
+                        html: { default: "" },
+                        provider: { default: null },
+                        title: { default: null },
+                        width: { default: null },
                         height: { default: null }
                     },
-                    toDOM: (node) => ["img", {
-                        src: node.attrs.src,
-                        alt: node.attrs.alt,
-                        title: node.attrs.title,
-                        width: node.attrs.width,
-                        height: node.attrs.height
-                    }]
+                    toDOM: (node) => {
+                        const label = node.attrs.title || node.attrs.url || "Embedded content";
+                        return ["div", {
+                            class: "rte-embed",
+                            "data-embed-url": node.attrs.url || "",
+                            "data-embed-provider": node.attrs.provider || ""
+                        }, ["span", { class: "rte-embed-label" }, label]];
+                    }
                 },
                 hardBreak: {
                     group: "inline",
@@ -563,6 +651,56 @@ export default class Schema {
 // ============================================================================
 // Block style helper
 // ============================================================================
+
+/**
+ * Build a CSS style string for media alignment.
+ *
+ * @param {string|null} align - Alignment value ("left", "center", "right", or null)
+ * @returns {string|null} CSS style string, or null if no alignment
+ */
+function _buildAlignStyle(align) {
+    if (!align) return null;
+
+    switch (align) {
+        case "left":
+            return "text-align: left";
+        case "center":
+            return "text-align: center; margin: 0 auto";
+        case "right":
+            return "text-align: right";
+        default:
+            return null;
+    }
+}
+
+
+/**
+ * Extract YouTube video ID from various URL formats.
+ *
+ * @param {string} url - YouTube URL
+ * @returns {string} Video ID
+ */
+function _extractYouTubeId(url) {
+    if (!url) return "";
+    const match = url.match(/youtube\.com\/watch\?v=([^&]+)/) ||
+                  url.match(/youtu\.be\/([^?]+)/) ||
+                  url.match(/youtube\.com\/embed\/([^?]+)/);
+    return match ? match[1] : url;
+}
+
+
+/**
+ * Extract Vimeo video ID from URL.
+ *
+ * @param {string} url - Vimeo URL
+ * @returns {string} Video ID
+ */
+function _extractVimeoId(url) {
+    if (!url) return "";
+    const match = url.match(/vimeo\.com\/(\d+)/);
+    return match ? match[1] : url;
+}
+
 
 /**
  * Build a CSS style string from block attributes.
