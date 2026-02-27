@@ -2411,6 +2411,37 @@ function _findBlockInDoc(doc, pos) {
 
 
 /**
+ * Find the top-level block node containing a given position.
+ *
+ * Walks document children to find the block that contains `from`,
+ * returning the node, its position, and its index. Useful for media
+ * and other commands that need to locate the block at the cursor.
+ *
+ * @param {object} state - EditorState
+ * @param {number} from - Position within the document
+ * @returns {{ node: object, pos: number, index: number }|null}
+ * @public
+ */
+export function _findBlockAtPos(state, from) {
+    const doc = state.doc;
+    if (!doc.children) return null;
+
+    let accum = 0;
+    for (let i = 0; i < doc.children.length; i++) {
+        const child = doc.children[i];
+        const childEnd = accum + child.nodeSize;
+
+        if (from >= accum && from <= childEnd) {
+            return { node: child, pos: accum, index: i };
+        }
+
+        accum = childEnd;
+    }
+    return null;
+}
+
+
+/**
  * Find an ancestor node of a specific type containing a position.
  *
  * Searches top-level document children for a container of the given type
