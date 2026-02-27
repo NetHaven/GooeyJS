@@ -13,6 +13,7 @@ import { baseKeymap, keymap, insertText, toggleMark } from './state/Commands.js'
 import EditorView from './view/EditorView.js';
 import InputHandler from './view/InputHandler.js';
 import SelectionManager from './view/SelectionManager.js';
+import HistoryPlugin, { historyKeymap } from './plugins/HistoryPlugin.js';
 
 /**
  * Sanitize HTML to prevent XSS attacks.
@@ -113,12 +114,17 @@ export default class RichTextEditor extends TextElement {
         // Create initial EditorState
         this._state = EditorState.create(this._schema, null);
 
+        // Create HistoryPlugin
+        this._history = new HistoryPlugin();
+
         // Build the resolved keymap (platform-aware Mod- resolution)
+        // Merge history keymap (Mod-z, Mod-Shift-z, Mod-y) with base keymap
         const resolvedKeymap = keymap({
             ...baseKeymap,
             'Mod-b': toggleMark('bold'),
             'Mod-i': toggleMark('italic'),
-            'Mod-u': toggleMark('underline')
+            'Mod-u': toggleMark('underline'),
+            ...historyKeymap(this._history)
         });
 
         // Create EditorView
@@ -294,18 +300,102 @@ export default class RichTextEditor extends TextElement {
     }
 
     // =========================================================================
+    // History (undo/redo)
+    // =========================================================================
+
+    /**
+     * Undo the last edit (or batch of edits).
+     * Restores the editor state from before the edit and updates the view.
+     */
+    undo() {
+        if (!this._history) return;
+
+        const restored = this._history.undo(this._state);
+        if (restored) {
+            this._state = restored;
+            if (this._view) {
+                this._view.updateState(this._state);
+            }
+            if (this._selectionManager) {
+                this._selectionManager.update(this._state.selection);
+            }
+        }
+    }
+
+    /**
+     * Redo a previously undone edit.
+     * Restores the editor state to after the edit and updates the view.
+     */
+    redo() {
+        if (!this._history) return;
+
+        const restored = this._history.redo(this._state);
+        if (restored) {
+            this._state = restored;
+            if (this._view) {
+                this._view.updateState(this._state);
+            }
+            if (this._selectionManager) {
+                this._selectionManager.update(this._state.selection);
+            }
+        }
+    }
+
+    /**
+     * Check whether undo is available.
+     * @returns {boolean}
+     */
+    canUndo() {
+        return this._history ? this._history.canUndo() : false;
+    }
+
+    /**
+     * Check whether redo is available.
+     * @returns {boolean}
+     */
+    canRedo() {
+        return this._history ? this._history.canRedo() : false;
+    }
+
+    /**
+     * Clear all undo/redo history.
+     */
+    clearHistory() {
+        if (this._history) {
+            this._history.clear();
+        }
+    }
+
+    // =========================================================================
     // Dispatch
     // =========================================================================
 
     /**
      * Apply a transaction to produce a new state and update the view.
      *
+     * Supports two paths:
+     * - Normal: applies transaction steps to produce new state, records
+     *   pre-edit state for undo (if transaction has content-changing steps).
+     * - Force state: if `tr._forceState` is set (undo/redo), uses that
+     *   state directly instead of applying the transaction.
+     *
      * @param {import('./state/Transaction.js').default} tr - Transaction to apply
      * @private
      */
     _dispatch(tr) {
         const oldState = this._state;
-        this._state = this._state.apply(tr);
+
+        if (tr._forceState) {
+            // Undo/redo path: restore the state directly
+            this._state = tr._forceState;
+        } else {
+            // Normal path: record state for undo before applying
+            // Only push to history if the transaction has content-changing steps
+            if (tr.steps.length > 0 && this._history) {
+                this._history.pushState(this._state);
+            }
+            this._state = this._state.apply(tr);
+        }
 
         // Update view with new state
         if (this._view) {
