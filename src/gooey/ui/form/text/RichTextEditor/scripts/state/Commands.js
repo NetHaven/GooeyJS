@@ -778,8 +778,9 @@ export function getActiveMarks(state) {
 /**
  * Create a command that changes the block type of blocks in the selection range.
  *
- * Can-execute: returns true if the current block is not already the target type.
- * Foundation for heading/paragraph switching in Phase 36.
+ * Uses the SetBlockTypeStep to properly change the block's type (not the
+ * old attrs hack). Can-execute: returns false if already the target type
+ * with matching attrs.
  *
  * @param {string} nodeType - Target block type name (e.g., "heading", "paragraph")
  * @param {object} [attrs] - Optional attributes for the new block type
@@ -802,21 +803,229 @@ export function setBlockType(nodeType, attrs) {
 
         if (dispatch) {
             const tr = state.transaction;
-            // Find the position of the parent block in the document
-            // Walk up the path to find the block's position
-            const blockPos = _findBlockPos(state.doc, from);
-            if (blockPos !== null) {
-                tr.setNodeAttrs(blockPos, { ...attrs, __type: nodeType });
-                // Note: Full setBlockType (changing the actual node type) requires
-                // a replaceRange step that rebuilds the node. For Phase 33 foundation,
-                // we set attrs which serves as the mechanism for EditorView to recognize
-                // the type change. Full implementation in Phase 36.
+            const blockInfo = _findBlockInDoc(state.doc, from);
+            if (blockInfo !== null) {
+                const { blockPos } = blockInfo;
+                tr.setBlockType(blockPos, nodeType, attrs || null);
+
+                // Preserve cursor at same relative offset in the new block
+                const relOffset = $from.parentOffset;
+                tr.setSelection(Selection.cursor(blockPos + 1 + relOffset));
             }
             dispatch(tr);
         }
         return true;
     };
 }
+
+
+/**
+ * Command that wraps the current block(s) in a blockquote, or unwraps
+ * if already inside a blockquote (toggle behavior).
+ *
+ * @param {object} state - EditorState
+ * @param {function|null} dispatch - Dispatch function or null for can-execute check
+ * @returns {boolean}
+ */
+export function wrapInBlockquote(state, dispatch) {
+    const { from } = state.selection;
+    const doc = state.doc;
+
+    // Check if we're inside a blockquote
+    const bqInfo = _findAncestorOfType(doc, from, "blockquote");
+
+    if (bqInfo) {
+        // Already in a blockquote — unwrap it
+        if (dispatch) {
+            const tr = state.transaction;
+            tr.unwrap(bqInfo.pos);
+            // Adjust cursor position: unwrapping removes 2 positions (boundaries)
+            const newCursorPos = Math.max(1, from - 1);
+            tr.setSelection(Selection.cursor(newCursorPos));
+            dispatch(tr);
+        }
+        return true;
+    }
+
+    // Not in blockquote — wrap the current block(s)
+    const blockInfo = _findBlockInDoc(doc, from);
+    if (!blockInfo) return false;
+
+    if (dispatch) {
+        const tr = state.transaction;
+        const block = doc.children[blockInfo.blockIndex];
+        const blockEnd = blockInfo.blockPos + block.nodeSize;
+        tr.wrapIn(blockInfo.blockPos, blockEnd, "blockquote");
+        // Cursor shifts right by 1 (opening boundary of blockquote)
+        tr.setSelection(Selection.cursor(from + 1));
+        dispatch(tr);
+    }
+    return true;
+}
+
+
+/**
+ * Command that toggles the current block between codeBlock and paragraph.
+ *
+ * When converting to codeBlock, strips all marks from text children
+ * since code blocks only contain plain text (content: "text*").
+ *
+ * @param {object} state - EditorState
+ * @param {function|null} dispatch - Dispatch function or null for can-execute check
+ * @returns {boolean}
+ */
+export function toggleCodeBlock(state, dispatch) {
+    const { from } = state.selection;
+    const $from = state.doc.resolve(from);
+    const parent = $from.parent;
+
+    if (parent.type === "codeBlock") {
+        // Already a code block — convert back to paragraph
+        return setBlockType("paragraph")(state, dispatch);
+    }
+
+    // Convert to code block
+    if (parent.type !== "paragraph" && parent.type !== "heading") {
+        return false; // Can only convert paragraphs and headings
+    }
+
+    if (dispatch) {
+        const tr = state.transaction;
+        const blockInfo = _findBlockInDoc(state.doc, from);
+        if (blockInfo !== null) {
+            const { blockPos } = blockInfo;
+            const block = state.doc.children[blockInfo.blockIndex];
+
+            // Strip all marks from text children for code block
+            const plainChildren = [];
+            if (block.children) {
+                for (const child of block.children) {
+                    if (child.type === "text") {
+                        if (child.marks.length > 0) {
+                            plainChildren.push(new Node("text", null, null, [], child.text));
+                        } else {
+                            plainChildren.push(child);
+                        }
+                    }
+                    // Skip non-text inline nodes (hardBreak etc.) in code blocks
+                }
+            }
+
+            // Build the code block node directly and replace
+            const codeBlockNode = new Node("codeBlock", { language: null }, plainChildren);
+            const blockEnd = blockPos + block.nodeSize;
+            tr.replaceRange(blockPos, blockEnd, [codeBlockNode]);
+
+            // Position cursor inside the code block
+            const relOffset = Math.min($from.parentOffset, codeBlockNode.contentSize);
+            tr.setSelection(Selection.cursor(blockPos + 1 + relOffset));
+        }
+        dispatch(tr);
+    }
+    return true;
+}
+
+
+/**
+ * Command that inserts a horizontal rule at the cursor position.
+ *
+ * Splits the current block at the cursor, inserts a horizontalRule node
+ * between the two halves, and ensures the document remains valid
+ * (paragraph after the rule if needed).
+ *
+ * @param {object} state - EditorState
+ * @param {function|null} dispatch - Dispatch function or null for can-execute check
+ * @returns {boolean}
+ */
+export function insertHorizontalRule(state, dispatch) {
+    const { from, to, empty } = state.selection;
+    const $from = state.doc.resolve(from);
+
+    if ($from.parent.type === "document") return false;
+
+    if (dispatch) {
+        const tr = state.transaction;
+        const doc = state.doc;
+
+        // Delete selection first if not empty
+        let cursorPos = from;
+        if (!empty) {
+            tr.deleteRange(from, to);
+            cursorPos = from;
+        }
+
+        const currentDoc = tr.doc;
+        const blockInfo = _findBlockInDoc(currentDoc, cursorPos);
+        if (!blockInfo) return false;
+
+        const { blockPos, blockIndex } = blockInfo;
+        const block = currentDoc.children[blockIndex];
+        const $cursor = currentDoc.resolve(cursorPos);
+        const offset = $cursor.parentOffset;
+
+        // Split the block into left/right halves
+        const allChildren = block.children || [];
+        const leftChildren = [];
+        const rightChildren = [];
+
+        let childAccum = 0;
+        for (let i = 0; i < allChildren.length; i++) {
+            const child = allChildren[i];
+            const childSize = child.nodeSize;
+            const childEnd = childAccum + childSize;
+
+            if (childEnd <= offset) {
+                leftChildren.push(child);
+            } else if (childAccum >= offset) {
+                rightChildren.push(child);
+            } else if (child.type === "text") {
+                const splitAt = offset - childAccum;
+                const leftText = child.text.slice(0, splitAt);
+                const rightText = child.text.slice(splitAt);
+                if (leftText) leftChildren.push(new Node("text", child.attrs, null, child.marks, leftText));
+                if (rightText) rightChildren.push(new Node("text", child.attrs, null, child.marks, rightText));
+            } else {
+                rightChildren.push(child);
+            }
+
+            childAccum += childSize;
+        }
+
+        // Build the replacement: leftBlock + hr + rightBlock
+        const leftBlock = block.copy(leftChildren);
+        const hrNode = new Node("horizontalRule", null, null);
+        const rightBlock = block.copy(rightChildren);
+
+        const blockEnd = blockPos + block.nodeSize;
+        tr.replaceRange(blockPos, blockEnd, [leftBlock, hrNode, rightBlock]);
+
+        // Set cursor to start of right block (after hr)
+        const newCursorPos = blockPos + leftBlock.nodeSize + hrNode.nodeSize + 1;
+        tr.setSelection(Selection.cursor(newCursorPos));
+
+        dispatch(tr);
+    }
+    return true;
+}
+
+
+/**
+ * Create a heading command for a specific level.
+ *
+ * @param {number} level - Heading level (1-6)
+ * @returns {function(state, dispatch): boolean}
+ */
+export function heading(level) {
+    return setBlockType("heading", { level });
+}
+
+
+/**
+ * Command that converts the current block to a paragraph.
+ *
+ * @type {function(state, dispatch): boolean}
+ */
+export const paragraph = setBlockType("paragraph");
 
 
 // ============================================================================
@@ -1416,6 +1625,49 @@ function _findBlockInDoc(doc, pos) {
 
         if (pos >= accum && pos <= childEnd) {
             return { blockIndex: i, blockPos: accum };
+        }
+
+        accum = childEnd;
+    }
+    return null;
+}
+
+
+/**
+ * Find an ancestor node of a specific type containing a position.
+ *
+ * Searches top-level document children for a container of the given type
+ * that contains the position.
+ *
+ * @param {object} doc - Document node
+ * @param {number} pos - Position within the document
+ * @param {string} nodeType - Type name to search for (e.g., "blockquote")
+ * @returns {{ pos: number, node: object, index: number }|null}
+ */
+function _findAncestorOfType(doc, pos, nodeType) {
+    if (!doc.children) return null;
+
+    let accum = 0;
+    for (let i = 0; i < doc.children.length; i++) {
+        const child = doc.children[i];
+        const childEnd = accum + child.nodeSize;
+
+        if (pos >= accum && pos <= childEnd) {
+            if (child.type === nodeType) {
+                return { pos: accum, node: child, index: i };
+            }
+            // Check inside container children recursively
+            if (child.children) {
+                let innerAccum = accum + 1; // +1 for opening boundary
+                for (let j = 0; j < child.children.length; j++) {
+                    const inner = child.children[j];
+                    const innerEnd = innerAccum + inner.nodeSize;
+                    if (pos >= innerAccum && pos <= innerEnd && inner.type === nodeType) {
+                        return { pos: innerAccum, node: inner, index: j };
+                    }
+                    innerAccum = innerEnd;
+                }
+            }
         }
 
         accum = childEnd;

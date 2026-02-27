@@ -509,6 +509,193 @@ class SetNodeAttrsStep extends Step {
 
 
 // ============================================================================
+// WrapInStep
+// ============================================================================
+
+/**
+ * Wrap a range of blocks in a container node.
+ */
+class WrapInStep extends Step {
+
+    /**
+     * @param {number} from - Start position (block-level boundary)
+     * @param {number} to - End position (block-level boundary)
+     * @param {string} nodeType - Container type to wrap with (e.g., "blockquote")
+     * @param {object|null} attrs - Attributes for the wrapper node
+     */
+    constructor(from, to, nodeType, attrs) {
+        super();
+        this.from = from;
+        this.to = to;
+        this.nodeType = nodeType;
+        this.attrs = attrs || null;
+    }
+
+    apply(doc) {
+        try {
+            const newDoc = _wrapInDoc(doc, this.from, this.to, this.nodeType, this.attrs);
+            return { doc: newDoc, failed: null };
+        } catch (e) {
+            return { doc: null, failed: e.message };
+        }
+    }
+
+    invert(doc) {
+        // Inverting a wrap is an unwrap at the same from position
+        return new UnwrapStep(this.from);
+    }
+
+    getMap() {
+        // Wrapping adds 2 positions (opening + closing boundary of wrapper)
+        return new StepMap([[this.from, 0, 2]]);
+    }
+
+    map(mapping) {
+        const newFrom = mapping.map(this.from, 1);
+        const newTo = mapping.map(this.to, -1);
+        if (newFrom >= newTo) return null;
+        return new WrapInStep(newFrom, newTo, this.nodeType, this.attrs);
+    }
+
+    toJSON() {
+        return {
+            type: "wrapIn",
+            from: this.from,
+            to: this.to,
+            nodeType: this.nodeType,
+            attrs: this.attrs ? { ...this.attrs } : null
+        };
+    }
+
+    static fromJSON(schema, json) {
+        return new WrapInStep(json.from, json.to, json.nodeType, json.attrs);
+    }
+}
+
+
+// ============================================================================
+// UnwrapStep
+// ============================================================================
+
+/**
+ * Remove a wrapping container node, lifting its children into the parent.
+ */
+class UnwrapStep extends Step {
+
+    /**
+     * @param {number} pos - Position of the wrapper node
+     */
+    constructor(pos) {
+        super();
+        this.pos = pos;
+    }
+
+    apply(doc) {
+        try {
+            const newDoc = _unwrapInDoc(doc, this.pos);
+            return { doc: newDoc, failed: null };
+        } catch (e) {
+            return { doc: null, failed: e.message };
+        }
+    }
+
+    invert(doc) {
+        // Find the wrapper node at pos before unwrapping to get its type/attrs
+        const resolved = doc.resolve(this.pos);
+        const wrapperNode = resolved.nodeAfter;
+        if (!wrapperNode) {
+            // Fallback: cannot invert without knowing the wrapper
+            return new WrapInStep(this.pos, this.pos, "blockquote", null);
+        }
+        const endPos = this.pos + wrapperNode.nodeSize;
+        return new WrapInStep(this.pos, endPos, wrapperNode.type, wrapperNode.attrs);
+    }
+
+    getMap() {
+        // Unwrapping removes 2 positions (opening + closing boundary)
+        return new StepMap([[this.pos, 2, 0]]);
+    }
+
+    map(mapping) {
+        const newPos = mapping.map(this.pos, 1);
+        return new UnwrapStep(newPos);
+    }
+
+    toJSON() {
+        return { type: "unwrap", pos: this.pos };
+    }
+
+    static fromJSON(schema, json) {
+        return new UnwrapStep(json.pos);
+    }
+}
+
+
+// ============================================================================
+// SetBlockTypeStep
+// ============================================================================
+
+/**
+ * Change the type of a block node at a given position.
+ */
+class SetBlockTypeStep extends Step {
+
+    /**
+     * @param {number} pos - Position of the block node
+     * @param {string} newType - New block type name
+     * @param {object|null} newAttrs - New attributes for the block
+     */
+    constructor(pos, newType, newAttrs) {
+        super();
+        this.pos = pos;
+        this.newType = newType;
+        this.newAttrs = newAttrs || null;
+    }
+
+    apply(doc) {
+        try {
+            const newDoc = _setBlockTypeInDoc(doc, this.pos, this.newType, this.newAttrs);
+            return { doc: newDoc, failed: null };
+        } catch (e) {
+            return { doc: null, failed: e.message };
+        }
+    }
+
+    invert(doc) {
+        const resolved = doc.resolve(this.pos);
+        const targetNode = resolved.nodeAfter;
+        if (!targetNode) {
+            throw new Error(`No node at position ${this.pos} for inversion`);
+        }
+        return new SetBlockTypeStep(this.pos, targetNode.type, { ...targetNode.attrs });
+    }
+
+    getMap() {
+        // Changing block type doesn't change positions
+        return StepMap.empty();
+    }
+
+    map(mapping) {
+        const newPos = mapping.map(this.pos, 1);
+        return new SetBlockTypeStep(newPos, this.newType, this.newAttrs);
+    }
+
+    toJSON() {
+        return {
+            type: "setBlockType",
+            pos: this.pos,
+            newType: this.newType,
+            newAttrs: this.newAttrs ? { ...this.newAttrs } : null
+        };
+    }
+
+    static fromJSON(schema, json) {
+        return new SetBlockTypeStep(json.pos, json.newType, json.newAttrs);
+    }
+}
+
+
+// ============================================================================
 // Step registry for deserialization
 // ============================================================================
 
@@ -518,7 +705,10 @@ const STEP_TYPES = {
     replaceRange: ReplaceRangeStep,
     addMark: AddMarkStep,
     removeMark: RemoveMarkStep,
-    setNodeAttrs: SetNodeAttrsStep
+    setNodeAttrs: SetNodeAttrsStep,
+    wrapIn: WrapInStep,
+    unwrap: UnwrapStep,
+    setBlockType: SetBlockTypeStep
 };
 
 
@@ -982,6 +1172,140 @@ function _contentSize(nodes) {
 
 
 /**
+ * Wrap blocks in a range with a container node.
+ *
+ * @param {Node} doc - Document root
+ * @param {number} from - Start position of blocks to wrap
+ * @param {number} to - End position of blocks to wrap
+ * @param {string} nodeType - Container type name
+ * @param {object|null} attrs - Container attributes
+ * @returns {Node} New document with blocks wrapped
+ */
+function _wrapInDoc(doc, from, to, nodeType, attrs) {
+    if (!doc.children) throw new Error("Cannot wrap in a document without children");
+
+    // Find blocks in the range
+    const blocksToWrap = [];
+    let firstIdx = -1;
+    let lastIdx = -1;
+    let accum = 0;
+
+    for (let i = 0; i < doc.children.length; i++) {
+        const child = doc.children[i];
+        const childEnd = accum + child.nodeSize;
+
+        if (childEnd > from && accum < to) {
+            if (firstIdx === -1) firstIdx = i;
+            lastIdx = i;
+            blocksToWrap.push(child);
+        }
+
+        accum += childEnd === accum ? child.nodeSize : 0;
+        accum = accum === 0 ? childEnd : accum;
+    }
+
+    // Recompute properly
+    blocksToWrap.length = 0;
+    firstIdx = -1;
+    lastIdx = -1;
+    accum = 0;
+
+    for (let i = 0; i < doc.children.length; i++) {
+        const child = doc.children[i];
+        const childStart = accum;
+        const childEnd = accum + child.nodeSize;
+
+        if (childEnd > from && childStart < to) {
+            if (firstIdx === -1) firstIdx = i;
+            lastIdx = i;
+            blocksToWrap.push(child);
+        }
+
+        accum = childEnd;
+    }
+
+    if (blocksToWrap.length === 0) {
+        throw new Error(`No blocks found in range [${from}, ${to})`);
+    }
+
+    // Create wrapper node containing the blocks
+    const wrapperNode = new Node(nodeType, attrs, blocksToWrap);
+
+    // Build new children array: before + wrapper + after
+    const newChildren = [
+        ...doc.children.slice(0, firstIdx),
+        wrapperNode,
+        ...doc.children.slice(lastIdx + 1)
+    ];
+
+    return doc.copy(newChildren);
+}
+
+
+/**
+ * Unwrap a container node, lifting its children into the parent.
+ *
+ * @param {Node} doc - Document root
+ * @param {number} pos - Position of the wrapper node
+ * @returns {Node} New document with wrapper removed
+ */
+function _unwrapInDoc(doc, pos) {
+    if (!doc.children) throw new Error("Cannot unwrap in a document without children");
+
+    // Find the wrapper node at pos
+    let accum = 0;
+    for (let i = 0; i < doc.children.length; i++) {
+        const child = doc.children[i];
+        const childStart = accum;
+
+        if (childStart === pos) {
+            if (!child.children || child.children.length === 0) {
+                throw new Error(`Node at position ${pos} has no children to unwrap`);
+            }
+
+            // Replace wrapper with its children
+            const newChildren = [
+                ...doc.children.slice(0, i),
+                ...child.children,
+                ...doc.children.slice(i + 1)
+            ];
+
+            return doc.copy(newChildren);
+        }
+
+        accum += child.nodeSize;
+    }
+
+    throw new Error(`No node found at position ${pos} to unwrap`);
+}
+
+
+/**
+ * Change the type of a block node at a given position.
+ *
+ * @param {Node} doc - Document root
+ * @param {number} pos - Position of the block node
+ * @param {string} newType - New block type name
+ * @param {object|null} newAttrs - New attributes
+ * @returns {Node} New document with block type changed
+ */
+function _setBlockTypeInDoc(doc, pos, newType, newAttrs) {
+    const resolved = doc.resolve(pos);
+    const targetNode = resolved.nodeAfter;
+    if (!targetNode) {
+        throw new Error(`No node at position ${pos}`);
+    }
+
+    // Build new node with new type but same children and marks
+    const mergedAttrs = newAttrs ? { ...newAttrs } : {};
+    const newNode = new Node(newType, mergedAttrs, targetNode.children, targetNode.marks, targetNode.text);
+
+    // Rebuild tree from root to the changed node
+    return _replaceChildInPath(doc, resolved, newNode);
+}
+
+
+/**
  * Replace a child node found via ResolvedPos path in the tree.
  *
  * @param {Node} doc - Document root
@@ -1172,6 +1496,41 @@ export default class Transaction {
     }
 
     /**
+     * Add a wrapIn step.
+     * @param {number} from - Start position of blocks to wrap
+     * @param {number} to - End position of blocks to wrap
+     * @param {string} nodeType - Container type name
+     * @param {object|null} [attrs] - Container attributes
+     * @returns {Transaction} this
+     */
+    wrapIn(from, to, nodeType, attrs) {
+        const step = new WrapInStep(from, to, nodeType, attrs || null);
+        return this._applyStep(step);
+    }
+
+    /**
+     * Add an unwrap step.
+     * @param {number} pos - Position of the wrapper node to unwrap
+     * @returns {Transaction} this
+     */
+    unwrap(pos) {
+        const step = new UnwrapStep(pos);
+        return this._applyStep(step);
+    }
+
+    /**
+     * Add a setBlockType step.
+     * @param {number} pos - Position of the block node
+     * @param {string} newType - New block type name
+     * @param {object|null} [attrs] - New attributes for the block
+     * @returns {Transaction} this
+     */
+    setBlockType(pos, newType, attrs) {
+        const step = new SetBlockTypeStep(pos, newType, attrs || null);
+        return this._applyStep(step);
+    }
+
+    /**
      * Set the selection for this transaction.
      * @param {Selection} selection
      * @returns {Transaction} this
@@ -1224,4 +1583,4 @@ export default class Transaction {
 }
 
 // Export step classes for direct use
-export { Step, InsertTextStep, DeleteRangeStep, ReplaceRangeStep, AddMarkStep, RemoveMarkStep, SetNodeAttrsStep };
+export { Step, InsertTextStep, DeleteRangeStep, ReplaceRangeStep, AddMarkStep, RemoveMarkStep, SetNodeAttrsStep, WrapInStep, UnwrapStep, SetBlockTypeStep };
