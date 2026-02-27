@@ -59,6 +59,14 @@ export default class InputHandler {
         this.textarea.addEventListener("compositionstart", this._onCompositionStart);
         this.textarea.addEventListener("compositionupdate", this._onCompositionUpdate);
         this.textarea.addEventListener("compositionend", this._onCompositionEnd);
+
+        // Enable browser spellcheck and autocorrect on the hidden textarea.
+        // Since the textarea captures all text input, corrections flow
+        // through the normal input event pipeline.
+        this.textarea.setAttribute("spellcheck", "true");
+        this.textarea.setAttribute("autocorrect", "on");
+        this.textarea.setAttribute("autocomplete", "off");
+        this.textarea.setAttribute("autocapitalize", "sentences");
     }
 
     /**
@@ -155,6 +163,23 @@ export default class InputHandler {
      */
     get readOnly() {
         return this._readOnly;
+    }
+
+    /**
+     * Set spellcheck enabled state on the hidden textarea.
+     * @param {boolean} enabled
+     */
+    setSpellcheck(enabled) {
+        this.textarea.spellcheck = !!enabled;
+        this.textarea.setAttribute("spellcheck", enabled ? "true" : "false");
+    }
+
+    /**
+     * Set autocorrect enabled state on the hidden textarea.
+     * @param {boolean} enabled
+     */
+    setAutocorrect(enabled) {
+        this.textarea.setAttribute("autocorrect", enabled ? "on" : "off");
     }
 
     /**

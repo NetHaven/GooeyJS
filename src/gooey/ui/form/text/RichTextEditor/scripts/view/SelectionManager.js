@@ -4,11 +4,14 @@ import { Selection } from "../model/Position.js";
  * SelectionManager renders custom cursor and selection highlights
  * as positioned overlays within the .rte-selection layer.
  *
- * It also handles mouse-based selection by listening to mousedown/
- * mousemove/mouseup on the content container, including:
- * - Single click: position cursor
- * - Double-click: select word
- * - Triple-click: select paragraph (entire block)
+ * It handles both mouse and touch-based selection by listening to
+ * mousedown/mousemove/mouseup and touchstart/touchmove/touchend
+ * on the content container, including:
+ * - Single click/tap: position cursor
+ * - Double-click/tap: select word
+ * - Triple-click/tap: select paragraph (entire block)
+ * - Long-press (touch): select word
+ * - Drag selection (mouse and touch)
  *
  * This is a plain class (not a web component).
  */
@@ -46,15 +49,34 @@ export default class SelectionManager {
         /** @type {{ x: number, y: number }|null} Position of last mousedown */
         this._lastClickPos = null;
 
+        // Touch input state
+        /** @type {number|null} Touch start timestamp for long-press detection */
+        this._touchStartTime = null;
+
+        /** @type {number|null} Document position at touch start */
+        this._touchStartPos = null;
+
+        /** @type {{ x: number, y: number }|null} Coordinates at touch start */
+        this._touchStartCoords = null;
+
+        /** @type {boolean} Whether touch is currently in selection drag mode */
+        this._touchSelecting = false;
+
         // Bound handlers for cleanup
         this._onMouseDown = this._handleMouseDown.bind(this);
         this._onMouseMove = this._handleMouseMove.bind(this);
         this._onMouseUp = this._handleMouseUp.bind(this);
+        this._onTouchStart = this._handleTouchStart.bind(this);
+        this._onTouchMove = this._handleTouchMove.bind(this);
+        this._onTouchEnd = this._handleTouchEnd.bind(this);
 
         // Listen on the content container (not selection layer, which has pointer-events: none)
         const contentEl = this.view.container;
         if (contentEl) {
             contentEl.addEventListener("mousedown", this._onMouseDown);
+            contentEl.addEventListener("touchstart", this._onTouchStart, { passive: false });
+            contentEl.addEventListener("touchmove", this._onTouchMove, { passive: false });
+            contentEl.addEventListener("touchend", this._onTouchEnd, { passive: false });
         }
     }
 
@@ -90,6 +112,9 @@ export default class SelectionManager {
         const contentEl = this.view ? this.view.container : null;
         if (contentEl) {
             contentEl.removeEventListener("mousedown", this._onMouseDown);
+            contentEl.removeEventListener("touchstart", this._onTouchStart);
+            contentEl.removeEventListener("touchmove", this._onTouchMove);
+            contentEl.removeEventListener("touchend", this._onTouchEnd);
         }
 
         // Clean up any dangling document-level listeners
@@ -334,6 +359,149 @@ export default class SelectionManager {
 
         document.removeEventListener("mousemove", this._onMouseMove);
         document.removeEventListener("mouseup", this._onMouseUp);
+    }
+
+    // =========================================================================
+    // Touch selection
+    // =========================================================================
+
+    /**
+     * Handle touchstart on the content container.
+     *
+     * Records touch position and time for tap/long-press detection.
+     * Participates in the click count system so double-tap selects
+     * a word on touch devices.
+     *
+     * @param {TouchEvent} event
+     * @private
+     */
+    _handleTouchStart(event) {
+        const touch = event.touches[0];
+        if (!touch) return;
+
+        const coords = { left: touch.clientX, top: touch.clientY };
+        const pos = this.view.posAtCoords(coords);
+        if (pos === null) return;
+
+        const now = Date.now();
+
+        // Track click count for double-tap / triple-tap detection
+        if (this._lastClickPos &&
+            (now - this._lastClickTime) < 500 &&
+            Math.abs(touch.clientX - this._lastClickPos.x) < 20 &&
+            Math.abs(touch.clientY - this._lastClickPos.y) < 20) {
+            this._clickCount++;
+        } else {
+            this._clickCount = 1;
+        }
+
+        this._lastClickTime = now;
+        this._lastClickPos = { x: touch.clientX, y: touch.clientY };
+
+        // Store touch start state for long-press and drag detection
+        this._touchStartTime = now;
+        this._touchStartPos = pos;
+        this._touchStartCoords = { x: touch.clientX, y: touch.clientY };
+        this._touchSelecting = false;
+
+        // Focus the input handler textarea so keyboard appears
+        if (this.view.inputHandler) {
+            this.view.inputHandler.focus();
+        }
+    }
+
+    /**
+     * Handle touchmove during touch interaction.
+     *
+     * If the touch has moved beyond a threshold from the start position,
+     * enters selection drag mode and creates a range selection from the
+     * anchor to the current position.
+     *
+     * @param {TouchEvent} event
+     * @private
+     */
+    _handleTouchMove(event) {
+        if (this._touchStartPos === null || this._touchStartCoords === null) return;
+
+        const touch = event.touches[0];
+        if (!touch) return;
+
+        const dx = touch.clientX - this._touchStartCoords.x;
+        const dy = touch.clientY - this._touchStartCoords.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        // Require at least 10px movement to enter selection mode
+        if (distance < 10) return;
+
+        this._touchSelecting = true;
+
+        const coords = { left: touch.clientX, top: touch.clientY };
+        const pos = this.view.posAtCoords(coords);
+        if (pos === null) return;
+
+        // Create selection from anchor to current touch position
+        if (this.view.dispatch) {
+            const tr = this.view.state.transaction;
+            tr.setSelection(Selection.between(this._touchStartPos, pos));
+            this.view.dispatch(tr);
+        }
+
+        // Prevent scrolling while selecting text
+        event.preventDefault();
+    }
+
+    /**
+     * Handle touchend: finalize touch interaction.
+     *
+     * Determines whether the touch was a tap, long-press, or selection
+     * drag and applies the appropriate action.
+     *
+     * @param {TouchEvent} event
+     * @private
+     */
+    _handleTouchEnd(event) {
+        if (this._touchStartTime === null) return;
+
+        const elapsed = Date.now() - this._touchStartTime;
+        const pos = this._touchStartPos;
+
+        // If we were in selection drag mode, just clean up
+        if (this._touchSelecting) {
+            this._touchStartTime = null;
+            this._touchStartPos = null;
+            this._touchStartCoords = null;
+            this._touchSelecting = false;
+            return;
+        }
+
+        // Not a drag — determine tap type
+        if (pos !== null) {
+            // Handle multi-tap first (double-tap, triple-tap)
+            if (this._clickCount === 3) {
+                this._selectParagraph(pos);
+                event.preventDefault();
+            } else if (this._clickCount === 2) {
+                this._selectWord(pos);
+                event.preventDefault();
+            } else if (elapsed > 500) {
+                // Long-press: select word at touch position
+                this._selectWord(pos);
+                event.preventDefault();
+            } else {
+                // Short tap: place cursor
+                if (this.view.dispatch) {
+                    const tr = this.view.state.transaction;
+                    tr.setSelection(Selection.cursor(pos));
+                    this.view.dispatch(tr);
+                }
+            }
+        }
+
+        // Clean up touch tracking state
+        this._touchStartTime = null;
+        this._touchStartPos = null;
+        this._touchStartCoords = null;
+        this._touchSelecting = false;
     }
 
     // =========================================================================
