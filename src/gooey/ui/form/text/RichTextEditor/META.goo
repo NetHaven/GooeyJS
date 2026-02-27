@@ -97,6 +97,11 @@
     "maxLength": { "type": "NUMBER", "default": null },
     "minLength": { "type": "NUMBER", "default": null },
     "readOnly": { "type": "BOOLEAN", "default": false },
-    "value": { "type": "STRING", "default": null }
+    "value": { "type": "STRING", "default": null },
+    "toolbar": { "type": "STRING", "default": "full" },
+    "group": { "type": "STRING", "default": null },
+    "airMode": { "type": "BOOLEAN", "default": false },
+    "spellcheck": { "type": "BOOLEAN", "default": true },
+    "autofocus": { "type": "BOOLEAN", "default": false }
   }
 }
