@@ -21,11 +21,17 @@ import { Selection } from '../model/Position.js';
 export default class SearchPlugin {
 
     /**
-     * @param {import('../RichTextEditor.js').default} editor - RichTextEditor instance
+     * Unique plugin name for registry identification.
+     * @returns {string}
+     */
+    static get pluginName() { return 'search'; }
+
+    /**
+     * @param {import('../RichTextEditor.js').default} [editor] - RichTextEditor instance (optional for PluginManager path)
      */
     constructor(editor) {
         /** @type {import('../RichTextEditor.js').default} */
-        this.editor = editor;
+        this.editor = editor || null;
 
         // Search state
         /** @type {string} Current search term */
@@ -845,6 +851,45 @@ export default class SearchPlugin {
         label.appendChild(span);
 
         return label;
+    }
+
+    // =========================================================================
+    // Plugin interface methods
+    // =========================================================================
+
+    /**
+     * Initialize the plugin with the editor instance.
+     * Called by PluginManager after construction.
+     * No-op if already initialized via constructor.
+     *
+     * @param {object} editor - RichTextEditor instance
+     */
+    init(editor) {
+        if (this.editor) return;
+        this.editor = editor;
+    }
+
+    /**
+     * Return keybindings for find/replace.
+     *
+     * @returns {object} Keymap bindings
+     */
+    keymap() {
+        return {
+            'Mod-f': (state, dispatch) => { this.open('find'); return true; },
+            'Mod-h': (state, dispatch) => { this.open('replace'); return true; }
+        };
+    }
+
+    /**
+     * Return toolbar item descriptors for find/replace.
+     *
+     * @returns {Array<object>}
+     */
+    toolbarItems() {
+        return [
+            { name: 'findReplace', type: 'button', command: () => this.open('find'), label: 'Find & Replace', icon: 'search' }
+        ];
     }
 
     // =========================================================================

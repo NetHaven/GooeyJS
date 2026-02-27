@@ -10,18 +10,50 @@
  */
 
 import { _isInTable } from "../../state/Commands.js";
-import { addRowAfter } from "../../commands/TableCommands.js";
+import {
+    insertTable,
+    addRowBefore,
+    addRowAfter,
+    addColumnBefore,
+    addColumnAfter,
+    deleteRow,
+    deleteColumn,
+    deleteTable,
+    mergeCells,
+    splitCell
+} from "../../commands/TableCommands.js";
 import { Selection } from "../../model/Position.js";
 
 
 export default class TablePlugin {
 
     /**
-     * @param {import('../../view/EditorView.js').default} view - EditorView reference
+     * Unique plugin name for registry identification.
+     * @returns {string}
+     */
+    static get pluginName() { return 'table'; }
+
+    /**
+     * @param {import('../../view/EditorView.js').default} [view] - EditorView reference (optional for PluginManager path)
      */
     constructor(view) {
         /** @type {import('../../view/EditorView.js').default} */
-        this._view = view;
+        this._view = view || null;
+    }
+
+    // =========================================================================
+    // Plugin interface methods
+    // =========================================================================
+
+    /**
+     * Initialize the plugin with the editor instance.
+     * Called by PluginManager after construction.
+     *
+     * @param {object} editor - RichTextEditor instance
+     */
+    init(editor) {
+        this._editor = editor;
+        // View reference will be set after view creation
     }
 
 
@@ -136,11 +168,54 @@ export default class TablePlugin {
      *
      * @returns {object}
      */
-    get keymap() {
+    keymap() {
         return {
             "Tab": (state, dispatch) => this.moveToNextCell(state, dispatch),
             "Shift-Tab": (state, dispatch) => this.moveToPrevCell(state, dispatch)
         };
+    }
+
+    /**
+     * Return toolbar item descriptors for table insertion.
+     *
+     * @returns {Array<object>}
+     */
+    toolbarItems() {
+        return [
+            { name: 'insertTable', type: 'button', command: insertTable(3, 3), label: 'Insert Table', icon: 'table' }
+        ];
+    }
+
+    /**
+     * Return context menu item descriptors for table operations.
+     * Only returns items when the cursor is inside a table.
+     *
+     * @param {object} context - { state, pos, node, selection, ... }
+     * @returns {Array<object>}
+     */
+    contextMenuItems(context) {
+        if (!context || !context.state) return [];
+        const ctx = _isInTable(context.state);
+        if (!ctx) return [];
+        return [
+            { name: 'addRowBefore', label: 'Insert Row Above', command: addRowBefore, group: 'table', order: 1 },
+            { name: 'addRowAfter', label: 'Insert Row Below', command: addRowAfter, group: 'table', order: 2 },
+            { name: 'addColumnBefore', label: 'Insert Column Left', command: addColumnBefore, group: 'table', order: 3 },
+            { name: 'addColumnAfter', label: 'Insert Column Right', command: addColumnAfter, group: 'table', order: 4 },
+            { name: 'deleteRow', label: 'Delete Row', command: deleteRow, group: 'table', order: 10 },
+            { name: 'deleteColumn', label: 'Delete Column', command: deleteColumn, group: 'table', order: 11 },
+            { name: 'deleteTable', label: 'Delete Table', command: deleteTable, group: 'table', order: 12 },
+            { name: 'mergeCells', label: 'Merge Cells', command: mergeCells, group: 'table', order: 20 },
+            { name: 'splitCell', label: 'Split Cell', command: splitCell, group: 'table', order: 21 }
+        ];
+    }
+
+    /**
+     * Clean up plugin state.
+     */
+    destroy() {
+        this._editor = null;
+        this._view = null;
     }
 }
 

@@ -21,11 +21,17 @@ import { Selection } from "../../model/Position.js";
 export default class ImagePlugin {
 
     /**
-     * @param {object} editor - RichTextEditor component instance
+     * Unique plugin name for registry identification.
+     * @returns {string}
+     */
+    static get pluginName() { return 'image'; }
+
+    /**
+     * @param {object} [editor] - RichTextEditor component instance (optional for PluginManager path)
      */
     constructor(editor) {
         /** @type {object} */
-        this._editor = editor;
+        this._editor = editor || null;
 
         /** @type {object|null} Active resize state */
         this._resizing = null;
@@ -54,8 +60,56 @@ export default class ImagePlugin {
         this._onMouseUp = this._onMouseUp.bind(this);
         this._onKeyDown = this._onKeyDown.bind(this);
 
-        // Attach to editor
+        // Attach to editor if provided via constructor (backward-compatible path)
+        if (this._editor) {
+            this._attach();
+        }
+    }
+
+    // =========================================================================
+    // Plugin interface methods
+    // =========================================================================
+
+    /**
+     * Initialize the plugin with the editor instance.
+     * Called by PluginManager after construction.
+     * No-op if already initialized via constructor.
+     *
+     * @param {object} editor - RichTextEditor instance
+     */
+    init(editor) {
+        if (this._editor) return; // Already initialized via constructor
+        this._editor = editor;
         this._attach();
+    }
+
+    /**
+     * Return toolbar item descriptors for image insertion.
+     *
+     * @returns {Array<object>}
+     */
+    toolbarItems() {
+        return [
+            { name: 'insertImage', type: 'button', command: insertImage, label: 'Insert Image', icon: 'image' }
+        ];
+    }
+
+    /**
+     * Return context menu item descriptors for media alignment and deletion.
+     * Only returns items when context targets an image or video node.
+     *
+     * @param {object} context - { pos, node, selection, ... }
+     * @returns {Array<object>}
+     */
+    contextMenuItems(context) {
+        if (!context || !context.node) return [];
+        if (context.node.type !== 'image' && context.node.type !== 'video') return [];
+        return [
+            { name: 'imageAlignLeft', label: 'Align Left', command: setMediaAlignment('left'), group: 'media', order: 1 },
+            { name: 'imageAlignCenter', label: 'Align Center', command: setMediaAlignment('center'), group: 'media', order: 2 },
+            { name: 'imageAlignRight', label: 'Align Right', command: setMediaAlignment('right'), group: 'media', order: 3 },
+            { name: 'deleteMedia', label: 'Delete', command: deleteMedia, group: 'media', order: 10 }
+        ];
     }
 
 
