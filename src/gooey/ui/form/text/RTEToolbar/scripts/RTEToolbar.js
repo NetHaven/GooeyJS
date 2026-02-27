@@ -124,6 +124,23 @@ export default class RTEToolbar extends UIComponent {
         // Bound click-outside handler for popovers
         this._boundClosePopover = this._closeActivePopover.bind(this);
 
+        // Keyboard navigation state (roving tabindex)
+        this._focusedIndex = 0;
+        this._focusableItems = [];
+
+        // Bound keyboard handler for toolbar navigation
+        this._boundToolbarKeydown = this._handleToolbarKeydown.bind(this);
+        if (this._toolbarContainer) {
+            this._toolbarContainer.addEventListener('keydown', this._boundToolbarKeydown);
+        }
+
+        // Set ARIA attributes on the toolbar container
+        if (this._toolbarContainer) {
+            this._toolbarContainer.setAttribute('role', 'toolbar');
+            this._toolbarContainer.setAttribute('aria-label', 'Editor toolbar');
+            this._toolbarContainer.setAttribute('aria-orientation', 'horizontal');
+        }
+
         // Register valid events
         this.addValidEvent(RTEToolbarEvent.ACTION);
         this.addValidEvent(RTEToolbarEvent.BOUND);
@@ -135,6 +152,7 @@ export default class RTEToolbar extends UIComponent {
         }
         if (this.hasAttribute('position')) {
             // position is handled by CSS via :host([position=...])
+            this._updateAriaOrientation();
         }
     }
 
@@ -192,6 +210,7 @@ export default class RTEToolbar extends UIComponent {
                 break;
             case 'position':
                 // CSS handles position via :host([position=...])
+                this._updateAriaOrientation();
                 break;
             case 'sticky':
                 // CSS handles sticky via :host([sticky])
@@ -621,11 +640,16 @@ export default class RTEToolbar extends UIComponent {
                 if (gi > 0 && this._toolbarItems.children.length > 0) {
                     const sep = document.createElement('div');
                     sep.className = 'rte-toolbar-separator';
+                    sep.setAttribute('role', 'separator');
+                    sep.setAttribute('aria-orientation', 'vertical');
                     this._toolbarItems.appendChild(sep);
                 }
                 this._toolbarItems.appendChild(groupEl);
             }
         }
+
+        // Build focusable items list for roving tabindex
+        this._buildFocusableItems();
     }
 
     /**
@@ -653,6 +677,14 @@ export default class RTEToolbar extends UIComponent {
         btn.title = fullLabel;
         btn.setAttribute('aria-label', fullLabel);
 
+        // For toggle buttons, set initial aria-pressed
+        if (typeof descriptor.isActive === 'function') {
+            btn.setAttribute('aria-pressed', 'false');
+        }
+
+        // Roving tabindex: initially -1, managed by keyboard navigation
+        btn.setAttribute('tabindex', '-1');
+
         // Click handler
         btn.addEventListener('click', (e) => {
             e.preventDefault();
@@ -667,6 +699,18 @@ export default class RTEToolbar extends UIComponent {
                 descriptor.onAction(state, dispatch);
             } else if (typeof descriptor.command === 'function') {
                 descriptor.command(state, dispatch);
+            }
+
+            // Announce formatting change to screen readers
+            if (this._editor && typeof this._editor.announce === 'function') {
+                if (typeof descriptor.isActive === 'function') {
+                    try {
+                        const nowActive = descriptor.isActive(this._editor._state);
+                        this._editor.announce(labelText + (nowActive ? ' applied' : ' removed'));
+                    } catch (e) {
+                        // Ignore
+                    }
+                }
             }
 
             // Fire ACTION event
@@ -706,6 +750,9 @@ export default class RTEToolbar extends UIComponent {
         const labelText = descriptor.label || descriptor.name;
         select.title = labelText;
         select.setAttribute('aria-label', labelText);
+
+        // Roving tabindex: initially -1, managed by keyboard navigation
+        select.setAttribute('tabindex', '-1');
 
         // Populate options based on descriptor format
         if (descriptor.items && descriptor.items.length > 0) {
@@ -809,6 +856,9 @@ export default class RTEToolbar extends UIComponent {
         const btn = document.createElement('button');
         btn.type = 'button';
         btn.className = 'rte-tb-btn rte-tb-color-btn';
+
+        // Roving tabindex: initially -1, managed by keyboard navigation
+        btn.setAttribute('tabindex', '-1');
 
         // Icon
         const iconKey = descriptor.icon || descriptor.name;
@@ -1197,5 +1247,154 @@ export default class RTEToolbar extends UIComponent {
         if (this._tbWordCount) {
             this._tbWordCount.textContent = wordCount + (wordCount === 1 ? ' word' : ' words');
         }
+    }
+
+    // =========================================================================
+    // ARIA & Keyboard Navigation (Roving Tabindex)
+    // =========================================================================
+
+    /**
+     * Build the list of focusable toolbar items for roving tabindex.
+     * Called after _renderLayout to collect all buttons and selects.
+     * @private
+     */
+    _buildFocusableItems() {
+        this._focusableItems = [];
+        this._focusedIndex = 0;
+
+        if (!this._toolbarItems) return;
+
+        // Collect all focusable items: buttons and select elements
+        const buttons = this._toolbarItems.querySelectorAll('.rte-tb-btn, .rte-tb-dropdown');
+        this._focusableItems = Array.from(buttons);
+
+        // Set the first item to tabindex="0" (entry point for Tab)
+        if (this._focusableItems.length > 0) {
+            this._focusableItems[0].setAttribute('tabindex', '0');
+        }
+    }
+
+    /**
+     * Handle keydown events within the toolbar container for keyboard navigation.
+     *
+     * Implements WAI-ARIA toolbar pattern:
+     * - ArrowRight/ArrowDown: move focus to next item (wraps)
+     * - ArrowLeft/ArrowUp: move focus to previous item (wraps)
+     * - Home: move focus to first item
+     * - End: move focus to last item
+     * - Enter/Space: activate current item
+     * - Escape: return focus to editor
+     *
+     * @param {KeyboardEvent} e
+     * @private
+     */
+    _handleToolbarKeydown(e) {
+        if (!this._focusableItems || this._focusableItems.length === 0) return;
+
+        let handled = false;
+
+        switch (e.key) {
+            case 'ArrowRight':
+            case 'ArrowDown':
+                this._moveFocus(1);
+                handled = true;
+                break;
+
+            case 'ArrowLeft':
+            case 'ArrowUp':
+                this._moveFocus(-1);
+                handled = true;
+                break;
+
+            case 'Home':
+                this._setFocusedItem(0);
+                handled = true;
+                break;
+
+            case 'End':
+                this._setFocusedItem(this._focusableItems.length - 1);
+                handled = true;
+                break;
+
+            case 'Enter':
+            case ' ':
+                // Activate the focused item (click it)
+                if (this._focusableItems[this._focusedIndex]) {
+                    const item = this._focusableItems[this._focusedIndex];
+                    // For select elements, Enter/Space should open the native dropdown
+                    if (item.tagName !== 'SELECT') {
+                        item.click();
+                        handled = true;
+                    }
+                }
+                break;
+
+            case 'Escape':
+                // Return focus to the editor
+                if (this._editor && this._editor.focus) {
+                    this._editor.focus();
+                    handled = true;
+                }
+                break;
+        }
+
+        if (handled) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+    }
+
+    /**
+     * Move focus by the given offset (1 or -1), wrapping around.
+     * @param {number} offset - Direction to move (+1 forward, -1 backward)
+     * @private
+     */
+    _moveFocus(offset) {
+        const len = this._focusableItems.length;
+        if (len === 0) return;
+
+        // Skip disabled items
+        let attempts = 0;
+        let newIndex = this._focusedIndex;
+
+        do {
+            newIndex = (newIndex + offset + len) % len;
+            attempts++;
+        } while (this._focusableItems[newIndex].disabled && attempts < len);
+
+        if (!this._focusableItems[newIndex].disabled) {
+            this._setFocusedItem(newIndex);
+        }
+    }
+
+    /**
+     * Set the focused item by index, updating tabindex values.
+     * @param {number} index - Index of the item to focus
+     * @private
+     */
+    _setFocusedItem(index) {
+        if (index < 0 || index >= this._focusableItems.length) return;
+
+        // Remove tabindex from previous item
+        if (this._focusableItems[this._focusedIndex]) {
+            this._focusableItems[this._focusedIndex].setAttribute('tabindex', '-1');
+        }
+
+        // Set tabindex on new item and focus it
+        this._focusedIndex = index;
+        this._focusableItems[this._focusedIndex].setAttribute('tabindex', '0');
+        this._focusableItems[this._focusedIndex].focus();
+    }
+
+    /**
+     * Update aria-orientation based on the position attribute.
+     * Left/right positions use vertical orientation.
+     * @private
+     */
+    _updateAriaOrientation() {
+        if (!this._toolbarContainer) return;
+        const pos = (this.getAttribute('position') || 'top').toLowerCase();
+        const orientation = (pos === 'left' || pos === 'right') ? 'vertical' : 'horizontal';
+        this._toolbarContainer.setAttribute('aria-orientation', orientation);
     }
 }

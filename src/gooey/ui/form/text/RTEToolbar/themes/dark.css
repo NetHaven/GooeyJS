@@ -1,0 +1,45 @@
+/* RTEToolbar - Dark theme override */
+
+:host {
+    --gooey-rte-toolbar-bg: #2d2d2d;
+    --gooey-rte-toolbar-border-color: #505050;
+    --gooey-rte-toolbar-btn-color: #e0e0e0;
+    --gooey-rte-toolbar-btn-hover-bg: #4a4a4a;
+    --gooey-rte-toolbar-btn-hover-border: #606060;
+    --gooey-rte-toolbar-btn-active-bg: #4a90e2;
+    --gooey-rte-toolbar-btn-active-color: #ffffff;
+    --gooey-rte-toolbar-status-color: #a0a0a0;
+}
+
+/* Dropdown selects need explicit dark styling for native widget */
+.rte-tb-dropdown {
+    background-color: #3d3d3d;
+    color: #e0e0e0;
+    border-color: #505050;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23a0a0a0'/%3E%3C/svg%3E");
+}
+
+.rte-tb-dropdown:hover {
+    border-color: #606060;
+}
+
+.rte-tb-dropdown option {
+    background-color: #3d3d3d;
+    color: #e0e0e0;
+}
+
+/* Color picker popover dark background */
+.rte-color-popover {
+    background: #2d2d2d;
+    border-color: #505050;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.rte-color-swatch {
+    border-color: #505050;
+}
+
+.rte-color-input {
+    border-color: #505050;
+    background-color: #3d3d3d;
+}

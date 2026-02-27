@@ -9,7 +9,49 @@
   ],
   "themes": {
     "default": "base",
-    "available": ["base"]
+    "available": ["base", "dark", "janus"]
+  },
+  "tokens": {
+    "gooey-rte-toolbar-bg": {
+      "description": "RTEToolbar background color",
+      "fallback": "gooey-color-surface",
+      "category": "color"
+    },
+    "gooey-rte-toolbar-border-color": {
+      "description": "RTEToolbar border color",
+      "fallback": "gooey-color-border",
+      "category": "color"
+    },
+    "gooey-rte-toolbar-btn-color": {
+      "description": "RTEToolbar button text/icon color",
+      "fallback": "gooey-color-text",
+      "category": "color"
+    },
+    "gooey-rte-toolbar-btn-hover-bg": {
+      "description": "RTEToolbar button hover background",
+      "fallback": "gooey-color-surface-hover",
+      "category": "color"
+    },
+    "gooey-rte-toolbar-btn-hover-border": {
+      "description": "RTEToolbar button hover border color",
+      "fallback": "gooey-color-border",
+      "category": "color"
+    },
+    "gooey-rte-toolbar-btn-active-bg": {
+      "description": "RTEToolbar button active/toggled background",
+      "fallback": "gooey-color-primary",
+      "category": "color"
+    },
+    "gooey-rte-toolbar-btn-active-color": {
+      "description": "RTEToolbar button active/toggled text color",
+      "fallback": "gooey-color-on-primary",
+      "category": "color"
+    },
+    "gooey-rte-toolbar-status-color": {
+      "description": "RTEToolbar status bar text color",
+      "fallback": "gooey-color-text-secondary",
+      "category": "color"
+    }
   },
   "attributes": {
     "editor": { "type": "STRING", "default": null },

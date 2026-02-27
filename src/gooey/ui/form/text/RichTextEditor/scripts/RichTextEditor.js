@@ -315,6 +315,18 @@ export default class RichTextEditor extends TextElement {
         this._statusBar.appendChild(this._wordCountSpan);
         this._shell.appendChild(this._statusBar);
 
+        // Create screen reader announcer (live region for formatting change announcements)
+        this._announcer = document.createElement('div');
+        this._announcer.className = 'rte-announcer';
+        this._announcer.setAttribute('role', 'status');
+        this._announcer.setAttribute('aria-live', 'polite');
+        this._announcer.setAttribute('aria-atomic', 'true');
+        this._shell.appendChild(this._announcer);
+
+        // Set default aria-label on content area
+        const ariaLabel = this.getAttribute('aria-label') || this.getAttribute('label') || 'Rich text editor';
+        this._content.setAttribute('aria-label', ariaLabel);
+
         // Air toolbar reference (floating toolbar shown on text selection)
         this._airToolbar = null;
 
@@ -394,6 +406,7 @@ export default class RichTextEditor extends TextElement {
 
         this._previousValue = this.value;
         this._syncDisabledState();
+        this._syncRequiredState();
         this._updateRequiredIndicator();
     }
 
@@ -516,6 +529,13 @@ export default class RichTextEditor extends TextElement {
                 break;
             case 'spellcheck':
                 this._syncSpellcheck();
+                break;
+            case 'required':
+                this._syncRequiredState();
+                break;
+            case 'aria-label':
+            case 'label':
+                this._syncAriaLabel();
                 break;
         }
     }
@@ -2986,6 +3006,44 @@ export default class RichTextEditor extends TextElement {
         if (this._content) {
             this._content.setAttribute('aria-readonly', readOnly ? 'true' : 'false');
         }
+    }
+
+    /**
+     * Synchronize required state with ARIA attribute on content.
+     * @private
+     */
+    _syncRequiredState() {
+        if (!this._content) return;
+        const required = this.hasAttribute('required');
+        this._content.setAttribute('aria-required', required ? 'true' : 'false');
+    }
+
+    /**
+     * Synchronize aria-label on the content area.
+     * Uses aria-label attribute, then label attribute, then default.
+     * @private
+     */
+    _syncAriaLabel() {
+        if (!this._content) return;
+        const ariaLabel = this.getAttribute('aria-label') || this.getAttribute('label') || 'Rich text editor';
+        this._content.setAttribute('aria-label', ariaLabel);
+    }
+
+    /**
+     * Announce a message to screen readers via the live region.
+     * The message is displayed briefly and then cleared.
+     * @param {string} message - The message to announce
+     */
+    announce(message) {
+        if (!this._announcer) return;
+        this._announcer.textContent = message;
+        // Clear after a short delay to allow multiple announcements
+        clearTimeout(this._announceTimer);
+        this._announceTimer = setTimeout(() => {
+            if (this._announcer) {
+                this._announcer.textContent = '';
+            }
+        }, 1000);
     }
 
     /**
