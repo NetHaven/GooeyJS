@@ -49,6 +49,13 @@ export default class EditorView {
          */
         this.dispatch = null;
 
+        /**
+         * Active decorations: array of { from, to, attrs: { class } } specs.
+         * These are non-model visual overlays (e.g., search match highlights).
+         * @type {Array<{from: number, to: number, attrs: {class: string}}>}
+         */
+        this._decorations = [];
+
         // Perform initial render
         this._renderDoc(state.doc);
     }
@@ -70,6 +77,91 @@ export default class EditorView {
         }
 
         this._diffAndPatch(oldDoc, newDoc);
+
+        // Reapply decorations after DOM update
+        if (this._decorations.length > 0) {
+            this._applyDecorations();
+        }
+    }
+
+    // =========================================================================
+    // Decoration Support
+    // =========================================================================
+
+    /**
+     * Set visual decorations (non-model overlays like search highlights).
+     *
+     * @param {Array<{from: number, to: number, attrs: {class: string}}>} decorations
+     */
+    setDecorations(decorations) {
+        this._decorations = decorations || [];
+        this._applyDecorations();
+    }
+
+    /**
+     * Apply decorations by wrapping matching text ranges in span elements.
+     *
+     * First removes any existing decoration wrappers, then wraps text
+     * portions matching decoration ranges in span elements with the
+     * specified CSS classes.
+     *
+     * @private
+     */
+    _applyDecorations() {
+        // Remove all existing decoration wrappers
+        const existing = this.container.querySelectorAll('.rte-decoration');
+        for (const el of existing) {
+            // Unwrap: replace the span with its text content
+            if (el.parentNode) {
+                while (el.firstChild) {
+                    el.parentNode.insertBefore(el.firstChild, el);
+                }
+                el.parentNode.removeChild(el);
+            }
+        }
+
+        // Normalize text nodes after removing wrappers
+        this.container.normalize();
+
+        if (this._decorations.length === 0) return;
+
+        // Apply each decoration
+        for (const deco of this._decorations) {
+            this._applyDecoration(deco);
+        }
+    }
+
+    /**
+     * Apply a single decoration to the rendered DOM.
+     *
+     * Finds the DOM text nodes in the decoration range and wraps them
+     * in span elements with the decoration's CSS class.
+     *
+     * @param {{from: number, to: number, attrs: {class: string}}} deco
+     * @private
+     */
+    _applyDecoration(deco) {
+        const fromInfo = this._domAtPos(deco.from);
+        const toInfo = this._domAtPos(deco.to);
+
+        if (!fromInfo || !toInfo) return;
+
+        try {
+            const range = document.createRange();
+            range.setStart(fromInfo.node, fromInfo.offset);
+            range.setEnd(toInfo.node, toInfo.offset);
+
+            // Create wrapper span
+            const wrapper = document.createElement('span');
+            wrapper.className = 'rte-decoration ' + (deco.attrs.class || '');
+
+            // Surround the range contents with the wrapper
+            range.surroundContents(wrapper);
+        } catch (e) {
+            // surroundContents can fail if the range crosses element boundaries.
+            // In that case, fall back to doing nothing for this decoration.
+            // Multi-element ranges are uncommon for search matches.
+        }
     }
 
     /**

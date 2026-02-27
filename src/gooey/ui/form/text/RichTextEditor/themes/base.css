@@ -105,3 +105,177 @@
 :host([readonly]) .rte-caret {
     animation: none;
 }
+
+/* =========================================================================
+ * Find/Replace Panel
+ * ========================================================================= */
+
+.rte-find-panel {
+    display: none;
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 20;
+    background: var(--gooey-color-surface, #ffffff);
+    border: 1px solid var(--gooey-color-border, #cccccc);
+    border-radius: 0 0 0 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    padding: 8px;
+    font-size: 13px;
+    font-family: var(--gooey-font-family, sans-serif);
+    flex-direction: column;
+    gap: 6px;
+    max-width: 360px;
+    min-width: 280px;
+}
+
+.rte-find-panel.rte-find-panel-visible {
+    display: flex;
+}
+
+.rte-find-row,
+.rte-replace-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.rte-find-input,
+.rte-replace-input {
+    flex: 1;
+    padding: 4px 8px;
+    border: 1px solid var(--gooey-color-border, #cccccc);
+    border-radius: 2px;
+    font-size: 13px;
+    font-family: inherit;
+    outline: none;
+    min-width: 0;
+}
+
+.rte-find-input:focus,
+.rte-replace-input:focus {
+    border-color: var(--gooey-color-primary, #0078d7);
+    box-shadow: 0 0 0 1px var(--gooey-color-primary, #0078d7);
+}
+
+.rte-find-count {
+    font-size: 12px;
+    color: var(--gooey-color-text-secondary, #666);
+    white-space: nowrap;
+    min-width: 50px;
+    text-align: center;
+}
+
+.rte-find-panel button {
+    padding: 2px 6px;
+    border: 1px solid var(--gooey-color-border, #cccccc);
+    border-radius: 2px;
+    background: var(--gooey-color-surface, #ffffff);
+    cursor: pointer;
+    font-size: 12px;
+    line-height: 1.4;
+    min-width: 24px;
+}
+
+.rte-find-panel button:hover {
+    background: var(--gooey-color-surface-hover, #f0f0f0);
+}
+
+.rte-find-panel button:disabled {
+    opacity: var(--gooey-opacity-disabled, 0.5);
+    cursor: not-allowed;
+}
+
+.rte-find-options {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.rte-find-option {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    font-size: 12px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.rte-find-option input[type="checkbox"] {
+    margin: 0;
+}
+
+.rte-find-error {
+    color: var(--gooey-color-error, #d32f2f);
+    font-size: 12px;
+    display: none;
+}
+
+.rte-find-error.rte-find-error-visible {
+    display: block;
+}
+
+/* =========================================================================
+ * Search Match Decorations
+ * ========================================================================= */
+
+.rte-search-match {
+    background-color: rgba(255, 235, 59, 0.4);
+    border-radius: 1px;
+}
+
+.rte-search-match-current {
+    background-color: rgba(255, 152, 0, 0.6);
+    outline: 1px solid rgba(255, 152, 0, 0.8);
+}
+
+/* =========================================================================
+ * Drag-Drop Visual Feedback
+ * ========================================================================= */
+
+.rte-drop-cursor {
+    display: none;
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: var(--gooey-color-primary, #0078d7);
+    pointer-events: none;
+    z-index: 10;
+    transition: top 0.05s ease;
+}
+
+.rte-drag-handle {
+    display: none;
+    position: absolute;
+    left: -24px;
+    width: 20px;
+    height: 20px;
+    cursor: grab;
+    opacity: 0.4;
+    font-size: 14px;
+    line-height: 20px;
+    text-align: center;
+    color: var(--gooey-color-text-secondary, #666);
+    user-select: none;
+    z-index: 5;
+    border-radius: 2px;
+}
+
+.rte-drag-handle:hover {
+    opacity: 0.8;
+    background-color: var(--gooey-color-surface-hover, rgba(0, 0, 0, 0.05));
+}
+
+.rte-drag-handle:active {
+    cursor: grabbing;
+}
+
+.rte-content > *.rte-dragging {
+    opacity: 0.3;
+}
+
+.rte-drop-cursor.rte-drop-invalid {
+    background-color: var(--gooey-color-error, #d32f2f);
+    opacity: 0.5;
+}

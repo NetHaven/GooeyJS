@@ -15,6 +15,7 @@ import InputHandler from './view/InputHandler.js';
 import SelectionManager from './view/SelectionManager.js';
 import HistoryPlugin, { historyKeymap } from './plugins/HistoryPlugin.js';
 import ClipboardPlugin from './plugins/ClipboardPlugin.js';
+import SearchPlugin from './plugins/SearchPlugin.js';
 
 /**
  * Sanitize HTML to prevent XSS attacks.
@@ -121,6 +122,9 @@ export default class RichTextEditor extends TextElement {
         // Create ClipboardPlugin (needs editor reference for clipboard events)
         this._clipboard = new ClipboardPlugin(this);
 
+        // Create SearchPlugin (needs editor reference for panel and decorations)
+        this._search = new SearchPlugin(this);
+
         // Build the resolved keymap (platform-aware Mod- resolution)
         // Merge history keymap (Mod-z, Mod-Shift-z, Mod-y) with base keymap
         const resolvedKeymap = keymap({
@@ -150,6 +154,9 @@ export default class RichTextEditor extends TextElement {
             'Mod-Shift-7': toggleOrderedList,
             // Clipboard: paste as plain text
             'Mod-Shift-v': (state, dispatch) => this._clipboard.pasteAsPlainText(state, dispatch),
+            // Search: find and replace
+            'Mod-f': (state, dispatch) => { this._search.open('find'); return true; },
+            'Mod-h': (state, dispatch) => { this._search.open('replace'); return true; },
             // Context-sensitive overrides for list editing
             'Tab': chainCommands(listIndent, insertText("  ")),
             'Shift-Tab': listOutdent,
@@ -734,6 +741,72 @@ export default class RichTextEditor extends TextElement {
     }
 
     // =========================================================================
+    // Search & Replace API
+    // =========================================================================
+
+    /**
+     * Find text in the editor programmatically.
+     *
+     * @param {string} term - Search term
+     * @param {object} [options] - Search options
+     * @param {boolean} [options.caseSensitive=false]
+     * @param {boolean} [options.wholeWord=false]
+     * @param {boolean} [options.useRegex=false]
+     * @returns {{ total: number, currentIndex: number }} Match info
+     */
+    findText(term, options) {
+        this._search.setSearchTerm(term, options);
+        this._search._updateSearch();
+        return {
+            total: this._search._matches.length,
+            currentIndex: this._search._currentMatchIndex
+        };
+    }
+
+    /**
+     * Replace all occurrences of a search term programmatically.
+     *
+     * @param {string} searchTerm - Search term
+     * @param {string} replaceTerm - Replacement text
+     * @param {object} [options] - Search options
+     * @param {boolean} [options.caseSensitive=false]
+     * @param {boolean} [options.wholeWord=false]
+     * @param {boolean} [options.useRegex=false]
+     * @returns {number} Number of replacements made
+     */
+    replaceText(searchTerm, replaceTerm, options) {
+        this._search.setSearchTerm(searchTerm, options);
+        this._search._replaceTerm = replaceTerm || '';
+        this._search._updateSearch();
+        const count = this._search._matches.length;
+        if (count > 0) {
+            this._search.replaceAll();
+        }
+        return count;
+    }
+
+    /**
+     * Open the find panel.
+     */
+    openFindPanel() {
+        this._search.open('find');
+    }
+
+    /**
+     * Open the find/replace panel.
+     */
+    openReplacePanel() {
+        this._search.open('replace');
+    }
+
+    /**
+     * Close the find/replace panel.
+     */
+    closeFindPanel() {
+        this._search.close();
+    }
+
+    // =========================================================================
     // History (undo/redo)
     // =========================================================================
 
@@ -847,6 +920,11 @@ export default class RichTextEditor extends TextElement {
             if (coords) {
                 this._inputHandler.updatePosition(coords);
             }
+        }
+
+        // Notify search plugin of state change (for live match recalculation)
+        if (this._search) {
+            this._search.stateDidUpdate();
         }
 
         // Fire events
