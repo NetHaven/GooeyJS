@@ -9,7 +9,7 @@ import Schema from './model/Schema.js';
 import Node, { Mark } from './model/Node.js';
 import { Selection } from './model/Position.js';
 import EditorState from './state/EditorState.js';
-import { baseKeymap, keymap, insertText, toggleMark, setMark, toggleLink, clearFormatting, markActive, getActiveMarks, setBlockType, heading, paragraph, wrapInBlockquote, toggleCodeBlock, insertHorizontalRule, setAlignment, increaseIndent, decreaseIndent, setLineHeight } from './state/Commands.js';
+import { baseKeymap, keymap, insertText, toggleMark, setMark, toggleLink, clearFormatting, markActive, getActiveMarks, setBlockType, heading, paragraph, wrapInBlockquote, toggleCodeBlock, insertHorizontalRule, setAlignment, increaseIndent, decreaseIndent, setLineHeight, toggleBulletList, toggleOrderedList, toggleChecklist, listIndent, listOutdent, splitListItem, liftListItem, chainCommands, splitBlock, deleteBackward } from './state/Commands.js';
 import EditorView from './view/EditorView.js';
 import InputHandler from './view/InputHandler.js';
 import SelectionManager from './view/SelectionManager.js';
@@ -141,6 +141,14 @@ export default class RichTextEditor extends TextElement {
             // Indentation
             'Mod-]': increaseIndent,
             'Mod-[': decreaseIndent,
+            // List commands
+            'Mod-Shift-8': toggleBulletList,
+            'Mod-Shift-7': toggleOrderedList,
+            // Context-sensitive overrides for list editing
+            'Tab': chainCommands(listIndent, insertText("  ")),
+            'Shift-Tab': listOutdent,
+            'Enter': chainCommands(splitListItem, splitBlock),
+            'Backspace': chainCommands(liftListItem, deleteBackward),
             ...historyKeymap(this._history)
         });
 
@@ -566,6 +574,55 @@ export default class RichTextEditor extends TextElement {
     }
 
     // =========================================================================
+    // List API
+    // =========================================================================
+
+    /**
+     * Toggle a bullet list on the current selection.
+     *
+     * @returns {boolean} Whether the command executed successfully
+     */
+    toggleBulletList() {
+        return toggleBulletList(this._state, (tr) => this._dispatch(tr));
+    }
+
+    /**
+     * Toggle an ordered list on the current selection.
+     *
+     * @returns {boolean} Whether the command executed successfully
+     */
+    toggleOrderedList() {
+        return toggleOrderedList(this._state, (tr) => this._dispatch(tr));
+    }
+
+    /**
+     * Toggle a checklist on the current selection.
+     *
+     * @returns {boolean} Whether the command executed successfully
+     */
+    toggleChecklist() {
+        return toggleChecklist(this._state, (tr) => this._dispatch(tr));
+    }
+
+    /**
+     * Indent the current list item (nest under previous sibling).
+     *
+     * @returns {boolean} Whether the command executed successfully
+     */
+    indentListItem() {
+        return listIndent(this._state, (tr) => this._dispatch(tr));
+    }
+
+    /**
+     * Outdent the current list item (lift out of list or up one level).
+     *
+     * @returns {boolean} Whether the command executed successfully
+     */
+    outdentListItem() {
+        return listOutdent(this._state, (tr) => this._dispatch(tr));
+    }
+
+    // =========================================================================
     // History (undo/redo)
     // =========================================================================
 
@@ -696,6 +753,9 @@ export default class RichTextEditor extends TextElement {
         if (!oldState.selection.eq(this._state.selection)) {
             const $head = this._state.doc.resolve(this._state.selection.head);
             const parentAttrs = $head.parent.attrs;
+            // Detect list context for toolbar state sync
+            const listContext = this._getListContext(this._state.selection.head);
+
             this.fireEvent(RichTextEditorEvent.TEXT_CURSOR_MOVE, {
                 value: this.value,
                 anchor: this._state.selection.anchor,
@@ -705,7 +765,10 @@ export default class RichTextEditor extends TextElement {
                 blockAttrs: { ...parentAttrs },
                 align: parentAttrs.align || "left",
                 indent: parentAttrs.indent || 0,
-                lineHeight: parentAttrs.lineHeight || null
+                lineHeight: parentAttrs.lineHeight || null,
+                listType: listContext.listType,
+                listDepth: listContext.listDepth,
+                isChecklist: listContext.isChecklist
             });
         }
     }
@@ -865,6 +928,64 @@ export default class RichTextEditor extends TextElement {
     // =========================================================================
     // Internal helpers
     // =========================================================================
+
+    /**
+     * Detect list context at a given position.
+     *
+     * Returns listType ("bulletList", "orderedList", or null),
+     * listDepth (nesting level, 0 if not in list), and isChecklist.
+     *
+     * @param {number} pos - Position in the document
+     * @returns {{ listType: string|null, listDepth: number, isChecklist: boolean }}
+     * @private
+     */
+    _getListContext(pos) {
+        const doc = this._state.doc;
+        if (!doc.children) return { listType: null, listDepth: 0, isChecklist: false };
+
+        let accum = 0;
+        for (let i = 0; i < doc.children.length; i++) {
+            const child = doc.children[i];
+            const childEnd = accum + child.nodeSize;
+
+            if (pos >= accum && pos <= childEnd) {
+                if (child.type === "bulletList" || child.type === "orderedList") {
+                    // Check if any listItem has checked attribute (checklist)
+                    let isChecklist = false;
+                    if (child.children) {
+                        isChecklist = child.children.some(
+                            li => li.attrs && li.attrs.checked !== null && li.attrs.checked !== undefined
+                        );
+                    }
+                    // Count nesting depth (for now, top-level is 1)
+                    let depth = 1;
+                    // Check for nested lists within the list item
+                    if (child.children) {
+                        let liAccum = accum + 1;
+                        for (const li of child.children) {
+                            const liEnd = liAccum + li.nodeSize;
+                            if (pos >= liAccum && pos <= liEnd && li.children) {
+                                // Check if any child of this listItem is a list (nested)
+                                let innerAccum = liAccum + 1;
+                                for (const inner of li.children) {
+                                    const innerEnd = innerAccum + inner.nodeSize;
+                                    if (pos >= innerAccum && pos <= innerEnd &&
+                                        (inner.type === "bulletList" || inner.type === "orderedList")) {
+                                        depth = 2;
+                                    }
+                                    innerAccum = innerEnd;
+                                }
+                            }
+                            liAccum = liEnd;
+                        }
+                    }
+                    return { listType: child.type, listDepth: depth, isChecklist };
+                }
+            }
+            accum = childEnd;
+        }
+        return { listType: null, listDepth: 0, isChecklist: false };
+    }
 
     /**
      * Find the top-level block info for a given position.

@@ -418,11 +418,17 @@ export default class Schema {
                     content: "block+",
                     attrs: {
                         align: { default: null },
-                        indent: { default: 0 }
+                        indent: { default: 0 },
+                        checked: { default: null }
                     },
                     toDOM: (node) => {
                         const style = _buildBlockStyle(node.attrs);
-                        return ["li", style ? { style } : {}, 0];
+                        const attrs = style ? { style } : {};
+                        if (node.attrs.checked !== null && node.attrs.checked !== undefined) {
+                            attrs.class = "checklist-item";
+                            attrs["data-checked"] = String(node.attrs.checked);
+                        }
+                        return ["li", attrs, 0];
                     }
                 },
                 codeBlock: {
