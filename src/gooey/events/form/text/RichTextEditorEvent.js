@@ -9,6 +9,11 @@ export default class RichTextEditorEvent extends Event {
     static HIGHLIGHT = "highlight";
     static UNHIGHLIGHT = "unhighlight";
     static TEXT_CURSOR_MOVE = "textcursormove";
+    static PASTE_START = "pastestart";
+    static PASTE_END = "pasteend";
+    static SEARCH_FOUND = "searchfound";
+    static SEARCH_NOT_FOUND = "searchnotfound";
+    static REPLACE_DONE = "replacedone";
 
     constructor() {
         super();

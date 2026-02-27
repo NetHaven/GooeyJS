@@ -14,6 +14,7 @@ import EditorView from './view/EditorView.js';
 import InputHandler from './view/InputHandler.js';
 import SelectionManager from './view/SelectionManager.js';
 import HistoryPlugin, { historyKeymap } from './plugins/HistoryPlugin.js';
+import ClipboardPlugin from './plugins/ClipboardPlugin.js';
 
 /**
  * Sanitize HTML to prevent XSS attacks.
@@ -117,6 +118,9 @@ export default class RichTextEditor extends TextElement {
         // Create HistoryPlugin
         this._history = new HistoryPlugin();
 
+        // Create ClipboardPlugin (needs editor reference for clipboard events)
+        this._clipboard = new ClipboardPlugin(this);
+
         // Build the resolved keymap (platform-aware Mod- resolution)
         // Merge history keymap (Mod-z, Mod-Shift-z, Mod-y) with base keymap
         const resolvedKeymap = keymap({
@@ -144,6 +148,8 @@ export default class RichTextEditor extends TextElement {
             // List commands
             'Mod-Shift-8': toggleBulletList,
             'Mod-Shift-7': toggleOrderedList,
+            // Clipboard: paste as plain text
+            'Mod-Shift-v': (state, dispatch) => this._clipboard.pasteAsPlainText(state, dispatch),
             // Context-sensitive overrides for list editing
             'Tab': chainCommands(listIndent, insertText("  ")),
             'Shift-Tab': listOutdent,
@@ -208,6 +214,14 @@ export default class RichTextEditor extends TextElement {
     disconnectedCallback() {
         if (super.disconnectedCallback) {
             super.disconnectedCallback();
+        }
+
+        // Clean up plugins
+        if (this._clipboard) {
+            this._clipboard.destroy();
+        }
+        if (this._search) {
+            this._search.destroy();
         }
 
         // Clean up view layer
@@ -623,6 +637,103 @@ export default class RichTextEditor extends TextElement {
     }
 
     // =========================================================================
+    // Clipboard API
+    // =========================================================================
+
+    /**
+     * Get the plain text of the current selection.
+     *
+     * @returns {string} Selected plain text, or empty string if no selection
+     */
+    getSelectedText() {
+        const { from, to, empty } = this._state.selection;
+        if (empty) return '';
+        return this._clipboard._serializePlainText(this._state.doc, from, to);
+    }
+
+    /**
+     * Get the HTML of the current selection.
+     *
+     * @returns {string} Selected HTML, or empty string if no selection
+     */
+    getSelectedHTML() {
+        const { from, to, empty } = this._state.selection;
+        if (empty) return '';
+        return this._clipboard._serializeSlice(from, to);
+    }
+
+    /**
+     * Programmatically copy the current selection to clipboard.
+     *
+     * @returns {Promise<void>}
+     */
+    async copy() {
+        const { from, to, empty } = this._state.selection;
+        if (empty) return;
+
+        const htmlStr = this._clipboard._serializeSlice(from, to);
+        const plainStr = this._clipboard._serializePlainText(this._state.doc, from, to);
+
+        if (navigator.clipboard && navigator.clipboard.write) {
+            try {
+                const blob = new Blob([htmlStr], { type: 'text/html' });
+                const textBlob = new Blob([plainStr], { type: 'text/plain' });
+                await navigator.clipboard.write([
+                    new ClipboardItem({
+                        'text/html': blob,
+                        'text/plain': textBlob
+                    })
+                ]);
+            } catch (e) {
+                // Fallback: try writeText for plain text at least
+                try {
+                    await navigator.clipboard.writeText(plainStr);
+                } catch (e2) {
+                    console.warn('Clipboard write failed:', e2);
+                }
+            }
+        }
+    }
+
+    /**
+     * Programmatically cut the current selection to clipboard.
+     *
+     * @returns {Promise<void>}
+     */
+    async cut() {
+        await this.copy();
+        const { from, to, empty } = this._state.selection;
+        if (empty) return;
+        const tr = this._state.transaction;
+        tr.deleteRange(from, to);
+        tr.setSelection(Selection.cursor(from));
+        this._dispatch(tr);
+    }
+
+    /**
+     * Programmatically paste HTML content at the current cursor position.
+     *
+     * @param {string} html - HTML string to paste
+     */
+    paste(html) {
+        if (!html) return;
+        const sanitized = this._clipboard._sanitizer.sanitize(html);
+        const { from, to } = this._state.selection;
+        this._clipboard._insertHTMLContent(sanitized, from, to);
+    }
+
+    /**
+     * Programmatically paste plain text at the current cursor position.
+     *
+     * @param {string} text - Plain text to paste
+     */
+    pasteText(text) {
+        if (!text) return;
+        const { from, to } = this._state.selection;
+        this._clipboard._insertPlainText(text, from, to);
+    }
+
+    // =========================================================================
     // History (undo/redo)
     // =========================================================================
 
@@ -864,6 +975,11 @@ export default class RichTextEditor extends TextElement {
         this.addValidEvent(RichTextEditorEvent.MODEL_CHANGED);
         this.addValidEvent(RichTextEditorEvent.EDITOR_ACTION);
         this.addValidEvent(RichTextEditorEvent.TEXT_CURSOR_MOVE);
+        this.addValidEvent(RichTextEditorEvent.PASTE_START);
+        this.addValidEvent(RichTextEditorEvent.PASTE_END);
+        this.addValidEvent(RichTextEditorEvent.SEARCH_FOUND);
+        this.addValidEvent(RichTextEditorEvent.SEARCH_NOT_FOUND);
+        this.addValidEvent(RichTextEditorEvent.REPLACE_DONE);
     }
 
     // =========================================================================
