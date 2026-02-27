@@ -1,4 +1,4 @@
-import { insertText, extendSelection } from "../state/Commands.js";
+import { insertText, extendSelection, splitBlock, insertHardBreak } from "../state/Commands.js";
 import { Selection } from "../model/Position.js";
 
 /**
@@ -243,12 +243,16 @@ export default class InputHandler {
             }
         }
 
-        // Handle Enter key for paragraph splitting (will be enhanced in Phase 36)
-        if (event.key === "Enter" && !event.shiftKey && !this._readOnly) {
+        // Handle Enter key for block splitting and Shift-Enter for hard break
+        if (event.key === "Enter" && !this._readOnly) {
             event.preventDefault();
-            // For now, insert a newline character. Phase 36 will add proper
-            // paragraph splitting. This provides basic feedback.
-            this._dispatchInsertText("\n");
+            if (event.shiftKey) {
+                const cmd = insertHardBreak;
+                cmd(this.view.state, (tr) => this.view.dispatch(tr));
+            } else {
+                const cmd = splitBlock;
+                cmd(this.view.state, (tr) => this.view.dispatch(tr));
+            }
             this.textarea.value = "";
             return;
         }

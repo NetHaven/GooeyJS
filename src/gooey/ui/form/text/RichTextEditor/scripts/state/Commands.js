@@ -746,6 +746,153 @@ export function keymap(bindings) {
 
 
 // ============================================================================
+// Block splitting and hard break commands
+// ============================================================================
+
+/**
+ * Command for Enter key: split the current block at the cursor position.
+ *
+ * If selection is not empty, deletes it first. Then splits the parent
+ * block into two blocks of the same type at the cursor position.
+ * Places the cursor at the start of the new (second) block.
+ *
+ * @param {object} state - EditorState
+ * @param {function|null} dispatch - Dispatch function or null for can-execute check
+ * @returns {boolean}
+ */
+export function splitBlock(state, dispatch) {
+    const { from, to, empty } = state.selection;
+
+    // Resolve cursor to check we're inside a block
+    const $from = state.doc.resolve(from);
+    if ($from.parent.type === "document") return false;
+
+    if (dispatch) {
+        const tr = state.transaction;
+
+        // Delete selection first if not empty
+        let cursorPos = from;
+        if (!empty) {
+            tr.deleteRange(from, to);
+            cursorPos = from;
+        }
+
+        // Resolve the position in the (potentially modified) document
+        const doc = tr.doc;
+        const $cursor = doc.resolve(cursorPos);
+        const parentBlock = $cursor.parent;
+        const offset = $cursor.parentOffset;
+
+        // Find the block's position in the document
+        const blockInfo = _findBlockInDoc(doc, cursorPos);
+        if (!blockInfo) return false;
+
+        const { blockPos } = blockInfo;
+
+        // Gather children for left and right halves
+        const allChildren = parentBlock.children || [];
+        const leftChildren = [];
+        const rightChildren = [];
+
+        let childAccum = 0;
+        for (let i = 0; i < allChildren.length; i++) {
+            const child = allChildren[i];
+            const childSize = child.nodeSize;
+            const childEnd = childAccum + childSize;
+
+            if (childEnd <= offset) {
+                // Entirely in left half
+                leftChildren.push(child);
+            } else if (childAccum >= offset) {
+                // Entirely in right half
+                rightChildren.push(child);
+            } else {
+                // Split point is within this child (must be a text node)
+                if (child.type === "text") {
+                    const splitAt = offset - childAccum;
+                    const leftText = child.text.slice(0, splitAt);
+                    const rightText = child.text.slice(splitAt);
+                    if (leftText) {
+                        leftChildren.push(new Node("text", child.attrs, null, child.marks, leftText));
+                    }
+                    if (rightText) {
+                        rightChildren.push(new Node("text", child.attrs, null, child.marks, rightText));
+                    }
+                } else {
+                    // Non-text child at split point goes to right half
+                    rightChildren.push(child);
+                }
+            }
+
+            childAccum += childSize;
+        }
+
+        // Create two new blocks of the same type with same attrs
+        const leftBlock = parentBlock.copy(leftChildren);
+        const rightBlock = parentBlock.copy(rightChildren);
+
+        // Replace the original block with the two new blocks
+        // Block starts at blockPos (its opening boundary position)
+        // Block ends at blockPos + parentBlock.nodeSize
+        const blockEnd = blockPos + parentBlock.nodeSize;
+
+        // Replace the range from blockPos to blockEnd with the two new blocks
+        // The blockPos is the position of the block's opening boundary in the
+        // document's content area
+        tr.replaceRange(blockPos, blockEnd, [leftBlock, rightBlock]);
+
+        // Set cursor to position 1 inside the new (second) block
+        // New cursor position: blockPos + leftBlock.nodeSize + 1 (opening of right block)
+        const newCursorPos = blockPos + leftBlock.nodeSize + 1;
+        tr.setSelection(Selection.cursor(newCursorPos));
+
+        dispatch(tr);
+    }
+    return true;
+}
+
+
+/**
+ * Command for Shift-Enter: insert a hard line break within a block.
+ *
+ * If selection is not empty, deletes it first. Then inserts a hard_break
+ * node if the schema defines one, otherwise inserts a newline character.
+ *
+ * @param {object} state - EditorState
+ * @param {function|null} dispatch - Dispatch function or null for can-execute check
+ * @returns {boolean}
+ */
+export function insertHardBreak(state, dispatch) {
+    if (dispatch) {
+        const tr = state.transaction;
+        const { from, to, empty } = state.selection;
+
+        // Delete selection first if not empty
+        if (!empty) {
+            tr.deleteRange(from, to);
+        }
+
+        // Check if schema defines a hard_break node type
+        const schema = state.schema;
+        if (schema && schema.nodes["hardBreak"]) {
+            // Insert a hardBreak node
+            const hardBreakNode = new Node("hardBreak", null, null, null);
+            tr.replaceRange(from, from, [hardBreakNode]);
+            // Cursor moves past the hard break (nodeSize = 1)
+            tr.setSelection(Selection.cursor(from + 1));
+        } else {
+            // Fallback: insert a newline character
+            tr.insertText("\n", from);
+            tr.setSelection(Selection.cursor(from + 1));
+        }
+
+        dispatch(tr);
+    }
+    return true;
+}
+
+
+// ============================================================================
 // Default keymap
 // ============================================================================
 
@@ -765,7 +912,9 @@ export const baseKeymap = {
     "Home": moveToBlockStart,
     "End": moveToBlockEnd,
     "Mod-ArrowLeft": moveWordLeft,
-    "Mod-ArrowRight": moveWordRight
+    "Mod-ArrowRight": moveWordRight,
+    "Enter": splitBlock,
+    "Shift-Enter": insertHardBreak
 };
 
 
