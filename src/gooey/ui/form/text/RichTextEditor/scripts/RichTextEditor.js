@@ -18,6 +18,8 @@ import ClipboardPlugin from './plugins/ClipboardPlugin.js';
 import SearchPlugin from './plugins/SearchPlugin.js';
 import TablePlugin from './plugins/table/TablePlugin.js';
 import { insertTable as insertTableCmd, addRowBefore as addRowBeforeCmd, addRowAfter as addRowAfterCmd, addColumnBefore as addColumnBeforeCmd, addColumnAfter as addColumnAfterCmd, deleteRow as deleteRowCmd, deleteColumn as deleteColumnCmd, deleteTable as deleteTableCmd, mergeCells as mergeCellsCmd, splitCell as splitCellCmd, toggleHeaderRow as toggleHeaderRowCmd, toggleHeaderColumn as toggleHeaderColumnCmd } from './commands/TableCommands.js';
+import ImagePlugin from './plugins/media/ImagePlugin.js';
+import { insertImage as insertImageCmd, insertVideo as insertVideoCmd, insertEmbed as insertEmbedCmd, setMediaAlignment as setMediaAlignmentCmd, setImageAlt as setImageAltCmd, setImageCaption as setImageCaptionCmd, updateMediaAttrs as updateMediaAttrsCmd, deleteMedia as deleteMediaCmd, _findMediaNodeAtPos } from './commands/MediaCommands.js';
 
 /**
  * Sanitize HTML to prevent XSS attacks.
@@ -99,6 +101,7 @@ export default class RichTextEditor extends TextElement {
         Template.activate("ui-RichTextEditor", this.shadowRoot);
 
         this._previousValue = '';
+        this._config = {};
 
         // Query new template DOM elements
         this._shell = this.shadowRoot.querySelector('.rte-shell');
@@ -129,6 +132,9 @@ export default class RichTextEditor extends TextElement {
 
         // Create TablePlugin (needs view for cell navigation)
         this._tablePlugin = new TablePlugin(null); // view not yet created, set later
+
+        // Create ImagePlugin (drag-drop, paste, resize, alignment popover)
+        this._imagePlugin = new ImagePlugin(this);
 
         // Build the resolved keymap (platform-aware Mod- resolution)
         // Merge history keymap (Mod-z, Mod-Shift-z, Mod-y) with base keymap
@@ -244,6 +250,9 @@ export default class RichTextEditor extends TextElement {
         }
         if (this._search) {
             this._search.destroy();
+        }
+        if (this._imagePlugin) {
+            this._imagePlugin.destroy();
         }
 
         // Clean up view layer
@@ -773,6 +782,122 @@ export default class RichTextEditor extends TextElement {
     }
 
     // =========================================================================
+    // Media API
+    // =========================================================================
+
+    /**
+     * Get the editor configuration object.
+     *
+     * @returns {object}
+     */
+    get config() {
+        return this._config;
+    }
+
+    /**
+     * Set the editor configuration object.
+     * Supports: `{ imageUpload: async (file) => ({ src, alt, ... }) }`
+     *
+     * @param {object} val
+     */
+    set config(val) {
+        this._config = val || {};
+    }
+
+    /**
+     * Insert an image at the current cursor position.
+     *
+     * @param {string} src - Image source URL
+     * @param {object} [attrs={}] - Optional attributes (alt, width, height, align, caption)
+     * @returns {boolean} Whether the command executed successfully
+     */
+    insertImage(src, attrs = {}) {
+        return insertImageCmd(src, attrs)(this._state, (tr) => this._dispatch(tr));
+    }
+
+    /**
+     * Insert a video at the current cursor position.
+     *
+     * @param {string} url - Video URL (YouTube, Vimeo, or direct)
+     * @param {object} [attrs={}] - Optional attributes (width, height, align)
+     * @returns {boolean} Whether the command executed successfully
+     */
+    insertVideo(url, attrs = {}) {
+        return insertVideoCmd(url, attrs)(this._state, (tr) => this._dispatch(tr));
+    }
+
+    /**
+     * Insert an embed at the current cursor position.
+     *
+     * @param {string} url - Embed URL
+     * @param {object} [attrs={}] - Optional attributes (label, width, height)
+     * @returns {boolean} Whether the command executed successfully
+     */
+    insertEmbed(url, attrs = {}) {
+        return insertEmbedCmd(url, attrs)(this._state, (tr) => this._dispatch(tr));
+    }
+
+    /**
+     * Set the alignment of the currently selected media node.
+     *
+     * @param {string|null} align - "left", "center", "right", or null to remove
+     * @returns {boolean} Whether the command executed successfully
+     */
+    setMediaAlignment(align) {
+        return setMediaAlignmentCmd(align)(this._state, (tr) => this._dispatch(tr));
+    }
+
+    /**
+     * Set the alt text of the currently selected image.
+     *
+     * @param {string} text - Alt text
+     * @returns {boolean} Whether the command executed successfully
+     */
+    setImageAlt(text) {
+        return setImageAltCmd(text)(this._state, (tr) => this._dispatch(tr));
+    }
+
+    /**
+     * Set the caption of the currently selected image.
+     *
+     * @param {string} caption - Caption text
+     * @returns {boolean} Whether the command executed successfully
+     */
+    setImageCaption(caption) {
+        return setImageCaptionCmd(caption)(this._state, (tr) => this._dispatch(tr));
+    }
+
+    /**
+     * Update attributes on the currently selected media node.
+     *
+     * @param {object} attrs - Attributes to update (e.g., { width: '300px', height: '200px' })
+     * @returns {boolean} Whether the command executed successfully
+     */
+    updateMediaAttrs(attrs) {
+        return updateMediaAttrsCmd(attrs)(this._state, (tr) => this._dispatch(tr));
+    }
+
+    /**
+     * Delete the currently selected media node.
+     *
+     * @returns {boolean} Whether the command executed successfully
+     */
+    deleteMedia() {
+        return deleteMediaCmd(this._state, (tr) => this._dispatch(tr));
+    }
+
+    /**
+     * Get information about the currently selected media node, if any.
+     *
+     * @returns {{ type: string, attrs: object }|null} Media info or null
+     */
+    getSelectedMedia() {
+        const mediaInfo = _findMediaNodeAtPos(this._state);
+        if (!mediaInfo) return null;
+        return { type: mediaInfo.type, attrs: { ...mediaInfo.node.attrs } };
+    }
+
+    // =========================================================================
     // Clipboard API
     // =========================================================================
 
@@ -1077,6 +1202,9 @@ export default class RichTextEditor extends TextElement {
             // Detect table context
             const tableInfo = _isInTable(this._state);
 
+            // Detect media context
+            const mediaInfo = _findMediaNodeAtPos(this._state);
+
             this.fireEvent(RichTextEditorEvent.TEXT_CURSOR_MOVE, {
                 value: this.value,
                 anchor: this._state.selection.anchor,
@@ -1092,7 +1220,10 @@ export default class RichTextEditor extends TextElement {
                 isChecklist: listContext.isChecklist,
                 inTable: !!tableInfo,
                 tableRowIndex: tableInfo ? tableInfo.rowIndex : null,
-                tableCellIndex: tableInfo ? tableInfo.cellIndex : null
+                tableCellIndex: tableInfo ? tableInfo.cellIndex : null,
+                inMedia: !!mediaInfo,
+                mediaType: mediaInfo ? mediaInfo.type : null,
+                mediaAttrs: mediaInfo ? { ...mediaInfo.node.attrs } : null
             });
         }
     }

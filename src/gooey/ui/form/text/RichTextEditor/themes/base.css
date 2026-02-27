@@ -314,3 +314,142 @@
     outline: 2px solid var(--gooey-color-primary, var(--gooey-color-focus));
     outline-offset: -2px;
 }
+
+/* =========================================================================
+ * Media Blocks
+ * ========================================================================= */
+
+.rte-content img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    cursor: pointer;
+}
+
+.rte-content .rte-media-wrapper {
+    position: relative;
+    display: block;
+    margin: 8px 0;
+    max-width: 100%;
+}
+
+.rte-content .rte-media-figure {
+    position: relative;
+    display: block;
+    margin: 8px 0;
+    max-width: 100%;
+}
+
+.rte-content figcaption {
+    font-size: 0.85em;
+    color: var(--gooey-richtexteditor-caption-color, var(--gooey-color-text-secondary, #666666));
+    text-align: center;
+    padding: 4px 0;
+    font-style: italic;
+}
+
+.rte-content .rte-video {
+    position: relative;
+    margin: 8px 0;
+    max-width: 100%;
+}
+
+.rte-content .rte-video iframe,
+.rte-content .rte-video video {
+    max-width: 100%;
+    display: block;
+}
+
+.rte-content .rte-embed {
+    position: relative;
+    margin: 8px 0;
+    max-width: 100%;
+    border: 1px solid var(--gooey-richtexteditor-embed-border, var(--gooey-color-border, #cccccc));
+    border-radius: 4px;
+    padding: 8px;
+    background: var(--gooey-richtexteditor-embed-bg, var(--gooey-color-surface-alt, #f5f5f5));
+}
+
+.rte-content .rte-embed-label {
+    display: block;
+    color: var(--gooey-richtexteditor-embed-color, var(--gooey-color-text-secondary, #666666));
+    font-size: 0.85em;
+    word-break: break-all;
+}
+
+/* =========================================================================
+ * Resize Handles
+ * ========================================================================= */
+
+.rte-resize-overlay {
+    position: absolute;
+    pointer-events: none;
+    border: 2px solid var(--gooey-color-primary, #0078d7);
+    box-sizing: border-box;
+    z-index: 10;
+}
+
+.rte-resize-handle {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: var(--gooey-color-primary, #0078d7);
+    border: 1px solid var(--gooey-color-surface, #ffffff);
+    pointer-events: all;
+    box-sizing: border-box;
+}
+
+.rte-resize-handle-nw { top: -4px; left: -4px; cursor: nw-resize; }
+.rte-resize-handle-ne { top: -4px; right: -4px; cursor: ne-resize; }
+.rte-resize-handle-sw { bottom: -4px; left: -4px; cursor: sw-resize; }
+.rte-resize-handle-se { bottom: -4px; right: -4px; cursor: se-resize; }
+
+/* Selected media highlight */
+.rte-content img.rte-media-selected,
+.rte-content .rte-video.rte-media-selected,
+.rte-content .rte-embed.rte-media-selected {
+    outline: 2px solid var(--gooey-color-primary, #0078d7);
+    outline-offset: 2px;
+}
+
+/* =========================================================================
+ * Media Alignment Popover
+ * ========================================================================= */
+
+.rte-media-align-popover {
+    position: absolute;
+    display: flex;
+    gap: 2px;
+    padding: 4px;
+    background: var(--gooey-color-surface, #ffffff);
+    border: 1px solid var(--gooey-color-border, #cccccc);
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    z-index: 11;
+    pointer-events: all;
+}
+
+.rte-media-align-btn {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 12px;
+    color: var(--gooey-color-text, #333333);
+    background: transparent;
+}
+
+.rte-media-align-btn:hover {
+    background: var(--gooey-color-surface-hover, #e8e8e8);
+    border-color: var(--gooey-color-border, #cccccc);
+}
+
+.rte-media-align-btn.active {
+    background: var(--gooey-color-primary, #0078d7);
+    color: var(--gooey-color-on-primary, #ffffff);
+    border-color: var(--gooey-color-primary, #0078d7);
+}
