@@ -215,12 +215,29 @@ export default class InputHandler {
         // During composition, let the IME handle keys
         if (this._composing) return;
 
-        // Handle Tab key for indentation
-        if (event.key === "Tab" && !event.shiftKey && !this._readOnly) {
-            event.preventDefault();
-            this._dispatchInsertText("  ");
-            this.textarea.value = "";
-            return;
+        // Handle Tab/Shift-Tab: check keymap first (table nav, list indent),
+        // then fall back to 2-space insertion for plain Tab
+        if (event.key === "Tab" && !this._readOnly) {
+            const tabKeyStr = this._buildKeyString(event);
+            const tabCommand = this.keymap[tabKeyStr];
+            if (tabCommand) {
+                const state = this.view.state;
+                const dispatch = (tr) => {
+                    if (this.view.dispatch) this.view.dispatch(tr);
+                };
+                if (tabCommand(state, dispatch)) {
+                    event.preventDefault();
+                    this.textarea.value = "";
+                    return;
+                }
+            }
+            // Fallback: insert two spaces (only for Tab, not Shift-Tab)
+            if (!event.shiftKey) {
+                event.preventDefault();
+                this._dispatchInsertText("  ");
+                this.textarea.value = "";
+                return;
+            }
         }
 
         // Handle Shift+navigation keys for selection extension
