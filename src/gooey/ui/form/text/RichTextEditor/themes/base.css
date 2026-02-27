@@ -279,3 +279,38 @@
     background-color: var(--gooey-color-error, #d32f2f);
     opacity: 0.5;
 }
+
+/* Table styles */
+.rte-content table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 8px 0;
+    table-layout: fixed;
+}
+
+.rte-content table td,
+.rte-content table th {
+    border: 1px solid var(--gooey-richtexteditor-border-color, var(--gooey-color-border));
+    padding: 6px 8px;
+    vertical-align: top;
+    min-width: 40px;
+}
+
+.rte-content table th {
+    background-color: var(--gooey-richtexteditor-toolbar-bg, var(--gooey-color-surface-hover));
+    font-weight: bold;
+    text-align: left;
+}
+
+.rte-content table tr:first-child td,
+.rte-content table tr:first-child th {
+    border-top-width: 1px;
+}
+
+/* Cell selection highlight */
+.rte-content table td.rte-cell-selected,
+.rte-content table th.rte-cell-selected {
+    background-color: var(--gooey-color-primary-light, var(--gooey-color-focus));
+    outline: 2px solid var(--gooey-color-primary, var(--gooey-color-focus));
+    outline-offset: -2px;
+}

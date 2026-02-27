@@ -9,13 +9,15 @@ import Schema from './model/Schema.js';
 import Node, { Mark } from './model/Node.js';
 import { Selection } from './model/Position.js';
 import EditorState from './state/EditorState.js';
-import { baseKeymap, keymap, insertText, toggleMark, setMark, toggleLink, clearFormatting, markActive, getActiveMarks, setBlockType, heading, paragraph, wrapInBlockquote, toggleCodeBlock, insertHorizontalRule, setAlignment, increaseIndent, decreaseIndent, setLineHeight, toggleBulletList, toggleOrderedList, toggleChecklist, listIndent, listOutdent, splitListItem, liftListItem, chainCommands, splitBlock, deleteBackward } from './state/Commands.js';
+import { baseKeymap, keymap, insertText, toggleMark, setMark, toggleLink, clearFormatting, markActive, getActiveMarks, setBlockType, heading, paragraph, wrapInBlockquote, toggleCodeBlock, insertHorizontalRule, setAlignment, increaseIndent, decreaseIndent, setLineHeight, toggleBulletList, toggleOrderedList, toggleChecklist, listIndent, listOutdent, splitListItem, liftListItem, chainCommands, splitBlock, deleteBackward, _isInTable } from './state/Commands.js';
 import EditorView from './view/EditorView.js';
 import InputHandler from './view/InputHandler.js';
 import SelectionManager from './view/SelectionManager.js';
 import HistoryPlugin, { historyKeymap } from './plugins/HistoryPlugin.js';
 import ClipboardPlugin from './plugins/ClipboardPlugin.js';
 import SearchPlugin from './plugins/SearchPlugin.js';
+import TablePlugin from './plugins/table/TablePlugin.js';
+import { insertTable as insertTableCmd, addRowBefore as addRowBeforeCmd, addRowAfter as addRowAfterCmd, addColumnBefore as addColumnBeforeCmd, addColumnAfter as addColumnAfterCmd, deleteRow as deleteRowCmd, deleteColumn as deleteColumnCmd, deleteTable as deleteTableCmd, mergeCells as mergeCellsCmd, splitCell as splitCellCmd, toggleHeaderRow as toggleHeaderRowCmd, toggleHeaderColumn as toggleHeaderColumnCmd } from './commands/TableCommands.js';
 
 /**
  * Sanitize HTML to prevent XSS attacks.
@@ -125,6 +127,9 @@ export default class RichTextEditor extends TextElement {
         // Create SearchPlugin (needs editor reference for panel and decorations)
         this._search = new SearchPlugin(this);
 
+        // Create TablePlugin (needs view for cell navigation)
+        this._tablePlugin = new TablePlugin(null); // view not yet created, set later
+
         // Build the resolved keymap (platform-aware Mod- resolution)
         // Merge history keymap (Mod-z, Mod-Shift-z, Mod-y) with base keymap
         const resolvedKeymap = keymap({
@@ -158,8 +163,15 @@ export default class RichTextEditor extends TextElement {
             'Mod-f': (state, dispatch) => { this._search.open('find'); return true; },
             'Mod-h': (state, dispatch) => { this._search.open('replace'); return true; },
             // Context-sensitive overrides for list editing
-            'Tab': chainCommands(listIndent, insertText("  ")),
-            'Shift-Tab': listOutdent,
+            'Tab': chainCommands(
+                (s, d) => this._tablePlugin.moveToNextCell(s, d),
+                listIndent,
+                insertText("  ")
+            ),
+            'Shift-Tab': chainCommands(
+                (s, d) => this._tablePlugin.moveToPrevCell(s, d),
+                listOutdent
+            ),
             'Enter': chainCommands(splitListItem, splitBlock),
             'Backspace': chainCommands(liftListItem, deleteBackward),
             ...historyKeymap(this._history)
@@ -167,6 +179,9 @@ export default class RichTextEditor extends TextElement {
 
         // Create EditorView
         this._view = new EditorView(this._content, this._state, this._schema);
+
+        // Wire TablePlugin view reference (needed for cell navigation)
+        this._tablePlugin._view = this._view;
 
         // Create InputHandler
         this._inputHandler = new InputHandler(this._inputSink, this._view, resolvedKeymap);
@@ -644,6 +659,120 @@ export default class RichTextEditor extends TextElement {
     }
 
     // =========================================================================
+    // Table API
+    // =========================================================================
+
+    /**
+     * Insert a table with the specified number of rows and columns.
+     *
+     * @param {number} [rows=3] - Number of rows
+     * @param {number} [cols=3] - Number of columns
+     * @returns {boolean} Whether the command executed successfully
+     */
+    insertTable(rows = 3, cols = 3) {
+        return insertTableCmd(rows, cols)(this._state, (tr) => this._dispatch(tr));
+    }
+
+    /**
+     * Add a row above the current row.
+     *
+     * @returns {boolean} Whether the command executed successfully
+     */
+    addRowBefore() {
+        return addRowBeforeCmd(this._state, (tr) => this._dispatch(tr));
+    }
+
+    /**
+     * Add a row below the current row.
+     *
+     * @returns {boolean} Whether the command executed successfully
+     */
+    addRowAfter() {
+        return addRowAfterCmd(this._state, (tr) => this._dispatch(tr));
+    }
+
+    /**
+     * Add a column to the left of the current column.
+     *
+     * @returns {boolean} Whether the command executed successfully
+     */
+    addColumnBefore() {
+        return addColumnBeforeCmd(this._state, (tr) => this._dispatch(tr));
+    }
+
+    /**
+     * Add a column to the right of the current column.
+     *
+     * @returns {boolean} Whether the command executed successfully
+     */
+    addColumnAfter() {
+        return addColumnAfterCmd(this._state, (tr) => this._dispatch(tr));
+    }
+
+    /**
+     * Delete the current row from the table.
+     *
+     * @returns {boolean} Whether the command executed successfully
+     */
+    deleteRow() {
+        return deleteRowCmd(this._state, (tr) => this._dispatch(tr));
+    }
+
+    /**
+     * Delete the current column from the table.
+     *
+     * @returns {boolean} Whether the command executed successfully
+     */
+    deleteColumn() {
+        return deleteColumnCmd(this._state, (tr) => this._dispatch(tr));
+    }
+
+    /**
+     * Delete the entire table containing the cursor.
+     *
+     * @returns {boolean} Whether the command executed successfully
+     */
+    deleteTable() {
+        return deleteTableCmd(this._state, (tr) => this._dispatch(tr));
+    }
+
+    /**
+     * Merge selected cells in the table.
+     *
+     * @returns {boolean} Whether the command executed successfully
+     */
+    mergeCells() {
+        return mergeCellsCmd(this._state, (tr) => this._dispatch(tr));
+    }
+
+    /**
+     * Split a merged cell back into individual cells.
+     *
+     * @returns {boolean} Whether the command executed successfully
+     */
+    splitCell() {
+        return splitCellCmd(this._state, (tr) => this._dispatch(tr));
+    }
+
+    /**
+     * Toggle header attribute on all cells in the current row.
+     *
+     * @returns {boolean} Whether the command executed successfully
+     */
+    toggleHeaderRow() {
+        return toggleHeaderRowCmd(this._state, (tr) => this._dispatch(tr));
+    }
+
+    /**
+     * Toggle header attribute on all cells in the current column.
+     *
+     * @returns {boolean} Whether the command executed successfully
+     */
+    toggleHeaderColumn() {
+        return toggleHeaderColumnCmd(this._state, (tr) => this._dispatch(tr));
+    }
+
+    // =========================================================================
     // Clipboard API
     // =========================================================================
 
@@ -945,6 +1074,9 @@ export default class RichTextEditor extends TextElement {
             // Detect list context for toolbar state sync
             const listContext = this._getListContext(this._state.selection.head);
 
+            // Detect table context
+            const tableInfo = _isInTable(this._state);
+
             this.fireEvent(RichTextEditorEvent.TEXT_CURSOR_MOVE, {
                 value: this.value,
                 anchor: this._state.selection.anchor,
@@ -957,7 +1089,10 @@ export default class RichTextEditor extends TextElement {
                 lineHeight: parentAttrs.lineHeight || null,
                 listType: listContext.listType,
                 listDepth: listContext.listDepth,
-                isChecklist: listContext.isChecklist
+                isChecklist: listContext.isChecklist,
+                inTable: !!tableInfo,
+                tableRowIndex: tableInfo ? tableInfo.rowIndex : null,
+                tableCellIndex: tableInfo ? tableInfo.cellIndex : null
             });
         }
     }
