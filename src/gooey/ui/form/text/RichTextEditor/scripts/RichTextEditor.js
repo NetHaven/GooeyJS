@@ -9,7 +9,7 @@ import Schema from './model/Schema.js';
 import Node, { Mark } from './model/Node.js';
 import { Selection } from './model/Position.js';
 import EditorState from './state/EditorState.js';
-import { baseKeymap, keymap, insertText, toggleMark } from './state/Commands.js';
+import { baseKeymap, keymap, insertText, toggleMark, clearFormatting } from './state/Commands.js';
 import EditorView from './view/EditorView.js';
 import InputHandler from './view/InputHandler.js';
 import SelectionManager from './view/SelectionManager.js';
@@ -124,6 +124,9 @@ export default class RichTextEditor extends TextElement {
             'Mod-b': toggleMark('bold'),
             'Mod-i': toggleMark('italic'),
             'Mod-u': toggleMark('underline'),
+            'Mod-Shift-s': toggleMark('strikethrough'),
+            'Mod-e': toggleMark('code'),
+            'Mod-\\': clearFormatting,
             ...historyKeymap(this._history)
         });
 
