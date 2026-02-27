@@ -19,42 +19,223 @@ import { insertTable as insertTableCmd, addRowBefore as addRowBeforeCmd, addRowA
 import { insertImage as insertImageCmd, insertVideo as insertVideoCmd, insertEmbed as insertEmbedCmd, setMediaAlignment as setMediaAlignmentCmd, setImageAlt as setImageAltCmd, setImageCaption as setImageCaptionCmd, updateMediaAttrs as updateMediaAttrsCmd, deleteMedia as deleteMediaCmd, _findMediaNodeAtPos } from './commands/MediaCommands.js';
 
 /**
- * Sanitize HTML to prevent XSS attacks.
- * Removes script tags, event handlers, and javascript: URLs.
+ * Elements that must be stripped entirely (with all descendants).
+ * @type {Set<string>}
+ */
+const FORBIDDEN_ELEMENTS = new Set([
+    'script', 'iframe', 'object', 'embed', 'form', 'input',
+    'button', 'select', 'textarea', 'link', 'meta', 'base', 'applet'
+]);
+
+/**
+ * Allowed CSS properties in style attributes for input sanitization.
+ * @type {Set<string>}
+ */
+const ALLOWED_STYLE_PROPERTIES = new Set([
+    'color', 'background-color', 'font-size', 'font-family',
+    'text-align', 'line-height', 'text-decoration', 'font-weight',
+    'font-style', 'vertical-align', 'margin-left'
+]);
+
+/**
+ * URL attributes that may contain dangerous schemes.
+ * @type {Set<string>}
+ */
+const URL_ATTRIBUTES = new Set([
+    'href', 'src', 'action', 'formaction', 'data', 'codebase'
+]);
+
+/**
+ * Regex matching dangerous URL schemes including HTML-entity-encoded variants.
+ * @type {RegExp}
+ */
+const DANGEROUS_URL_RE = /^\s*(javascript|vbscript|data\s*:\s*text\/html)\s*:/i;
+
+/**
+ * Decode HTML entities to detect obfuscated URL schemes.
+ * @param {string} str
+ * @returns {string}
+ */
+function _decodeHTMLEntities(str) {
+    if (!str) return '';
+    // Handle numeric entities (&#106; &#x6A;) and named entities
+    return str
+        .replace(/&#x([0-9a-fA-F]+);/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)))
+        .replace(/&#(\d+);/g, (_, dec) => String.fromCharCode(parseInt(dec, 10)));
+}
+
+/**
+ * Sanitize HTML input to prevent XSS attacks.
+ *
+ * Parses HTML via DOMParser and walks the DOM tree, removing:
+ * - Dangerous elements (script, iframe, object, embed, form, input, etc.)
+ * - All on* event handler attributes
+ * - javascript:, vbscript:, data:text/html URLs in URL-bearing attributes
+ * - Inline styles not in the allow-list
+ *
  * @param {string} html - Raw HTML string
  * @returns {string} Sanitized HTML
  */
-function sanitizeHTML(html) {
+function _sanitizeInput(html) {
     if (!html) return '';
 
-    // Create temporary element to parse HTML
-    const temp = document.createElement('div');
-    temp.textContent = html; // First escape as text
-    const escaped = temp.innerHTML;
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    const body = doc.body;
+    if (!body) return '';
 
-    // Parse as HTML
-    temp.innerHTML = escaped;
+    // Collect nodes to remove/unwrap (snapshot to avoid mutation during iteration)
+    const walker = document.createTreeWalker(body, NodeFilter.SHOW_ELEMENT, null);
+    const toRemove = [];
 
-    // Remove dangerous elements
-    const scripts = temp.querySelectorAll('script, iframe, object, embed');
-    scripts.forEach(el => el.remove());
+    let node;
+    while ((node = walker.nextNode())) {
+        const tag = node.tagName.toLowerCase();
 
-    // Remove event handlers and javascript: URLs
-    const allElements = temp.querySelectorAll('*');
-    allElements.forEach(el => {
-        // Remove on* event attributes
-        Array.from(el.attributes).forEach(attr => {
-            if (attr.name.startsWith('on')) {
-                el.removeAttribute(attr.name);
+        // Strip forbidden elements entirely
+        if (FORBIDDEN_ELEMENTS.has(tag)) {
+            toRemove.push(node);
+            continue;
+        }
+
+        // Clean attributes on allowed elements
+        _cleanInputAttributes(node);
+    }
+
+    // Remove forbidden elements (and all descendants)
+    for (const el of toRemove) {
+        if (el.parentNode) {
+            el.parentNode.removeChild(el);
+        }
+    }
+
+    return body.innerHTML;
+}
+
+/**
+ * Clean attributes on an element for input sanitization.
+ * Removes on* handlers, dangerous URLs, and filters style properties.
+ *
+ * @param {Element} el
+ */
+function _cleanInputAttributes(el) {
+    const attrsToRemove = [];
+
+    for (const attr of Array.from(el.attributes)) {
+        const name = attr.name.toLowerCase();
+
+        // Strip on* event handler attributes
+        if (name.startsWith('on')) {
+            attrsToRemove.push(attr.name);
+            continue;
+        }
+
+        // Check URL attributes for dangerous schemes
+        if (URL_ATTRIBUTES.has(name)) {
+            const decoded = _decodeHTMLEntities(attr.value);
+            if (DANGEROUS_URL_RE.test(decoded)) {
+                // For images, allow data:image/* but strip data:text/html
+                if (name === 'src' && /^\s*data\s*:\s*image\//i.test(decoded)) {
+                    // Safe data URI for images — keep it
+                    continue;
+                }
+                attrsToRemove.push(attr.name);
+                continue;
             }
-            // Remove javascript: URLs
-            if (attr.value && attr.value.trim().toLowerCase().startsWith('javascript:')) {
-                el.removeAttribute(attr.name);
-            }
-        });
-    });
+        }
 
-    return temp.innerHTML;
+        // Filter style attribute
+        if (name === 'style') {
+            const filtered = _filterStyleProperties(attr.value);
+            if (filtered) {
+                el.setAttribute('style', filtered);
+            } else {
+                attrsToRemove.push(attr.name);
+            }
+        }
+    }
+
+    for (const name of attrsToRemove) {
+        el.removeAttribute(name);
+    }
+}
+
+/**
+ * Filter a CSS style string to only allowed properties.
+ *
+ * @param {string} styleStr - Raw style attribute value
+ * @returns {string} Filtered style string, or empty string
+ */
+function _filterStyleProperties(styleStr) {
+    if (!styleStr) return '';
+
+    const parts = styleStr.split(';').filter(Boolean);
+    const allowed = [];
+
+    for (const part of parts) {
+        const colonIdx = part.indexOf(':');
+        if (colonIdx === -1) continue;
+
+        const prop = part.slice(0, colonIdx).trim().toLowerCase();
+        const value = part.slice(colonIdx + 1).trim();
+
+        if (ALLOWED_STYLE_PROPERTIES.has(prop) && value) {
+            allowed.push(`${prop}: ${value}`);
+        }
+    }
+
+    return allowed.length > 0 ? allowed.join('; ') : '';
+}
+
+/**
+ * Sanitize HTML output (lighter sanitizer for the value getter path).
+ * Removes any on* attributes and javascript: URLs that might have
+ * been injected via model manipulation. Does NOT strip structural elements.
+ *
+ * @param {string} html - HTML string from model serialization
+ * @returns {string} Sanitized HTML
+ */
+function _sanitizeOutput(html) {
+    if (!html) return '';
+
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    const body = doc.body;
+    if (!body) return '';
+
+    const walker = document.createTreeWalker(body, NodeFilter.SHOW_ELEMENT, null);
+
+    let node;
+    while ((node = walker.nextNode())) {
+        const attrsToRemove = [];
+
+        for (const attr of Array.from(node.attributes)) {
+            const name = attr.name.toLowerCase();
+
+            // Strip on* event handler attributes
+            if (name.startsWith('on')) {
+                attrsToRemove.push(attr.name);
+                continue;
+            }
+
+            // Strip dangerous URL schemes
+            if (URL_ATTRIBUTES.has(name)) {
+                const decoded = _decodeHTMLEntities(attr.value);
+                if (DANGEROUS_URL_RE.test(decoded)) {
+                    if (name === 'src' && /^\s*data\s*:\s*image\//i.test(decoded)) {
+                        continue; // Safe data URI for images
+                    }
+                    attrsToRemove.push(attr.name);
+                }
+            }
+        }
+
+        for (const name of attrsToRemove) {
+            node.removeAttribute(name);
+        }
+    }
+
+    return body.innerHTML;
 }
 
 /**
@@ -98,7 +279,15 @@ export default class RichTextEditor extends TextElement {
         Template.activate("ui-RichTextEditor", this.shadowRoot);
 
         this._previousValue = '';
+        this._focusValue = '';
+        this._settingValueProgrammatically = false;
         this._config = {};
+
+        // Custom toolbar items registered via API
+        this._customToolbarItems = new Map();
+
+        // Internal toolbar reference (created when toolbar="full")
+        this._internalToolbar = null;
 
         // Query new template DOM elements
         this._shell = this.shadowRoot.querySelector('.rte-shell');
@@ -194,14 +383,31 @@ export default class RichTextEditor extends TextElement {
 
         this._syncDisabledState();
 
+        // Set up toolbar binding
+        this._setupToolbar();
+
+        // Handle spellcheck forwarding
+        this._syncSpellcheck();
+
+        // Handle autofocus
+        if (this.hasAttribute('autofocus')) {
+            Promise.resolve().then(() => this.focus());
+        }
+
         // Render initial state if view exists
         if (this._view && this._state) {
             this._view.updateState(this._state);
             this._selectionManager.update(this._state.selection);
         }
+
+        // Fire READY event once editor is fully initialized and connected
+        this.fireEvent(RichTextEditorEvent.READY, { value: this.value });
     }
 
     disconnectedCallback() {
+        // Fire DESTROY event before teardown
+        this.fireEvent(RichTextEditorEvent.DESTROY, { value: this.value });
+
         if (super.disconnectedCallback) {
             super.disconnectedCallback();
         }
@@ -230,21 +436,44 @@ export default class RichTextEditor extends TextElement {
             this._inputSink.removeEventListener('focus', this._handleInputFocusBound);
             this._inputSink.removeEventListener('blur', this._handleInputBlurBound);
         }
+
+        // Clean up internal toolbar
+        if (this._internalToolbar) {
+            this._internalToolbar.remove();
+            this._internalToolbar = null;
+        }
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
+        if (oldValue === newValue) return;
+
         super.attributeChangedCallback?.(name, oldValue, newValue);
 
-        if (name === 'disabled') {
-            this._syncDisabledState();
-        }
-
-        if (name === 'readonly') {
-            this._syncReadOnlyState();
-        }
-
-        if (name === 'value' && newValue !== oldValue && newValue !== this.value) {
-            this.value = newValue ?? '';
+        switch (name) {
+            case 'disabled':
+                this._syncDisabledState();
+                break;
+            case 'readonly':
+                this._syncReadOnlyState();
+                break;
+            case 'placeholder':
+                this._syncPlaceholder(newValue);
+                break;
+            case 'value':
+                if (newValue !== this.value) {
+                    this.value = newValue ?? '';
+                }
+                break;
+            case 'toolbar':
+                this._tearDownToolbar();
+                this._setupToolbar();
+                break;
+            case 'airmode':
+                this._syncAirMode();
+                break;
+            case 'spellcheck':
+                this._syncSpellcheck();
+                break;
         }
     }
 
@@ -254,25 +483,29 @@ export default class RichTextEditor extends TextElement {
 
     /**
      * Get the editor content as an HTML string.
-     * Serializes the document model to HTML.
+     * Serializes the document model to HTML and sanitizes the output.
      * @returns {string}
      */
     get value() {
         if (!this._state || !this._state.doc) {
             return '';
         }
-        return this._serializeToHTML(this._state.doc);
+        const raw = this._serializeToHTML(this._state.doc);
+        return _sanitizeOutput(raw);
     }
 
     /**
      * Set the editor content from an HTML string.
-     * Parses HTML into a document model and updates the view.
+     * Sanitizes input, parses HTML into a document model, and updates the view.
+     * Fires CONTENT_SET event (not INPUT).
      * @param {string} val
      */
     set value(val) {
         if (!this._schema) return;
 
-        const doc = this._parseHTML(val);
+        const oldValue = this._state ? this._serializeToHTML(this._state.doc) : '';
+        const sanitized = _sanitizeInput(val);
+        const doc = this._parseHTML(sanitized);
         const selection = Selection.cursor(1);
         this._state = new EditorState(doc, selection, [], [], this._schema);
 
@@ -282,6 +515,14 @@ export default class RichTextEditor extends TextElement {
         if (this._selectionManager) {
             this._selectionManager.update(this._state.selection);
         }
+
+        // Fire CONTENT_SET (not INPUT) for programmatic value setting
+        this._settingValueProgrammatically = true;
+        this.fireEvent(RichTextEditorEvent.CONTENT_SET, {
+            value: this.value,
+            previousValue: oldValue
+        });
+        this._settingValueProgrammatically = false;
     }
 
     /**
@@ -323,6 +564,165 @@ export default class RichTextEditor extends TextElement {
      */
     get schema() {
         return this._schema;
+    }
+
+    /**
+     * Get read-only state.
+     * @returns {boolean}
+     */
+    get readOnly() {
+        return this.hasAttribute('readonly');
+    }
+
+    /**
+     * Set read-only state.
+     * @param {boolean} val
+     */
+    set readOnly(val) {
+        if (val) {
+            this.setAttribute('readonly', '');
+        } else {
+            this.removeAttribute('readonly');
+        }
+        this._syncReadOnlyState();
+    }
+
+    /**
+     * Get placeholder text.
+     * @returns {string}
+     */
+    get placeholder() {
+        return this.getAttribute('placeholder') || '';
+    }
+
+    /**
+     * Set placeholder text. Forwards to PlaceholderPlugin.
+     * @param {string} val
+     */
+    set placeholder(val) {
+        if (val) {
+            this.setAttribute('placeholder', val);
+        } else {
+            this.removeAttribute('placeholder');
+        }
+        this._syncPlaceholder(val);
+    }
+
+    /**
+     * Get maxLength constraint.
+     * @returns {number} -1 if not set
+     */
+    get maxLength() {
+        const attr = this.getAttribute('maxlength');
+        return attr !== null ? parseInt(attr, 10) : -1;
+    }
+
+    /**
+     * Set maxLength constraint.
+     * @param {number} val
+     */
+    set maxLength(val) {
+        if (val !== null && val !== undefined && val >= 0) {
+            this.setAttribute('maxlength', val);
+        } else {
+            this.removeAttribute('maxlength');
+        }
+    }
+
+    /**
+     * Get minLength constraint.
+     * @returns {number} -1 if not set
+     */
+    get minLength() {
+        const attr = this.getAttribute('minlength');
+        return attr !== null ? parseInt(attr, 10) : -1;
+    }
+
+    /**
+     * Set minLength constraint.
+     * @param {number} val
+     */
+    set minLength(val) {
+        if (val !== null && val !== undefined && val >= 0) {
+            this.setAttribute('minlength', val);
+        } else {
+            this.removeAttribute('minlength');
+        }
+    }
+
+    /**
+     * Get the character length of the editor content (text only, no markup).
+     * @returns {number}
+     */
+    getLength() {
+        if (!this._state || !this._state.doc) return 0;
+        return this._getTextLength(this._state.doc);
+    }
+
+    /**
+     * Check if the editor content is effectively empty.
+     * @returns {boolean}
+     */
+    isEmpty() {
+        if (!this._state || !this._state.doc) return true;
+        const doc = this._state.doc;
+        if (!doc.children || doc.children.length === 0) return true;
+        if (doc.children.length === 1) {
+            const child = doc.children[0];
+            if (child.type === 'paragraph') {
+                if (!child.children || child.children.length === 0) return true;
+                if (child.textContent === '') return true;
+            }
+        }
+        if (doc.contentSize <= 2) return true;
+        return false;
+    }
+
+    /**
+     * Check form validity.
+     * Returns false if required and empty, or if minLength constraint is violated.
+     * @returns {boolean}
+     */
+    checkValidity() {
+        if (this.required && this.isEmpty()) {
+            return false;
+        }
+        const ml = this.minLength;
+        if (ml > 0 && this.getLength() < ml) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Get the editor content as an HTML string (alias for value getter).
+     * @returns {string}
+     */
+    getHTML() {
+        return this.value;
+    }
+
+    /**
+     * Set the editor content from an HTML string (alias for value setter).
+     * Input is sanitized before parsing.
+     * @param {string} html
+     */
+    setHTML(html) {
+        this.value = html;
+    }
+
+    /**
+     * Insert HTML at the current cursor position.
+     * Input is sanitized before insertion.
+     * @param {string} html
+     */
+    insertHTML(html) {
+        if (!html) return;
+        const sanitized = _sanitizeInput(html);
+        if (this._clipboard) {
+            const { from, to } = this._state.selection;
+            this._clipboard._insertHTMLContent(sanitized, from, to);
+        }
     }
 
     // =========================================================================
@@ -1174,6 +1574,11 @@ export default class RichTextEditor extends TextElement {
             // Undo/redo path: restore the state directly
             this._state = tr._forceState;
         } else {
+            // Enforce maxLength constraint for content-changing steps
+            if (tr.steps.length > 0 && !this._validateMaxLength(tr)) {
+                return; // Reject the transaction — content would exceed maxLength
+            }
+
             // Normal path: record state for undo before applying
             // Only push to history if the transaction has content-changing steps
             if (tr.steps.length > 0 && this._history) {
@@ -1209,10 +1614,13 @@ export default class RichTextEditor extends TextElement {
             state: this._state
         });
 
-        this.fireEvent(TextElementEvent.INPUT, {
-            value: this.value,
-            state: this._state
-        });
+        // Fire INPUT event only for user-initiated transactions (not programmatic value set)
+        if (!this._settingValueProgrammatically) {
+            this.fireEvent(TextElementEvent.INPUT, {
+                value: this.value,
+                state: this._state
+            });
+        }
 
         // Track selection changes
         if (!oldState.selection.eq(this._state.selection)) {
@@ -1334,10 +1742,13 @@ export default class RichTextEditor extends TextElement {
      * @private
      */
     _registerEvents() {
+        // FormElement events
         this.addValidEvent(TextElementEvent.INPUT);
         this.addValidEvent(TextElementEvent.CHANGE);
         this.addValidEvent(FormElementEvent.FOCUS);
         this.addValidEvent(FormElementEvent.BLUR);
+
+        // RichTextEditor-specific events
         this.addValidEvent(RichTextEditorEvent.MODEL_CHANGED);
         this.addValidEvent(RichTextEditorEvent.EDITOR_ACTION);
         this.addValidEvent(RichTextEditorEvent.TEXT_CURSOR_MOVE);
@@ -1346,6 +1757,16 @@ export default class RichTextEditor extends TextElement {
         this.addValidEvent(RichTextEditorEvent.SEARCH_FOUND);
         this.addValidEvent(RichTextEditorEvent.SEARCH_NOT_FOUND);
         this.addValidEvent(RichTextEditorEvent.REPLACE_DONE);
+        this.addValidEvent(RichTextEditorEvent.HIGHLIGHT);
+        this.addValidEvent(RichTextEditorEvent.UNHIGHLIGHT);
+        this.addValidEvent(RichTextEditorEvent.PLUGIN_LOADED);
+        this.addValidEvent(RichTextEditorEvent.PLUGIN_ERROR);
+
+        // Lifecycle events
+        this.addValidEvent(RichTextEditorEvent.CONTENT_SET);
+        this.addValidEvent(RichTextEditorEvent.READY);
+        this.addValidEvent(RichTextEditorEvent.DESTROY);
+        this.addValidEvent(RichTextEditorEvent.MODE_CHANGE);
     }
 
     // =========================================================================
@@ -1373,7 +1794,7 @@ export default class RichTextEditor extends TextElement {
      * @private
      */
     _handleInputFocus(event) {
-        this._previousValue = this.value;
+        this._focusValue = this.value;
         this._shell.classList.add('rte-focused');
 
         this.fireEvent(FormElementEvent.FOCUS, {
@@ -1397,13 +1818,13 @@ export default class RichTextEditor extends TextElement {
         });
 
         // Fire CHANGE event if value changed since focus
-        if (this.value !== this._previousValue) {
+        const currentValue = this.value;
+        if (currentValue !== this._focusValue) {
             this.fireEvent(TextElementEvent.CHANGE, {
-                value: this.value,
-                previousValue: this._previousValue,
+                value: currentValue,
+                previousValue: this._focusValue,
                 originalEvent: event
             });
-            this._previousValue = this.value;
         }
     }
 
@@ -1531,6 +1952,59 @@ export default class RichTextEditor extends TextElement {
         if (this._content) {
             this._content.setAttribute('aria-readonly', readOnly ? 'true' : 'false');
         }
+    }
+
+    /**
+     * Synchronize placeholder text with the PlaceholderPlugin.
+     * @param {string} text - New placeholder text
+     * @private
+     */
+    _syncPlaceholder(text) {
+        if (this._pluginManager) {
+            const placeholderPlugin = this._pluginManager.getPlugin('placeholder');
+            if (placeholderPlugin && typeof placeholderPlugin.setPlaceholderText === 'function') {
+                placeholderPlugin.setPlaceholderText(text || '');
+            }
+        }
+    }
+
+    /**
+     * Get the total text character count of the document (excluding markup).
+     * @param {object} node - Document or child node
+     * @returns {number}
+     * @private
+     */
+    _getTextLength(node) {
+        if (!node) return 0;
+        if (node.type === 'text') {
+            return node.text ? node.text.length : 0;
+        }
+        if (node.children) {
+            let total = 0;
+            for (const child of node.children) {
+                total += this._getTextLength(child);
+            }
+            return total;
+        }
+        return 0;
+    }
+
+    /**
+     * Validate maxLength constraint and reject the transaction if exceeded.
+     * Called during dispatch before state is applied.
+     *
+     * @param {object} tr - Transaction to check
+     * @returns {boolean} true if the transaction should proceed
+     * @private
+     */
+    _validateMaxLength(tr) {
+        const ml = this.maxLength;
+        if (ml < 0) return true; // No constraint
+
+        // Apply the transaction tentatively to check length
+        const newState = this._state.apply(tr);
+        const newLength = this._getTextLength(newState.doc);
+        return newLength <= ml;
     }
 
     // =========================================================================
@@ -1721,11 +2195,9 @@ export default class RichTextEditor extends TextElement {
             return this._schema.node('document', null, [para]);
         }
 
-        const sanitized = sanitizeHTML(html);
-
         // Parse into a temporary DOM element
         const temp = document.createElement('div');
-        temp.innerHTML = sanitized;
+        temp.innerHTML = html;
 
         // Walk the DOM to build the model tree
         const blocks = this._parseDOMChildren(temp, 'block');

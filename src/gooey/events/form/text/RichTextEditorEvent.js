@@ -17,6 +17,12 @@ export default class RichTextEditorEvent extends Event {
     static PLUGIN_LOADED = "pluginloaded";
     static PLUGIN_ERROR = "pluginerror";
 
+    // Lifecycle events
+    static CONTENT_SET = "contentSet";
+    static READY = "ready";
+    static DESTROY = "destroy";
+    static MODE_CHANGE = "modeChange";
+
     constructor() {
         super();
     }
