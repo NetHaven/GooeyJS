@@ -579,6 +579,112 @@ export function toggleMark(markType, attrs) {
 
 
 /**
+ * Command that removes all marks from the current selection.
+ *
+ * If the selection is empty (cursor), clears all stored marks.
+ * If the selection has a range, removes all marks from all text in the range.
+ * Always returns true (clearing formatting is always valid).
+ *
+ * @param {object} state - EditorState
+ * @param {function|null} dispatch - Dispatch function or null for can-execute check
+ * @returns {boolean}
+ */
+export function clearFormatting(state, dispatch) {
+    if (dispatch) {
+        const tr = state.transaction;
+        const { from, to, empty } = state.selection;
+
+        if (empty) {
+            // Cursor: clear all stored marks
+            tr.setStoredMarks([]);
+        } else {
+            // Range: collect all unique mark types in the range, then remove each
+            const markTypes = new Set();
+
+            state.doc.nodesBetween(from, to, (node, pos) => {
+                if (node.type === "text") {
+                    for (const mark of node.marks) {
+                        markTypes.add(mark.type);
+                    }
+                    return false;
+                }
+                return true;
+            });
+
+            // Remove each unique mark type from the range
+            for (const markType of markTypes) {
+                tr.removeMark(from, to, Mark.create(markType));
+            }
+        }
+
+        dispatch(tr);
+    }
+    return true;
+}
+
+
+/**
+ * Get all active marks at the current selection position.
+ *
+ * For cursor selections (empty): returns stored marks merged with marks
+ * on text at the cursor position.
+ * For range selections: returns marks that are present on ALL text nodes
+ * in the range (intersection of mark sets).
+ *
+ * @param {object} state - EditorState
+ * @returns {object[]} Array of active mark objects
+ */
+export function getActiveMarks(state) {
+    const { from, to, empty } = state.selection;
+
+    if (empty) {
+        // Cursor: merge stored marks with marks on adjacent text
+        const storedMarks = state.marks || [];
+        const posMarks = _allMarksAtPos(state.doc, from);
+
+        // Merge: start with stored marks, add position marks not already present
+        const merged = [...storedMarks];
+        for (const mark of posMarks) {
+            if (!merged.some(m => m.type === mark.type)) {
+                merged.push(mark);
+            }
+        }
+        return merged;
+    }
+
+    // Range: find marks present on ALL text nodes in the range
+    let commonMarks = null;
+    let foundText = false;
+
+    state.doc.nodesBetween(from, to, (node, pos) => {
+        if (node.type === "text") {
+            const textStart = pos;
+            const textEnd = pos + node.text.length;
+
+            // Only consider the overlapping portion
+            if (textEnd > from && textStart < to) {
+                foundText = true;
+                if (commonMarks === null) {
+                    // First text node: start with its marks
+                    commonMarks = [...node.marks];
+                } else {
+                    // Intersect: keep only marks present on this node too
+                    commonMarks = commonMarks.filter(
+                        cm => node.marks.some(m => m.type === cm.type)
+                    );
+                }
+            }
+            return false;
+        }
+        return true;
+    });
+
+    if (!foundText || commonMarks === null) return [];
+    return commonMarks;
+}
+
+
+/**
  * Create a command that changes the block type of blocks in the selection range.
  *
  * Can-execute: returns true if the current block is not already the target type.
@@ -951,6 +1057,43 @@ function _marksAtPos(doc, pos, markType) {
     }
 
     return found;
+}
+
+
+/**
+ * Get all mark objects on text at a given position.
+ *
+ * Checks text nodes adjacent to the cursor (before and after)
+ * and returns all marks found.
+ *
+ * @param {object} doc - Document node
+ * @param {number} pos - Position to check
+ * @returns {object[]} Array of mark objects
+ */
+function _allMarksAtPos(doc, pos) {
+    const marks = [];
+    const seen = new Set();
+    const checkPos = pos > 0 ? pos - 1 : pos;
+    const endPos = pos + 1;
+
+    try {
+        doc.nodesBetween(checkPos, Math.min(endPos, doc.contentSize), (node, nodePos) => {
+            if (node.type === "text") {
+                for (const mark of node.marks) {
+                    if (!seen.has(mark.type)) {
+                        seen.add(mark.type);
+                        marks.push(mark);
+                    }
+                }
+                return false;
+            }
+            return true;
+        });
+    } catch (e) {
+        // Position out of range - no marks
+    }
+
+    return marks;
 }
 
 
