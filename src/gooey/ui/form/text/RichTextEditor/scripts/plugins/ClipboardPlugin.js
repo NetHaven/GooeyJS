@@ -735,6 +735,60 @@ export default class ClipboardPlugin {
             textarea.addEventListener('cut', this._onCut);
             textarea.addEventListener('paste', this._onPaste);
         }
+
+        // =====================================================================
+        // Drag-drop setup
+        // =====================================================================
+
+        /** @type {{ blockEl: Element, blockIndex: number }|null} */
+        this._dragSource = null;
+
+        // Create drop cursor element
+        this._dropCursor = document.createElement('div');
+        this._dropCursor.className = 'rte-drop-cursor';
+        if (this.editor._editorArea) {
+            this.editor._editorArea.appendChild(this._dropCursor);
+        }
+
+        // Create drag handle element
+        this._dragHandle = document.createElement('div');
+        this._dragHandle.className = 'rte-drag-handle';
+        this._dragHandle.textContent = '\u22EE\u22EE'; // ⋮⋮
+        this._dragHandle.setAttribute('draggable', 'true');
+        this._dragHandle.setAttribute('aria-label', 'Drag to reorder');
+        if (this.editor._editorArea) {
+            this.editor._editorArea.appendChild(this._dragHandle);
+        }
+
+        /** @type {Element|null} The block element that the drag handle is associated with */
+        this._dragHandleBlock = null;
+
+        /** @type {number} Target block index for drops */
+        this._dropTargetIndex = -1;
+
+        // Bind drag-drop handlers
+        this._onDragStart = this._handleDragStart.bind(this);
+        this._onDragOver = this._handleDragOver.bind(this);
+        this._onDrop = this._handleDrop.bind(this);
+        this._onDragEnd = this._handleDragEnd.bind(this);
+        this._onDragLeave = this._handleDragLeave.bind(this);
+        this._onContentMouseMove = this._handleContentMouseMove.bind(this);
+        this._onContentMouseLeave = this._handleContentMouseLeave.bind(this);
+        this._onHandleDragStart = this._handleHandleDragStart.bind(this);
+
+        // Attach drag-drop listeners to content container
+        const content = this.editor._content;
+        if (content) {
+            content.addEventListener('dragover', this._onDragOver);
+            content.addEventListener('drop', this._onDrop);
+            content.addEventListener('dragend', this._onDragEnd);
+            content.addEventListener('dragleave', this._onDragLeave);
+            content.addEventListener('mousemove', this._onContentMouseMove);
+            content.addEventListener('mouseleave', this._onContentMouseLeave);
+        }
+
+        // Attach dragstart to the drag handle
+        this._dragHandle.addEventListener('dragstart', this._onHandleDragStart);
     }
 
     // =========================================================================
@@ -1195,6 +1249,459 @@ export default class ClipboardPlugin {
     }
 
     // =========================================================================
+    // Drag-Drop Event Handlers
+    // =========================================================================
+
+    /**
+     * Handle dragstart events initiated from the drag handle.
+     * Identifies the associated block, serializes it, and stores
+     * internal drag metadata.
+     *
+     * @param {DragEvent} event
+     * @private
+     */
+    _handleHandleDragStart(event) {
+        if (!this._dragHandleBlock) return;
+
+        const blockEl = this._dragHandleBlock;
+        const blockIndex = this._getBlockIndexForElement(blockEl);
+        if (blockIndex === -1) return;
+
+        // Store drag source for internal move detection
+        this._dragSource = { blockEl, blockIndex };
+
+        // Add visual feedback to the dragged block
+        blockEl.classList.add('rte-dragging');
+
+        // Set data transfer
+        event.dataTransfer.effectAllowed = 'move';
+        event.dataTransfer.setData('application/x-gooey-rte-drag', JSON.stringify({ blockIndex }));
+
+        // Serialize the block to HTML and plain text
+        const doc = this.editor._state.doc;
+        if (doc.children && blockIndex < doc.children.length) {
+            const blockNode = doc.children[blockIndex];
+            const htmlStr = this.editor._serializeNode(blockNode);
+            const plainStr = this._serializePlainText(doc, this._blockStartPos(blockIndex), this._blockEndPos(blockIndex));
+            event.dataTransfer.setData('text/html', htmlStr);
+            event.dataTransfer.setData('text/plain', plainStr);
+        }
+    }
+
+    /**
+     * Handle dragstart events from direct content interactions.
+     * Prevents default browser drag behavior on content elements.
+     *
+     * @param {DragEvent} event
+     * @private
+     */
+    _handleDragStart(event) {
+        // Only allow drags initiated from the drag handle
+        if (event.target !== this._dragHandle) {
+            // Prevent text/element drags from the content area
+            event.preventDefault();
+        }
+    }
+
+    /**
+     * Handle dragover events — determine drop position and show cursor.
+     *
+     * @param {DragEvent} event
+     * @private
+     */
+    _handleDragOver(event) {
+        event.preventDefault();
+
+        // Determine if this is an internal or external drag
+        const isInternal = this._dragSource !== null;
+        event.dataTransfer.dropEffect = isInternal ? 'move' : 'copy';
+
+        // Find the block element and position under the cursor
+        const view = this.editor._view;
+        if (!view) return;
+
+        const blockInfo = view.blockAtCoords(event.clientX, event.clientY);
+        if (!blockInfo) {
+            this._hideDropCursor();
+            return;
+        }
+
+        // Calculate the target insertion index
+        let targetIndex;
+        if (blockInfo.position === 'above') {
+            targetIndex = blockInfo.blockIndex;
+        } else {
+            targetIndex = blockInfo.blockIndex + 1;
+        }
+
+        // For internal moves, check if the drop is a no-op
+        if (isInternal) {
+            const sourceIndex = this._dragSource.blockIndex;
+            if (targetIndex === sourceIndex || targetIndex === sourceIndex + 1) {
+                // Dropping at the same position — show invalid cursor
+                this._showDropCursor(blockInfo.blockEl, blockInfo.position, true);
+                this._dropTargetIndex = -1;
+                return;
+            }
+        }
+
+        this._dropTargetIndex = targetIndex;
+        this._showDropCursor(blockInfo.blockEl, blockInfo.position, false);
+    }
+
+    /**
+     * Handle drop events — perform block move or insert external content.
+     *
+     * @param {DragEvent} event
+     * @private
+     */
+    _handleDrop(event) {
+        event.preventDefault();
+        this._hideDropCursor();
+
+        const isInternal = event.dataTransfer.types.includes('application/x-gooey-rte-drag') && this._dragSource;
+
+        if (isInternal) {
+            this._handleInternalDrop(event);
+        } else {
+            this._handleExternalDrop(event);
+        }
+
+        this._clearDragState();
+    }
+
+    /**
+     * Handle an internal drag-drop to reorder blocks.
+     *
+     * @param {DragEvent} event
+     * @private
+     */
+    _handleInternalDrop(event) {
+        if (this._dropTargetIndex === -1) return;
+
+        const sourceIndex = this._dragSource.blockIndex;
+        const targetIndex = this._dropTargetIndex;
+
+        // No-op check
+        if (targetIndex === sourceIndex || targetIndex === sourceIndex + 1) return;
+
+        const doc = this.editor._state.doc;
+        if (!doc.children || sourceIndex >= doc.children.length) return;
+
+        const blockNode = doc.children[sourceIndex];
+        const state = this.editor._state;
+        const tr = state.transaction;
+
+        // Calculate positions for the source block
+        const sourceStart = this._blockStartPos(sourceIndex);
+        const sourceEnd = this._blockEndPos(sourceIndex);
+
+        // Determine insert position
+        // If the target is after the source, adjust for the removal
+        let insertIndex = targetIndex;
+        if (insertIndex > sourceIndex) {
+            insertIndex--;
+        }
+
+        // Step 1: Delete the source block
+        tr.deleteRange(sourceStart, sourceEnd);
+
+        // Step 2: Calculate the new insert position after deletion
+        let insertPos;
+        if (insertIndex >= doc.children.length - 1) {
+            // Insert at the end — sum up all remaining blocks
+            insertPos = 0;
+            for (let i = 0; i < doc.children.length; i++) {
+                if (i === sourceIndex) continue;
+                insertPos += doc.children[i].nodeSize;
+            }
+        } else {
+            insertPos = 0;
+            let count = 0;
+            for (let i = 0; i < doc.children.length; i++) {
+                if (i === sourceIndex) continue;
+                if (count === insertIndex) break;
+                insertPos += doc.children[i].nodeSize;
+                count++;
+            }
+        }
+
+        // Step 3: Insert the block at the new position using replaceRange
+        tr.replaceRange(insertPos, insertPos, [blockNode]);
+
+        // Set cursor to the start of the moved block
+        tr.setSelection(Selection.cursor(insertPos + 1));
+
+        this.editor._dispatch(tr);
+    }
+
+    /**
+     * Handle an external drop — insert content from outside the editor.
+     *
+     * @param {DragEvent} event
+     * @private
+     */
+    _handleExternalDrop(event) {
+        const dt = event.dataTransfer;
+        const view = this.editor._view;
+        if (!view) return;
+
+        // Determine insertion position from coordinates
+        const blockInfo = view.blockAtCoords(event.clientX, event.clientY);
+        if (!blockInfo) return;
+
+        let insertPos;
+        if (blockInfo.position === 'above') {
+            insertPos = this._blockStartPos(blockInfo.blockIndex);
+        } else {
+            insertPos = this._blockEndPos(blockInfo.blockIndex);
+        }
+
+        // Check for image files
+        if (dt.files && dt.files.length > 0) {
+            const imageFiles = Array.from(dt.files).filter(f => f.type.startsWith('image/'));
+            if (imageFiles.length > 0) {
+                // Placeholder for images (full support in Phase 39)
+                const state = this.editor._state;
+                const tr = state.transaction;
+                const placeholderText = imageFiles.map(f => `[Image: ${f.name}]`).join('\n');
+                tr.insertText(placeholderText, insertPos);
+                tr.setSelection(Selection.cursor(insertPos + placeholderText.length));
+                this.editor._dispatch(tr);
+                console.warn('Image drop detected — full image support will be available in a future update.');
+                return;
+            }
+        }
+
+        // Check for HTML content
+        const html = dt.getData('text/html');
+        if (html && html.trim()) {
+            // Run through paste pipeline: matchers -> sanitizer -> parse -> insert
+            let processed = this._runPasteMatchers(html, dt);
+            processed = this._sanitizer.sanitize(processed);
+
+            if (processed && processed.trim()) {
+                this._insertHTMLContent(processed, insertPos, insertPos);
+                return;
+            }
+        }
+
+        // Fallback to plain text
+        const text = dt.getData('text/plain');
+        if (text) {
+            this._insertPlainText(text, insertPos, insertPos);
+        }
+    }
+
+    /**
+     * Handle dragend events — clean up drag state.
+     *
+     * @param {DragEvent} event
+     * @private
+     */
+    _handleDragEnd(event) {
+        this._hideDropCursor();
+        this._clearDragState();
+    }
+
+    /**
+     * Handle dragleave events — hide cursor if leaving the content area.
+     *
+     * @param {DragEvent} event
+     * @private
+     */
+    _handleDragLeave(event) {
+        const content = this.editor._content;
+        if (!content) return;
+
+        // Only hide if we're truly leaving the content area
+        // relatedTarget is the element the mouse entered
+        if (!event.relatedTarget || !content.contains(event.relatedTarget)) {
+            this._hideDropCursor();
+        }
+    }
+
+    // =========================================================================
+    // Drag Handle (hover reveal)
+    // =========================================================================
+
+    /**
+     * Handle mousemove on the content area to show/reposition the drag handle.
+     *
+     * @param {MouseEvent} event
+     * @private
+     */
+    _handleContentMouseMove(event) {
+        if (this.editor.disabled) return;
+
+        const view = this.editor._view;
+        if (!view) return;
+
+        const blockInfo = view.blockAtCoords(event.clientX, event.clientY);
+        if (!blockInfo) {
+            this._hideDragHandle();
+            return;
+        }
+
+        const blockEl = blockInfo.blockEl;
+
+        // Don't re-position if it's the same block
+        if (this._dragHandleBlock === blockEl) return;
+
+        this._dragHandleBlock = blockEl;
+
+        // Position the handle at the left of the block, vertically centered
+        const blockRect = blockEl.getBoundingClientRect();
+        const editorAreaRect = this.editor._editorArea.getBoundingClientRect();
+
+        const handleTop = blockRect.top - editorAreaRect.top + (blockRect.height / 2) - 10; // center vertically (handle is 20px)
+        const handleLeft = blockRect.left - editorAreaRect.left - 24; // 24px to the left of the block
+
+        this._dragHandle.style.display = 'block';
+        this._dragHandle.style.top = `${handleTop}px`;
+        this._dragHandle.style.left = `${Math.max(0, handleLeft)}px`;
+    }
+
+    /**
+     * Handle mouseleave on the content area — hide drag handle.
+     *
+     * @param {MouseEvent} event
+     * @private
+     */
+    _handleContentMouseLeave(event) {
+        // Only hide if mouse is not entering the drag handle itself
+        if (event.relatedTarget === this._dragHandle) return;
+        this._hideDragHandle();
+    }
+
+    // =========================================================================
+    // Drag-Drop Visual Helpers
+    // =========================================================================
+
+    /**
+     * Show the drop cursor at a block boundary.
+     *
+     * @param {Element} blockEl - Reference block element
+     * @param {string} position - "above" or "below"
+     * @param {boolean} invalid - Whether this is an invalid drop position
+     * @private
+     */
+    _showDropCursor(blockEl, position, invalid) {
+        if (!this._dropCursor || !this.editor._editorArea) return;
+
+        const blockRect = blockEl.getBoundingClientRect();
+        const areaRect = this.editor._editorArea.getBoundingClientRect();
+
+        let cursorTop;
+        if (position === 'above') {
+            cursorTop = blockRect.top - areaRect.top;
+        } else {
+            cursorTop = blockRect.bottom - areaRect.top;
+        }
+
+        this._dropCursor.style.display = 'block';
+        this._dropCursor.style.top = `${cursorTop}px`;
+
+        if (invalid) {
+            this._dropCursor.classList.add('rte-drop-invalid');
+        } else {
+            this._dropCursor.classList.remove('rte-drop-invalid');
+        }
+    }
+
+    /**
+     * Hide the drop cursor.
+     * @private
+     */
+    _hideDropCursor() {
+        if (this._dropCursor) {
+            this._dropCursor.style.display = 'none';
+            this._dropCursor.classList.remove('rte-drop-invalid');
+        }
+    }
+
+    /**
+     * Hide the drag handle.
+     * @private
+     */
+    _hideDragHandle() {
+        if (this._dragHandle) {
+            this._dragHandle.style.display = 'none';
+        }
+        this._dragHandleBlock = null;
+    }
+
+    /**
+     * Clear all drag-related state.
+     * @private
+     */
+    _clearDragState() {
+        if (this._dragSource) {
+            this._dragSource.blockEl.classList.remove('rte-dragging');
+        }
+        this._dragSource = null;
+        this._dropTargetIndex = -1;
+    }
+
+    // =========================================================================
+    // Drag-Drop Position Helpers
+    // =========================================================================
+
+    /**
+     * Get the block index (in doc.children) for a DOM element.
+     *
+     * @param {Element} el - DOM element (must be a direct child of the content container)
+     * @returns {number} Block index, or -1 if not found
+     * @private
+     */
+    _getBlockIndexForElement(el) {
+        const container = this.editor._content;
+        if (!container) return -1;
+
+        const children = container.children;
+        for (let i = 0; i < children.length; i++) {
+            if (children[i] === el) return i;
+        }
+        return -1;
+    }
+
+    /**
+     * Get the model position where a block starts.
+     *
+     * @param {number} blockIndex - Index in doc.children
+     * @returns {number} Model position at start of block
+     * @private
+     */
+    _blockStartPos(blockIndex) {
+        const doc = this.editor._state.doc;
+        if (!doc.children) return 0;
+
+        let pos = 0;
+        for (let i = 0; i < blockIndex && i < doc.children.length; i++) {
+            pos += doc.children[i].nodeSize;
+        }
+        return pos;
+    }
+
+    /**
+     * Get the model position where a block ends.
+     *
+     * @param {number} blockIndex - Index in doc.children
+     * @returns {number} Model position at end of block
+     * @private
+     */
+    _blockEndPos(blockIndex) {
+        const doc = this.editor._state.doc;
+        if (!doc.children) return 0;
+
+        let pos = 0;
+        for (let i = 0; i <= blockIndex && i < doc.children.length; i++) {
+            pos += doc.children[i].nodeSize;
+        }
+        return pos;
+    }
+
+    // =========================================================================
     // Cleanup
     // =========================================================================
 
@@ -1208,8 +1715,35 @@ export default class ClipboardPlugin {
             textarea.removeEventListener('cut', this._onCut);
             textarea.removeEventListener('paste', this._onPaste);
         }
+
+        // Clean up drag-drop listeners
+        const content = this.editor._content;
+        if (content) {
+            content.removeEventListener('dragover', this._onDragOver);
+            content.removeEventListener('drop', this._onDrop);
+            content.removeEventListener('dragend', this._onDragEnd);
+            content.removeEventListener('dragleave', this._onDragLeave);
+            content.removeEventListener('mousemove', this._onContentMouseMove);
+            content.removeEventListener('mouseleave', this._onContentMouseLeave);
+        }
+
+        // Clean up drag handle
+        if (this._dragHandle) {
+            this._dragHandle.removeEventListener('dragstart', this._onHandleDragStart);
+            if (this._dragHandle.parentNode) {
+                this._dragHandle.parentNode.removeChild(this._dragHandle);
+            }
+        }
+
+        // Clean up drop cursor
+        if (this._dropCursor && this._dropCursor.parentNode) {
+            this._dropCursor.parentNode.removeChild(this._dropCursor);
+        }
+
         this.editor = null;
         this._sanitizer = null;
         this._pasteMatchers = [];
+        this._dragSource = null;
+        this._dragHandleBlock = null;
     }
 }

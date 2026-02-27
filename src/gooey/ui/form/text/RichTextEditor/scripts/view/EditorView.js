@@ -244,6 +244,69 @@ export default class EditorView {
     }
 
     /**
+     * Find the block element and model index at given pixel coordinates.
+     *
+     * Walks the content container's direct children and uses
+     * getBoundingClientRect() to determine which block the y coordinate
+     * falls within, or between.
+     *
+     * @param {number} x - Pixel x coordinate
+     * @param {number} y - Pixel y coordinate
+     * @returns {{ blockIndex: number, blockEl: Element, position: string }|null}
+     *   blockIndex: index in doc.children, blockEl: DOM element,
+     *   position: "above" or "below" relative to the block midpoint
+     */
+    blockAtCoords(x, y) {
+        const children = this.container.children;
+        if (children.length === 0) return null;
+
+        for (let i = 0; i < children.length; i++) {
+            const child = children[i];
+            const rect = child.getBoundingClientRect();
+
+            // Check if y is within this block's bounds
+            if (y >= rect.top && y <= rect.bottom) {
+                const midpoint = rect.top + rect.height / 2;
+                return {
+                    blockIndex: i,
+                    blockEl: child,
+                    position: y < midpoint ? 'above' : 'below'
+                };
+            }
+
+            // Check if y is between this block and the previous one
+            if (i > 0) {
+                const prevRect = children[i - 1].getBoundingClientRect();
+                if (y > prevRect.bottom && y < rect.top) {
+                    return {
+                        blockIndex: i,
+                        blockEl: child,
+                        position: 'above'
+                    };
+                }
+            }
+        }
+
+        // Beyond the last block
+        const lastChild = children[children.length - 1];
+        const lastRect = lastChild.getBoundingClientRect();
+        if (y > lastRect.bottom) {
+            return {
+                blockIndex: children.length - 1,
+                blockEl: lastChild,
+                position: 'below'
+            };
+        }
+
+        // Above the first block
+        return {
+            blockIndex: 0,
+            blockEl: children[0],
+            position: 'above'
+        };
+    }
+
+    /**
      * Return the DOM element for a model node.
      *
      * @param {import('../model/Node.js').default} node - Model node
