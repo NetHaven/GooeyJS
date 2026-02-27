@@ -579,6 +579,97 @@ export function toggleMark(markType, attrs) {
 
 
 /**
+ * Create a command that applies an attribute mark to the current selection.
+ *
+ * Unlike toggleMark which removes the mark if active, setMark always
+ * applies/replaces the mark with the given attributes. This is the
+ * correct semantic for color, fontSize, fontFamily marks where the
+ * user is selecting a new value, not toggling on/off.
+ *
+ * If selection is empty (cursor): adds/replaces the mark in stored marks.
+ * If selection has a range: removes any existing mark of the same type,
+ * then adds the new mark with the given attributes.
+ *
+ * Can-execute: returns true if the mark type exists in the schema.
+ *
+ * @param {string} markType - Mark type name (e.g., "textColor", "fontSize")
+ * @param {object} attrs - Mark attributes (e.g., { color: '#FF0000' })
+ * @returns {function(state, dispatch): boolean}
+ */
+export function setMark(markType, attrs) {
+    return function (state, dispatch) {
+        // Check if mark type exists in schema
+        if (state.schema && !state.schema.marks[markType]) {
+            return false;
+        }
+
+        if (dispatch) {
+            const tr = state.transaction;
+            const { from, to, empty } = state.selection;
+            const mark = state.schema
+                ? state.schema.mark(markType, attrs)
+                : Mark.create(markType, attrs);
+
+            if (empty) {
+                // Cursor: replace in stored marks
+                const newMarks = state.marks.filter(m => m.type !== markType);
+                newMarks.push(mark);
+                tr.setStoredMarks(newMarks);
+            } else {
+                // Range: remove existing mark of same type, then add new one
+                tr.removeMark(from, to, Mark.create(markType));
+                tr.addMark(from, to, mark);
+            }
+
+            dispatch(tr);
+        }
+        return true;
+    };
+}
+
+
+/**
+ * Command for Mod-K link toggle.
+ *
+ * If the link mark is active on the selection: removes the link (unlink).
+ * If the link mark is NOT active: returns true from can-execute but does
+ * NOT dispatch. The actual link creation requires a dialog (URL input),
+ * which must be handled by the RichTextEditor component.
+ *
+ * @param {object} state - EditorState
+ * @param {function|null} dispatch - Dispatch function or null for can-execute check
+ * @returns {boolean}
+ */
+export function toggleLink(state, dispatch) {
+    // Check if link mark type exists in schema
+    if (state.schema && !state.schema.marks['link']) {
+        return false;
+    }
+
+    const { from, to, empty } = state.selection;
+    const isActive = markActive(state, 'link');
+
+    if (isActive && !empty) {
+        // Link is active on selection range: remove it (unlink)
+        if (dispatch) {
+            const tr = state.transaction;
+            tr.removeMark(from, to, Mark.create('link'));
+            dispatch(tr);
+        }
+        return true;
+    }
+
+    if (isActive && empty) {
+        // Cursor inside a link: signal can-execute (component handles dialog)
+        return true;
+    }
+
+    // Link NOT active: signal can-execute for dialog handling by component
+    return true;
+}
+
+
+/**
  * Command that removes all marks from the current selection.
  *
  * If the selection is empty (cursor), clears all stored marks.
