@@ -134,6 +134,16 @@ export default class InputHandler {
     }
 
     /**
+     * Replace the entire keymap with a new one.
+     * Used by RichTextEditor._rebuildKeymap() after plugin register/unregister.
+     *
+     * @param {object} newKeymap - New keymap object
+     */
+    updateKeymap(newKeymap) {
+        this.keymap = newKeymap || {};
+    }
+
+    /**
      * Set disabled state.
      * @param {boolean} disabled
      */

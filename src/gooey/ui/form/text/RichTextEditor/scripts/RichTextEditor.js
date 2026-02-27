@@ -9,16 +9,13 @@ import Schema from './model/Schema.js';
 import Node, { Mark } from './model/Node.js';
 import { Selection } from './model/Position.js';
 import EditorState from './state/EditorState.js';
-import { baseKeymap, keymap, insertText, toggleMark, setMark, toggleLink, clearFormatting, markActive, getActiveMarks, setBlockType, heading, paragraph, wrapInBlockquote, toggleCodeBlock, insertHorizontalRule, setAlignment, increaseIndent, decreaseIndent, setLineHeight, toggleBulletList, toggleOrderedList, toggleChecklist, listIndent, listOutdent, splitListItem, liftListItem, chainCommands, splitBlock, deleteBackward, _isInTable } from './state/Commands.js';
+import { baseKeymap, keymap, toggleMark, setMark, clearFormatting, markActive, getActiveMarks, setBlockType, heading, paragraph, wrapInBlockquote, toggleCodeBlock, insertHorizontalRule, setAlignment, increaseIndent, decreaseIndent, setLineHeight, toggleBulletList, toggleOrderedList, toggleChecklist, listIndent, listOutdent, _isInTable } from './state/Commands.js';
 import EditorView from './view/EditorView.js';
 import InputHandler from './view/InputHandler.js';
 import SelectionManager from './view/SelectionManager.js';
-import HistoryPlugin, { historyKeymap } from './plugins/HistoryPlugin.js';
-import ClipboardPlugin from './plugins/ClipboardPlugin.js';
-import SearchPlugin from './plugins/SearchPlugin.js';
-import TablePlugin from './plugins/table/TablePlugin.js';
+import PluginManager from './plugins/PluginManager.js';
+import { DEFAULT_PLUGINS } from './plugins/DefaultPlugins.js';
 import { insertTable as insertTableCmd, addRowBefore as addRowBeforeCmd, addRowAfter as addRowAfterCmd, addColumnBefore as addColumnBeforeCmd, addColumnAfter as addColumnAfterCmd, deleteRow as deleteRowCmd, deleteColumn as deleteColumnCmd, deleteTable as deleteTableCmd, mergeCells as mergeCellsCmd, splitCell as splitCellCmd, toggleHeaderRow as toggleHeaderRowCmd, toggleHeaderColumn as toggleHeaderColumnCmd } from './commands/TableCommands.js';
-import ImagePlugin from './plugins/media/ImagePlugin.js';
 import { insertImage as insertImageCmd, insertVideo as insertVideoCmd, insertEmbed as insertEmbedCmd, setMediaAlignment as setMediaAlignmentCmd, setImageAlt as setImageAltCmd, setImageCaption as setImageCaptionCmd, updateMediaAttrs as updateMediaAttrsCmd, deleteMedia as deleteMediaCmd, _findMediaNodeAtPos } from './commands/MediaCommands.js';
 
 /**
@@ -121,73 +118,38 @@ export default class RichTextEditor extends TextElement {
         // Create initial EditorState
         this._state = EditorState.create(this._schema, null);
 
-        // Create HistoryPlugin
-        this._history = new HistoryPlugin();
+        // Create PluginManager and load all default plugins
+        this._pluginManager = new PluginManager(this);
 
-        // Create ClipboardPlugin (needs editor reference for clipboard events)
-        this._clipboard = new ClipboardPlugin(this);
+        // Determine which plugins to disable from config
+        const disableList = this._config.disablePlugins || [];
 
-        // Create SearchPlugin (needs editor reference for panel and decorations)
-        this._search = new SearchPlugin(this);
+        // Load all default plugins
+        this._pluginManager.loadPlugins(DEFAULT_PLUGINS, disableList);
 
-        // Create TablePlugin (needs view for cell navigation)
-        this._tablePlugin = new TablePlugin(null); // view not yet created, set later
+        // Get references to specific plugins for backward-compatible API
+        this._history = this._pluginManager.getPlugin('history');
+        this._clipboard = this._pluginManager.getPlugin('clipboard');
+        this._search = this._pluginManager.getPlugin('search');
+        this._tablePlugin = this._pluginManager.getPlugin('table');
+        this._imagePlugin = this._pluginManager.getPlugin('image');
 
-        // Create ImagePlugin (drag-drop, paste, resize, alignment popover)
-        this._imagePlugin = new ImagePlugin(this);
-
-        // Build the resolved keymap (platform-aware Mod- resolution)
-        // Merge history keymap (Mod-z, Mod-Shift-z, Mod-y) with base keymap
+        // Build the resolved keymap from plugin contributions + baseKeymap
+        const pluginKeymaps = this._pluginManager.collectKeymaps();
         const resolvedKeymap = keymap({
             ...baseKeymap,
-            // Inline formatting
-            'Mod-b': toggleMark('bold'),
-            'Mod-i': toggleMark('italic'),
-            'Mod-u': toggleMark('underline'),
-            'Mod-Shift-s': toggleMark('strikethrough'),
-            'Mod-e': toggleMark('code'),
-            'Mod-\\': clearFormatting,
-            'Mod-k': (state, dispatch) => this._handleLinkCommand(state, dispatch),
-            // Block type commands
-            'Mod-Alt-0': paragraph,
-            'Mod-Alt-1': heading(1),
-            'Mod-Alt-2': heading(2),
-            'Mod-Alt-3': heading(3),
-            'Mod-Alt-4': heading(4),
-            'Mod-Alt-5': heading(5),
-            'Mod-Alt-6': heading(6),
-            'Mod-Shift-B': wrapInBlockquote,
-            // Indentation
-            'Mod-]': increaseIndent,
-            'Mod-[': decreaseIndent,
-            // List commands
-            'Mod-Shift-8': toggleBulletList,
-            'Mod-Shift-7': toggleOrderedList,
-            // Clipboard: paste as plain text
-            'Mod-Shift-v': (state, dispatch) => this._clipboard.pasteAsPlainText(state, dispatch),
-            // Search: find and replace
-            'Mod-f': (state, dispatch) => { this._search.open('find'); return true; },
-            'Mod-h': (state, dispatch) => { this._search.open('replace'); return true; },
-            // Context-sensitive overrides for list editing
-            'Tab': chainCommands(
-                (s, d) => this._tablePlugin.moveToNextCell(s, d),
-                listIndent,
-                insertText("  ")
-            ),
-            'Shift-Tab': chainCommands(
-                (s, d) => this._tablePlugin.moveToPrevCell(s, d),
-                listOutdent
-            ),
-            'Enter': chainCommands(splitListItem, splitBlock),
-            'Backspace': chainCommands(liftListItem, deleteBackward),
-            ...historyKeymap(this._history)
+            ...pluginKeymaps,
+            // Editor-level override: Mod-k uses _handleLinkCommand for dialog
+            'Mod-k': (state, dispatch) => this._handleLinkCommand(state, dispatch)
         });
 
         // Create EditorView
         this._view = new EditorView(this._content, this._state, this._schema);
 
         // Wire TablePlugin view reference (needed for cell navigation)
-        this._tablePlugin._view = this._view;
+        if (this._tablePlugin) {
+            this._tablePlugin._view = this._view;
+        }
 
         // Create InputHandler
         this._inputHandler = new InputHandler(this._inputSink, this._view, resolvedKeymap);
@@ -244,15 +206,9 @@ export default class RichTextEditor extends TextElement {
             super.disconnectedCallback();
         }
 
-        // Clean up plugins
-        if (this._clipboard) {
-            this._clipboard.destroy();
-        }
-        if (this._search) {
-            this._search.destroy();
-        }
-        if (this._imagePlugin) {
-            this._imagePlugin.destroy();
+        // Clean up all plugins via PluginManager
+        if (this._pluginManager) {
+            this._pluginManager.destroy();
         }
 
         // Clean up view layer
@@ -1128,6 +1084,69 @@ export default class RichTextEditor extends TextElement {
     }
 
     // =========================================================================
+    // Plugin API
+    // =========================================================================
+
+    /**
+     * Register a plugin at runtime.
+     * Triggers a keymap rebuild so the new plugin's bindings take effect.
+     *
+     * @param {Function} PluginClass - Plugin class to register
+     * @returns {object|null} Plugin instance, or null on failure
+     */
+    registerPlugin(PluginClass) {
+        const plugin = this._pluginManager.registerPlugin(PluginClass);
+        if (plugin) {
+            this._rebuildKeymap();
+        }
+        return plugin;
+    }
+
+    /**
+     * Unregister a plugin by name.
+     * Triggers a keymap rebuild to remove the plugin's bindings.
+     *
+     * @param {string} name - Plugin name
+     * @returns {boolean} true if the plugin was found and removed
+     */
+    unregisterPlugin(name) {
+        const result = this._pluginManager.unregisterPlugin(name);
+        if (result) {
+            this._rebuildKeymap();
+        }
+        return result;
+    }
+
+    /**
+     * Get a registered plugin by name.
+     *
+     * @param {string} name - Plugin name
+     * @returns {object|null} Plugin instance or null
+     */
+    getPlugin(name) {
+        return this._pluginManager.getPlugin(name);
+    }
+
+    /**
+     * Rebuild keymap from current active plugins.
+     * Called after plugin register/unregister to update key bindings.
+     *
+     * @private
+     */
+    _rebuildKeymap() {
+        const pluginKeymaps = this._pluginManager.collectKeymaps();
+        const resolvedKeymap = keymap({
+            ...baseKeymap,
+            ...pluginKeymaps,
+            // Editor-level override: Mod-k uses _handleLinkCommand for dialog
+            'Mod-k': (state, dispatch) => this._handleLinkCommand(state, dispatch)
+        });
+        if (this._inputHandler) {
+            this._inputHandler.updateKeymap(resolvedKeymap);
+        }
+    }
+
+    // =========================================================================
     // Dispatch
     // =========================================================================
 
@@ -1144,6 +1163,11 @@ export default class RichTextEditor extends TextElement {
      * @private
      */
     _dispatch(tr) {
+        // Run plugin transaction filters (skip for forced states like undo/redo)
+        if (!tr._forceState) {
+            tr = this._pluginManager.runFilterTransaction(tr, this._state);
+        }
+
         const oldState = this._state;
 
         if (tr._forceState) {
@@ -1176,10 +1200,8 @@ export default class RichTextEditor extends TextElement {
             }
         }
 
-        // Notify search plugin of state change (for live match recalculation)
-        if (this._search) {
-            this._search.stateDidUpdate();
-        }
+        // Run plugin stateDidUpdate hooks (replaces direct search plugin notification)
+        this._pluginManager.runStateDidUpdate(this._state, oldState);
 
         // Fire events
         this.fireEvent(RichTextEditorEvent.MODEL_CHANGED, {
