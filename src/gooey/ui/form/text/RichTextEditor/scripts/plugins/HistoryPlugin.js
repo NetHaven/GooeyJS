@@ -11,6 +11,12 @@
 export default class HistoryPlugin {
 
     /**
+     * Unique plugin name for registry identification.
+     * @returns {string}
+     */
+    static get pluginName() { return 'history'; }
+
+    /**
      * @param {object} [options]
      * @param {number} [options.batchDelay=500] - Delay in ms for batching edits
      * @param {number} [options.maxDepth=100] - Maximum undo stack size
@@ -179,6 +185,53 @@ export default class HistoryPlugin {
         while (this._undoStack.length > n) {
             this._undoStack.shift();
         }
+    }
+
+    // =========================================================================
+    // Plugin interface methods
+    // =========================================================================
+
+    /**
+     * Initialize the plugin with the editor instance.
+     * Called by PluginManager after construction.
+     *
+     * @param {object} editor - RichTextEditor instance
+     */
+    init(editor) {
+        this._editor = editor;
+    }
+
+    /**
+     * Return keybindings for undo/redo.
+     *
+     * @returns {object} Keymap bindings
+     */
+    keymap() {
+        return {
+            'Mod-z': undoCommand(this),
+            'Mod-Shift-z': redoCommand(this),
+            'Mod-y': redoCommand(this)
+        };
+    }
+
+    /**
+     * Return toolbar item descriptors for undo/redo buttons.
+     *
+     * @returns {Array<object>}
+     */
+    toolbarItems() {
+        return [
+            { name: 'undo', type: 'button', command: undoCommand(this), isEnabled: () => this.canUndo(), label: 'Undo', icon: 'undo' },
+            { name: 'redo', type: 'button', command: redoCommand(this), isEnabled: () => this.canRedo(), label: 'Redo', icon: 'redo' }
+        ];
+    }
+
+    /**
+     * Clean up history state and editor reference.
+     */
+    destroy() {
+        this.clear();
+        this._editor = null;
     }
 }
 

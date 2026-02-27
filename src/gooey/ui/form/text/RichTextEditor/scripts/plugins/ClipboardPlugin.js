@@ -692,11 +692,17 @@ export class GoogleDocsPasteMatcher {
 export default class ClipboardPlugin {
 
     /**
-     * @param {import('../RichTextEditor.js').default} editor - RichTextEditor instance
+     * Unique plugin name for registry identification.
+     * @returns {string}
+     */
+    static get pluginName() { return 'clipboard'; }
+
+    /**
+     * @param {import('../RichTextEditor.js').default} [editor] - RichTextEditor instance (optional for PluginManager path)
      */
     constructor(editor) {
         /** @type {import('../RichTextEditor.js').default} */
-        this.editor = editor;
+        this.editor = editor || null;
 
         /** @type {Sanitizer} */
         this._sanitizer = new Sanitizer();
@@ -716,6 +722,65 @@ export default class ClipboardPlugin {
             new GoogleDocsPasteMatcher()
         ];
 
+        // If editor provided via constructor (backward-compatible path), set up immediately
+        if (this.editor) {
+            this._setupClipboardListeners();
+            this._setupDragDrop();
+        }
+    }
+
+    // =========================================================================
+    // Plugin interface methods
+    // =========================================================================
+
+    /**
+     * Initialize the plugin with the editor instance.
+     * Called by PluginManager after construction.
+     * No-op if already initialized via constructor.
+     *
+     * @param {object} editor - RichTextEditor instance
+     */
+    init(editor) {
+        if (this.editor) return; // Already initialized via constructor
+        this.editor = editor;
+        this._setupClipboardListeners();
+        this._setupDragDrop();
+    }
+
+    /**
+     * Return keybindings for clipboard operations.
+     *
+     * @returns {object} Keymap bindings
+     */
+    keymap() {
+        return {
+            'Mod-Shift-v': (state, dispatch) => this.pasteAsPlainText(state, dispatch)
+        };
+    }
+
+    /**
+     * Return context menu item descriptors for clipboard operations.
+     *
+     * @param {object} context - Menu context
+     * @returns {Array<object>}
+     */
+    contextMenuItems(context) {
+        return [
+            { name: 'cut', label: 'Cut', command: () => document.execCommand('cut'), group: 'clipboard', order: 1 },
+            { name: 'copy', label: 'Copy', command: () => document.execCommand('copy'), group: 'clipboard', order: 2 },
+            { name: 'paste', label: 'Paste', command: () => document.execCommand('paste'), group: 'clipboard', order: 3 }
+        ];
+    }
+
+    // =========================================================================
+    // Setup helpers
+    // =========================================================================
+
+    /**
+     * Attach clipboard event listeners to the textarea input sink.
+     * @private
+     */
+    _setupClipboardListeners() {
         // Load custom paste rules from editor config (prepend for priority)
         if (this.editor._config && this.editor._config.pasteRules) {
             for (const rule of this.editor._config.pasteRules) {
@@ -735,11 +800,13 @@ export default class ClipboardPlugin {
             textarea.addEventListener('cut', this._onCut);
             textarea.addEventListener('paste', this._onPaste);
         }
+    }
 
-        // =====================================================================
-        // Drag-drop setup
-        // =====================================================================
-
+    /**
+     * Set up drag-drop elements and event listeners.
+     * @private
+     */
+    _setupDragDrop() {
         /** @type {{ blockEl: Element, blockIndex: number }|null} */
         this._dragSource = null;
 
@@ -753,7 +820,7 @@ export default class ClipboardPlugin {
         // Create drag handle element
         this._dragHandle = document.createElement('div');
         this._dragHandle.className = 'rte-drag-handle';
-        this._dragHandle.textContent = '\u22EE\u22EE'; // ⋮⋮
+        this._dragHandle.textContent = '\u22EE\u22EE'; // double vertical ellipsis
         this._dragHandle.setAttribute('draggable', 'true');
         this._dragHandle.setAttribute('aria-label', 'Drag to reorder');
         if (this.editor._editorArea) {
