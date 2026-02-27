@@ -114,6 +114,83 @@
     border-color: var(--gooey-rte-toolbar-btn-hover-border, var(--gooey-color-border));
 }
 
+.rte-tb-dropdown:disabled {
+    opacity: var(--gooey-opacity-disabled, 0.5);
+    cursor: not-allowed;
+}
+
+.rte-tb-dropdown:focus {
+    outline: 2px solid var(--gooey-color-focus, #0078d4);
+    outline-offset: -1px;
+}
+
+.rte-tb-dropdown-wrapper {
+    display: inline-flex;
+    position: relative;
+    align-items: center;
+}
+
+.rte-tb-color-btn {
+    flex-direction: column;
+    padding: 2px;
+    height: auto;
+    min-height: 28px;
+}
+
+.rte-color-indicator {
+    height: 3px;
+    width: 16px;
+    margin-top: 1px;
+    display: block;
+    border-radius: 1px;
+    flex-shrink: 0;
+}
+
+.rte-color-popover {
+    position: absolute;
+    z-index: 20;
+    top: 100%;
+    left: 0;
+    display: none;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 2px;
+    padding: 8px;
+    background: var(--gooey-rte-toolbar-bg, var(--gooey-color-surface));
+    border: 1px solid var(--gooey-rte-toolbar-border-color, var(--gooey-color-border));
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.rte-color-swatch {
+    width: 20px;
+    height: 20px;
+    border: 1px solid var(--gooey-rte-toolbar-border-color, var(--gooey-color-border));
+    border-radius: 2px;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+.rte-color-swatch:hover {
+    outline: 2px solid var(--gooey-color-primary, #0078d4);
+    outline-offset: -1px;
+}
+
+.rte-color-custom {
+    grid-column: 1 / -1;
+    margin-top: 4px;
+    display: flex;
+    justify-content: center;
+}
+
+.rte-color-input {
+    width: 100%;
+    height: 24px;
+    border: 1px solid var(--gooey-rte-toolbar-border-color, var(--gooey-color-border));
+    border-radius: 2px;
+    cursor: pointer;
+    padding: 0;
+}
+
 :host([disabled]) .rte-toolbar-container {
     opacity: 0.5;
     pointer-events: none;
