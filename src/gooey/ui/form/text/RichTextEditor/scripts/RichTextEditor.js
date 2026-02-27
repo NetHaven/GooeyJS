@@ -9,7 +9,7 @@ import Schema from './model/Schema.js';
 import Node, { Mark } from './model/Node.js';
 import { Selection } from './model/Position.js';
 import EditorState from './state/EditorState.js';
-import { baseKeymap, keymap, insertText, toggleMark, clearFormatting } from './state/Commands.js';
+import { baseKeymap, keymap, insertText, toggleMark, setMark, toggleLink, clearFormatting, markActive, getActiveMarks } from './state/Commands.js';
 import EditorView from './view/EditorView.js';
 import InputHandler from './view/InputHandler.js';
 import SelectionManager from './view/SelectionManager.js';
@@ -127,6 +127,7 @@ export default class RichTextEditor extends TextElement {
             'Mod-Shift-s': toggleMark('strikethrough'),
             'Mod-e': toggleMark('code'),
             'Mod-\\': clearFormatting,
+            'Mod-k': (state, dispatch) => this._handleLinkCommand(state, dispatch),
             ...historyKeymap(this._history)
         });
 
@@ -303,6 +304,76 @@ export default class RichTextEditor extends TextElement {
     }
 
     // =========================================================================
+    // Formatting API
+    // =========================================================================
+
+    /**
+     * Apply a mark to the current selection.
+     *
+     * For simple marks (no attrs): toggles the mark on/off.
+     * For attribute marks (attrs provided): applies/replaces the mark.
+     *
+     * @param {string} markType - Mark type name (e.g., "bold", "textColor")
+     * @param {object} [attrs] - Optional mark attributes (e.g., { color: '#FF0000' })
+     * @returns {boolean} Whether the command executed successfully
+     */
+    formatText(markType, attrs) {
+        if (attrs) {
+            return setMark(markType, attrs)(this._state, (tr) => this._dispatch(tr));
+        }
+        return toggleMark(markType)(this._state, (tr) => this._dispatch(tr));
+    }
+
+    /**
+     * Remove mark(s) from the current selection.
+     *
+     * If markType is provided: removes that specific mark type.
+     * If markType is null/undefined: removes ALL marks (clear formatting).
+     *
+     * @param {string} [markType] - Optional mark type to remove
+     * @returns {boolean} Whether the command executed successfully
+     */
+    removeFormat(markType) {
+        if (markType) {
+            const { from, to, empty } = this._state.selection;
+            if (empty) {
+                // Cursor: remove from stored marks
+                const tr = this._state.transaction;
+                const newMarks = this._state.marks.filter(m => m.type !== markType);
+                tr.setStoredMarks(newMarks);
+                this._dispatch(tr);
+                return true;
+            }
+            // Range: remove mark from range
+            const tr = this._state.transaction;
+            tr.removeMark(from, to, Mark.create(markType));
+            this._dispatch(tr);
+            return true;
+        }
+        // No markType: clear all formatting
+        return clearFormatting(this._state, (tr) => this._dispatch(tr));
+    }
+
+    /**
+     * Check if a mark is active at the current selection/cursor.
+     *
+     * @param {string} markType - Mark type name (e.g., "bold", "link")
+     * @returns {boolean}
+     */
+    isMarkActive(markType) {
+        return markActive(this._state, markType);
+    }
+
+    /**
+     * Get all active marks at the current selection/cursor.
+     *
+     * @returns {object[]} Array of active mark objects
+     */
+    getActiveMarks() {
+        return getActiveMarks(this._state);
+    }
+
+    // =========================================================================
     // History (undo/redo)
     // =========================================================================
 
@@ -434,9 +505,85 @@ export default class RichTextEditor extends TextElement {
             this.fireEvent(RichTextEditorEvent.TEXT_CURSOR_MOVE, {
                 value: this.value,
                 anchor: this._state.selection.anchor,
-                head: this._state.selection.head
+                head: this._state.selection.head,
+                marks: getActiveMarks(this._state)
             });
         }
+    }
+
+    // =========================================================================
+    // Link handling
+    // =========================================================================
+
+    /**
+     * Handle the Mod-K link command.
+     *
+     * If link is active on selection: removes the link (unlink).
+     * If no selection (cursor): prompts for URL and link text, inserts linked text.
+     * If selection exists without link: prompts for URL, wraps selection in link.
+     *
+     * @param {object} state - EditorState
+     * @param {function} dispatch - Dispatch function
+     * @returns {boolean}
+     * @private
+     */
+    _handleLinkCommand(state, dispatch) {
+        const { from, to, empty } = state.selection;
+        const isActive = markActive(state, 'link');
+
+        if (isActive && !empty) {
+            // Unlink: remove link mark from selection range
+            if (dispatch) {
+                const tr = state.transaction;
+                tr.removeMark(from, to, Mark.create('link'));
+                dispatch(tr);
+            }
+            return true;
+        }
+
+        if (isActive && empty) {
+            // Cursor inside a link -- for now, treat as unlink is not possible
+            // without knowing the link boundaries. Return false.
+            return false;
+        }
+
+        // Link NOT active -- prompt for URL
+        const url = window.prompt('Enter URL:');
+        if (url === null) return false; // User cancelled
+
+        // XSS prevention: reject dangerous URL schemes
+        const trimmedUrl = url.trim().toLowerCase();
+        if (trimmedUrl.startsWith('javascript:') ||
+            trimmedUrl.startsWith('vbscript:') ||
+            trimmedUrl.startsWith('data:text/html')) {
+            window.alert('Invalid URL scheme');
+            return false;
+        }
+
+        if (empty) {
+            // No selection: prompt for link text, insert linked text
+            const text = window.prompt('Enter link text:', url);
+            if (text === null || text.length === 0) return false;
+
+            if (dispatch) {
+                const tr = state.transaction;
+                const linkMark = Mark.create('link', { href: url, title: null, target: null });
+                tr.insertText(text, from);
+                tr.addMark(from, from + text.length, linkMark);
+                tr.setSelection(Selection.cursor(from + text.length));
+                dispatch(tr);
+            }
+            return true;
+        }
+
+        // Selection exists: wrap in link
+        if (dispatch) {
+            const tr = state.transaction;
+            const linkMark = Mark.create('link', { href: url, title: null, target: null });
+            tr.addMark(from, to, linkMark);
+            dispatch(tr);
+        }
+        return true;
     }
 
     // =========================================================================
