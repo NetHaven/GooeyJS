@@ -1484,6 +1484,169 @@ export default class RichTextEditor extends TextElement {
     }
 
     // =========================================================================
+    // Toolbar API
+    // =========================================================================
+
+    /**
+     * Get the toolbar mode.
+     * @returns {string} "full", "none", or an element ID
+     */
+    get toolbar() {
+        return this.getAttribute('toolbar') || 'full';
+    }
+
+    /**
+     * Set the toolbar mode.
+     * @param {string} val - "full", "none", or an element ID
+     */
+    set toolbar(val) {
+        if (val === null || val === undefined) {
+            this.removeAttribute('toolbar');
+        } else {
+            this.setAttribute('toolbar', val);
+        }
+    }
+
+    /**
+     * Get the group name for toolbar group binding.
+     * @returns {string|null}
+     */
+    get group() {
+        return this.getAttribute('group') || null;
+    }
+
+    /**
+     * Set the group name.
+     * @param {string|null} val
+     */
+    set group(val) {
+        if (val) {
+            this.setAttribute('group', val);
+        } else {
+            this.removeAttribute('group');
+        }
+    }
+
+    /**
+     * Get whether air mode (floating toolbar) is enabled.
+     * @returns {boolean}
+     */
+    get airMode() {
+        return this.hasAttribute('airmode');
+    }
+
+    /**
+     * Set air mode. When true and toolbar is "full", hides the internal toolbar.
+     * Floating toolbar implementation deferred to Plan 05.
+     * @param {boolean} val
+     */
+    set airMode(val) {
+        if (val) {
+            this.setAttribute('airmode', '');
+        } else {
+            this.removeAttribute('airmode');
+        }
+        this._syncAirMode();
+    }
+
+    /**
+     * Get spellcheck state.
+     * @returns {boolean}
+     */
+    get spellcheck() {
+        const val = this.getAttribute('spellcheck');
+        return val !== 'false';
+    }
+
+    /**
+     * Set spellcheck state. Forwarded to the input sink textarea.
+     * @param {boolean} val
+     */
+    set spellcheck(val) {
+        this.setAttribute('spellcheck', val ? 'true' : 'false');
+        this._syncSpellcheck();
+    }
+
+    /**
+     * Get autofocus state.
+     * @returns {boolean}
+     */
+    get autofocus() {
+        return this.hasAttribute('autofocus');
+    }
+
+    /**
+     * Set autofocus state.
+     * @param {boolean} val
+     */
+    set autofocus(val) {
+        if (val) {
+            this.setAttribute('autofocus', '');
+        } else {
+            this.removeAttribute('autofocus');
+        }
+    }
+
+    /**
+     * Register a custom toolbar item descriptor.
+     * Bound toolbars will re-render to include the item.
+     *
+     * @param {{ name: string, type: string, [key: string]: any }} descriptor
+     * @throws {Error} If descriptor lacks name or type
+     */
+    registerToolbarItem(descriptor) {
+        if (!descriptor || !descriptor.name || !descriptor.type) {
+            throw new Error('Toolbar item descriptor must have name and type');
+        }
+        this._customToolbarItems.set(descriptor.name, descriptor);
+        this.fireEvent(RichTextEditorEvent.MODEL_CHANGED, {
+            value: this.value,
+            state: this._state,
+            toolbarItemsChanged: true
+        });
+    }
+
+    /**
+     * Unregister a custom toolbar item by name.
+     *
+     * @param {string} name - Item name
+     * @returns {boolean} true if found and removed
+     */
+    unregisterToolbarItem(name) {
+        const removed = this._customToolbarItems.delete(name);
+        if (removed) {
+            this.fireEvent(RichTextEditorEvent.MODEL_CHANGED, {
+                value: this.value,
+                state: this._state,
+                toolbarItemsChanged: true
+            });
+        }
+        return removed;
+    }
+
+    /**
+     * Get all toolbar items (from plugins + custom registrations).
+     *
+     * @returns {Array} Array of toolbar item descriptors
+     */
+    getToolbarItems() {
+        const items = [];
+
+        // Collect from plugins
+        if (this._pluginManager) {
+            const pluginItems = this._pluginManager.collectToolbarItems();
+            items.push(...pluginItems);
+        }
+
+        // Merge custom items
+        for (const item of this._customToolbarItems.values()) {
+            items.push(item);
+        }
+
+        return items;
+    }
+
+    // =========================================================================
     // Plugin API
     // =========================================================================
 
@@ -1951,6 +2114,116 @@ export default class RichTextEditor extends TextElement {
 
         if (this._content) {
             this._content.setAttribute('aria-readonly', readOnly ? 'true' : 'false');
+        }
+    }
+
+    /**
+     * Set up toolbar based on the toolbar attribute value.
+     *
+     * - "full": creates an internal RTEToolbar element
+     * - "none": hides the toolbar area
+     * - other string: treats as element ID for external toolbar binding
+     *
+     * @private
+     */
+    _setupToolbar() {
+        const toolbarVal = this.getAttribute('toolbar') || 'full';
+
+        if (toolbarVal === 'none') {
+            // Hide toolbar slot area
+            if (this._toolbar) {
+                this._toolbar.style.display = 'none';
+            }
+            return;
+        }
+
+        if (toolbarVal === 'full') {
+            // Create internal toolbar if not already created
+            if (!this._internalToolbar && this._toolbar) {
+                this._toolbar.style.display = '';
+
+                // Create the toolbar element (will be available when dynamically loaded)
+                const tb = document.createElement('gooeyui-rte-toolbar');
+                tb.setAttribute('layout', 'full');
+                this._toolbar.appendChild(tb);
+                this._internalToolbar = tb;
+
+                // Bind toolbar to this editor
+                if (typeof tb._bindToEditor === 'function') {
+                    tb._bindToEditor(this);
+                } else {
+                    // Toolbar not yet upgraded (customElements.define pending).
+                    // Try binding after microtask.
+                    Promise.resolve().then(() => {
+                        if (typeof tb._bindToEditor === 'function') {
+                            tb._bindToEditor(this);
+                        }
+                    });
+                }
+
+                // Sync air mode visibility
+                this._syncAirMode();
+            }
+            return;
+        }
+
+        // Treat as element ID for external toolbar
+        const externalToolbar = document.getElementById(toolbarVal);
+        if (externalToolbar && typeof externalToolbar._bindToEditor === 'function') {
+            externalToolbar._bindToEditor(this);
+        } else {
+            // Deferred lookup
+            Promise.resolve().then(() => {
+                const deferred = document.getElementById(toolbarVal);
+                if (deferred && typeof deferred._bindToEditor === 'function') {
+                    deferred._bindToEditor(this);
+                }
+            });
+        }
+
+        // Hide internal toolbar area when using external
+        if (this._toolbar) {
+            this._toolbar.style.display = 'none';
+        }
+    }
+
+    /**
+     * Tear down the current toolbar setup.
+     * @private
+     */
+    _tearDownToolbar() {
+        if (this._internalToolbar) {
+            if (typeof this._internalToolbar._unbindFromEditor === 'function') {
+                this._internalToolbar._unbindFromEditor();
+            }
+            this._internalToolbar.remove();
+            this._internalToolbar = null;
+        }
+    }
+
+    /**
+     * Synchronize air mode visibility.
+     * When air mode is active and toolbar is "full", hide the internal toolbar.
+     * @private
+     */
+    _syncAirMode() {
+        if (this._internalToolbar) {
+            if (this.airMode) {
+                this._internalToolbar.style.display = 'none';
+            } else {
+                this._internalToolbar.style.display = '';
+            }
+        }
+    }
+
+    /**
+     * Synchronize spellcheck attribute to the input sink textarea.
+     * @private
+     */
+    _syncSpellcheck() {
+        if (this._inputSink) {
+            const val = this.getAttribute('spellcheck');
+            this._inputSink.setAttribute('spellcheck', val !== 'false' ? 'true' : 'false');
         }
     }
 

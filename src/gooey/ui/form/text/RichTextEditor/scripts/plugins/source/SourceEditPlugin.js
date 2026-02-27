@@ -160,21 +160,7 @@ export default class SourceEditPlugin {
         // Read HTML from textarea
         const html = this._sourceTextarea.value;
 
-        // Parse HTML back through the editor's parsing pipeline
-        // This normalizes/drops content that violates schema rules
-        if (typeof editor._parseHTML === "function") {
-            const doc = editor._parseHTML(html);
-            if (doc) {
-                const tr = editor._state.transaction;
-                // Replace entire document content
-                tr.replaceRange(0, editor._state.doc.contentSize, doc.children || []);
-                if (typeof editor._dispatch === "function") {
-                    editor._dispatch(tr);
-                }
-            }
-        }
-
-        // Hide textarea
+        // Hide textarea first
         this._sourceTextarea.style.display = "none";
 
         // Show WYSIWYG content area
@@ -190,6 +176,22 @@ export default class SourceEditPlugin {
         }
 
         this._isSourceMode = false;
+
+        // Use the editor's value setter which sanitizes input via _sanitizeInput
+        // before parsing into the document model
+        if (typeof editor.setHTML === "function") {
+            editor.setHTML(html);
+        } else if (typeof editor._parseHTML === "function") {
+            // Fallback: parse through editor pipeline (legacy path)
+            const doc = editor._parseHTML(html);
+            if (doc) {
+                const tr = editor._state.transaction;
+                tr.replaceRange(0, editor._state.doc.contentSize, doc.children || []);
+                if (typeof editor._dispatch === "function") {
+                    editor._dispatch(tr);
+                }
+            }
+        }
     }
 
     /**
