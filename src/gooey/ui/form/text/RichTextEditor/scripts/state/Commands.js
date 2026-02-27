@@ -1029,6 +1029,186 @@ export const paragraph = setBlockType("paragraph");
 
 
 // ============================================================================
+// Alignment, indentation, and line height commands
+// ============================================================================
+
+/**
+ * Iterate over all top-level blocks that overlap the current selection.
+ *
+ * @param {object} state - EditorState
+ * @param {function} callback - (block, blockPos, blockIndex) => void
+ * @private
+ */
+function _forEachBlockInSelection(state, callback) {
+    const { from, to } = state.selection;
+    const doc = state.doc;
+    if (!doc.children) return;
+
+    let accum = 0;
+    for (let i = 0; i < doc.children.length; i++) {
+        const child = doc.children[i];
+        const childEnd = accum + child.nodeSize;
+
+        if (childEnd > from && accum < to) {
+            callback(child, accum, i);
+        }
+
+        accum = childEnd;
+    }
+}
+
+
+/**
+ * Create a command that sets text alignment on blocks in the selection.
+ *
+ * @param {string|null} align - Alignment value ("left", "center", "right", "justify", or null to reset)
+ * @returns {function(state, dispatch): boolean}
+ */
+export function setAlignment(align) {
+    return function (state, dispatch) {
+        if (dispatch) {
+            const tr = state.transaction;
+            const { from, to } = state.selection;
+            const doc = state.doc;
+
+            if (!doc.children) return false;
+
+            // For single-block or multi-block selections, set alignment on all blocks
+            let accum = 0;
+            let posOffset = 0;
+            for (let i = 0; i < doc.children.length; i++) {
+                const child = doc.children[i];
+                const childEnd = accum + child.nodeSize;
+
+                if (childEnd > from && accum < to) {
+                    tr.setNodeAttrs(accum + posOffset, { align });
+                }
+
+                accum = childEnd;
+            }
+
+            dispatch(tr);
+        }
+        return true;
+    };
+}
+
+
+/**
+ * Command that increases the indentation of the current block(s).
+ * Maximum indent level is 10.
+ *
+ * @param {object} state - EditorState
+ * @param {function|null} dispatch - Dispatch function or null for can-execute check
+ * @returns {boolean}
+ */
+export function increaseIndent(state, dispatch) {
+    const { from } = state.selection;
+    const $from = state.doc.resolve(from);
+    const currentIndent = $from.parent.attrs.indent || 0;
+
+    if (currentIndent >= 10) return false;
+
+    if (dispatch) {
+        const tr = state.transaction;
+        const doc = state.doc;
+        const { to } = state.selection;
+
+        let accum = 0;
+        for (let i = 0; i < doc.children.length; i++) {
+            const child = doc.children[i];
+            const childEnd = accum + child.nodeSize;
+
+            if (childEnd > from && accum < to) {
+                const indent = (child.attrs.indent || 0) + 1;
+                if (indent <= 10) {
+                    tr.setNodeAttrs(accum, { indent });
+                }
+            }
+
+            accum = childEnd;
+        }
+
+        dispatch(tr);
+    }
+    return true;
+}
+
+
+/**
+ * Command that decreases the indentation of the current block(s).
+ * Minimum indent level is 0.
+ *
+ * @param {object} state - EditorState
+ * @param {function|null} dispatch - Dispatch function or null for can-execute check
+ * @returns {boolean}
+ */
+export function decreaseIndent(state, dispatch) {
+    const { from } = state.selection;
+    const $from = state.doc.resolve(from);
+    const currentIndent = $from.parent.attrs.indent || 0;
+
+    if (currentIndent <= 0) return false;
+
+    if (dispatch) {
+        const tr = state.transaction;
+        const doc = state.doc;
+        const { to } = state.selection;
+
+        let accum = 0;
+        for (let i = 0; i < doc.children.length; i++) {
+            const child = doc.children[i];
+            const childEnd = accum + child.nodeSize;
+
+            if (childEnd > from && accum < to) {
+                const indent = Math.max(0, (child.attrs.indent || 0) - 1);
+                tr.setNodeAttrs(accum, { indent });
+            }
+
+            accum = childEnd;
+        }
+
+        dispatch(tr);
+    }
+    return true;
+}
+
+
+/**
+ * Create a command that sets line height on blocks in the selection.
+ *
+ * @param {string|null} value - CSS line-height value (e.g., "1.5", "2") or null to reset
+ * @returns {function(state, dispatch): boolean}
+ */
+export function setLineHeight(value) {
+    return function (state, dispatch) {
+        if (dispatch) {
+            const tr = state.transaction;
+            const { from, to } = state.selection;
+            const doc = state.doc;
+
+            if (!doc.children) return false;
+
+            let accum = 0;
+            for (let i = 0; i < doc.children.length; i++) {
+                const child = doc.children[i];
+                const childEnd = accum + child.nodeSize;
+
+                if (childEnd > from && accum < to) {
+                    tr.setNodeAttrs(accum, { lineHeight: value });
+                }
+
+                accum = childEnd;
+            }
+
+            dispatch(tr);
+        }
+        return true;
+    };
+}
+
+
+// ============================================================================
 // Helper utilities
 // ============================================================================
 

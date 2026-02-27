@@ -368,18 +368,40 @@ export default class Schema {
                 paragraph: {
                     content: "inline*",
                     group: "block",
-                    toDOM: () => ["p", {}, 0]
+                    attrs: {
+                        align: { default: null },
+                        indent: { default: 0 },
+                        lineHeight: { default: null }
+                    },
+                    toDOM: (node) => {
+                        const style = _buildBlockStyle(node.attrs);
+                        return ["p", style ? { style } : {}, 0];
+                    }
                 },
                 heading: {
                     content: "inline*",
                     group: "block",
-                    attrs: { level: { default: 1 } },
-                    toDOM: (node) => [`h${node.attrs.level}`, {}, 0]
+                    attrs: {
+                        level: { default: 1 },
+                        align: { default: null },
+                        indent: { default: 0 },
+                        lineHeight: { default: null }
+                    },
+                    toDOM: (node) => {
+                        const style = _buildBlockStyle(node.attrs);
+                        return [`h${node.attrs.level}`, style ? { style } : {}, 0];
+                    }
                 },
                 blockquote: {
                     content: "block+",
                     group: "block",
-                    toDOM: () => ["blockquote", {}, 0]
+                    attrs: {
+                        align: { default: null }
+                    },
+                    toDOM: (node) => {
+                        const style = _buildBlockStyle(node.attrs);
+                        return ["blockquote", style ? { style } : {}, 0];
+                    }
                 },
                 bulletList: {
                     content: "listItem+",
@@ -394,7 +416,14 @@ export default class Schema {
                 },
                 listItem: {
                     content: "block+",
-                    toDOM: () => ["li", {}, 0]
+                    attrs: {
+                        align: { default: null },
+                        indent: { default: 0 }
+                    },
+                    toDOM: (node) => {
+                        const style = _buildBlockStyle(node.attrs);
+                        return ["li", style ? { style } : {}, 0];
+                    }
                 },
                 codeBlock: {
                     content: "text*",
@@ -522,4 +551,33 @@ export default class Schema {
             }
         });
     }
+}
+
+
+// ============================================================================
+// Block style helper
+// ============================================================================
+
+/**
+ * Build a CSS style string from block attributes.
+ *
+ * @param {object} attrs - Block node attributes
+ * @returns {string|null} CSS style string, or null if no styles needed
+ */
+function _buildBlockStyle(attrs) {
+    const parts = [];
+
+    if (attrs.align && attrs.align !== null) {
+        parts.push(`text-align: ${attrs.align}`);
+    }
+
+    if (attrs.indent && attrs.indent > 0) {
+        parts.push(`margin-left: ${attrs.indent * 40}px`);
+    }
+
+    if (attrs.lineHeight && attrs.lineHeight !== null) {
+        parts.push(`line-height: ${attrs.lineHeight}`);
+    }
+
+    return parts.length > 0 ? parts.join("; ") : null;
 }
