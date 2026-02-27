@@ -5,7 +5,10 @@ import { Selection } from "../model/Position.js";
  * as positioned overlays within the .rte-selection layer.
  *
  * It also handles mouse-based selection by listening to mousedown/
- * mousemove/mouseup on the content container.
+ * mousemove/mouseup on the content container, including:
+ * - Single click: position cursor
+ * - Double-click: select word
+ * - Triple-click: select paragraph (entire block)
  *
  * This is a plain class (not a web component).
  */
@@ -33,6 +36,15 @@ export default class SelectionManager {
 
         /** @type {number|null} Anchor position during mouse selection */
         this._mouseAnchor = null;
+
+        /** @type {number} Click count for double/triple-click detection */
+        this._clickCount = 0;
+
+        /** @type {number} Timestamp of the last mousedown */
+        this._lastClickTime = 0;
+
+        /** @type {{ x: number, y: number }|null} Position of last mousedown */
+        this._lastClickPos = null;
 
         // Bound handlers for cleanup
         this._onMouseDown = this._handleMouseDown.bind(this);
@@ -229,6 +241,9 @@ export default class SelectionManager {
     /**
      * Handle mousedown on the content container.
      *
+     * Tracks click count for double-click (word select) and
+     * triple-click (paragraph select) detection.
+     *
      * @param {MouseEvent} event
      * @private
      */
@@ -236,9 +251,39 @@ export default class SelectionManager {
         // Only handle left button
         if (event.button !== 0) return;
 
+        const now = Date.now();
         const pos = this.view.posAtCoords({ left: event.clientX, top: event.clientY });
         if (pos === null) return;
 
+        // Detect multi-clicks: within 500ms and 5px of last click
+        if (this._lastClickPos &&
+            (now - this._lastClickTime) < 500 &&
+            Math.abs(event.clientX - this._lastClickPos.x) < 5 &&
+            Math.abs(event.clientY - this._lastClickPos.y) < 5) {
+            this._clickCount++;
+        } else {
+            this._clickCount = 1;
+        }
+
+        this._lastClickTime = now;
+        this._lastClickPos = { x: event.clientX, y: event.clientY };
+
+        // Route to appropriate handler based on click count
+        if (this._clickCount === 3) {
+            // Triple-click: select paragraph
+            this._selectParagraph(pos);
+            event.preventDefault();
+            return;
+        }
+
+        if (this._clickCount === 2) {
+            // Double-click: select word
+            this._selectWord(pos);
+            event.preventDefault();
+            return;
+        }
+
+        // Single click: position cursor and start drag selection
         this._selecting = true;
         this._mouseAnchor = pos;
 
@@ -289,5 +334,107 @@ export default class SelectionManager {
 
         document.removeEventListener("mousemove", this._onMouseMove);
         document.removeEventListener("mouseup", this._onMouseUp);
+    }
+
+    // =========================================================================
+    // Word and paragraph selection
+    // =========================================================================
+
+    /**
+     * Select the word at the given document position (double-click).
+     *
+     * Scans backward and forward from the position to find word
+     * boundaries using \w for word characters.
+     *
+     * @param {number} pos - Document position
+     * @private
+     */
+    _selectWord(pos) {
+        const doc = this.view.state.doc;
+        let $pos;
+
+        try {
+            $pos = doc.resolve(pos);
+        } catch (e) {
+            return; // Invalid position
+        }
+
+        const parent = $pos.parent;
+        if (!parent || parent.type === "document") return;
+
+        const blockText = parent.textContent;
+        const offset = $pos.parentOffset;
+        const blockStart = pos - offset;
+
+        if (blockText.length === 0) return;
+
+        // Clamp offset to valid range
+        const safeOffset = Math.min(offset, blockText.length);
+
+        // Find word boundaries
+        let wordStart = safeOffset;
+        let wordEnd = safeOffset;
+
+        // Scan backward to find word start
+        while (wordStart > 0 && /\w/.test(blockText[wordStart - 1])) {
+            wordStart--;
+        }
+
+        // Scan forward to find word end
+        while (wordEnd < blockText.length && /\w/.test(blockText[wordEnd])) {
+            wordEnd++;
+        }
+
+        // If no word characters found at position, select the non-word character
+        if (wordStart === wordEnd) {
+            if (safeOffset < blockText.length) {
+                wordEnd = safeOffset + 1;
+                wordStart = safeOffset;
+            } else if (safeOffset > 0) {
+                wordStart = safeOffset - 1;
+                wordEnd = safeOffset;
+            }
+        }
+
+        // Dispatch selection
+        if (this.view.dispatch) {
+            const tr = this.view.state.transaction;
+            tr.setSelection(Selection.between(blockStart + wordStart, blockStart + wordEnd));
+            this.view.dispatch(tr);
+        }
+    }
+
+    /**
+     * Select the entire paragraph/block at the given position (triple-click).
+     *
+     * Finds the parent block node and creates a selection spanning
+     * the entire block content.
+     *
+     * @param {number} pos - Document position
+     * @private
+     */
+    _selectParagraph(pos) {
+        const doc = this.view.state.doc;
+        let $pos;
+
+        try {
+            $pos = doc.resolve(pos);
+        } catch (e) {
+            return; // Invalid position
+        }
+
+        const parent = $pos.parent;
+        if (!parent || parent.type === "document") return;
+
+        const offset = $pos.parentOffset;
+        const blockStart = pos - offset;
+        const blockEnd = blockStart + parent.contentSize;
+
+        // Dispatch selection spanning entire block content
+        if (this.view.dispatch) {
+            const tr = this.view.state.transaction;
+            tr.setSelection(Selection.between(blockStart, blockEnd));
+            this.view.dispatch(tr);
+        }
     }
 }

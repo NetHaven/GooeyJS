@@ -1,5 +1,15 @@
-import { insertText } from "../state/Commands.js";
+import { insertText, extendSelection } from "../state/Commands.js";
 import { Selection } from "../model/Position.js";
+
+/**
+ * Set of navigation keys that support Shift-selection extension.
+ * When Shift is held with these keys, the base command is wrapped
+ * with extendSelection to extend the selection instead of collapsing it.
+ */
+const NAVIGATION_KEYS = new Set([
+    "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown",
+    "Home", "End"
+]);
 
 /**
  * InputHandler manages the hidden textarea that captures keyboard input.
@@ -94,6 +104,28 @@ export default class InputHandler {
     }
 
     /**
+     * Add a key binding dynamically.
+     *
+     * Used by EditorView to add arrow up/down commands that need
+     * the view reference for coordinate mapping.
+     *
+     * @param {string} key - Key string (e.g., "ArrowUp")
+     * @param {function} command - Command function (state, dispatch) => boolean
+     */
+    addKeyBinding(key, command) {
+        this.keymap[key] = command;
+    }
+
+    /**
+     * Remove a key binding.
+     *
+     * @param {string} key - Key string to remove
+     */
+    removeKeyBinding(key) {
+        delete this.keymap[key];
+    }
+
+    /**
      * Set disabled state.
      * @param {boolean} disabled
      */
@@ -145,6 +177,10 @@ export default class InputHandler {
     /**
      * Handle keydown events. Match against keymap and dispatch commands.
      *
+     * Shift+navigation keys are handled specially: the base movement
+     * command is wrapped with extendSelection to extend the selection
+     * instead of collapsing it.
+     *
      * @param {KeyboardEvent} event
      * @private
      */
@@ -153,6 +189,39 @@ export default class InputHandler {
 
         // During composition, let the IME handle keys
         if (this._composing) return;
+
+        // Handle Tab key for indentation
+        if (event.key === "Tab" && !event.shiftKey && !this._readOnly) {
+            event.preventDefault();
+            this._dispatchInsertText("  ");
+            this.textarea.value = "";
+            return;
+        }
+
+        // Handle Shift+navigation keys for selection extension
+        if (event.shiftKey && NAVIGATION_KEYS.has(event.key)) {
+            // Build the key string WITHOUT the Shift modifier
+            // to find the base navigation command
+            const baseKeyStr = this._buildBaseKeyString(event);
+            const baseCommand = this.keymap[baseKeyStr];
+
+            if (baseCommand) {
+                const wrappedCommand = extendSelection(baseCommand);
+                const state = this.view.state;
+                const dispatch = (tr) => {
+                    if (this.view.dispatch) {
+                        this.view.dispatch(tr);
+                    }
+                };
+
+                const handled = wrappedCommand(state, dispatch);
+                if (handled) {
+                    event.preventDefault();
+                    this.textarea.value = "";
+                    return;
+                }
+            }
+        }
 
         const keyStr = this._buildKeyString(event);
         const command = this.keymap[keyStr];
@@ -259,6 +328,9 @@ export default class InputHandler {
     /**
      * Dispatch an insertText command for the given text.
      *
+     * If the editor state has stored marks, they are applied to the
+     * inserted text range after insertion.
+     *
      * @param {string} text
      * @private
      */
@@ -266,10 +338,34 @@ export default class InputHandler {
         if (!this.view || !this.view.dispatch) return;
 
         const state = this.view.state;
-        const cmd = insertText(text);
-        cmd(state, (tr) => {
+        const storedMarks = state.marks;
+
+        if (storedMarks && storedMarks.length > 0) {
+            // Insert text with stored marks applied
+            const { from, to } = state.selection;
+            const tr = state.transaction;
+
+            // Delete selection range first if not empty
+            if (from !== to) {
+                tr.deleteRange(from, to);
+            }
+
+            tr.insertText(text, from);
+            // Apply stored marks to the inserted text range
+            for (const mark of storedMarks) {
+                tr.addMark(from, from + text.length, mark);
+            }
+            tr.setSelection(Selection.cursor(from + text.length));
+            // Clear stored marks after applying
+            tr.setStoredMarks([]);
+
             this.view.dispatch(tr);
-        });
+        } else {
+            const cmd = insertText(text);
+            cmd(state, (tr) => {
+                this.view.dispatch(tr);
+            });
+        }
     }
 
     /**
@@ -313,6 +409,34 @@ export default class InputHandler {
         // We need to check both. Return the Mod- version first as that's
         // the canonical form used by baseKeymap.
         return keyStr;
+    }
+
+    /**
+     * Build a key string for a navigation key WITHOUT the Shift modifier.
+     *
+     * Used when Shift is held with a navigation key to find the base
+     * movement command (which will then be wrapped with extendSelection).
+     *
+     * @param {KeyboardEvent} event
+     * @returns {string}
+     * @private
+     */
+    _buildBaseKeyString(event) {
+        const parts = [];
+        const isMac = InputHandler._isMac();
+
+        // Include modifiers EXCEPT Shift
+        if (event.ctrlKey && !isMac) parts.push("Ctrl");
+        if (event.metaKey && isMac) parts.push("Ctrl");
+        if (event.altKey) parts.push("Alt");
+
+        let key = event.key;
+        if (key.length === 1) {
+            key = key.toLowerCase();
+        }
+
+        parts.push(key);
+        return parts.join("-");
     }
 
     /**
