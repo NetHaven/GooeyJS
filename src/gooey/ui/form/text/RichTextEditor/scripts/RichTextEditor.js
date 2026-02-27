@@ -9,7 +9,7 @@ import Schema from './model/Schema.js';
 import Node, { Mark } from './model/Node.js';
 import { Selection } from './model/Position.js';
 import EditorState from './state/EditorState.js';
-import { baseKeymap, keymap, insertText, toggleMark, setMark, toggleLink, clearFormatting, markActive, getActiveMarks, setBlockType, heading, paragraph, wrapInBlockquote, toggleCodeBlock, insertHorizontalRule } from './state/Commands.js';
+import { baseKeymap, keymap, insertText, toggleMark, setMark, toggleLink, clearFormatting, markActive, getActiveMarks, setBlockType, heading, paragraph, wrapInBlockquote, toggleCodeBlock, insertHorizontalRule, setAlignment, increaseIndent, decreaseIndent, setLineHeight } from './state/Commands.js';
 import EditorView from './view/EditorView.js';
 import InputHandler from './view/InputHandler.js';
 import SelectionManager from './view/SelectionManager.js';
@@ -138,6 +138,9 @@ export default class RichTextEditor extends TextElement {
             'Mod-Alt-5': heading(5),
             'Mod-Alt-6': heading(6),
             'Mod-Shift-B': wrapInBlockquote,
+            // Indentation
+            'Mod-]': increaseIndent,
+            'Mod-[': decreaseIndent,
             ...historyKeymap(this._history)
         });
 
@@ -470,6 +473,99 @@ export default class RichTextEditor extends TextElement {
     }
 
     // =========================================================================
+    // Alignment, Indentation & Line Height API
+    // =========================================================================
+
+    /**
+     * Set text alignment on the current block.
+     *
+     * @param {string|null} align - "left", "center", "right", "justify", or null to reset
+     * @returns {boolean} Whether the command executed successfully
+     */
+    setAlignment(align) {
+        return setAlignment(align)(this._state, (tr) => this._dispatch(tr));
+    }
+
+    /**
+     * Get the current block's text alignment.
+     *
+     * @returns {string} Alignment value ("left" if not set)
+     */
+    getAlignment() {
+        const { from } = this._state.selection;
+        const $from = this._state.doc.resolve(from);
+        return $from.parent.attrs.align || "left";
+    }
+
+    /**
+     * Set the indent level on the current block.
+     *
+     * @param {number} level - Indent level (>= 0)
+     * @returns {boolean} Whether the command executed successfully
+     */
+    setIndent(level) {
+        if (level < 0) return false;
+        const { from } = this._state.selection;
+        const blockInfo = this._findBlockInfo(from);
+        if (!blockInfo) return false;
+
+        const tr = this._state.transaction;
+        tr.setNodeAttrs(blockInfo.blockPos, { indent: level });
+        this._dispatch(tr);
+        return true;
+    }
+
+    /**
+     * Get the current block's indent level.
+     *
+     * @returns {number} Indent level (default 0)
+     */
+    getIndent() {
+        const { from } = this._state.selection;
+        const $from = this._state.doc.resolve(from);
+        return $from.parent.attrs.indent || 0;
+    }
+
+    /**
+     * Increase the indentation of the current block.
+     *
+     * @returns {boolean} Whether the command executed successfully
+     */
+    increaseIndent() {
+        return increaseIndent(this._state, (tr) => this._dispatch(tr));
+    }
+
+    /**
+     * Decrease the indentation of the current block.
+     *
+     * @returns {boolean} Whether the command executed successfully
+     */
+    decreaseIndent() {
+        return decreaseIndent(this._state, (tr) => this._dispatch(tr));
+    }
+
+    /**
+     * Set line height on the current block.
+     *
+     * @param {string|null} value - CSS line-height value (e.g., "1.5", "2") or null to reset
+     * @returns {boolean} Whether the command executed successfully
+     */
+    setLineHeight(value) {
+        return setLineHeight(value)(this._state, (tr) => this._dispatch(tr));
+    }
+
+    /**
+     * Get the current block's line height.
+     *
+     * @returns {string|null} Line height value or null
+     */
+    getLineHeight() {
+        const { from } = this._state.selection;
+        const $from = this._state.doc.resolve(from);
+        return $from.parent.attrs.lineHeight || null;
+    }
+
+    // =========================================================================
     // History (undo/redo)
     // =========================================================================
 
@@ -599,13 +695,17 @@ export default class RichTextEditor extends TextElement {
         // Track selection changes
         if (!oldState.selection.eq(this._state.selection)) {
             const $head = this._state.doc.resolve(this._state.selection.head);
+            const parentAttrs = $head.parent.attrs;
             this.fireEvent(RichTextEditorEvent.TEXT_CURSOR_MOVE, {
                 value: this.value,
                 anchor: this._state.selection.anchor,
                 head: this._state.selection.head,
                 marks: getActiveMarks(this._state),
                 blockType: $head.parent.type,
-                blockAttrs: { ...$head.parent.attrs }
+                blockAttrs: { ...parentAttrs },
+                align: parentAttrs.align || "left",
+                indent: parentAttrs.indent || 0,
+                lineHeight: parentAttrs.lineHeight || null
             });
         }
     }
@@ -760,6 +860,33 @@ export default class RichTextEditor extends TextElement {
             });
             this._previousValue = this.value;
         }
+    }
+
+    // =========================================================================
+    // Internal helpers
+    // =========================================================================
+
+    /**
+     * Find the top-level block info for a given position.
+     *
+     * @param {number} pos - Position in the document
+     * @returns {{ blockIndex: number, blockPos: number }|null}
+     * @private
+     */
+    _findBlockInfo(pos) {
+        const doc = this._state.doc;
+        if (!doc.children) return null;
+
+        let accum = 0;
+        for (let i = 0; i < doc.children.length; i++) {
+            const child = doc.children[i];
+            const childEnd = accum + child.nodeSize;
+            if (pos >= accum && pos <= childEnd) {
+                return { blockIndex: i, blockPos: accum };
+            }
+            accum = childEnd;
+        }
+        return null;
     }
 
     // =========================================================================
