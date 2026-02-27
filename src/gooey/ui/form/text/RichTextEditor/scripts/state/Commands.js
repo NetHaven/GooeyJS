@@ -1209,6 +1209,115 @@ export function setLineHeight(value) {
 
 
 // ============================================================================
+// Table utilities
+// ============================================================================
+
+/**
+ * Check if the cursor is inside a table structure.
+ *
+ * Walks the document tree to find if the cursor position falls within
+ * a table > tableRow > tableCell hierarchy, returning full context
+ * about the table, row, and cell containing the cursor.
+ *
+ * @param {object} state - EditorState
+ * @returns {{ tablePos: number, tableIndex: number, rowPos: number, rowIndex: number, cellPos: number, cellIndex: number, tableNode: object, rowNode: object, cellNode: object }|null}
+ * @public
+ */
+export function _isInTable(state) {
+    const { from } = state.selection;
+    const doc = state.doc;
+    if (!doc.children) return null;
+
+    let accum = 0;
+    for (let i = 0; i < doc.children.length; i++) {
+        const child = doc.children[i];
+        const childEnd = accum + child.nodeSize;
+
+        if (from >= accum && from <= childEnd) {
+            if (child.type === "table") {
+                // Find the row containing the position
+                const rowInfo = _findRowInTable(child, from, accum);
+                if (!rowInfo) return null;
+
+                // Find the cell containing the position within the row
+                const cellInfo = _findCellInRow(rowInfo.node, from, rowInfo.pos);
+                if (!cellInfo) return null;
+
+                return {
+                    tablePos: accum,
+                    tableIndex: i,
+                    rowPos: rowInfo.pos,
+                    rowIndex: rowInfo.index,
+                    cellPos: cellInfo.pos,
+                    cellIndex: cellInfo.index,
+                    tableNode: child,
+                    rowNode: rowInfo.node,
+                    cellNode: cellInfo.node
+                };
+            }
+        }
+
+        accum = childEnd;
+    }
+    return null;
+}
+
+
+/**
+ * Find the table row containing a position within a table node.
+ *
+ * @param {object} tableNode - table node
+ * @param {number} pos - Document position
+ * @param {number} tableStart - Start position of the table in the document
+ * @returns {{ pos: number, index: number, node: object }|null}
+ * @private
+ */
+function _findRowInTable(tableNode, pos, tableStart) {
+    if (!tableNode.children) return null;
+
+    let accum = tableStart + 1; // +1 for table opening boundary
+    for (let i = 0; i < tableNode.children.length; i++) {
+        const row = tableNode.children[i];
+        const rowEnd = accum + row.nodeSize;
+
+        if (pos >= accum && pos <= rowEnd) {
+            return { pos: accum, index: i, node: row };
+        }
+
+        accum = rowEnd;
+    }
+    return null;
+}
+
+
+/**
+ * Find the table cell containing a position within a table row node.
+ *
+ * @param {object} rowNode - tableRow node
+ * @param {number} pos - Document position
+ * @param {number} rowStart - Start position of the row in the document
+ * @returns {{ pos: number, index: number, node: object }|null}
+ * @private
+ */
+function _findCellInRow(rowNode, pos, rowStart) {
+    if (!rowNode.children) return null;
+
+    let accum = rowStart + 1; // +1 for row opening boundary
+    for (let i = 0; i < rowNode.children.length; i++) {
+        const cell = rowNode.children[i];
+        const cellEnd = accum + cell.nodeSize;
+
+        if (pos >= accum && pos <= cellEnd) {
+            return { pos: accum, index: i, node: cell };
+        }
+
+        accum = cellEnd;
+    }
+    return null;
+}
+
+
+// ============================================================================
 // List commands
 // ============================================================================
 
