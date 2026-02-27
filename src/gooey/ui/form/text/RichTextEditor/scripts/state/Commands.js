@@ -1,5 +1,375 @@
-import { Mark } from "../model/Node.js";
+import Node, { Mark } from "../model/Node.js";
 import { Selection } from "../model/Position.js";
+
+
+// ============================================================================
+// Navigation commands
+// ============================================================================
+
+/**
+ * Move cursor one position to the left.
+ *
+ * If selection is not empty, collapses to the `from` side.
+ * If at position 0, returns false (cannot move further).
+ *
+ * @param {object} state - EditorState
+ * @param {function|null} dispatch - Dispatch function or null for can-execute check
+ * @returns {boolean}
+ */
+export function moveLeft(state, dispatch) {
+    const { from, empty, head } = state.selection;
+
+    if (!empty) {
+        // Collapse selection to the from (left) side
+        if (dispatch) {
+            const tr = state.transaction;
+            tr.setSelection(Selection.cursor(from));
+            dispatch(tr);
+        }
+        return true;
+    }
+
+    if (head <= 0) return false;
+
+    // Find the previous valid text position
+    const newPos = _findPrevTextPos(state.doc, head);
+    if (newPos === null || newPos === head) return false;
+
+    if (dispatch) {
+        const tr = state.transaction;
+        tr.setSelection(Selection.cursor(newPos));
+        dispatch(tr);
+    }
+    return true;
+}
+
+
+/**
+ * Move cursor one position to the right.
+ *
+ * If selection is not empty, collapses to the `to` side.
+ * If at end of document, returns false.
+ *
+ * @param {object} state - EditorState
+ * @param {function|null} dispatch - Dispatch function or null for can-execute check
+ * @returns {boolean}
+ */
+export function moveRight(state, dispatch) {
+    const { to, empty, head } = state.selection;
+
+    if (!empty) {
+        // Collapse selection to the to (right) side
+        if (dispatch) {
+            const tr = state.transaction;
+            tr.setSelection(Selection.cursor(to));
+            dispatch(tr);
+        }
+        return true;
+    }
+
+    const docSize = state.doc.contentSize;
+    if (head >= docSize) return false;
+
+    // Find the next valid text position
+    const newPos = _findNextTextPos(state.doc, head);
+    if (newPos === null || newPos === head) return false;
+
+    if (dispatch) {
+        const tr = state.transaction;
+        tr.setSelection(Selection.cursor(newPos));
+        dispatch(tr);
+    }
+    return true;
+}
+
+
+/**
+ * Factory: create a moveUp command that uses the view for coordinate mapping.
+ *
+ * @param {object} view - EditorView reference
+ * @returns {function(state, dispatch): boolean}
+ */
+export function moveUp(view) {
+    return function (state, dispatch) {
+        const { head } = state.selection;
+        const coords = view.coordsAtPos(head);
+        if (!coords) {
+            // Cannot determine coordinates — move to document start
+            if (dispatch) {
+                const tr = state.transaction;
+                const startPos = _firstTextPos(state.doc);
+                tr.setSelection(Selection.cursor(startPos));
+                dispatch(tr);
+            }
+            return true;
+        }
+
+        const lineHeight = coords.bottom - coords.top;
+        if (lineHeight <= 0) return false;
+
+        // Look one line up
+        const targetTop = coords.top - lineHeight;
+        const pos = view.posAtCoords({ left: coords.left, top: targetTop });
+
+        if (pos === null || pos === head) {
+            // No position above — move to document start
+            if (dispatch) {
+                const tr = state.transaction;
+                const startPos = _firstTextPos(state.doc);
+                tr.setSelection(Selection.cursor(startPos));
+                dispatch(tr);
+            }
+            return true;
+        }
+
+        if (dispatch) {
+            const tr = state.transaction;
+            tr.setSelection(Selection.cursor(pos));
+            dispatch(tr);
+        }
+        return true;
+    };
+}
+
+
+/**
+ * Factory: create a moveDown command that uses the view for coordinate mapping.
+ *
+ * @param {object} view - EditorView reference
+ * @returns {function(state, dispatch): boolean}
+ */
+export function moveDown(view) {
+    return function (state, dispatch) {
+        const { head } = state.selection;
+        const coords = view.coordsAtPos(head);
+        if (!coords) {
+            // Cannot determine coordinates — move to document end
+            if (dispatch) {
+                const tr = state.transaction;
+                tr.setSelection(Selection.cursor(state.doc.contentSize));
+                dispatch(tr);
+            }
+            return true;
+        }
+
+        const lineHeight = coords.bottom - coords.top;
+        if (lineHeight <= 0) return false;
+
+        // Look one line down
+        const targetTop = coords.bottom + 1;
+        const pos = view.posAtCoords({ left: coords.left, top: targetTop });
+
+        if (pos === null || pos === head) {
+            // No position below — move to document end
+            if (dispatch) {
+                const tr = state.transaction;
+                tr.setSelection(Selection.cursor(state.doc.contentSize));
+                dispatch(tr);
+            }
+            return true;
+        }
+
+        if (dispatch) {
+            const tr = state.transaction;
+            tr.setSelection(Selection.cursor(pos));
+            dispatch(tr);
+        }
+        return true;
+    };
+}
+
+
+/**
+ * Move cursor to the start of the current block (Home key).
+ *
+ * @param {object} state - EditorState
+ * @param {function|null} dispatch - Dispatch function or null for can-execute check
+ * @returns {boolean}
+ */
+export function moveToBlockStart(state, dispatch) {
+    const { head } = state.selection;
+    const $head = state.doc.resolve(head);
+
+    // Find the start of the parent block's content
+    const blockStart = head - $head.parentOffset;
+
+    if (blockStart === head) return false; // Already at start
+
+    if (dispatch) {
+        const tr = state.transaction;
+        tr.setSelection(Selection.cursor(blockStart));
+        dispatch(tr);
+    }
+    return true;
+}
+
+
+/**
+ * Move cursor to the end of the current block (End key).
+ *
+ * @param {object} state - EditorState
+ * @param {function|null} dispatch - Dispatch function or null for can-execute check
+ * @returns {boolean}
+ */
+export function moveToBlockEnd(state, dispatch) {
+    const { head } = state.selection;
+    const $head = state.doc.resolve(head);
+
+    // Find the end of the parent block's content
+    const blockEnd = head - $head.parentOffset + $head.parent.contentSize;
+
+    if (blockEnd === head) return false; // Already at end
+
+    if (dispatch) {
+        const tr = state.transaction;
+        tr.setSelection(Selection.cursor(blockEnd));
+        dispatch(tr);
+    }
+    return true;
+}
+
+
+/**
+ * Move cursor one word to the left (Ctrl+Left / Mod+Left).
+ *
+ * Scans backward from cursor: skips whitespace, then skips word characters,
+ * stopping at the word boundary. Stops at block boundaries.
+ *
+ * @param {object} state - EditorState
+ * @param {function|null} dispatch - Dispatch function or null for can-execute check
+ * @returns {boolean}
+ */
+export function moveWordLeft(state, dispatch) {
+    const { head } = state.selection;
+    const $head = state.doc.resolve(head);
+
+    // Get the text content of the parent block
+    const blockText = $head.parent.textContent;
+    const offset = $head.parentOffset;
+    const blockStart = head - offset;
+
+    if (offset === 0) {
+        // At start of block — try to move to previous block
+        return moveLeft(state, dispatch);
+    }
+
+    // Scan backward from offset
+    let pos = offset;
+
+    // Skip whitespace
+    while (pos > 0 && /\s/.test(blockText[pos - 1])) {
+        pos--;
+    }
+    // Skip word characters
+    while (pos > 0 && /\w/.test(blockText[pos - 1])) {
+        pos--;
+    }
+
+    // If we didn't move at all (e.g., at a punctuation char), move at least one
+    if (pos === offset && pos > 0) {
+        pos--;
+    }
+
+    const newPos = blockStart + pos;
+    if (newPos === head) return false;
+
+    if (dispatch) {
+        const tr = state.transaction;
+        tr.setSelection(Selection.cursor(newPos));
+        dispatch(tr);
+    }
+    return true;
+}
+
+
+/**
+ * Move cursor one word to the right (Ctrl+Right / Mod+Right).
+ *
+ * Scans forward from cursor: skips word characters, then skips whitespace,
+ * stopping at the next word boundary. Stops at block boundaries.
+ *
+ * @param {object} state - EditorState
+ * @param {function|null} dispatch - Dispatch function or null for can-execute check
+ * @returns {boolean}
+ */
+export function moveWordRight(state, dispatch) {
+    const { head } = state.selection;
+    const $head = state.doc.resolve(head);
+
+    // Get the text content of the parent block
+    const blockText = $head.parent.textContent;
+    const offset = $head.parentOffset;
+    const blockStart = head - offset;
+    const textLen = blockText.length;
+
+    if (offset >= textLen) {
+        // At end of block — try to move to next block
+        return moveRight(state, dispatch);
+    }
+
+    // Scan forward from offset
+    let pos = offset;
+
+    // Skip word characters
+    while (pos < textLen && /\w/.test(blockText[pos])) {
+        pos++;
+    }
+    // Skip whitespace
+    while (pos < textLen && /\s/.test(blockText[pos])) {
+        pos++;
+    }
+
+    // If we didn't move at all (e.g., at a punctuation char), move at least one
+    if (pos === offset && pos < textLen) {
+        pos++;
+    }
+
+    const newPos = blockStart + pos;
+    if (newPos === head) return false;
+
+    if (dispatch) {
+        const tr = state.transaction;
+        tr.setSelection(Selection.cursor(newPos));
+        dispatch(tr);
+    }
+    return true;
+}
+
+
+/**
+ * Higher-order function that wraps a movement command to extend
+ * the selection instead of collapsing it.
+ *
+ * Preserves the anchor and moves only the head.
+ *
+ * @param {function} moveCommand - A movement command (state, dispatch) => boolean
+ * @returns {function(state, dispatch): boolean}
+ */
+export function extendSelection(moveCommand) {
+    return function (state, dispatch) {
+        const { anchor } = state.selection;
+
+        // Create a probe dispatch to find where the movement would go
+        let targetHead = null;
+        const probeDispatch = (tr) => {
+            if (tr._selection) {
+                // The movement command set a selection — get its head
+                targetHead = tr._selection.head;
+            }
+        };
+
+        // Execute the command in probe mode to find the target position
+        const canExec = moveCommand(state, probeDispatch);
+        if (!canExec || targetHead === null) return false;
+
+        if (dispatch) {
+            const tr = state.transaction;
+            tr.setSelection(Selection.between(anchor, targetHead));
+            dispatch(tr);
+        }
+        return true;
+    };
+}
 
 
 // ============================================================================
@@ -64,8 +434,7 @@ export function deleteSelection(state, dispatch) {
  * Command for Backspace key.
  *
  * - If selection is not empty, deletes the selection.
- * - If at start of block, attempts to join with previous block
- *   (returns false for now — block operations added in Phase 36).
+ * - If at start of block, joins with the previous block.
  * - Otherwise, deletes one character before cursor.
  *
  * @param {object} state - EditorState
@@ -83,11 +452,11 @@ export function deleteBackward(state, dispatch) {
     // Check if at position where we can delete backward
     if (from <= 0) return false;
 
-    // Check if at start of block — would need block join (Phase 36)
+    // Check if at start of block — join with previous block
     const $from = state.doc.resolve(from);
     if ($from.parentOffset === 0) {
-        // At start of block content — block join not yet implemented
-        return false;
+        // At start of block content — join with previous block
+        return _joinBlockBackward(state, dispatch, from, $from);
     }
 
     if (dispatch) {
@@ -104,8 +473,7 @@ export function deleteBackward(state, dispatch) {
  * Command for Delete key.
  *
  * - If selection is not empty, deletes the selection.
- * - If at end of block, attempts to join with next block
- *   (returns false for now — block operations added in Phase 36).
+ * - If at end of block, joins with the next block.
  * - Otherwise, deletes one character after cursor.
  *
  * @param {object} state - EditorState
@@ -120,13 +488,13 @@ export function deleteForward(state, dispatch) {
 
     const { from } = state.selection;
 
-    // Check if at the end of document content
+    // Check if at the end of block content
     const $from = state.doc.resolve(from);
     const parentContentSize = $from.parent.contentSize;
 
     if ($from.parentOffset >= parentContentSize) {
-        // At end of block content — block join not yet implemented
-        return false;
+        // At end of block content — join with next block
+        return _joinBlockForward(state, dispatch, from, $from);
     }
 
     if (dispatch) {
@@ -382,12 +750,22 @@ export function keymap(bindings) {
 // ============================================================================
 
 /**
- * Base keymap with default keyboard bindings for foundation editing.
+ * Base keymap with default keyboard bindings for editing and navigation.
+ *
+ * Note: ArrowUp and ArrowDown are NOT included here because they require
+ * a view reference (coordinate mapping). They are added dynamically
+ * by the EditorView/InputHandler using moveUp(view) and moveDown(view).
  */
 export const baseKeymap = {
     "Backspace": deleteBackward,
     "Delete": deleteForward,
-    "Mod-a": selectAll
+    "Mod-a": selectAll,
+    "ArrowLeft": moveLeft,
+    "ArrowRight": moveRight,
+    "Home": moveToBlockStart,
+    "End": moveToBlockEnd,
+    "Mod-ArrowLeft": moveWordLeft,
+    "Mod-ArrowRight": moveWordRight
 };
 
 
@@ -509,4 +887,235 @@ function _isMac() {
  */
 function _normalizeKey(key, isMac) {
     return key.replace(/Mod-/g, isMac ? "Meta-" : "Ctrl-");
+}
+
+
+// ============================================================================
+// Block join helpers
+// ============================================================================
+
+/**
+ * Join current block with the previous block (Backspace at start of block).
+ *
+ * Finds the previous sibling block, appends current block's content to it,
+ * and removes the current block.
+ *
+ * @param {object} state - EditorState
+ * @param {function|null} dispatch - Dispatch function
+ * @param {number} from - Cursor position (start of current block content)
+ * @param {object} $from - Resolved position
+ * @returns {boolean}
+ */
+function _joinBlockBackward(state, dispatch, from, $from) {
+    const doc = state.doc;
+
+    // Find parent block in the document's child list
+    const blockInfo = _findBlockInDoc(doc, from);
+    if (!blockInfo) return false;
+
+    const { blockIndex, blockPos } = blockInfo;
+
+    // Need a previous block to join with
+    if (blockIndex <= 0) return false;
+
+    const prevBlock = doc.children[blockIndex - 1];
+    const currBlock = doc.children[blockIndex];
+
+    // Only join block-level containers (not text or leaf nodes)
+    if (prevBlock.children === null || currBlock.children === null) return false;
+
+    if (dispatch) {
+        const tr = state.transaction;
+
+        // Merge: combine children of both blocks into the previous block
+        const prevChildren = prevBlock.children || [];
+        const currChildren = currBlock.children || [];
+        const mergedChildren = [...prevChildren, ...currChildren];
+
+        // Create merged block (keep the previous block's type and attrs)
+        const mergedBlock = prevBlock.copy(mergedChildren);
+
+        // Replace both blocks with the merged one
+        const newDocChildren = [...doc.children];
+        newDocChildren.splice(blockIndex - 1, 2, mergedBlock);
+        const newDoc = doc.copy(newDocChildren);
+
+        // Calculate cursor position: end of previous block's content
+        // Position = previous block opening boundary + previous block content size
+        let cursorPos = 0;
+        for (let i = 0; i < blockIndex - 1; i++) {
+            cursorPos += doc.children[i].nodeSize;
+        }
+        cursorPos += 1 + prevBlock.contentSize; // +1 for opening boundary
+
+        // Build step manually: replace the entire document
+        // Use replaceRange with the boundaries between the two blocks
+        const prevBlockStart = blockPos - currBlock.nodeSize;
+        // Actually, we need to compute positions carefully.
+        // The boundary between blocks is: end of prev block to start of curr block content
+        // prev block ends at: prevBlockPos + prevBlock.nodeSize
+        // curr block starts at: prevBlockPos + prevBlock.nodeSize
+
+        // Simpler approach: rebuild with the transaction's replaceRange
+        // Delete from end of prev block's content to start of curr block's content
+        // This removes the closing tag of prev, the opening tag of curr = 2 positions
+        const deleteFrom = cursorPos; // end of prev block's content
+        const deleteTo = deleteFrom + 2; // skip closing of prev + opening of curr
+
+        tr.deleteRange(deleteFrom, deleteTo);
+        tr.setSelection(Selection.cursor(cursorPos));
+        dispatch(tr);
+    }
+    return true;
+}
+
+
+/**
+ * Join current block with the next block (Delete at end of block).
+ *
+ * Finds the next sibling block, appends its content to the current block,
+ * and removes the next block.
+ *
+ * @param {object} state - EditorState
+ * @param {function|null} dispatch - Dispatch function
+ * @param {number} from - Cursor position (end of current block content)
+ * @param {object} $from - Resolved position
+ * @returns {boolean}
+ */
+function _joinBlockForward(state, dispatch, from, $from) {
+    const doc = state.doc;
+
+    // Find the current block in the document's child list
+    const blockInfo = _findBlockInDoc(doc, from);
+    if (!blockInfo) return false;
+
+    const { blockIndex } = blockInfo;
+
+    // Need a next block to join with
+    if (blockIndex >= doc.children.length - 1) return false;
+
+    const currBlock = doc.children[blockIndex];
+    const nextBlock = doc.children[blockIndex + 1];
+
+    // Only join block-level containers
+    if (currBlock.children === null || nextBlock.children === null) return false;
+
+    if (dispatch) {
+        const tr = state.transaction;
+
+        // The boundary to delete is: closing tag of current block + opening tag of next block
+        // That's 2 positions starting at `from` (which is at end of current block's content)
+        const deleteFrom = from; // end of current block content
+        const deleteTo = from + 2; // closing of current + opening of next
+
+        tr.deleteRange(deleteFrom, deleteTo);
+        tr.setSelection(Selection.cursor(from));
+        dispatch(tr);
+    }
+    return true;
+}
+
+
+/**
+ * Find which top-level block a position belongs to.
+ *
+ * @param {object} doc - Document node
+ * @param {number} pos - Position within the document
+ * @returns {{ blockIndex: number, blockPos: number }|null}
+ */
+function _findBlockInDoc(doc, pos) {
+    if (!doc.children) return null;
+
+    let accum = 0;
+    for (let i = 0; i < doc.children.length; i++) {
+        const child = doc.children[i];
+        const childEnd = accum + child.nodeSize;
+
+        if (pos >= accum && pos <= childEnd) {
+            return { blockIndex: i, blockPos: accum };
+        }
+
+        accum = childEnd;
+    }
+    return null;
+}
+
+
+// ============================================================================
+// Navigation position helpers
+// ============================================================================
+
+/**
+ * Find the previous valid text position from a given position.
+ * Skips over block boundaries (the +2 positions for container open/close).
+ *
+ * @param {object} doc - Document node
+ * @param {number} pos - Current position
+ * @returns {number|null} Previous text position, or null if none
+ */
+function _findPrevTextPos(doc, pos) {
+    if (pos <= 0) return null;
+
+    // Try pos - 1 first
+    const candidate = pos - 1;
+    try {
+        const $candidate = doc.resolve(candidate);
+        // If resolving succeeds and position is within a text-containing block, it's valid
+        if ($candidate.parent.type !== "document") {
+            return candidate;
+        }
+        // Position is at a block boundary — skip to previous block's content end
+        // Go one more back
+        if (candidate > 0) {
+            return _findPrevTextPos(doc, candidate);
+        }
+    } catch (e) {
+        // Position out of range
+    }
+    return null;
+}
+
+
+/**
+ * Find the next valid text position from a given position.
+ * Skips over block boundaries.
+ *
+ * @param {object} doc - Document node
+ * @param {number} pos - Current position
+ * @returns {number|null} Next text position, or null if none
+ */
+function _findNextTextPos(doc, pos) {
+    const maxPos = doc.contentSize;
+    if (pos >= maxPos) return null;
+
+    const candidate = pos + 1;
+    if (candidate > maxPos) return null;
+
+    try {
+        const $candidate = doc.resolve(candidate);
+        if ($candidate.parent.type !== "document") {
+            return candidate;
+        }
+        // At a block boundary — skip forward
+        if (candidate < maxPos) {
+            return _findNextTextPos(doc, candidate);
+        }
+    } catch (e) {
+        // Position out of range
+    }
+    return null;
+}
+
+
+/**
+ * Find the first valid text position in the document.
+ *
+ * @param {object} doc - Document node
+ * @returns {number} First text position (usually 1, inside first block)
+ */
+function _firstTextPos(doc) {
+    if (doc.children && doc.children.length > 0) {
+        return 1; // After first block's opening boundary
+    }
+    return 0;
 }
