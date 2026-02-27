@@ -9,7 +9,7 @@ import Schema from './model/Schema.js';
 import Node, { Mark } from './model/Node.js';
 import { Selection } from './model/Position.js';
 import EditorState from './state/EditorState.js';
-import { baseKeymap, keymap, insertText, toggleMark, setMark, toggleLink, clearFormatting, markActive, getActiveMarks } from './state/Commands.js';
+import { baseKeymap, keymap, insertText, toggleMark, setMark, toggleLink, clearFormatting, markActive, getActiveMarks, setBlockType, heading, paragraph, wrapInBlockquote, toggleCodeBlock, insertHorizontalRule } from './state/Commands.js';
 import EditorView from './view/EditorView.js';
 import InputHandler from './view/InputHandler.js';
 import SelectionManager from './view/SelectionManager.js';
@@ -121,6 +121,7 @@ export default class RichTextEditor extends TextElement {
         // Merge history keymap (Mod-z, Mod-Shift-z, Mod-y) with base keymap
         const resolvedKeymap = keymap({
             ...baseKeymap,
+            // Inline formatting
             'Mod-b': toggleMark('bold'),
             'Mod-i': toggleMark('italic'),
             'Mod-u': toggleMark('underline'),
@@ -128,6 +129,15 @@ export default class RichTextEditor extends TextElement {
             'Mod-e': toggleMark('code'),
             'Mod-\\': clearFormatting,
             'Mod-k': (state, dispatch) => this._handleLinkCommand(state, dispatch),
+            // Block type commands
+            'Mod-Alt-0': paragraph,
+            'Mod-Alt-1': heading(1),
+            'Mod-Alt-2': heading(2),
+            'Mod-Alt-3': heading(3),
+            'Mod-Alt-4': heading(4),
+            'Mod-Alt-5': heading(5),
+            'Mod-Alt-6': heading(6),
+            'Mod-Shift-B': wrapInBlockquote,
             ...historyKeymap(this._history)
         });
 
@@ -374,6 +384,92 @@ export default class RichTextEditor extends TextElement {
     }
 
     // =========================================================================
+    // Block Type API
+    // =========================================================================
+
+    /**
+     * Change the block type of the current selection.
+     *
+     * @param {string} type - Block type name (e.g., "heading", "paragraph")
+     * @param {object} [attrs] - Optional attributes (e.g., { level: 2 })
+     * @returns {boolean} Whether the command executed successfully
+     */
+    setBlockType(type, attrs) {
+        return setBlockType(type, attrs)(this._state, (tr) => this._dispatch(tr));
+    }
+
+    /**
+     * Get the block type name at the current selection position.
+     *
+     * @returns {string} Block type name (e.g., "paragraph", "heading")
+     */
+    getBlockType() {
+        const { from } = this._state.selection;
+        const $from = this._state.doc.resolve(from);
+        return $from.parent.type;
+    }
+
+    /**
+     * Get the block attributes at the current selection position.
+     *
+     * @returns {object} Block attributes (e.g., { level: 2 } for heading)
+     */
+    getBlockAttrs() {
+        const { from } = this._state.selection;
+        const $from = this._state.doc.resolve(from);
+        return { ...$from.parent.attrs };
+    }
+
+    /**
+     * Insert a horizontal rule at the current cursor position.
+     *
+     * @returns {boolean} Whether the command executed successfully
+     */
+    insertHorizontalRule() {
+        return insertHorizontalRule(this._state, (tr) => this._dispatch(tr));
+    }
+
+    /**
+     * Toggle the current block between code block and paragraph.
+     *
+     * @param {string} [language] - Optional language for syntax highlighting
+     * @returns {boolean} Whether the command executed successfully
+     */
+    toggleCodeBlock(language) {
+        // If language is provided and we're converting to code block,
+        // we handle it by first toggling then setting language attr
+        const result = toggleCodeBlock(this._state, (tr) => this._dispatch(tr));
+        if (result && language && this.getBlockType() === "codeBlock") {
+            const tr = this._state.transaction;
+            const { from } = this._state.selection;
+            const blockInfo = this._state.doc.resolve(from);
+            // Find block pos and set language attr
+            const doc = this._state.doc;
+            let accum = 0;
+            for (let i = 0; i < doc.children.length; i++) {
+                const child = doc.children[i];
+                const childEnd = accum + child.nodeSize;
+                if (from >= accum && from <= childEnd) {
+                    tr.setNodeAttrs(accum, { language });
+                    this._dispatch(tr);
+                    break;
+                }
+                accum = childEnd;
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Toggle blockquote wrapping on the current block.
+     *
+     * @returns {boolean} Whether the command executed successfully
+     */
+    toggleBlockquote() {
+        return wrapInBlockquote(this._state, (tr) => this._dispatch(tr));
+    }
+
+    // =========================================================================
     // History (undo/redo)
     // =========================================================================
 
@@ -502,11 +598,14 @@ export default class RichTextEditor extends TextElement {
 
         // Track selection changes
         if (!oldState.selection.eq(this._state.selection)) {
+            const $head = this._state.doc.resolve(this._state.selection.head);
             this.fireEvent(RichTextEditorEvent.TEXT_CURSOR_MOVE, {
                 value: this.value,
                 anchor: this._state.selection.anchor,
                 head: this._state.selection.head,
-                marks: getActiveMarks(this._state)
+                marks: getActiveMarks(this._state),
+                blockType: $head.parent.type,
+                blockAttrs: { ...$head.parent.attrs }
             });
         }
     }
