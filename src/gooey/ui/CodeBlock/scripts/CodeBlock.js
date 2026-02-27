@@ -35,14 +35,6 @@ export default class CodeBlock extends UIComponent {
         this._tokenizer = null;
         this._tokenizerLanguage = null;
 
-        // Initialize attributes - defer setAttribute calls to connectedCallback
-        if (this.hasAttribute("language")) {
-            this.language = this.getAttribute("language");
-        }
-
-        // Visual state will be initialized in connectedCallback
-        // (Custom Elements spec prohibits setAttribute in constructor)
-
         // Register events
         this.addValidEvent(CodeBlockEvent.COPY);
         this.addValidEvent(CodeBlockEvent.HIGHLIGHT_ERROR);
@@ -104,20 +96,22 @@ export default class CodeBlock extends UIComponent {
      * Sets default attributes that couldn't be set in constructor.
      */
     connectedCallback() {
-        if (super.connectedCallback) {
-            super.connectedCallback();
-        }
+        super.connectedCallback?.();
 
-        // Set defaults for linenumbers and copybutton if not specified
-        if (!this.hasAttribute("linenumbers")) {
-            this.setAttribute("linenumbers", "true");
+        if (!this._codeBlockInit) {
+            this._codeBlockInit = true;
+            if (this.hasAttribute("language")) {
+                this.language = this.getAttribute("language");
+            }
+            if (!this.hasAttribute("linenumbers")) {
+                this.setAttribute("linenumbers", "true");
+            }
+            this._updateLineNumbersVisibility();
+            if (!this.hasAttribute("copybutton")) {
+                this.setAttribute("copybutton", "true");
+            }
+            this._updateCopyButtonVisibility();
         }
-        this._updateLineNumbersVisibility();
-
-        if (!this.hasAttribute("copybutton")) {
-            this.setAttribute("copybutton", "true");
-        }
-        this._updateCopyButtonVisibility();
     }
 
     /**

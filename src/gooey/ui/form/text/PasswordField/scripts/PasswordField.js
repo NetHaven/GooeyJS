@@ -73,20 +73,23 @@ export default class PasswordField extends TextElement {
             });
         });
 
-        if (this.hasAttribute("inputmode")) {
-            this.inputmode = this.getAttribute("inputmode");
-        }
+    }
 
-        if (this.hasAttribute("pattern")) {
-            this.textElement.setAttribute("pattern", this.getAttribute("pattern"));
+    connectedCallback() {
+        super.connectedCallback?.();
+        if (!this._passwordFieldInit) {
+            this._passwordFieldInit = true;
+            if (this.hasAttribute("inputmode")) {
+                this.inputmode = this.getAttribute("inputmode");
+            }
+            if (this.hasAttribute("pattern")) {
+                this.textElement.setAttribute("pattern", this.getAttribute("pattern"));
+            }
+            if (this.hasAttribute("size")) {
+                this.size = this.getAttribute("size");
+            }
+            this._updateRequiredIndicator();
         }
-
-        if (this.hasAttribute("size")) {
-            this.size = this.getAttribute("size");
-        }
-
-        // Update required indicator after form element is set up
-        this._updateRequiredIndicator();
     }
 
     get inputmode() {

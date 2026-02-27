@@ -7,21 +7,23 @@ export default class Application extends UIComponent {
 
         Template.activate("ui-Application", this.shadowRoot);
 
-        this.classList.add("ui-Application");
-        
-        // Application is the root container, set default full viewport dimensions
-        if (!this.hasAttribute("width")) {
-            this.style.width = "100vw";
+    }
+
+    connectedCallback() {
+        super.connectedCallback?.();
+        if (!this._applicationInit) {
+            this._applicationInit = true;
+            this.classList.add("ui-Application");
+            if (!this.hasAttribute("width")) {
+                this.style.width = "100vw";
+            }
+            if (!this.hasAttribute("height")) {
+                this.style.height = "100vh";
+            }
+            this.style.margin = "0";
+            this.style.padding = "0";
+            this.style.overflow = "hidden";
+            this.style.position = "relative";
         }
-        
-        if (!this.hasAttribute("height")) {
-            this.style.height = "100vh";
-        }
-        
-        // Set application-level styling
-        this.style.margin = "0";
-        this.style.padding = "0";
-        this.style.overflow = "hidden";
-        this.style.position = "relative";
     }
 }

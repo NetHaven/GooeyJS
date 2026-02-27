@@ -9,25 +9,10 @@ export default class Menu extends UIComponent {
         super();
 
         Template.activate("ui-Menu", this.shadowRoot);
-        this.visible = false;
 
         // Add valid events
         this.addValidEvent(MenuEvent.MENU_SHOW);
         this.addValidEvent(MenuEvent.MENU_HIDE);
-
-        if (this.hasAttribute("text")) {
-            this.text = this.getAttribute("text");
-        }
-
-        // Trigger text re-render for menu items to apply accelerator underlines.
-        // MenuItem._renderText() handles accelerator rendering with DOM nodes.
-        const allMenuItems = this.querySelectorAll("gooeyui-menuitem, gooeyui-checkboxmenuitem");
-        allMenuItems.forEach((menuItem) => {
-            const menuText = menuItem.getAttribute("text");
-            if (menuText) {
-                menuItem.text = menuText;
-            }
-        });
 
         // Bind the handler so it can be removed later
         this._handleKeyDown = this._handleKeyDown.bind(this);
@@ -35,6 +20,24 @@ export default class Menu extends UIComponent {
 
     connectedCallback() {
         super.connectedCallback?.();
+
+        if (!this._menuInit) {
+            this._menuInit = true;
+            if (!this.hasAttribute("visible")) {
+                this.visible = false;
+            }
+            if (this.hasAttribute("text")) {
+                this.text = this.getAttribute("text");
+            }
+            // Trigger text re-render for menu items to apply accelerator underlines.
+            const allMenuItems = this.querySelectorAll("gooeyui-menuitem, gooeyui-checkboxmenuitem");
+            allMenuItems.forEach((menuItem) => {
+                const menuText = menuItem.getAttribute("text");
+                if (menuText) {
+                    menuItem.text = menuText;
+                }
+            });
+        }
         document.addEventListener(KeyboardEvent.KEY_DOWN, this._handleKeyDown);
     }
 

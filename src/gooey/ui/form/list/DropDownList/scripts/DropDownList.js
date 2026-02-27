@@ -50,8 +50,15 @@ export default class DropDownList extends FormElement {
             });
         });
 
-        if (this.hasAttribute("disabled")) {
-            this.disabled = true;
+    }
+
+    connectedCallback() {
+        super.connectedCallback?.();
+        if (!this._dropDownListInit) {
+            this._dropDownListInit = true;
+            if (this.hasAttribute("disabled")) {
+                this.disabled = true;
+            }
         }
     }
 

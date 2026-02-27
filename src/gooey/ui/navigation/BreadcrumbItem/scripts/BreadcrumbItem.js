@@ -32,19 +32,22 @@ export default class BreadcrumbItem extends UIComponent {
         this._link = this.shadowRoot.querySelector(".breadcrumb-link");
         this._textElement = this.shadowRoot.querySelector(".breadcrumb-text");
 
-        // Set ARIA role
-        this.setAttribute("role", "listitem");
-
         // Bind methods
         this._handleClick = this._handleClick.bind(this);
         this._link.addEventListener("click", this._handleClick);
+    }
 
-        // Initialize attributes
-        this._applyText(this.text);
-        this._applyHref(this.href);
-        this._applyIcon(this.icon);
-        this._applyActive(this.active);
-        this._syncInteractiveState();
+    connectedCallback() {
+        super.connectedCallback?.();
+        if (!this._breadcrumbItemInit) {
+            this._breadcrumbItemInit = true;
+            this.setAttribute("role", "listitem");
+            this._applyText(this.text);
+            this._applyHref(this.href);
+            this._applyIcon(this.icon);
+            this._applyActive(this.active);
+            this._syncInteractiveState();
+        }
     }
 
     attributeChangedCallback(name, oldValue, newValue) {

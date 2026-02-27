@@ -9,11 +9,18 @@ export default class AppPanel extends Container {
         super();
 
         Template.activate("ui-AppPanel", this.shadowRoot);
-        this.layout = LayoutType.BORDER;
-        
-        // Handle formfactor attribute
-        if (this.hasAttribute("formfactor")) {
-            this.formfactor = this.getAttribute("formfactor");
+    }
+
+    connectedCallback() {
+        super.connectedCallback?.();
+        if (!this._appPanelInit) {
+            this._appPanelInit = true;
+            if (!this.hasAttribute("layout")) {
+                this.layout = LayoutType.BORDER;
+            }
+            if (this.hasAttribute("formfactor")) {
+                this.formfactor = this.getAttribute("formfactor");
+            }
         }
     }
     

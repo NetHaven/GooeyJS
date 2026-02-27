@@ -10,8 +10,6 @@ export default class SplitPanel extends Container {
 
         Template.activate("ui-SplitPanel", this.shadowRoot);
 
-        this.classList.add("ui-SplitPanel");
-
         // Default attributes
         this._dividerSize = 5;
 
@@ -25,40 +23,10 @@ export default class SplitPanel extends Container {
         this._minimumLocation = { value: 10, isPercent: true };
         this._maximumLocation = { value: 90, isPercent: true };
 
-        // Initialize from attributes
-        if (this.hasAttribute("dividerSize")) {
-            this._dividerSize = parseInt(this.getAttribute("dividerSize"));
-        }
-
-        if (this.hasAttribute("orientation")) {
-            this._orientation = this.getAttribute("orientation");
-        }
-
-        if (this.hasAttribute("dividerlocation")) {
-            this._dividerLocation = this._parseLocationValue(this.getAttribute("dividerlocation"));
-        }
-
-        if (this.hasAttribute("minimumlocation")) {
-            this._minimumLocation = this._parseLocationValue(this.getAttribute("minimumlocation"));
-        }
-
-        if (this.hasAttribute("maximumlocation")) {
-            this._maximumLocation = this._parseLocationValue(this.getAttribute("maximumlocation"));
-        }
-
         // Initialize drag state
         this._isDragging = false;
         this._dragStartPos = 0;
         this._dragStartLocation = 0;
-
-        // Create internal structure
-        this._createInternalStructure();
-
-        // Setup event listeners
-        this._setupEventListeners();
-
-        // Apply initial layout
-        this._updateLayout();
     }
 
     /**
@@ -143,6 +111,36 @@ export default class SplitPanel extends Container {
         // Prevent text selection during drag
         this._divider.addEventListener('selectstart', (e) => e.preventDefault());
         this._divider.addEventListener(DragEvent.START, (e) => e.preventDefault());
+    }
+
+    connectedCallback() {
+        super.connectedCallback?.();
+        if (!this._splitPanelInit) {
+            this._splitPanelInit = true;
+            this.classList.add("ui-SplitPanel");
+
+            // Initialize from attributes
+            if (this.hasAttribute("dividerSize")) {
+                this._dividerSize = parseInt(this.getAttribute("dividerSize"));
+            }
+            if (this.hasAttribute("orientation")) {
+                this._orientation = this.getAttribute("orientation");
+            }
+            if (this.hasAttribute("dividerlocation")) {
+                this._dividerLocation = this._parseLocationValue(this.getAttribute("dividerlocation"));
+            }
+            if (this.hasAttribute("minimumlocation")) {
+                this._minimumLocation = this._parseLocationValue(this.getAttribute("minimumlocation"));
+            }
+            if (this.hasAttribute("maximumlocation")) {
+                this._maximumLocation = this._parseLocationValue(this.getAttribute("maximumlocation"));
+            }
+
+            // Create internal structure and setup
+            this._createInternalStructure();
+            this._setupEventListeners();
+            this._updateLayout();
+        }
     }
 
     disconnectedCallback() {

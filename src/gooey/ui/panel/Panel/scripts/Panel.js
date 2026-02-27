@@ -46,11 +46,18 @@ export default class Panel extends Container {
         super();
 
         Template.activate("ui-Panel", this.shadowRoot);
-        this.layout = LayoutType.FLOW;
+    }
 
-        // Add support for title attribute
-        if (this.hasAttribute("title")) {
-            this.title = this.getAttribute("title");
+    connectedCallback() {
+        super.connectedCallback?.();
+        if (!this._panelInit) {
+            this._panelInit = true;
+            if (!this.hasAttribute("layout")) {
+                this.layout = LayoutType.FLOW;
+            }
+            if (this.hasAttribute("title")) {
+                this.title = this.getAttribute("title");
+            }
         }
     }
 

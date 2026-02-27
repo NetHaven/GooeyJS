@@ -169,7 +169,7 @@ export default class ComponentRegistry {
                 // Case-insensitive comparison since components may normalize values
                 if (attrDef.values && attrDef.values.length > 0) {
                     const upperValue = value.toUpperCase();
-                    const validValues = attrDef.values.map(v => v.toUpperCase());
+                    const validValues = attrDef.values.map(v => String(v).toUpperCase());
                     if (!validValues.includes(upperValue)) {
                         return { valid: false, error: `${name} must be one of: ${attrDef.values.join(', ')}` };
                     }
@@ -196,7 +196,7 @@ export default class ComponentRegistry {
                 // Case-insensitive comparison since components normalize values
                 if (attrDef.values && attrDef.values.length > 0) {
                     const upperValue = value.toUpperCase();
-                    const validValues = attrDef.values.map(v => v.toUpperCase());
+                    const validValues = attrDef.values.map(v => String(v).toUpperCase());
                     if (!validValues.includes(upperValue)) {
                         return { valid: false, error: `${name} must be one of: ${attrDef.values.join(', ')}` };
                     }

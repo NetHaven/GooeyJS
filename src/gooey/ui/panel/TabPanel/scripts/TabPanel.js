@@ -11,7 +11,6 @@ export default class TabPanel extends Container {
 
         Template.activate("ui-TabPanel", this.shadowRoot);
 
-        this.layout = LayoutType.FLOW;
         this._tabs = [];
         this._tabStrip = null;
         this._contentPanel = null;
@@ -25,7 +24,14 @@ export default class TabPanel extends Container {
     }
 
     connectedCallback() {
-        super.connectedCallback();
+        super.connectedCallback?.();
+
+        if (!this._tabPanelInit) {
+            this._tabPanelInit = true;
+            if (!this.hasAttribute("layout")) {
+                this.layout = LayoutType.FLOW;
+            }
+        }
 
         // Set up initial structure
         this._setupStructure();

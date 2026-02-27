@@ -40,27 +40,6 @@ export default class HamburgerMenu extends UIComponent {
         this.addValidEvent(HamburgerMenuEvent.TOGGLE);
         this.addValidEvent(MenuItemEvent.SELECT);
 
-        // Initialize attributes
-        if (this.hasAttribute("text")) {
-            this.text = this.getAttribute("text");
-        }
-
-        if (this.hasAttribute("icon")) {
-            this.icon = this.getAttribute("icon");
-        }
-
-        if (this.hasAttribute("position")) {
-            this.position = this.getAttribute("position");
-        }
-
-        if (this.hasAttribute("panelwidth")) {
-            this.panelwidth = this.getAttribute("panelwidth");
-        }
-
-        if (this.hasAttribute("panelheight")) {
-            this.panelheight = this.getAttribute("panelheight");
-        }
-
         // Bind event handlers
         this._boundKeyDownHandler = this._handleKeyDown.bind(this);
         this._boundMenuItemSelectHandler = this._handleMenuItemSelect.bind(this);
@@ -73,7 +52,26 @@ export default class HamburgerMenu extends UIComponent {
     }
 
     connectedCallback() {
-        super.connectedCallback && super.connectedCallback();
+        super.connectedCallback?.();
+
+        if (!this._hamburgerMenuInit) {
+            this._hamburgerMenuInit = true;
+            if (this.hasAttribute("text")) {
+                this.text = this.getAttribute("text");
+            }
+            if (this.hasAttribute("icon")) {
+                this.icon = this.getAttribute("icon");
+            }
+            if (this.hasAttribute("position")) {
+                this.position = this.getAttribute("position");
+            }
+            if (this.hasAttribute("panelwidth")) {
+                this.panelwidth = this.getAttribute("panelwidth");
+            }
+            if (this.hasAttribute("panelheight")) {
+                this.panelheight = this.getAttribute("panelheight");
+            }
+        }
 
         // Add document-level keyboard listener
         document.addEventListener(KeyboardEvent.KEY_DOWN, this._boundKeyDownHandler);

@@ -23,10 +23,7 @@ export default class ContextMenu extends UIComponent {
             this._contextMenuElement.appendChild(child);
         });
 
-        // Set inline styles directly (avoid setAttribute in constructor per Custom Elements spec)
-        this.style.position = 'absolute';
-        this.style.zIndex = '1000';
-        this.style.display = 'none';
+        // Note: inline styles deferred to connectedCallback per Custom Elements spec
 
         // Create unique ID for debugging
         this._instanceId = Math.random().toString(36).substr(2, 9);
@@ -40,9 +37,11 @@ export default class ContextMenu extends UIComponent {
     connectedCallback() {
         super.connectedCallback();
 
-        // Defer attribute initialization to connectedCallback per Custom Elements spec
         if (!this._initialized) {
             this._initialized = true;
+            this.style.position = 'absolute';
+            this.style.zIndex = '1000';
+            this.style.display = 'none';
             this.visible = false;
             this.active = false;
         }

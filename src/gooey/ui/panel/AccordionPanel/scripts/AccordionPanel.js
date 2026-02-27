@@ -10,9 +10,6 @@ export default class AccordionPanel extends Container {
 
         Template.activate("ui-AccordionPanel", this.shadowRoot);
 
-        this.classList.add("ui-AccordionPanel");
-        this.layout = LayoutType.VBOX;
-        
         // Track accordion state
         this._accordions = [];
         this._activeAccordion = null;
@@ -27,7 +24,15 @@ export default class AccordionPanel extends Container {
     }
 
     connectedCallback() {
-        super.connectedCallback();
+        super.connectedCallback?.();
+
+        if (!this._accordionPanelInit) {
+            this._accordionPanelInit = true;
+            this.classList.add("ui-AccordionPanel");
+            if (!this.hasAttribute("layout")) {
+                this.layout = LayoutType.VBOX;
+            }
+        }
 
         if (this._initialized) {
             // Already initialized - rebuild _accordions from existing DOM

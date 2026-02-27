@@ -66,32 +66,35 @@ export default class WaffleMenu extends UIComponent {
         this.addValidEvent(WaffleMenuEvent.CLOSE);
         this.addValidEvent(WaffleMenuEvent.ITEM_SELECT);
 
-        // Initialize attributes
-        if (this.hasAttribute("columns")) {
-            this.columns = this.getAttribute("columns");
-        }
-        if (this.hasAttribute("rows")) {
-            this.rows = this.getAttribute("rows");
-        }
-        if (this.hasAttribute("icon")) {
-            this.icon = this.getAttribute("icon");
-        }
-        if (this.hasAttribute("panelwidth")) {
-            this.panelwidth = this.getAttribute("panelwidth");
-        }
-        if (this.hasAttribute("label")) {
-            this.label = this.getAttribute("label");
-        }
-        if (this.hasAttribute("title")) {
-            this.title = this.getAttribute("title");
-        }
-        if (this.hasAttribute("disabled")) {
-            this.disabled = true;
-        }
     }
 
     connectedCallback() {
-        super.connectedCallback && super.connectedCallback();
+        super.connectedCallback?.();
+
+        if (!this._waffleMenuInit) {
+            this._waffleMenuInit = true;
+            if (this.hasAttribute("columns")) {
+                this.columns = this.getAttribute("columns");
+            }
+            if (this.hasAttribute("rows")) {
+                this.rows = this.getAttribute("rows");
+            }
+            if (this.hasAttribute("icon")) {
+                this.icon = this.getAttribute("icon");
+            }
+            if (this.hasAttribute("panelwidth")) {
+                this.panelwidth = this.getAttribute("panelwidth");
+            }
+            if (this.hasAttribute("label")) {
+                this.label = this.getAttribute("label");
+            }
+            if (this.hasAttribute("title")) {
+                this.title = this.getAttribute("title");
+            }
+            if (this.hasAttribute("disabled")) {
+                this.disabled = true;
+            }
+        }
 
         document.addEventListener(KeyboardEvent.KEY_DOWN, this._boundKeyDown);
 

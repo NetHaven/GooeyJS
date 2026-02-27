@@ -12,6 +12,7 @@ import Template from '../../../../util/Template.js';
 export default class GradientStop extends GooeyElement {
     constructor() {
         super();
+        this.attachShadow({ mode: 'open' });
         Template.activate("ui-GradientStop", this.shadowRoot);
     }
 

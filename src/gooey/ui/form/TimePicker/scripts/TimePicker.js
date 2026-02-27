@@ -7,13 +7,18 @@ export default class TimePicker extends FormElement {
 
         Template.activate("ui-TimePicker", this.shadowRoot);
         this.timeElement = this.shadowRoot.querySelector("input");
+    }
 
-        if (this.hasAttribute("max")) {
-            this.max = this.getAttribute("max");
-        }
-
-        if (this.hasAttribute("min")) {
-            this.min = this.getAttribute("min");
+    connectedCallback() {
+        super.connectedCallback?.();
+        if (!this._timePickerInit) {
+            this._timePickerInit = true;
+            if (this.hasAttribute("max")) {
+                this.max = this.getAttribute("max");
+            }
+            if (this.hasAttribute("min")) {
+                this.min = this.getAttribute("min");
+            }
         }
     }
 

@@ -15,23 +15,6 @@ export default class MenuItem extends UIComponent {
         this.shortcutElement = this.shadowRoot.querySelector(".MenuItemShortcut");
         this.iconElement = this.shadowRoot.querySelector(".MenuItemIconImage");
 
-        // ARIA: Set menuitem role and make focusable
-        this.setAttribute('role', 'menuitem');
-        this.setAttribute('tabindex', '-1');
-
-        if (this.hasAttribute("text")) {
-            this.text = this.getAttribute("text");
-        }
-
-        if (this.hasAttribute("shortcut")) {
-            this.shortcut = this.getAttribute("shortcut");
-        }
-
-        if (this.hasAttribute("icon")) {
-            this.icon = this.getAttribute("icon");
-        }
-        this._updateIcon();
-
         this.addValidEvent(MenuItemEvent.SELECT);
         
         this.addEventListener(MouseEvent.MOUSE_OVER, () => {
@@ -100,6 +83,25 @@ export default class MenuItem extends UIComponent {
         this.addEventListener(KeyboardEvent.KEY_DOWN, (eventName, event) => {
             this._handleKeyDown(event);
         });
+    }
+
+    connectedCallback() {
+        super.connectedCallback?.();
+        if (!this._menuItemInit) {
+            this._menuItemInit = true;
+            this.setAttribute('role', 'menuitem');
+            this.setAttribute('tabindex', '-1');
+            if (this.hasAttribute("text")) {
+                this.text = this.getAttribute("text");
+            }
+            if (this.hasAttribute("shortcut")) {
+                this.shortcut = this.getAttribute("shortcut");
+            }
+            if (this.hasAttribute("icon")) {
+                this.icon = this.getAttribute("icon");
+            }
+            this._updateIcon();
+        }
     }
 
     /**
@@ -296,6 +298,7 @@ export default class MenuItem extends UIComponent {
     }
 
     _updateIcon() {
+        if (!this.iconElement) return;
         const slottedIcon = this.querySelector('[slot="icon"]');
         if (slottedIcon) {
             this.iconElement.style.display = 'none';

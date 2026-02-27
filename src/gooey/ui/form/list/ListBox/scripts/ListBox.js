@@ -56,12 +56,18 @@ export default class ListBox extends FormElement {
             });
         });
 
-        if (this.hasAttribute("disabled")) {
-            this.disabled = true;
-        }
+    }
 
-        if (this.hasAttribute("size")) {
-            this.size = parseInt(this.getAttribute("size"));
+    connectedCallback() {
+        super.connectedCallback?.();
+        if (!this._listBoxInit) {
+            this._listBoxInit = true;
+            if (this.hasAttribute("disabled")) {
+                this.disabled = true;
+            }
+            if (this.hasAttribute("size")) {
+                this.size = parseInt(this.getAttribute("size"));
+            }
         }
     }
 

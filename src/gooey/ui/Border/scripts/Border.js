@@ -5,6 +5,7 @@ import Template from '../../../util/Template.js';
 export default class Border extends GooeyElement {
     constructor() {
         super();
+        this.attachShadow({ mode: 'open' });
         Template.activate("ui-Border", this.shadowRoot);
     }
 

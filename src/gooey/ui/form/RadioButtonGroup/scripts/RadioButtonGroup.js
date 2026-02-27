@@ -14,20 +14,20 @@ export default class RadioButtonGroup extends UIComponent {
         // MutationObserver for dynamically added radio buttons
         this._observer = null;
 
-        // ARIA: Set up label if provided
-        this._setupAriaLabel();
-
         // Set up mutation observer to watch for radio button changes
         this._setupSelectionHandling();
     }
 
     connectedCallback() {
-        // ARIA: Set radiogroup role (must be done here, not in constructor per Custom Elements spec)
-        if (!this.hasAttribute('role')) {
-            this.setAttribute('role', 'radiogroup');
-        }
-
         super.connectedCallback?.();
+
+        if (!this._radioGroupInit) {
+            this._radioGroupInit = true;
+            if (!this.hasAttribute('role')) {
+                this.setAttribute('role', 'radiogroup');
+            }
+            this._setupAriaLabel();
+        }
 
         // Wait for RadioButton custom element to be defined before assigning group names.
         // Child gooeyui-radiobutton elements may not be upgraded yet during dynamic loading,

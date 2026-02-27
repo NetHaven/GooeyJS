@@ -14,6 +14,7 @@ import GooeyElement from '../../../../GooeyElement.js';
 export default class MediaTrack extends GooeyElement {
     constructor() {
         super();
+        this.attachShadow({ mode: 'open' });
     }
 
     /**

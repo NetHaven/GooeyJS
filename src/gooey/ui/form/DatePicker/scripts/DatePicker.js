@@ -7,17 +7,21 @@ export default class DatePicker extends FormElement {
 
         Template.activate("ui-DatePicker", this.shadowRoot);
         this.dateElement = this.shadowRoot.querySelector("input");
+    }
 
-        if (this.hasAttribute("max")) {
-            this.max = this.getAttribute("max");
-        }
-
-        if (this.hasAttribute("min")) {
-            this.min = this.getAttribute("min");
-        }
-
-        if (this.hasAttribute("step")) {
-            this.step = this.getAttribute("step");
+    connectedCallback() {
+        super.connectedCallback?.();
+        if (!this._datePickerInit) {
+            this._datePickerInit = true;
+            if (this.hasAttribute("max")) {
+                this.max = this.getAttribute("max");
+            }
+            if (this.hasAttribute("min")) {
+                this.min = this.getAttribute("min");
+            }
+            if (this.hasAttribute("step")) {
+                this.step = this.getAttribute("step");
+            }
         }
     }
 

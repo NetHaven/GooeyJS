@@ -7,10 +7,15 @@ export default class Toolbar extends Container {
         super();
 
         Template.activate("ui-Toolbar", this.shadowRoot);
+    }
 
-        // Check for wrap attribute during initialization
-        if (this.hasAttribute("wrap")) {
-            this.wrap = true;
+    connectedCallback() {
+        super.connectedCallback?.();
+        if (!this._toolbarInit) {
+            this._toolbarInit = true;
+            if (this.hasAttribute("wrap")) {
+                this.wrap = true;
+            }
         }
     }
 

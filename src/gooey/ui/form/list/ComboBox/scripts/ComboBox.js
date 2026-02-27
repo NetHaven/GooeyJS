@@ -60,21 +60,6 @@ export default class ComboBox extends ListBox {
         // Track if we're in editable mode
         this._editable = this.hasAttribute('editable');
         
-        // Set initial value if specified
-        if (this.hasAttribute('value')) {
-            this.value = this.getAttribute('value');
-        }
-        
-        // Set initial text if specified
-        if (this.hasAttribute('text')) {
-            this.text = this.getAttribute('text');
-        }
-
-        // Set pattern if specified
-        if (this.hasAttribute('pattern')) {
-            this._textInput.setAttribute('pattern', this.getAttribute('pattern'));
-        }
-
         // Add valid events
         this.addValidEvent(FormElementEvent.FOCUS);
         this.addValidEvent(FormElementEvent.BLUR);
@@ -447,13 +432,23 @@ export default class ComboBox extends ListBox {
     }
 
     connectedCallback() {
-        // ARIA: Set combobox role (must be done here, not in constructor per Custom Elements spec)
-        if (!this.hasAttribute('role')) {
-            this.setAttribute('role', 'combobox');
-        }
-
-        // Call parent setup if exists
         super.connectedCallback?.();
+
+        if (!this._comboBoxInit) {
+            this._comboBoxInit = true;
+            if (!this.hasAttribute('role')) {
+                this.setAttribute('role', 'combobox');
+            }
+            if (this.hasAttribute('value')) {
+                this.value = this.getAttribute('value');
+            }
+            if (this.hasAttribute('text')) {
+                this.text = this.getAttribute('text');
+            }
+            if (this.hasAttribute('pattern')) {
+                this._textInput.setAttribute('pattern', this.getAttribute('pattern'));
+            }
+        }
     }
 
     disconnectedCallback() {

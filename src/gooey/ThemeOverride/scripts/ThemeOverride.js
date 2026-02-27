@@ -26,9 +26,7 @@ export default class ThemeOverride extends GooeyElement {
 
     constructor() {
         super();
-
-        // Non-visual: hide from layout
-        this.style.display = 'none';
+        this.attachShadow({ mode: 'open' });
 
         /** @type {string|null} Loaded CSS text */
         this._cssText = null;
@@ -42,6 +40,10 @@ export default class ThemeOverride extends GooeyElement {
 
     connectedCallback() {
         super.connectedCallback?.();
+        if (!this._themeOverrideInit) {
+            this._themeOverrideInit = true;
+            this.style.display = 'none';
+        }
         this._notifyParentTheme();
     }
 

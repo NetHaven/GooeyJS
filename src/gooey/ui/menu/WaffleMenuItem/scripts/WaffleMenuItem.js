@@ -44,28 +44,34 @@ export default class WaffleMenuItem extends UIComponent {
         // Register valid events
         this.addValidEvent(WaffleMenuItemEvent.SELECT);
 
-        // Initialize attributes
-        if (this.hasAttribute("icon")) {
-            this.icon = this.getAttribute("icon");
-        }
-        this._updateIcon();
-        if (this.hasAttribute("label")) {
-            this.label = this.getAttribute("label");
-        }
-        if (this.hasAttribute("action")) {
-            this.action = this.getAttribute("action");
-        }
-        if (this.hasAttribute("badge")) {
-            this.badge = this.getAttribute("badge");
-        }
-        if (this.hasAttribute("href")) {
-            this.href = this.getAttribute("href");
-        }
-        if (this.hasAttribute("target")) {
-            this.target = this.getAttribute("target");
-        }
-        if (this.hasAttribute("disabled")) {
-            this.disabled = true;
+    }
+
+    connectedCallback() {
+        super.connectedCallback?.();
+        if (!this._waffleMenuItemInit) {
+            this._waffleMenuItemInit = true;
+            if (this.hasAttribute("icon")) {
+                this.icon = this.getAttribute("icon");
+            }
+            this._updateIcon();
+            if (this.hasAttribute("label")) {
+                this.label = this.getAttribute("label");
+            }
+            if (this.hasAttribute("action")) {
+                this.action = this.getAttribute("action");
+            }
+            if (this.hasAttribute("badge")) {
+                this.badge = this.getAttribute("badge");
+            }
+            if (this.hasAttribute("href")) {
+                this.href = this.getAttribute("href");
+            }
+            if (this.hasAttribute("target")) {
+                this.target = this.getAttribute("target");
+            }
+            if (this.hasAttribute("disabled")) {
+                this.disabled = true;
+            }
         }
     }
 

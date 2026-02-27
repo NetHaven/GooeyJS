@@ -10,12 +10,11 @@ export default class ColorPicker extends UIComponent {
     constructor() {
         super();
         
-        this.classList.add("ui-ColorPicker");
         Template.activate("ui-ColorPicker", this.shadowRoot);
 
         // Create the color picker structure
         this._createColorPickerStructure();
-        
+
         this.addValidEvent(KeyboardEvent.KEY_DOWN);
         this.addValidEvent(ColorPickerEvent.CHANGE);
         this.addValidEvent(ColorPickerEvent.OPEN);
@@ -23,19 +22,24 @@ export default class ColorPicker extends UIComponent {
 
         // Set up event handlers
         this._setupEventHandlers();
-        
+
         // Initialize state
         this._isOpen = false;
         this._currentColor = '#000000';
         this._updatingAttribute = false;
-        
-        // Initialize attributes
-        if (this.hasAttribute('value')) {
-            this.value = this.getAttribute('value');
-        }
-        
-        if (this.hasAttribute('disabled')) {
-            this.disabled = this.getAttribute('disabled') === 'true';
+    }
+
+    connectedCallback() {
+        super.connectedCallback?.();
+        if (!this._colorPickerInit) {
+            this._colorPickerInit = true;
+            this.classList.add("ui-ColorPicker");
+            if (this.hasAttribute('value')) {
+                this.value = this.getAttribute('value');
+            }
+            if (this.hasAttribute('disabled')) {
+                this.disabled = this.getAttribute('disabled') === 'true';
+            }
         }
     }
     

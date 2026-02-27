@@ -7,7 +7,6 @@ export default class ToggleButtonGroup extends Container {
     constructor() {
         super();
 
-        this.classList.add("ui-ToggleButtonGroup");
         Template.activate("ui-ToggleButtonGroup", this.shadowRoot);
 
         // Initialize state
@@ -27,6 +26,14 @@ export default class ToggleButtonGroup extends Container {
         this.addValidEvent(ToggleButtonGroupEvent.SELECTION_CHANGE);
     }
     
+    connectedCallback() {
+        super.connectedCallback?.();
+        if (!this._toggleButtonGroupInit) {
+            this._toggleButtonGroupInit = true;
+            this.classList.add("ui-ToggleButtonGroup");
+        }
+    }
+
     /**
      * Set up mutation observer to handle dynamically added/removed toggle buttons
      */

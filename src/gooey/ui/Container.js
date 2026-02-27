@@ -7,19 +7,29 @@ import Logger from '../logging/Logger.js';
 export default class Container extends UIComponent {
     constructor () {
         super();
+    }
 
-        this.classList.add("ui-Container");
+    connectedCallback() {
+        super.connectedCallback?.();
 
-        if (this.hasAttribute("font")) {
-            this.font = this.getAttribute("font");
-        }
+        if (!this._containerInit) {
+            this._containerInit = true;
 
-        if (this.hasAttribute("border")) {
-            this.border = this.getAttribute("border");
-        }
+            if (!this.classList.contains("ui-Container")) {
+                this.classList.add("ui-Container");
+            }
 
-        if (this.hasAttribute("background")) {
-            this.background = this.getAttribute("background");
+            if (this.hasAttribute("font")) {
+                this.font = this.getAttribute("font");
+            }
+
+            if (this.hasAttribute("border")) {
+                this.border = this.getAttribute("border");
+            }
+
+            if (this.hasAttribute("background")) {
+                this.background = this.getAttribute("background");
+            }
         }
     }
 

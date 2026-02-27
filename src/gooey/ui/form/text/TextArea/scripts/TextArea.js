@@ -66,28 +66,25 @@ export default class TextArea extends TextElement {
             });
         });
 
-        if (this.hasAttribute("cols")) {
-            this.cols = this.getAttribute("cols");
-        }
+    }
 
-        if (this.hasAttribute("resize")) {
-            if (this.getAttribute("resize") === "false") {
-                this.resize = false;
+    connectedCallback() {
+        super.connectedCallback?.();
+        if (!this._textAreaInit) {
+            this._textAreaInit = true;
+            if (this.hasAttribute("cols")) {
+                this.cols = this.getAttribute("cols");
             }
-            else {
+            if (this.hasAttribute("resize")) {
+                this.resize = this.getAttribute("resize") !== "false";
+            } else {
                 this.resize = true;
             }
+            if (this.hasAttribute("rows")) {
+                this.rows = this.getAttribute("rows");
+            }
+            this._updateRequiredIndicator();
         }
-        else {
-            this.resize = true;
-        }
-
-        if (this.hasAttribute("rows")) {
-            this.rows = this.getAttribute("rows");
-        }
-
-        // Update required indicator after form element is set up
-        this._updateRequiredIndicator();
     }
 
     get cols() {

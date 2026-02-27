@@ -10,21 +10,24 @@ export default class FormPanel extends Panel {
         // Panel already created shadowRoot, so we append to it
         Template.activate("ui-FormPanel", this.shadowRoot);
 
-        this.classList.add("ui-FormPanel");
-
-        // Override the default layout to ensure CSS grid works
-        this.layout = LayoutType.GRID;
-        
-        // Set the grid columns explicitly to match the CSS
-        this.style.display = 'grid';
-        this.style.gridTemplateColumns = '30% 65% 5%';
-        
         // Add valid events
         this.addValidEvent(FormPanelEvent.INVALID);
         this.addValidEvent(FormPanelEvent.SUBMIT);
     }
 
     connectedCallback() {
+        super.connectedCallback?.();
+
+        if (!this._formPanelInit) {
+            this._formPanelInit = true;
+            this.classList.add("ui-FormPanel");
+            if (!this.hasAttribute("layout")) {
+                this.layout = LayoutType.GRID;
+            }
+            this.style.display = 'grid';
+            this.style.gridTemplateColumns = '30% 65% 5%';
+        }
+
         // Ensure all form elements have a corresponding empty span in the third column
         // for non-required fields to maintain proper grid layout
         this._ensureThirdColumnElements();

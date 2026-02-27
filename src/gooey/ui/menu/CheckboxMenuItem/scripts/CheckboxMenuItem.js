@@ -8,12 +8,19 @@ export default class CheckboxMenuItem extends MenuItem {
         super();
 
         Template.activate("ui-CheckboxmenuItem", this.shadowRoot);
-        if (this.hasAttribute("checked")) {
-            this.checked = true;
-        }
 
         this.addValidEvent(CheckboxMenuItemEvent.CHANGE);
         this.addEventListener(MouseEvent.CLICK, this._handleClick.bind(this));
+    }
+
+    connectedCallback() {
+        super.connectedCallback?.();
+        if (!this._checkboxMenuItemInit) {
+            this._checkboxMenuItemInit = true;
+            if (this.hasAttribute("checked")) {
+                this.checked = true;
+            }
+        }
     }
 
     _handleClick(eventName, data) {

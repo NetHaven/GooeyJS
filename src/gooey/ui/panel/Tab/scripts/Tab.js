@@ -10,7 +10,6 @@ export default class Tab extends Container {
 
         Template.activate("ui-Tab", this.shadowRoot);
 
-        this.layout = LayoutType.FLOW;
         this._active = false;
         this._tabHeader = null;
         this._tabPanel = null;
@@ -20,7 +19,14 @@ export default class Tab extends Container {
     }
 
     connectedCallback() {
-        super.connectedCallback();
+        super.connectedCallback?.();
+
+        if (!this._tabInit) {
+            this._tabInit = true;
+            if (!this.hasAttribute("layout")) {
+                this.layout = LayoutType.FLOW;
+            }
+        }
 
         // Find parent TabPanel
         this._tabPanel = this.closest('gooeyui-tabpanel');

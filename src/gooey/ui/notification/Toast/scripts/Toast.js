@@ -35,15 +35,6 @@ export default class Toast extends UIComponent {
         this._progressEl = this.shadowRoot.querySelector(".toast-progress");
         this._progressBar = this.shadowRoot.querySelector(".toast-progress-bar");
 
-        // Initialize attributes from DOM
-        if (this.hasAttribute("message")) {
-            this.message = this.getAttribute("message");
-        }
-
-        if (this.hasAttribute("type")) {
-            this.type = this.getAttribute("type");
-        }
-
         // Register valid Observable events
         this.addValidEvent(ToastEvent.SHOW);
         this.addValidEvent(ToastEvent.HIDE);
@@ -169,14 +160,19 @@ export default class Toast extends UIComponent {
      * Sets attributes that couldn't be set in constructor (Custom Elements spec requirement).
      */
     connectedCallback() {
-        if (super.connectedCallback) {
-            super.connectedCallback();
-        }
+        super.connectedCallback?.();
 
-        // Make toast focusable for keyboard-triggered timer pause
-        // Set via direct property instead of setAttribute to avoid potential issues
-        if (!this.hasAttribute('tabindex')) {
-            this.tabIndex = 0;
+        if (!this._toastInit) {
+            this._toastInit = true;
+            if (this.hasAttribute("message")) {
+                this.message = this.getAttribute("message");
+            }
+            if (this.hasAttribute("type")) {
+                this.type = this.getAttribute("type");
+            }
+            if (!this.hasAttribute('tabindex')) {
+                this.tabIndex = 0;
+            }
         }
     }
 

@@ -7,18 +7,20 @@ export default class GroupBox extends Panel {
 
         // Panel already created shadowRoot, so we append to it
         Template.activate("ui-GroupBox", this.shadowRoot);
-        this.classList.add("ui-GroupBox");
-
         this.contentPanel = this.shadowRoot.querySelector('div');
         this.textLabel = this.shadowRoot.querySelector('span');
-        
-        if (this.hasAttribute("text")) {
-            this.text = this.getAttribute("text");
-        }
     }
-    
+
     connectedCallback() {
-        super.connectedCallback && super.connectedCallback();
+        super.connectedCallback?.();
+
+        if (!this._groupBoxInit) {
+            this._groupBoxInit = true;
+            this.classList.add("ui-GroupBox");
+            if (this.hasAttribute("text")) {
+                this.text = this.getAttribute("text");
+            }
+        }
 
         // With shadow DOM and slot, children are automatically projected
         // No need to manually move them

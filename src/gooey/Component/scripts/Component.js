@@ -11,14 +11,12 @@ const _ComponentEvent = ComponentEvent;
 export default class Component extends Observable {
     constructor() {
         super();
+        this.attachShadow({ mode: 'open' });
 
         // Add valid events
         this.addValidEvent(ComponentEvent.LOADING);
         this.addValidEvent(ComponentEvent.LOADED);
         this.addValidEvent(ComponentEvent.ERROR);
-
-        // Hide this element - it's just a loader
-        this.style.display = 'none';
 
         this._href = null;
         this._meta = null;
@@ -28,6 +26,12 @@ export default class Component extends Observable {
     connectedCallback() {
         if (super.connectedCallback) {
             super.connectedCallback();
+        }
+
+        // Hide this element - it's just a loader
+        if (!this._componentInit) {
+            this._componentInit = true;
+            this.style.display = 'none';
         }
 
         // Guard: Don't reload if already loaded (prevents repeated fetch/import on re-attach)

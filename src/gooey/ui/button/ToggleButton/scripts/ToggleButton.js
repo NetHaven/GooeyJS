@@ -7,8 +7,6 @@ export default class ToggleButton extends UIComponent {
     constructor() {
         super();
         
-        this.classList.add("ui-ToggleButton");
-
         Template.activate("ui-ToggleButton", this.shadowRoot);
         this.button = this.shadowRoot.querySelector("button");
 
@@ -48,44 +46,43 @@ export default class ToggleButton extends UIComponent {
     }
 
     connectedCallback() {
-        if (super.connectedCallback) {
-            super.connectedCallback();
-        }
+        super.connectedCallback?.();
 
-        // Initialize attributes inherited from Button (icon, text, action)
-        // Use parent Button logic if available, otherwise apply directly
-        if (this.hasAttribute("icon")) {
-            const val = this.getAttribute("icon");
-            const slottedIcon = this.querySelector('[slot="icon"]');
-            if (!slottedIcon) {
-                if (!this.image) {
-                    this.image = document.createElement("img");
-                    this.button.appendChild(this.image);
-                    this.image.addEventListener(MouseEvent.CLICK, e=> {
-                        if (this.disabled) {
-                            e.stopPropagation();
-                        }
-                    });
+        if (!this._toggleButtonInit) {
+            this._toggleButtonInit = true;
+            this.classList.add("ui-ToggleButton");
+
+            // Initialize attributes inherited from Button (icon, text, action)
+            if (this.hasAttribute("icon")) {
+                const val = this.getAttribute("icon");
+                const slottedIcon = this.querySelector('[slot="icon"]');
+                if (!slottedIcon) {
+                    if (!this.image) {
+                        this.image = document.createElement("img");
+                        this.button.appendChild(this.image);
+                        this.image.addEventListener(MouseEvent.CLICK, e=> {
+                            if (this.disabled) {
+                                e.stopPropagation();
+                            }
+                        });
+                    }
+                    this.image.style.display = '';
+                    this.image.src = val;
                 }
-                this.image.style.display = '';
-                this.image.src = val;
             }
-        }
 
-        if (this.hasAttribute("text")) {
-            const val = this.getAttribute("text");
-            if (!this.textElement) {
-                this.textElement = document.createElement("span");
-                this.button.appendChild(this.textElement);
+            if (this.hasAttribute("text")) {
+                const val = this.getAttribute("text");
+                if (!this.textElement) {
+                    this.textElement = document.createElement("span");
+                    this.button.appendChild(this.textElement);
+                }
+                this.textElement.textContent = val;
             }
-            this.textElement.textContent = val;
-        }
 
-        // Initialize pressed state
-        if (this.hasAttribute("pressed")) {
-            const val = this.getAttribute("pressed") === 'true';
-            this._pressed = val;
-            if (val) {
+            // Initialize pressed state (BOOLEAN: presence = true)
+            if (this.hasAttribute("pressed")) {
+                this._pressed = true;
                 this.button.classList.add("pressed");
                 this.button.setAttribute("aria-pressed", "true");
             }
@@ -194,7 +191,7 @@ export default class ToggleButton extends UIComponent {
                 this.disabled = newValue !== null;
                 break;
             case 'pressed':
-                this.pressed = newValue === 'true';
+                this.pressed = newValue !== null;
                 break;
         }
     }

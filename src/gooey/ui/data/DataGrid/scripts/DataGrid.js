@@ -141,8 +141,7 @@ export default class DataGrid extends UIComponent {
         // Keyboard navigation
         this.addEventListener(KeyboardEvent.KEY_DOWN, (eventName, e) => this._onKeyDown(e));
 
-        // Make focusable for keyboard events
-        this.setAttribute('tabindex', '0');
+        // tabindex set in connectedCallback (spec compliance)
 
         // Resize handlers (bound methods for cleanup)
         this._onResizeMove = this._handleResizeMove.bind(this);
@@ -170,10 +169,13 @@ export default class DataGrid extends UIComponent {
     // =========== Web Component Lifecycle ===========
 
     connectedCallback() {
-        super.connectedCallback && super.connectedCallback();
+        super.connectedCallback?.();
 
-        // Set ARIA grid role and attributes
-        this.setAttribute('role', 'grid');
+        if (!this._dataGridInit) {
+            this._dataGridInit = true;
+            this.setAttribute('role', 'grid');
+            this.setAttribute('tabindex', '0');
+        }
         this._headerRow.setAttribute('role', 'row');
         this._bodyViewport.setAttribute('role', 'rowgroup');
 

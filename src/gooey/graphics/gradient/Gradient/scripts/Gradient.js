@@ -1,9 +1,9 @@
 import GooeyElement from '../../../../GooeyElement.js';
 import Template from '../../../../util/Template.js';
-import GradientType from '../GradientType.js';
-import GradientDirection from '../GradientDirection.js';
-import GradientShape from '../GradientShape.js';
-import GradientSize from '../GradientSize.js';
+import GradientType from '../../GradientType.js';
+import GradientDirection from '../../GradientDirection.js';
+import GradientShape from '../../GradientShape.js';
+import GradientSize from '../../GradientSize.js';
 
 /**
  * Gradient Component
@@ -19,6 +19,7 @@ import GradientSize from '../GradientSize.js';
 export default class Gradient extends GooeyElement {
     constructor() {
         super();
+        this.attachShadow({ mode: 'open' });
         Template.activate("ui-Gradient", this.shadowRoot);
     }
 

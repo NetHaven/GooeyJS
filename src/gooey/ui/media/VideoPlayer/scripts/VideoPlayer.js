@@ -88,15 +88,19 @@ export default class VideoPlayer extends UIComponent {
         this.#setupFullscreenEvents();
 
         // Mark construction complete so setters can safely call private methods.
-        // Must be set before #initializeFromAttributes() which uses setters that
-        // depend on #constructed being true to call #applyDimension().
         this.#constructed = true;
 
-        // Initialize from attributes
-        this.#initializeFromAttributes();
+        // Note: #initializeFromAttributes() deferred to connectedCallback per Custom Elements spec
+    }
 
-        // Observe child track elements
-        this.#setupTrackObserver();
+    connectedCallback() {
+        super.connectedCallback?.();
+        if (!this._videoPlayerInit) {
+            this._videoPlayerInit = true;
+            this.setAttribute('tabindex', '0');
+            this.#initializeFromAttributes();
+            this.#setupTrackObserver();
+        }
     }
 
     // ========== Event Registration ==========
@@ -295,7 +299,7 @@ export default class VideoPlayer extends UIComponent {
     #setupKeyboardEvents() {
         // Use native listener to get the actual DOM event object
         HTMLElement.prototype.addEventListener.call(this, 'keydown', (e) => this.#handleKeyboard(e));
-        this.setAttribute('tabindex', '0');
+        // Note: tabindex set in connectedCallback per Custom Elements spec
     }
 
     #handleKeyboard(event) {

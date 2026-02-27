@@ -92,7 +92,6 @@ export default class RichTextEditor extends TextElement {
         super();
 
         Template.activate("ui-RichTextEditor", this.shadowRoot);
-        this.classList.add('ui-RichTextEditor');
 
         this._previousValue = '';
 
@@ -159,6 +158,11 @@ export default class RichTextEditor extends TextElement {
     connectedCallback() {
         if (super.connectedCallback) {
             super.connectedCallback();
+        }
+
+        if (!this._richTextEditorInit) {
+            this._richTextEditorInit = true;
+            this.classList.add('ui-RichTextEditor');
         }
 
         this._syncDisabledState();

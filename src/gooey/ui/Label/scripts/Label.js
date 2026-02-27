@@ -10,28 +10,29 @@ export default class Label extends UIComponent {
 		
 		Template.activate("ui-Label", this.shadowRoot);
 		this.container = this.shadowRoot.querySelector("div");
-		
-		if (this.hasAttribute("icon")) {
-			this.icon = this.getAttribute("icon");			
-		}
-		
-		if (this.hasAttribute("text")) {
-			this.text = this.getAttribute("text");
-		}
-
-        if (this.hasAttribute("action")) {
-            this.action = this.getAttribute("action");
-        }
-
-        if (this.hasAttribute("halign")) {
-            this.halign = this.getAttribute("halign");
-        }
-
-        if (this.hasAttribute("valign")) {
-            this.valign = this.getAttribute("valign");
-        }
-
 	}
+
+    connectedCallback() {
+        super.connectedCallback?.();
+        if (!this._labelInit) {
+            this._labelInit = true;
+            if (this.hasAttribute("icon")) {
+                this.icon = this.getAttribute("icon");
+            }
+            if (this.hasAttribute("text")) {
+                this.text = this.getAttribute("text");
+            }
+            if (this.hasAttribute("action")) {
+                this.action = this.getAttribute("action");
+            }
+            if (this.hasAttribute("halign")) {
+                this.halign = this.getAttribute("halign");
+            }
+            if (this.hasAttribute("valign")) {
+                this.valign = this.getAttribute("valign");
+            }
+        }
+    }
 
     attributeChangedCallback(name, oldValue, newValue) {
         super.attributeChangedCallback?.(name, oldValue, newValue);

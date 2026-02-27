@@ -9,7 +9,7 @@ import Template from '../../../../util/Template.js';
 
 export default class Window extends UIComponent {
     constructor () {
-        var cancelButton, xLocation, yLocation;
+        var cancelButton;
 
         super();
 
@@ -18,17 +18,6 @@ export default class Window extends UIComponent {
         this.buttonbar = this.shadowRoot.querySelector(".WindowButtonbar");
         this.contentArea = this.shadowRoot.querySelector(".WindowContent");
         this.titlebar = this.shadowRoot.querySelector(".WindowTitlebar");
-
-        // ARIA: Set dialog role and attributes
-        const dialogType = this.getAttribute('dialogtype');
-        this.setAttribute('role', dialogType === 'alert' ? 'alertdialog' : 'dialog');
-
-        // ARIA: Generate unique ID for titlebar and set aria-labelledby
-        const titleId = `window-title-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-        if (this.titlebar) {
-            this.titlebar.id = titleId;
-            this.setAttribute('aria-labelledby', titleId);
-        }
 
         // Store reference to previously focused element for restoration
         this._previousFocus = null;
@@ -40,45 +29,67 @@ export default class Window extends UIComponent {
         this.addValidEvent(KeyboardEvent.KEY_DOWN);
         this.addValidEvent(TextFieldEvent.ENTER_PRESSED);
 
-        if (this.hasAttribute("wintitle")) {
-            this.winTitle = this.getAttribute("wintitle");
-        }
-        else {
-            this.winTitle = "";
-        }
-
-        // Defer initial centering until element has layout
-        requestAnimationFrame(() => {
-            const dims = this._getComputedDimensions();
-            xLocation = (window.innerWidth - dims.width) / 2;
-            yLocation = (window.innerHeight - dims.height) / 2;
-            if (yLocation < 0) {
-                yLocation = 0;
-            }
-            this.style.left = xLocation + "px";
-            this.style.top = yLocation + "px";
-        });
-
-        if (this.hasAttribute("draggable")) {
-            this.draggable = true;
-        }
-
         const okButton = this.shadowRoot.querySelector(".WindowOKButton");
-        okButton.addEventListener(MouseEvent.CLICK, ()=> {
-            this.close();
-        });
+        if (okButton) {
+            okButton.addEventListener(MouseEvent.CLICK, ()=> {
+                this.close();
+            });
+        }
 
         cancelButton = this.shadowRoot.querySelector(".WindowCancelButton");
-        cancelButton.addEventListener(MouseEvent.CLICK, ()=> {
-            this.close();
-        });
-
-        if (this.hasAttribute("constrainviewport")) {
-            this.constrainViewport = true;
+        if (cancelButton) {
+            cancelButton.addEventListener(MouseEvent.CLICK, ()=> {
+                this.close();
+            });
         }
+    }
 
-        if (this.hasAttribute("modal")) {
-            this.modal = true;
+    connectedCallback() {
+        super.connectedCallback?.();
+        if (!this._windowInit) {
+            this._windowInit = true;
+
+            // ARIA: Set dialog role and attributes
+            const dialogType = this.getAttribute('dialogtype');
+            this.setAttribute('role', dialogType === 'alert' ? 'alertdialog' : 'dialog');
+
+            // ARIA: Generate unique ID for titlebar and set aria-labelledby
+            const titleId = `window-title-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+            if (this.titlebar) {
+                this.titlebar.id = titleId;
+                this.setAttribute('aria-labelledby', titleId);
+            }
+
+            if (this.hasAttribute("wintitle")) {
+                this.winTitle = this.getAttribute("wintitle");
+            }
+            else {
+                this.winTitle = "";
+            }
+
+            // Defer initial centering until element has layout
+            requestAnimationFrame(() => {
+                const dims = this._getComputedDimensions();
+                const xLocation = (window.innerWidth - dims.width) / 2;
+                let yLocation = (window.innerHeight - dims.height) / 2;
+                if (yLocation < 0) {
+                    yLocation = 0;
+                }
+                this.style.left = xLocation + "px";
+                this.style.top = yLocation + "px";
+            });
+
+            if (this.hasAttribute("draggable")) {
+                this.draggable = true;
+            }
+
+            if (this.hasAttribute("constrainviewport")) {
+                this.constrainViewport = true;
+            }
+
+            if (this.hasAttribute("modal")) {
+                this.modal = true;
+            }
         }
     }
 

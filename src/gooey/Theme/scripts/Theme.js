@@ -45,9 +45,7 @@ export default class Theme extends GooeyElement {
 
     constructor() {
         super();
-
-        // Non-visual: hide from layout
-        this.style.display = 'none';
+        this.attachShadow({ mode: 'open' });
 
         /** @type {boolean} Whether theme has finished loading */
         this._loaded = false;
@@ -69,6 +67,10 @@ export default class Theme extends GooeyElement {
 
     connectedCallback() {
         super.connectedCallback?.();
+        if (!this._themeInit) {
+            this._themeInit = true;
+            this.style.display = 'none';
+        }
         this._collectOverrides();
         this._setupObserver();
         this._registerTheme();
