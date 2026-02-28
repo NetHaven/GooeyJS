@@ -19,12 +19,86 @@
     background: var(--gooey-window-titlebar-bg, var(--gooey-color-primary));
     color: var(--gooey-window-titlebar-color, var(--gooey-color-primary-text));
     cursor: default;
+    display: flex;
+    align-items: center;
     font-weight: var(--gooey-window-titlebar-font-weight, var(--gooey-font-weight-bold));
     height: var(--gooey-window-titlebar-height, 20px);
-    text-align: center;
     user-select: none;
     width: 100%;
 }
+
+.WindowTitleText {
+    flex: 1;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding: 0 4px;
+}
+
+.WindowControlButtons {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding-right: 2px;
+    flex-shrink: 0;
+}
+
+.WindowControlButtons button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 14px;
+    padding: 0;
+    margin: 0;
+    border: 1px solid var(--gooey-window-titlebar-color, var(--gooey-color-primary-text));
+    background: transparent;
+    color: var(--gooey-window-titlebar-color, var(--gooey-color-primary-text));
+    font-size: 10px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.WindowControlButtons button:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.WindowCloseBtn:hover {
+    background: var(--gooey-color-danger, #c42b1c) !important;
+    color: #ffffff !important;
+}
+
+.WindowControlButtons button:active {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+/* Resize Handles */
+.WindowResizeHandles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+}
+
+.WindowResizeHandle {
+    position: absolute;
+    pointer-events: auto;
+}
+
+/* Corner handles */
+.WindowResizeHandle-nw { top: -3px; left: -3px; width: 8px; height: 8px; }
+.WindowResizeHandle-ne { top: -3px; right: -3px; width: 8px; height: 8px; }
+.WindowResizeHandle-sw { bottom: -3px; left: -3px; width: 8px; height: 8px; }
+.WindowResizeHandle-se { bottom: -3px; right: -3px; width: 8px; height: 8px; }
+
+/* Edge handles */
+.WindowResizeHandle-n { top: -3px; left: 5px; right: 5px; height: 6px; }
+.WindowResizeHandle-s { bottom: -3px; left: 5px; right: 5px; height: 6px; }
+.WindowResizeHandle-w { left: -3px; top: 5px; bottom: 5px; width: 6px; }
+.WindowResizeHandle-e { right: -3px; top: 5px; bottom: 5px; width: 6px; }
 
 .WindowContent {
     display: flex;

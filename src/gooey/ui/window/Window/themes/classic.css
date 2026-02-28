@@ -20,31 +20,90 @@
     height: 20px;
     display: flex;
     align-items: center;
-    justify-content: center;
     user-select: none;
     position: relative;
-    padding: 0 24px;
+    padding: 0 4px;
     font-family: "ChicagoFLF", Chicago, sans-serif;
     font-size: 12px;
     font-weight: bold;
     color: #000000;
-    /* Title text sits on a solid background pill */
     background-clip: padding-box;
 }
 
-/* Close box glyph (left side) */
-.WindowTitlebar::before {
-    content: "";
-    position: absolute;
-    left: 4px;
-    top: 50%;
-    transform: translateY(-50%);
+.WindowTitleText {
+    flex: 1;
+    text-align: center;
+    background: #DDDDDD;
+    padding: 0 6px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.WindowControlButtons {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    flex-shrink: 0;
+    order: -1;
+    padding-right: 4px;
+}
+
+.WindowControlButtons button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     width: 12px;
     height: 12px;
+    padding: 0;
+    margin: 0;
     border: 1px solid #000000;
     background: #DDDDDD;
+    color: #000000;
+    font-size: 8px;
+    line-height: 1;
     cursor: pointer;
-    z-index: 1;
+}
+
+.WindowControlButtons button:active {
+    background: #000000;
+    color: #DDDDDD;
+}
+
+/* Resize Handles */
+.WindowResizeHandles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+}
+
+.WindowResizeHandle {
+    position: absolute;
+    pointer-events: auto;
+}
+
+.WindowResizeHandle-nw { top: -2px; left: -2px; width: 6px; height: 6px; }
+.WindowResizeHandle-ne { top: -2px; right: -2px; width: 6px; height: 6px; }
+.WindowResizeHandle-sw { bottom: -2px; left: -2px; width: 6px; height: 6px; }
+.WindowResizeHandle-se { bottom: -2px; right: -2px; width: 6px; height: 6px; }
+.WindowResizeHandle-n { top: -2px; left: 4px; right: 4px; height: 4px; }
+.WindowResizeHandle-s { bottom: -2px; left: 4px; right: 4px; height: 4px; }
+.WindowResizeHandle-w { left: -2px; top: 4px; bottom: 4px; width: 4px; }
+.WindowResizeHandle-e { right: -2px; top: 4px; bottom: 4px; width: 4px; }
+
+/* Resize grip indicator in bottom-right corner */
+:host([resizeable]) .WindowResizeHandle-se::after {
+    content: "";
+    position: absolute;
+    right: 1px;
+    bottom: 1px;
+    width: 6px;
+    height: 6px;
+    border-right: 2px solid #808080;
+    border-bottom: 2px solid #808080;
 }
 
 .WindowContent {
