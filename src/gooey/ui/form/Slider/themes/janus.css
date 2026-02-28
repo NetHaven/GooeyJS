@@ -1,0 +1,74 @@
+/* Slider - Janus structural override */
+
+.slider-track {
+    height: 4px;
+    background-color: #ffffff;
+    overflow: hidden;
+    /* sunken border */
+    border-top: 1px solid #808080;
+    border-left: 1px solid #808080;
+    border-right: 1px solid #ffffff;
+    border-bottom: 1px solid #ffffff;
+    box-shadow: inset 1px 1px 0 #000000;
+}
+
+.slider-fill {
+    background-color: #000080;
+}
+
+.slider-thumb {
+    background-color: #c0c0c0;
+    /* raised button */
+    border-top: 1px solid #ffffff;
+    border-left: 1px solid #ffffff;
+    border-right: 1px solid #808080;
+    border-bottom: 1px solid #808080;
+    box-shadow: 1px 1px 0 #000000;
+    border-radius: 0;
+    width: 12px;
+    height: 22px;
+}
+
+.slider-thumb:hover {
+    transform: translate(-50%, -50%);
+}
+
+.slider-thumb:active,
+.slider-thumb.active {
+    /* pressed: invert borders */
+    border-top: 1px solid #808080;
+    border-left: 1px solid #808080;
+    border-right: 1px solid #ffffff;
+    border-bottom: 1px solid #ffffff;
+    box-shadow: none;
+}
+
+.slider-tooltip {
+    background: #c0c0c0;
+    color: #000000;
+    border: 1px solid #808080;
+    border-radius: 0;
+}
+
+.slider-tick {
+    background: #808080;
+}
+
+.slider-tick-label {
+    color: #000000;
+}
+
+/* Vertical orientation adjustments */
+:host([orientation="vertical"]) .slider-thumb {
+    width: 22px;
+    height: 12px;
+}
+
+:host([orientation="vertical"]) .slider-thumb:hover {
+    transform: translate(-50%, 50%);
+}
+
+:host([orientation="vertical"]) .slider-thumb:active,
+:host([orientation="vertical"]) .slider-thumb.active {
+    transform: translate(-50%, 50%);
+}

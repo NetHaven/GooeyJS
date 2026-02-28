@@ -1,0 +1,79 @@
+/* Slider - Classic structural override */
+
+/* Kill all animations and transitions */
+:host,
+.slider-fill,
+.slider-thumb,
+.slider-tooltip {
+    animation: none !important;
+    transition: none !important;
+}
+
+.slider-track {
+    height: 4px;
+    background-color: #ffffff;
+    border: 1px solid #000000;
+    border-radius: 0;
+    overflow: hidden;
+}
+
+.slider-fill {
+    background-color: #0000A5;
+    border-radius: 0;
+}
+
+.slider-thumb {
+    border-radius: 0;
+    background-color: #c0c0c0;
+    /* bevel effect */
+    border-top: 1px solid #ffffff;
+    border-left: 1px solid #ffffff;
+    border-right: 1px solid #000000;
+    border-bottom: 1px solid #000000;
+    box-shadow: none;
+    width: 12px;
+    height: 22px;
+}
+
+.slider-thumb:hover {
+    transform: translate(-50%, -50%);
+}
+
+.slider-thumb:active,
+.slider-thumb.active {
+    /* pressed: swap border colors */
+    border-top: 1px solid #000000;
+    border-left: 1px solid #000000;
+    border-right: 1px solid #ffffff;
+    border-bottom: 1px solid #ffffff;
+}
+
+.slider-tooltip {
+    border-radius: 0;
+    border: 1px solid #000000;
+    background: #ffffcc;
+    color: #000000;
+}
+
+.slider-tick {
+    background: #000000;
+}
+
+.slider-tick-label {
+    color: #000000;
+}
+
+/* Vertical orientation adjustments */
+:host([orientation="vertical"]) .slider-thumb {
+    width: 22px;
+    height: 12px;
+}
+
+:host([orientation="vertical"]) .slider-thumb:hover {
+    transform: translate(-50%, 50%);
+}
+
+:host([orientation="vertical"]) .slider-thumb:active,
+:host([orientation="vertical"]) .slider-thumb.active {
+    transform: translate(-50%, 50%);
+}
