@@ -71,6 +71,8 @@ export default class Slider extends FormElement {
         this._boundKeyDown = this._onKeyDown.bind(this);
         this._boundFocus = this._onFocus.bind(this);
         this._boundBlur = this._onBlur.bind(this);
+        this._boundThumbEnter = this._onThumbEnter.bind(this);
+        this._boundThumbLeave = this._onThumbLeave.bind(this);
 
         // Update required indicator now that formElement is assigned
         this._updateRequiredIndicator();
@@ -175,6 +177,65 @@ export default class Slider extends FormElement {
         this._updateVisuals();
     }
 
+    // =========== ShowTicks Property ===========
+
+    get showTicks() {
+        return this.hasAttribute('showticks');
+    }
+
+    set showTicks(val) {
+        if (val) {
+            this.setAttribute('showticks', '');
+        } else {
+            this.removeAttribute('showticks');
+        }
+        this._renderTicks();
+    }
+
+    // =========== TickInterval Property ===========
+
+    get tickInterval() {
+        return this.hasAttribute('tickinterval') ? Number(this.getAttribute('tickinterval')) : null;
+    }
+
+    set tickInterval(val) {
+        if (val !== null && val !== undefined) {
+            this.setAttribute('tickinterval', String(val));
+        } else {
+            this.removeAttribute('tickinterval');
+        }
+        this._renderTicks();
+    }
+
+    // =========== ShowValue Property ===========
+
+    get showValue() {
+        return this.hasAttribute('showvalue');
+    }
+
+    set showValue(val) {
+        if (val) {
+            this.setAttribute('showvalue', '');
+        } else {
+            this.removeAttribute('showvalue');
+        }
+        this._renderTicks();
+    }
+
+    // =========== ShowTooltip Property ===========
+
+    get showTooltip() {
+        return this.hasAttribute('showtooltip');
+    }
+
+    set showTooltip(val) {
+        if (val) {
+            this.setAttribute('showtooltip', '');
+        } else {
+            this.removeAttribute('showtooltip');
+        }
+    }
+
     // =========== Internal Methods ===========
 
     /**
@@ -212,6 +273,176 @@ export default class Slider extends FormElement {
         }
     }
 
+    /**
+     * Format a value to match step precision
+     */
+    _formatValue(value) {
+        const stepStr = String(this._step);
+        const dotIndex = stepStr.indexOf('.');
+        if (dotIndex >= 0) {
+            const decimals = stepStr.length - dotIndex - 1;
+            return value.toFixed(decimals);
+        }
+        return String(Math.round(value));
+    }
+
+    /**
+     * Render tick marks and optional value labels
+     */
+    _renderTicks() {
+        // Clear existing ticks
+        this._ticksContainer.innerHTML = '';
+
+        const isVertical = this.orientation === 'vertical';
+
+        // If showValue is true but showTicks is false, show endpoint labels only
+        if (this.showValue && !this.showTicks) {
+            this._ticksContainer.style.display = '';
+
+            const minLabel = document.createElement('span');
+            minLabel.className = 'slider-tick-label slider-endpoint-label';
+            minLabel.textContent = this._formatValue(this._min);
+            if (isVertical) {
+                minLabel.style.position = 'absolute';
+                minLabel.style.bottom = '0';
+            } else {
+                minLabel.style.position = 'absolute';
+                minLabel.style.left = '0';
+            }
+            this._ticksContainer.appendChild(minLabel);
+
+            const maxLabel = document.createElement('span');
+            maxLabel.className = 'slider-tick-label slider-endpoint-label';
+            maxLabel.textContent = this._formatValue(this._max);
+            if (isVertical) {
+                maxLabel.style.position = 'absolute';
+                maxLabel.style.top = '0';
+            } else {
+                maxLabel.style.position = 'absolute';
+                maxLabel.style.right = '0';
+            }
+            this._ticksContainer.appendChild(maxLabel);
+            return;
+        }
+
+        if (!this.showTicks) {
+            this._ticksContainer.style.display = 'none';
+            return;
+        }
+
+        this._ticksContainer.style.display = '';
+
+        const interval = this.tickInterval !== null ? this.tickInterval : this._step;
+        if (interval <= 0) return;
+
+        const range = this._max - this._min;
+        if (range <= 0) return;
+
+        for (let val = this._min; val <= this._max; val += interval) {
+            const percent = ((val - this._min) / range) * 100;
+
+            const tick = document.createElement('div');
+            tick.className = 'slider-tick';
+
+            if (isVertical) {
+                tick.style.bottom = percent + '%';
+            } else {
+                tick.style.left = percent + '%';
+            }
+
+            this._ticksContainer.appendChild(tick);
+
+            if (this.showValue) {
+                const label = document.createElement('span');
+                label.className = 'slider-tick-label';
+                label.textContent = this._formatValue(val);
+
+                if (isVertical) {
+                    label.style.bottom = percent + '%';
+                } else {
+                    label.style.left = percent + '%';
+                }
+
+                this._ticksContainer.appendChild(label);
+            }
+        }
+
+        // Ensure the max value tick is present (floating point may skip it)
+        const lastPercent = 100;
+        const lastTick = this._ticksContainer.querySelector('.slider-tick:last-of-type');
+        if (!lastTick || Math.abs(parseFloat(lastTick.style.left || lastTick.style.bottom || '0') - lastPercent) > 0.5) {
+            const tick = document.createElement('div');
+            tick.className = 'slider-tick';
+            if (isVertical) {
+                tick.style.bottom = '100%';
+            } else {
+                tick.style.left = '100%';
+            }
+            this._ticksContainer.appendChild(tick);
+
+            if (this.showValue) {
+                const label = document.createElement('span');
+                label.className = 'slider-tick-label';
+                label.textContent = this._formatValue(this._max);
+                if (isVertical) {
+                    label.style.bottom = '100%';
+                } else {
+                    label.style.left = '100%';
+                }
+                this._ticksContainer.appendChild(label);
+            }
+        }
+    }
+
+    /**
+     * Show the value tooltip near the thumb
+     */
+    _showTooltip() {
+        if (!this.showTooltip) return;
+
+        this._tooltipEl.textContent = this._formatValue(this._value);
+        this._tooltipEl.style.display = 'block';
+        this._tooltipEl.classList.add('visible');
+        this._updateTooltipPosition();
+    }
+
+    /**
+     * Hide the value tooltip
+     */
+    _hideTooltip() {
+        this._tooltipEl.classList.remove('visible');
+        // Use timeout to allow CSS transition to complete
+        setTimeout(() => {
+            if (!this._tooltipEl.classList.contains('visible')) {
+                this._tooltipEl.style.display = 'none';
+            }
+        }, 150);
+    }
+
+    /**
+     * Update the tooltip position to follow the thumb
+     */
+    _updateTooltipPosition() {
+        if (!this.showTooltip || this._tooltipEl.style.display === 'none') return;
+
+        const percent = this._getPercent();
+        this._tooltipEl.textContent = this._formatValue(this._value);
+
+        if (this.orientation === 'vertical') {
+            this._tooltipEl.style.bottom = percent + '%';
+            this._tooltipEl.style.left = '';
+            this._tooltipEl.style.right = '100%';
+            this._tooltipEl.style.top = '';
+            this._tooltipEl.style.transform = 'translate(-8px, 50%)';
+        } else {
+            this._tooltipEl.style.left = percent + '%';
+            this._tooltipEl.style.bottom = '100%';
+            this._tooltipEl.style.right = '';
+            this._tooltipEl.style.top = '';
+            this._tooltipEl.style.transform = 'translate(-50%, -8px)';
+        }
+    }
+
     // =========== Mouse Interaction ===========
 
     /**
@@ -226,6 +457,7 @@ export default class Slider extends FormElement {
         document.addEventListener('mousemove', this._boundMouseMove);
         document.addEventListener('mouseup', this._boundMouseUp);
 
+        this._showTooltip();
         this.fireEvent(SliderEvent.SLIDE_START, { value: this._value });
     }
 
@@ -240,6 +472,7 @@ export default class Slider extends FormElement {
             this._value = newValue;
             this._updateVisuals();
             this._thumb.setAttribute('aria-valuenow', String(this._value));
+            this._updateTooltipPosition();
             this.fireEvent(SliderEvent.INPUT, { value: this._value });
         }
     }
@@ -255,6 +488,7 @@ export default class Slider extends FormElement {
         document.removeEventListener('mousemove', this._boundMouseMove);
         document.removeEventListener('mouseup', this._boundMouseUp);
 
+        this._hideTooltip();
         this.setAttribute('value', String(this._value));
         this._explicitlySet = true;
         this.fireEvent(SliderEvent.CHANGE, { value: this._value });
@@ -275,6 +509,7 @@ export default class Slider extends FormElement {
         document.addEventListener('touchmove', this._boundTouchMove, { passive: false });
         document.addEventListener('touchend', this._boundTouchEnd);
 
+        this._showTooltip();
         this.fireEvent(SliderEvent.SLIDE_START, { value: this._value });
     }
 
@@ -291,6 +526,7 @@ export default class Slider extends FormElement {
             this._value = newValue;
             this._updateVisuals();
             this._thumb.setAttribute('aria-valuenow', String(this._value));
+            this._updateTooltipPosition();
             this.fireEvent(SliderEvent.INPUT, { value: this._value });
         }
     }
@@ -306,6 +542,7 @@ export default class Slider extends FormElement {
         document.removeEventListener('touchmove', this._boundTouchMove);
         document.removeEventListener('touchend', this._boundTouchEnd);
 
+        this._hideTooltip();
         this.setAttribute('value', String(this._value));
         this._explicitlySet = true;
         this.fireEvent(SliderEvent.CHANGE, { value: this._value });
@@ -399,6 +636,22 @@ export default class Slider extends FormElement {
         this.fireEvent(FormElementEvent.BLUR, { value: this._value, originalEvent: e });
     }
 
+    /**
+     * Handle mouseenter on the thumb - show tooltip
+     */
+    _onThumbEnter() {
+        this._showTooltip();
+    }
+
+    /**
+     * Handle mouseleave on the thumb - hide tooltip if not dragging
+     */
+    _onThumbLeave() {
+        if (!this._dragging) {
+            this._hideTooltip();
+        }
+    }
+
     // =========== Validation ===========
 
     /**
@@ -450,6 +703,7 @@ export default class Slider extends FormElement {
                 if (this._value < this._min) {
                     this.value = this._min;
                 }
+                this._renderTicks();
                 break;
             case 'max':
                 this._max = Number(newValue);
@@ -457,12 +711,14 @@ export default class Slider extends FormElement {
                 if (this._value > this._max) {
                     this.value = this._max;
                 }
+                this._renderTicks();
                 break;
             case 'step': {
                 const stepVal = Number(newValue);
                 if (!isNaN(stepVal) && stepVal > 0) {
                     this._step = stepVal;
                 }
+                this._renderTicks();
                 break;
             }
             case 'readonly':
@@ -475,6 +731,12 @@ export default class Slider extends FormElement {
             case 'orientation':
                 this._thumb.setAttribute('aria-orientation', newValue || 'horizontal');
                 this._updateVisuals();
+                this._renderTicks();
+                break;
+            case 'showticks':
+            case 'tickinterval':
+            case 'showvalue':
+                this._renderTicks();
                 break;
         }
     }
@@ -490,6 +752,11 @@ export default class Slider extends FormElement {
         this._thumb.addEventListener('focus', this._boundFocus);
         this._thumb.addEventListener('blur', this._boundBlur);
         this.shadowRoot.querySelector('.slider-container').addEventListener('click', this._boundTrackClick);
+        this._thumb.addEventListener('mouseenter', this._boundThumbEnter);
+        this._thumb.addEventListener('mouseleave', this._boundThumbLeave);
+
+        // Render ticks if needed
+        this._renderTicks();
     }
 
     disconnectedCallback() {
@@ -500,6 +767,8 @@ export default class Slider extends FormElement {
         this._thumb.removeEventListener('focus', this._boundFocus);
         this._thumb.removeEventListener('blur', this._boundBlur);
         this.shadowRoot.querySelector('.slider-container').removeEventListener('click', this._boundTrackClick);
+        this._thumb.removeEventListener('mouseenter', this._boundThumbEnter);
+        this._thumb.removeEventListener('mouseleave', this._boundThumbLeave);
 
         // Clean up document listeners if dragging
         if (this._dragging) {
