@@ -60,6 +60,18 @@ export default class Slider extends FormElement {
             this._thumb.setAttribute('aria-orientation', this.getAttribute('orientation'));
         }
 
+        // Bind interaction handlers
+        this._boundMouseDown = this._onMouseDown.bind(this);
+        this._boundMouseMove = this._onMouseMove.bind(this);
+        this._boundMouseUp = this._onMouseUp.bind(this);
+        this._boundTouchStart = this._onTouchStart.bind(this);
+        this._boundTouchMove = this._onTouchMove.bind(this);
+        this._boundTouchEnd = this._onTouchEnd.bind(this);
+        this._boundTrackClick = this._onTrackClick.bind(this);
+        this._boundKeyDown = this._onKeyDown.bind(this);
+        this._boundFocus = this._onFocus.bind(this);
+        this._boundBlur = this._onBlur.bind(this);
+
         // Update required indicator now that formElement is assigned
         this._updateRequiredIndicator();
     }
@@ -200,6 +212,224 @@ export default class Slider extends FormElement {
         }
     }
 
+    // =========== Mouse Interaction ===========
+
+    /**
+     * Handle mousedown on the thumb - start dragging
+     */
+    _onMouseDown(e) {
+        if (this.disabled || this.readOnly) return;
+        e.preventDefault();
+
+        this._dragging = true;
+        this._thumb.classList.add('active');
+        document.addEventListener('mousemove', this._boundMouseMove);
+        document.addEventListener('mouseup', this._boundMouseUp);
+
+        this.fireEvent(SliderEvent.SLIDE_START, { value: this._value });
+    }
+
+    /**
+     * Handle mousemove during drag - update value continuously
+     */
+    _onMouseMove(e) {
+        if (!this._dragging) return;
+
+        const newValue = this._valueFromPosition(e.clientX, e.clientY);
+        if (newValue !== this._value) {
+            this._value = newValue;
+            this._updateVisuals();
+            this._thumb.setAttribute('aria-valuenow', String(this._value));
+            this.fireEvent(SliderEvent.INPUT, { value: this._value });
+        }
+    }
+
+    /**
+     * Handle mouseup - end dragging
+     */
+    _onMouseUp(e) {
+        if (!this._dragging) return;
+
+        this._dragging = false;
+        this._thumb.classList.remove('active');
+        document.removeEventListener('mousemove', this._boundMouseMove);
+        document.removeEventListener('mouseup', this._boundMouseUp);
+
+        this.setAttribute('value', String(this._value));
+        this._explicitlySet = true;
+        this.fireEvent(SliderEvent.CHANGE, { value: this._value });
+        this.fireEvent(SliderEvent.SLIDE_END, { value: this._value });
+    }
+
+    // =========== Touch Interaction ===========
+
+    /**
+     * Handle touchstart on the thumb - start touch drag
+     */
+    _onTouchStart(e) {
+        if (this.disabled || this.readOnly) return;
+        e.preventDefault();
+
+        this._dragging = true;
+        this._thumb.classList.add('active');
+        document.addEventListener('touchmove', this._boundTouchMove, { passive: false });
+        document.addEventListener('touchend', this._boundTouchEnd);
+
+        this.fireEvent(SliderEvent.SLIDE_START, { value: this._value });
+    }
+
+    /**
+     * Handle touchmove during drag - update value continuously
+     */
+    _onTouchMove(e) {
+        if (!this._dragging) return;
+        e.preventDefault();
+
+        const touch = e.touches[0];
+        const newValue = this._valueFromPosition(touch.clientX, touch.clientY);
+        if (newValue !== this._value) {
+            this._value = newValue;
+            this._updateVisuals();
+            this._thumb.setAttribute('aria-valuenow', String(this._value));
+            this.fireEvent(SliderEvent.INPUT, { value: this._value });
+        }
+    }
+
+    /**
+     * Handle touchend - end touch drag
+     */
+    _onTouchEnd(e) {
+        if (!this._dragging) return;
+
+        this._dragging = false;
+        this._thumb.classList.remove('active');
+        document.removeEventListener('touchmove', this._boundTouchMove);
+        document.removeEventListener('touchend', this._boundTouchEnd);
+
+        this.setAttribute('value', String(this._value));
+        this._explicitlySet = true;
+        this.fireEvent(SliderEvent.CHANGE, { value: this._value });
+        this.fireEvent(SliderEvent.SLIDE_END, { value: this._value });
+    }
+
+    // =========== Track Click ===========
+
+    /**
+     * Handle click on the track - jump to clicked position
+     */
+    _onTrackClick(e) {
+        if (this.disabled || this.readOnly) return;
+        // If the click target is the thumb, let thumb handle it
+        if (e.target === this._thumb) return;
+
+        const newValue = this._valueFromPosition(e.clientX, e.clientY);
+        this.fireEvent(SliderEvent.SLIDE_START, { value: this._value });
+
+        this._value = newValue;
+        this._updateVisuals();
+        this._thumb.setAttribute('aria-valuenow', String(this._value));
+        this.setAttribute('value', String(this._value));
+        this._explicitlySet = true;
+
+        this.fireEvent(SliderEvent.CHANGE, { value: this._value });
+        this.fireEvent(SliderEvent.SLIDE_END, { value: this._value });
+    }
+
+    // =========== Keyboard Interaction ===========
+
+    /**
+     * Handle keyboard navigation on the thumb
+     */
+    _onKeyDown(e) {
+        if (this.disabled || this.readOnly) return;
+
+        let newValue = this._value;
+        let handled = false;
+
+        switch (e.key) {
+            case 'ArrowRight':
+            case 'ArrowUp':
+                newValue = this._value + this._step;
+                handled = true;
+                break;
+            case 'ArrowLeft':
+            case 'ArrowDown':
+                newValue = this._value - this._step;
+                handled = true;
+                break;
+            case 'PageUp':
+                newValue = this._value + (10 * this._step);
+                handled = true;
+                break;
+            case 'PageDown':
+                newValue = this._value - (10 * this._step);
+                handled = true;
+                break;
+            case 'Home':
+                newValue = this._min;
+                handled = true;
+                break;
+            case 'End':
+                newValue = this._max;
+                handled = true;
+                break;
+        }
+
+        if (handled) {
+            e.preventDefault();
+            this.value = newValue;
+            this._explicitlySet = true;
+            this.fireEvent(SliderEvent.CHANGE, { value: this._value });
+        }
+    }
+
+    // =========== Focus/Blur ===========
+
+    /**
+     * Handle focus on the thumb
+     */
+    _onFocus(e) {
+        this.fireEvent(FormElementEvent.FOCUS, { value: this._value, originalEvent: e });
+    }
+
+    /**
+     * Handle blur on the thumb
+     */
+    _onBlur(e) {
+        this.fireEvent(FormElementEvent.BLUR, { value: this._value, originalEvent: e });
+    }
+
+    // =========== Validation ===========
+
+    /**
+     * Validate the slider for required field support
+     * Returns false if required and user has never explicitly set a value
+     */
+    validate() {
+        if (this.required && !this._explicitlySet) {
+            return false;
+        }
+        return true;
+    }
+
+    // =========== Position Calculation ===========
+
+    /**
+     * Calculate a snapped value from a client position
+     */
+    _valueFromPosition(clientX, clientY) {
+        const rect = this._track.getBoundingClientRect();
+        let percent;
+
+        if (this.orientation === 'vertical') {
+            percent = Math.max(0, Math.min(1, (rect.bottom - clientY) / rect.height));
+        } else {
+            percent = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+        }
+
+        return this._snapToStep(this._min + percent * (this._max - this._min));
+    }
+
     // =========== Lifecycle ===========
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -252,5 +482,32 @@ export default class Slider extends FormElement {
     connectedCallback() {
         super.connectedCallback();
         this._updateVisuals();
+
+        // Attach interaction listeners
+        this._thumb.addEventListener('mousedown', this._boundMouseDown);
+        this._thumb.addEventListener('touchstart', this._boundTouchStart, { passive: false });
+        this._thumb.addEventListener('keydown', this._boundKeyDown);
+        this._thumb.addEventListener('focus', this._boundFocus);
+        this._thumb.addEventListener('blur', this._boundBlur);
+        this.shadowRoot.querySelector('.slider-container').addEventListener('click', this._boundTrackClick);
+    }
+
+    disconnectedCallback() {
+        // Remove thumb listeners
+        this._thumb.removeEventListener('mousedown', this._boundMouseDown);
+        this._thumb.removeEventListener('touchstart', this._boundTouchStart);
+        this._thumb.removeEventListener('keydown', this._boundKeyDown);
+        this._thumb.removeEventListener('focus', this._boundFocus);
+        this._thumb.removeEventListener('blur', this._boundBlur);
+        this.shadowRoot.querySelector('.slider-container').removeEventListener('click', this._boundTrackClick);
+
+        // Clean up document listeners if dragging
+        if (this._dragging) {
+            document.removeEventListener('mousemove', this._boundMouseMove);
+            document.removeEventListener('mouseup', this._boundMouseUp);
+            document.removeEventListener('touchmove', this._boundTouchMove);
+            document.removeEventListener('touchend', this._boundTouchEnd);
+            this._dragging = false;
+        }
     }
 }
