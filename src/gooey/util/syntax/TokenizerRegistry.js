@@ -134,9 +134,14 @@ TokenizerRegistry.register("svg", "./tokenizers/HTMLTokenizer.js");
 TokenizerRegistry.register("javascript", "./tokenizers/JavaScriptTokenizer.js");
 TokenizerRegistry.register("js", "./tokenizers/JavaScriptTokenizer.js");
 TokenizerRegistry.register("jsx", "./tokenizers/JavaScriptTokenizer.js");
-TokenizerRegistry.register("typescript", "./tokenizers/JavaScriptTokenizer.js");
-TokenizerRegistry.register("ts", "./tokenizers/JavaScriptTokenizer.js");
-TokenizerRegistry.register("tsx", "./tokenizers/JavaScriptTokenizer.js");
+TokenizerRegistry.register("typescript", "./tokenizers/TypeScriptTokenizer.js");
+TokenizerRegistry.register("ts", "./tokenizers/TypeScriptTokenizer.js");
+TokenizerRegistry.register("tsx", "./tokenizers/TypeScriptTokenizer.js");
+
+TokenizerRegistry.register("php", "./tokenizers/PHPTokenizer.js");
+
+TokenizerRegistry.register("python", "./tokenizers/PythonTokenizer.js");
+TokenizerRegistry.register("py", "./tokenizers/PythonTokenizer.js");
 
 TokenizerRegistry.register("css", "./tokenizers/CSSTokenizer.js");
 TokenizerRegistry.register("scss", "./tokenizers/CSSTokenizer.js");
