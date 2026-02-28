@@ -1,0 +1,83 @@
+:host {
+    display: inline-block;
+    position: relative;
+    width: 200px;
+    min-height: 24px;
+    user-select: none;
+}
+
+.slider-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.slider-track {
+    width: 100%;
+    height: var(--gooey-slider-track-height, 4px);
+    background-color: var(--gooey-slider-track-bg, var(--gooey-color-surface-disabled));
+    border: 1px inset var(--gooey-slider-track-border-color, var(--gooey-color-surface));
+    border-radius: var(--gooey-slider-border-radius, var(--gooey-border-radius));
+    position: relative;
+    overflow: hidden;
+}
+
+.slider-fill {
+    height: 100%;
+    width: 0%;
+    background-color: var(--gooey-slider-fill-bg, var(--gooey-color-primary));
+    transition: width 0.05s ease;
+}
+
+.slider-thumb {
+    position: absolute;
+    top: 50%;
+    left: 0%;
+    width: var(--gooey-slider-thumb-size, 18px);
+    height: var(--gooey-slider-thumb-size, 18px);
+    background-color: var(--gooey-slider-thumb-bg, var(--gooey-color-surface));
+    border: 2px solid var(--gooey-slider-thumb-border-color, var(--gooey-color-border));
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+    z-index: 2;
+    outline: none;
+}
+
+.slider-thumb:hover {
+    transform: translate(-50%, -50%) scale(1.1);
+}
+
+.slider-thumb:active,
+.slider-thumb.active {
+    border-color: var(--gooey-color-border-strong, var(--gooey-color-border));
+    transform: translate(-50%, -50%);
+}
+
+.slider-thumb:focus-visible {
+    outline: 2px solid var(--gooey-color-focus);
+    outline-offset: 2px;
+}
+
+.slider-ticks {
+    display: none;
+}
+
+.slider-tooltip {
+    display: none;
+}
+
+/* Disabled state */
+:host([disabled]) {
+    opacity: var(--gooey-slider-opacity-disabled, var(--gooey-opacity-disabled, 0.5));
+    pointer-events: none;
+}
+
+/* ReadOnly state */
+:host([readonly]) .slider-thumb {
+    cursor: default;
+    pointer-events: none;
+}
