@@ -84,6 +84,14 @@
     "width": { "type": "STRING", "default": null },
     "tooltip": { "type": "STRING", "default": null },
     "visible": { "type": "BOOLEAN", "default": true },
-    "disabled": { "type": "BOOLEAN", "default": false }
+    "disabled": { "type": "BOOLEAN", "default": false },
+    "closeable": { "type": "BOOLEAN", "default": false },
+    "minimizable": { "type": "BOOLEAN", "default": false },
+    "maximizable": { "type": "BOOLEAN", "default": false },
+    "resizeable": { "type": "BOOLEAN", "default": false },
+    "minwidth": { "type": "NUMBER", "default": null },
+    "minheight": { "type": "NUMBER", "default": null },
+    "maxwidth": { "type": "NUMBER", "default": null },
+    "maxheight": { "type": "NUMBER", "default": null }
   }
 }

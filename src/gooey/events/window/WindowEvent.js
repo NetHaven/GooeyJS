@@ -7,6 +7,9 @@ export default class WindowEvent extends Event {
     static CLOSE = "close";
     static OPEN = "open";
     static MOVE = "move";
+    static MINIMIZE = "minimize";
+    static MAXIMIZE = "maximize";
+    static RESIZE = "resize";
 
     constructor() {
         super();

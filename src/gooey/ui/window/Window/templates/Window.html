@@ -1,5 +1,12 @@
 <template id="ui-Window">
-    <div class="WindowTitlebar" part="header"></div>
+    <div class="WindowTitlebar" part="header">
+        <span class="WindowTitleText"></span>
+        <div class="WindowControlButtons">
+            <button class="WindowMinimizeBtn" aria-label="Minimize" style="display:none">&#x2013;</button>
+            <button class="WindowMaximizeBtn" aria-label="Maximize" style="display:none">&#x25A1;</button>
+            <button class="WindowCloseBtn" aria-label="Close" style="display:none">&#x2715;</button>
+        </div>
+    </div>
     <div class="WindowContent" part="content">
         <slot></slot>
     </div>
