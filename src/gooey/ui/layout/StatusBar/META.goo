@@ -1,0 +1,56 @@
+{
+  "MetaGooVersion": "1.0",
+  "name": "StatusBar",
+  "prefix": "gooeyui",
+  "tagName": "statusbar",
+  "script": "StatusBar.js",
+  "templates": [
+    { "id": "ui-StatusBar", "file": "StatusBar.html" }
+  ],
+  "themes": {
+    "default": "base",
+    "available": ["base", "classic", "janus"]
+  },
+  "tokens": {
+    "gooey-statusbar-bg": {
+      "description": "StatusBar background color",
+      "fallback": "gooey-color-surface",
+      "category": "color"
+    },
+    "gooey-statusbar-border-color": {
+      "description": "StatusBar border color",
+      "fallback": "gooey-color-border",
+      "category": "color"
+    },
+    "gooey-statusbar-text-color": {
+      "description": "StatusBar text color",
+      "fallback": "gooey-color-text",
+      "category": "color"
+    },
+    "gooey-statusbar-divider-color": {
+      "description": "Vertical divider between items",
+      "fallback": "gooey-color-border",
+      "category": "color"
+    },
+    "gooey-statusbar-height": {
+      "description": "StatusBar bar height",
+      "fallback": null,
+      "category": "sizing"
+    },
+    "gooey-statusbar-font-size": {
+      "description": "StatusBar font size",
+      "fallback": null,
+      "category": "typography"
+    }
+  },
+  "attributes": {
+    "position": { "type": "ENUM", "default": "bottom", "values": ["TOP", "BOTTOM"] },
+    "height": { "type": "NUMBER", "default": 24 },
+    "draggable": { "type": "BOOLEAN", "default": false },
+    "droppable": { "type": "BOOLEAN", "default": false },
+    "dropzone": { "type": "STRING", "default": null },
+    "tooltip": { "type": "STRING", "default": null },
+    "visible": { "type": "BOOLEAN", "default": true },
+    "disabled": { "type": "BOOLEAN", "default": false }
+  }
+}

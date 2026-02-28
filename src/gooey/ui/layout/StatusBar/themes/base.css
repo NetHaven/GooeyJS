@@ -1,0 +1,74 @@
+:host {
+    display: flex;
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+    background: var(--gooey-statusbar-bg, var(--gooey-color-surface));
+    color: var(--gooey-statusbar-text-color, var(--gooey-color-text));
+    font-size: var(--gooey-statusbar-font-size, 11px);
+    font-family: var(--gooey-font-family, inherit);
+    height: var(--gooey-statusbar-height, 24px);
+    min-height: var(--gooey-statusbar-height, 24px);
+}
+
+:host([position="bottom"]) {
+    border-top: 1px solid var(--gooey-statusbar-border-color, var(--gooey-color-border));
+}
+
+:host([position="top"]) {
+    border-bottom: 1px solid var(--gooey-statusbar-border-color, var(--gooey-color-border));
+}
+
+.statusbar {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+}
+
+.statusbar-panel {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0 6px;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.statusbar-left {
+    flex: 1 1 auto;
+    justify-content: flex-start;
+}
+
+.statusbar-center {
+    flex: 0 0 auto;
+    justify-content: center;
+}
+
+.statusbar-right {
+    flex: 0 0 auto;
+    justify-content: flex-end;
+}
+
+/* Dividers between slotted items */
+::slotted(*:not(:first-child)) {
+    border-left: 1px solid var(--gooey-statusbar-divider-color, var(--gooey-color-border));
+    padding-left: 6px;
+}
+
+/* Text overflow on slotted items */
+::slotted(*) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Disabled state */
+:host([disabled]) {
+    opacity: var(--gooey-opacity-disabled, 0.5);
+    pointer-events: none;
+}
+
+:host([visible='false']) {
+    display: none;
+}

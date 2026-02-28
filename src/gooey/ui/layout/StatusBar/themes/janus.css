@@ -1,0 +1,24 @@
+/* StatusBar - Janus structural override */
+
+:host {
+    border: none;
+}
+
+:host([position="bottom"]) {
+    border-top: none;
+    box-shadow: inset 0 1px 0 #ffffff;
+}
+
+:host([position="top"]) {
+    border-bottom: none;
+    box-shadow: inset 0 -1px 0 #808080;
+}
+
+/* Janus divider between items */
+::slotted(*:not(:first-child)) {
+    border-left-color: #808080;
+}
+
+:host([disabled]) {
+    opacity: 0.5;
+}

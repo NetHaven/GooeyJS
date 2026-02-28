@@ -1,0 +1,28 @@
+/* StatusBar - Classic structural override */
+
+:host([position="bottom"]) {
+    border-top: 1px solid #000000;
+}
+
+:host([position="top"]) {
+    border-bottom: 1px solid #000000;
+}
+
+/* Inset bevel panels for each slot region */
+.statusbar-panel {
+    border: 1px solid;
+    border-color: #808080 #ffffff #ffffff #808080;
+    margin: 1px;
+    padding: 0 4px;
+}
+
+/* Classic divider between items */
+::slotted(*:not(:first-child)) {
+    border-left-color: #000000;
+}
+
+/* Disabled: Classic emboss effect */
+:host([disabled]) {
+    color: #7F7F7F;
+    text-shadow: 1px 1px 0 #FFFFFF;
+}
