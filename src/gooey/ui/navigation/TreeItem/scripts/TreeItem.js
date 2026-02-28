@@ -1,11 +1,11 @@
-import UIComponent from '../../UIComponent.js';
-import TreeItemEvent from '../../../events/TreeItemEvent.js';
-import MouseEvent from '../../../events/MouseEvent.js';
-import DragEvent from '../../../events/DragEvent.js';
-import KeyboardEvent from '../../../events/KeyboardEvent.js';
-import Key from '../../../io/Key.js';
-import Template from '../../../util/Template.js';
-import Logger from '../../../logging/Logger.js';
+import UIComponent from '../../../UIComponent.js';
+import TreeItemEvent from '../../../../events/TreeItemEvent.js';
+import MouseEvent from '../../../../events/MouseEvent.js';
+import DragEvent from '../../../../events/DragEvent.js';
+import KeyboardEvent from '../../../../events/KeyboardEvent.js';
+import Key from '../../../../io/Key.js';
+import Template from '../../../../util/Template.js';
+import Logger from '../../../../logging/Logger.js';
 
 export default class TreeItem extends UIComponent {
     constructor() {
