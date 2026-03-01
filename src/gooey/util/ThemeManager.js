@@ -48,6 +48,9 @@ export default class ThemeManager {
     /** @type {Map<string, CSSStyleSheet>} Active structural overrides: tagName -> CSSStyleSheet */
     static _activeOverrides = new Map();
 
+    /** @type {WeakMap<ShadowRoot|Document, HTMLStyleElement[]>} Fallback style nodes injected when adoptedStyleSheets is unavailable */
+    static _fallbackStyleNodes = new WeakMap();
+
     // ---- Theme state ----
 
     /**
@@ -280,13 +283,18 @@ export default class ThemeManager {
             }
         }
 
-        // Fallback: Inject <style> elements
+        // Fallback: Inject <style> elements and track them for later removal
         for (const sheet of sheetArray) {
             const style = document.createElement('style');
             // Extract CSS text from CSSStyleSheet
             const cssText = Array.from(sheet.cssRules).map(rule => rule.cssText).join('\n');
             style.textContent = cssText;
             root.appendChild(style);
+            // Track the injected node so it can be removed on the next theme switch
+            if (!ThemeManager._fallbackStyleNodes.has(root)) {
+                ThemeManager._fallbackStyleNodes.set(root, []);
+            }
+            ThemeManager._fallbackStyleNodes.get(root).push(style);
         }
     }
 
@@ -301,10 +309,21 @@ export default class ThemeManager {
     static _removeActiveThemeSheets() {
         if (this._activeThemeSheets.length === 0) return;
 
-        const sheetsToRemove = new Set(this._activeThemeSheets);
-        document.adoptedStyleSheets = document.adoptedStyleSheets.filter(
-            s => !sheetsToRemove.has(s)
-        );
+        // Feature check: adoptedStyleSheets may not exist in all environments
+        if ('adoptedStyleSheets' in document) {
+            const sheetsToRemove = new Set(this._activeThemeSheets);
+            document.adoptedStyleSheets = document.adoptedStyleSheets.filter(
+                s => !sheetsToRemove.has(s)
+            );
+        }
+
+        // Fallback cleanup: remove tracked <style> elements from document root
+        const docFallbackNodes = ThemeManager._fallbackStyleNodes.get(document);
+        if (docFallbackNodes && docFallbackNodes.length > 0) {
+            docFallbackNodes.forEach(style => style.parentNode?.removeChild(style));
+            ThemeManager._fallbackStyleNodes.delete(document);
+        }
+
         this._activeThemeSheets = [];
     }
 
@@ -325,10 +344,19 @@ export default class ThemeManager {
 
         for (const instance of liveInstances) {
             if (instance.shadowRoot) {
-                instance.shadowRoot.adoptedStyleSheets =
-                    instance.shadowRoot.adoptedStyleSheets.filter(
-                        sheet => !overrideSheets.has(sheet)
-                    );
+                // Feature check: adoptedStyleSheets may not exist in all environments
+                if ('adoptedStyleSheets' in instance.shadowRoot) {
+                    instance.shadowRoot.adoptedStyleSheets =
+                        instance.shadowRoot.adoptedStyleSheets.filter(
+                            sheet => !overrideSheets.has(sheet)
+                        );
+                }
+                // Fallback cleanup: remove tracked <style> elements from shadow root
+                const shadowFallbackNodes = ThemeManager._fallbackStyleNodes.get(instance.shadowRoot);
+                if (shadowFallbackNodes && shadowFallbackNodes.length > 0) {
+                    shadowFallbackNodes.forEach(style => style.parentNode?.removeChild(style));
+                    ThemeManager._fallbackStyleNodes.delete(instance.shadowRoot);
+                }
             }
         }
 
