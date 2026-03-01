@@ -191,6 +191,7 @@ export default class PluginManager {
     collectKeymaps() {
         const merged = {};
         for (const plugin of this.activePlugins) {
+            if (typeof plugin.keymap !== 'function') continue;
             try {
                 const km = plugin.keymap();
                 if (km && typeof km === 'object') {
@@ -211,6 +212,7 @@ export default class PluginManager {
     collectInputRules() {
         const rules = [];
         for (const plugin of this.activePlugins) {
+            if (typeof plugin.inputRules !== 'function') continue;
             try {
                 const r = plugin.inputRules();
                 if (Array.isArray(r)) {
@@ -231,6 +233,7 @@ export default class PluginManager {
     collectPasteRules() {
         const rules = [];
         for (const plugin of this.activePlugins) {
+            if (typeof plugin.pasteRules !== 'function') continue;
             try {
                 const r = plugin.pasteRules();
                 if (Array.isArray(r)) {
@@ -253,6 +256,7 @@ export default class PluginManager {
      */
     runFilterTransaction(tr, state) {
         for (const plugin of this.activePlugins) {
+            if (typeof plugin.filterTransaction !== 'function') continue;
             try {
                 const result = plugin.filterTransaction(tr, state);
                 if (result !== undefined && result !== null) {
@@ -274,6 +278,7 @@ export default class PluginManager {
      */
     runStateDidUpdate(newState, oldState) {
         for (const plugin of this.activePlugins) {
+            if (typeof plugin.stateDidUpdate !== 'function') continue;
             try {
                 plugin.stateDidUpdate(newState, oldState);
             } catch (err) {
@@ -290,6 +295,7 @@ export default class PluginManager {
     collectToolbarItems() {
         const items = [];
         for (const plugin of this.activePlugins) {
+            if (typeof plugin.toolbarItems !== 'function') continue;
             try {
                 const t = plugin.toolbarItems();
                 if (Array.isArray(t)) {
@@ -311,6 +317,7 @@ export default class PluginManager {
     collectContextMenuItems(context) {
         const items = [];
         for (const plugin of this.activePlugins) {
+            if (typeof plugin.contextMenuItems !== 'function') continue;
             try {
                 const c = plugin.contextMenuItems(context);
                 if (Array.isArray(c)) {
@@ -335,6 +342,7 @@ export default class PluginManager {
         const marks = {};
 
         for (const plugin of this.activePlugins) {
+            if (typeof plugin.schemaExtensions !== 'function') continue;
             try {
                 const ext = plugin.schemaExtensions();
                 if (!ext) continue;
