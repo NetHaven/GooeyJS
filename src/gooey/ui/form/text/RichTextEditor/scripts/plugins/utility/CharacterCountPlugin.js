@@ -15,6 +15,7 @@ export default class CharacterCountPlugin extends Plugin {
     }
 
     constructor() {
+        super();
         /** @type {object|null} */
         this._editor = null;
 

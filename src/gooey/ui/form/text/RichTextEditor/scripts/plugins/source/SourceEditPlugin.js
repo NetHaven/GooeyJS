@@ -20,6 +20,7 @@ export default class SourceEditPlugin extends Plugin {
     }
 
     constructor() {
+        super();
         /** @type {object|null} */
         this._editor = null;
 
