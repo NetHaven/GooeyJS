@@ -1,13 +1,12 @@
 import { clearFormatting } from '../../state/Commands.js';
+import Plugin from '../Plugin.js';
 
 /**
  * ClearFormattingPlugin removes all marks from the selection via Mod-\
  * keybinding and a toolbar button. Delegates to the clearFormatting command.
  */
-export default class ClearFormattingPlugin {
+export default class ClearFormattingPlugin extends Plugin {
     static get pluginName() { return 'clearFormatting'; }
-
-    init(editor) { this._editor = editor; }
 
     keymap() {
         return { 'Mod-\\': clearFormatting };
@@ -22,6 +21,4 @@ export default class ClearFormattingPlugin {
             icon: 'clearFormatting'
         }];
     }
-
-    destroy() { this._editor = null; }
 }

@@ -1,13 +1,12 @@
 import { toggleMark, markActive } from '../../state/Commands.js';
+import Plugin from '../Plugin.js';
 
 /**
  * UnderlinePlugin provides underline mark toggling via Mod-U keybinding
  * and a toolbar button. Delegates to the toggleMark command.
  */
-export default class UnderlinePlugin {
+export default class UnderlinePlugin extends Plugin {
     static get pluginName() { return 'underline'; }
-
-    init(editor) { this._editor = editor; }
 
     keymap() {
         return { 'Mod-u': toggleMark('underline') };
@@ -23,6 +22,4 @@ export default class UnderlinePlugin {
             icon: 'underline'
         }];
     }
-
-    destroy() { this._editor = null; }
 }

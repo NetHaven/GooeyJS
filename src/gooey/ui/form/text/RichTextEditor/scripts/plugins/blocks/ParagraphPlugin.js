@@ -6,19 +6,12 @@
  */
 
 import { paragraph } from "../../state/Commands.js";
+import Plugin from "../Plugin.js";
 
 
-export default class ParagraphPlugin {
+export default class ParagraphPlugin extends Plugin {
 
     static pluginName = "paragraph";
-
-    /**
-     * Initialize the plugin with an editor reference.
-     * @param {object} editor - RichTextEditor component instance
-     */
-    init(editor) {
-        this._editor = editor;
-    }
 
     /**
      * Return the keymap contributed by this plugin.
@@ -48,10 +41,4 @@ export default class ParagraphPlugin {
         }];
     }
 
-    /**
-     * Clean up plugin resources.
-     */
-    destroy() {
-        this._editor = null;
-    }
 }

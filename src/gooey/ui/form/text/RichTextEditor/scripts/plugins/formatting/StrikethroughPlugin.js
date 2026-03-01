@@ -1,13 +1,12 @@
 import { toggleMark, markActive } from '../../state/Commands.js';
+import Plugin from '../Plugin.js';
 
 /**
  * StrikethroughPlugin provides strikethrough mark toggling via Mod-Shift-S
  * keybinding and a toolbar button. Delegates to the toggleMark command.
  */
-export default class StrikethroughPlugin {
+export default class StrikethroughPlugin extends Plugin {
     static get pluginName() { return 'strikethrough'; }
-
-    init(editor) { this._editor = editor; }
 
     keymap() {
         return { 'Mod-Shift-s': toggleMark('strikethrough') };
@@ -23,6 +22,4 @@ export default class StrikethroughPlugin {
             icon: 'strikethrough'
         }];
     }
-
-    destroy() { this._editor = null; }
 }

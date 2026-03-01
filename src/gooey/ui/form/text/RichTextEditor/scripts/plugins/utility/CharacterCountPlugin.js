@@ -6,8 +6,9 @@
  * Provides getCharacterCount() and getWordCount() public methods for querying.
  */
 import RichTextEditorEvent from '../../../../../../events/form/text/RichTextEditorEvent.js';
+import Plugin from '../Plugin.js';
 
-export default class CharacterCountPlugin {
+export default class CharacterCountPlugin extends Plugin {
 
     static get pluginName() {
         return "characterCount";

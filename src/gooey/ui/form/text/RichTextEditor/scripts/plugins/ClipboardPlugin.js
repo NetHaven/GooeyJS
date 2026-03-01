@@ -14,6 +14,7 @@
  */
 
 import { Selection } from '../model/Position.js';
+import Plugin from './Plugin.js';
 
 
 // ============================================================================
@@ -689,7 +690,7 @@ export class GoogleDocsPasteMatcher {
  * Attaches copy/cut/paste event listeners on the textarea input sink
  * and provides programmatic clipboard methods.
  */
-export default class ClipboardPlugin {
+export default class ClipboardPlugin extends Plugin {
 
     /**
      * Unique plugin name for registry identification.

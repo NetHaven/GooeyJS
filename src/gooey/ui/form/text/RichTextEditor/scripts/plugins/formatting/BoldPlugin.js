@@ -1,13 +1,12 @@
 import { toggleMark, markActive } from '../../state/Commands.js';
+import Plugin from '../Plugin.js';
 
 /**
  * BoldPlugin provides bold mark toggling via Mod-B keybinding
  * and a toolbar button. Delegates to the toggleMark command.
  */
-export default class BoldPlugin {
+export default class BoldPlugin extends Plugin {
     static get pluginName() { return 'bold'; }
-
-    init(editor) { this._editor = editor; }
 
     keymap() {
         return { 'Mod-b': toggleMark('bold') };
@@ -23,6 +22,4 @@ export default class BoldPlugin {
             icon: 'bold'
         }];
     }
-
-    destroy() { this._editor = null; }
 }

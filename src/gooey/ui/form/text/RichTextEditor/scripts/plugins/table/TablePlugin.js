@@ -23,9 +23,10 @@ import {
     splitCell
 } from "../../commands/TableCommands.js";
 import { Selection } from "../../model/Position.js";
+import Plugin from "../Plugin.js";
 
 
-export default class TablePlugin {
+export default class TablePlugin extends Plugin {
 
     /**
      * Unique plugin name for registry identification.

@@ -8,20 +8,13 @@
  */
 
 import Node from "../../model/Node.js";
+import Plugin from "../Plugin.js";
 
 
-export default class TrailingNodePlugin {
+export default class TrailingNodePlugin extends Plugin {
 
     static get pluginName() {
         return "trailingNode";
-    }
-
-    /**
-     * Called when plugin is registered with the editor.
-     * @param {object} editor - RichTextEditor instance
-     */
-    init(editor) {
-        this._editor = editor;
     }
 
     /**
@@ -55,12 +48,6 @@ export default class TrailingNodePlugin {
         return tr;
     }
 
-    /**
-     * Cleanup when plugin is unregistered.
-     */
-    destroy() {
-        this._editor = null;
-    }
 }
 
 

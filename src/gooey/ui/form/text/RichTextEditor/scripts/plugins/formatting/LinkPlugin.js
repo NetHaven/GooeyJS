@@ -1,14 +1,13 @@
 import { toggleLink, markActive } from '../../state/Commands.js';
+import Plugin from '../Plugin.js';
 
 /**
  * LinkPlugin provides link mark toggling via Mod-K keybinding
  * and a toolbar button. The toggleLink command handles unlinking;
  * link creation delegates to the editor for a dialog.
  */
-export default class LinkPlugin {
+export default class LinkPlugin extends Plugin {
     static get pluginName() { return 'link'; }
-
-    init(editor) { this._editor = editor; }
 
     keymap() {
         return { 'Mod-k': toggleLink };
@@ -28,6 +27,4 @@ export default class LinkPlugin {
             icon: 'link'
         }];
     }
-
-    destroy() { this._editor = null; }
 }

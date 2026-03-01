@@ -9,18 +9,12 @@
  */
 
 
-export default class DropCursorPlugin {
+import Plugin from '../Plugin.js';
+
+export default class DropCursorPlugin extends Plugin {
 
     static get pluginName() {
         return "dropCursor";
-    }
-
-    /**
-     * Called when plugin is registered with the editor.
-     * @param {object} editor - RichTextEditor instance
-     */
-    init(editor) {
-        this._editor = editor;
     }
 
     /**
@@ -38,10 +32,4 @@ export default class DropCursorPlugin {
         ];
     }
 
-    /**
-     * Cleanup when plugin is unregistered.
-     */
-    destroy() {
-        this._editor = null;
-    }
 }

@@ -7,19 +7,12 @@
  */
 
 import { increaseIndent, decreaseIndent } from "../../state/Commands.js";
+import Plugin from "../Plugin.js";
 
 
-export default class IndentPlugin {
+export default class IndentPlugin extends Plugin {
 
     static pluginName = "indent";
-
-    /**
-     * Initialize the plugin with an editor reference.
-     * @param {object} editor - RichTextEditor component instance
-     */
-    init(editor) {
-        this._editor = editor;
-    }
 
     /**
      * Return the keymap contributed by this plugin.
@@ -63,10 +56,4 @@ export default class IndentPlugin {
         ];
     }
 
-    /**
-     * Clean up plugin resources.
-     */
-    destroy() {
-        this._editor = null;
-    }
 }

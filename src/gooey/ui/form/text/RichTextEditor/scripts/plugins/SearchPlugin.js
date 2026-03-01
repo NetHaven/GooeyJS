@@ -13,12 +13,13 @@
  */
 
 import { Selection } from '../model/Position.js';
+import Plugin from './Plugin.js';
 
 
 /**
  * SearchPlugin manages search state, match highlighting, and panel UI.
  */
-export default class SearchPlugin {
+export default class SearchPlugin extends Plugin {
 
     /**
      * Unique plugin name for registry identification.

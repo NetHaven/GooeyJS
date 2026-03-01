@@ -11,7 +11,9 @@
  */
 
 
-export default class SourceEditPlugin {
+import Plugin from '../Plugin.js';
+
+export default class SourceEditPlugin extends Plugin {
 
     static get pluginName() {
         return "sourceEdit";

@@ -1,17 +1,12 @@
 import { setMark } from '../../state/Commands.js';
+import Plugin from '../Plugin.js';
 
 /**
  * FontSizePlugin provides font size formatting via toolbar dropdown.
  * No keybinding. Delegates to the setMark command with size attributes.
  */
-export default class FontSizePlugin {
+export default class FontSizePlugin extends Plugin {
     static get pluginName() { return 'fontSize'; }
-
-    init(editor) { this._editor = editor; }
-
-    keymap() {
-        return {};
-    }
 
     toolbarItems() {
         return [{
@@ -22,6 +17,4 @@ export default class FontSizePlugin {
             icon: 'fontSize'
         }];
     }
-
-    destroy() { this._editor = null; }
 }

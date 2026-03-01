@@ -9,19 +9,12 @@
  */
 
 import { insertVideo } from "../../commands/MediaCommands.js";
+import Plugin from "../Plugin.js";
 
 
-export default class VideoPlugin {
+export default class VideoPlugin extends Plugin {
 
     static pluginName = "video";
-
-    /**
-     * Initialize the plugin with an editor reference.
-     * @param {object} editor - RichTextEditor component instance
-     */
-    init(editor) {
-        this._editor = editor;
-    }
 
     /**
      * Return toolbar item descriptors for video insertion.
@@ -42,10 +35,4 @@ export default class VideoPlugin {
         }];
     }
 
-    /**
-     * Clean up plugin resources.
-     */
-    destroy() {
-        this._editor = null;
-    }
 }

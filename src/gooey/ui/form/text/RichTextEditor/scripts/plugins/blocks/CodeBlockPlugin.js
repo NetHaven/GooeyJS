@@ -7,19 +7,12 @@
  */
 
 import { toggleCodeBlock } from "../../state/Commands.js";
+import Plugin from "../Plugin.js";
 
 
-export default class CodeBlockPlugin {
+export default class CodeBlockPlugin extends Plugin {
 
     static pluginName = "codeBlock";
-
-    /**
-     * Initialize the plugin with an editor reference.
-     * @param {object} editor - RichTextEditor component instance
-     */
-    init(editor) {
-        this._editor = editor;
-    }
 
     /**
      * Return the keymap contributed by this plugin.
@@ -47,10 +40,4 @@ export default class CodeBlockPlugin {
         }];
     }
 
-    /**
-     * Clean up plugin resources.
-     */
-    destroy() {
-        this._editor = null;
-    }
 }

@@ -7,19 +7,12 @@
  */
 
 import { setLineHeight } from "../../state/Commands.js";
+import Plugin from "../Plugin.js";
 
 
-export default class LineHeightPlugin {
+export default class LineHeightPlugin extends Plugin {
 
     static pluginName = "lineHeight";
-
-    /**
-     * Initialize the plugin with an editor reference.
-     * @param {object} editor - RichTextEditor component instance
-     */
-    init(editor) {
-        this._editor = editor;
-    }
 
     /**
      * Return toolbar item descriptors for line height.
@@ -47,10 +40,4 @@ export default class LineHeightPlugin {
         }];
     }
 
-    /**
-     * Clean up plugin resources.
-     */
-    destroy() {
-        this._editor = null;
-    }
 }

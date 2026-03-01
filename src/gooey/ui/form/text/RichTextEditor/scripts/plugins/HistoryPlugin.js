@@ -8,7 +8,9 @@
  * Integrates with the command/keymap system via exported command functions
  * and a keymap builder.
  */
-export default class HistoryPlugin {
+import Plugin from './Plugin.js';
+
+export default class HistoryPlugin extends Plugin {
 
     /**
      * Unique plugin name for registry identification.
@@ -190,16 +192,6 @@ export default class HistoryPlugin {
     // =========================================================================
     // Plugin interface methods
     // =========================================================================
-
-    /**
-     * Initialize the plugin with the editor instance.
-     * Called by PluginManager after construction.
-     *
-     * @param {object} editor - RichTextEditor instance
-     */
-    init(editor) {
-        this._editor = editor;
-    }
 
     /**
      * Return keybindings for undo/redo.

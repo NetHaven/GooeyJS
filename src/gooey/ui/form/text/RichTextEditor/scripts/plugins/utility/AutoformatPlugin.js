@@ -21,20 +21,13 @@ import {
     insertHorizontalRule,
     setBlockType
 } from "../../state/Commands.js";
+import Plugin from "../Plugin.js";
 
 
-export default class AutoformatPlugin {
+export default class AutoformatPlugin extends Plugin {
 
     static get pluginName() {
         return "autoformat";
-    }
-
-    /**
-     * Called when plugin is registered with the editor.
-     * @param {object} editor - RichTextEditor instance
-     */
-    init(editor) {
-        this._editor = editor;
     }
 
     /**
@@ -234,12 +227,6 @@ export default class AutoformatPlugin {
         ];
     }
 
-    /**
-     * Cleanup when plugin is unregistered.
-     */
-    destroy() {
-        this._editor = null;
-    }
 }
 
 

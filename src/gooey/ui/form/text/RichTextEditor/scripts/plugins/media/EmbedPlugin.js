@@ -9,19 +9,12 @@
  */
 
 import { insertEmbed } from "../../commands/MediaCommands.js";
+import Plugin from "../Plugin.js";
 
 
-export default class EmbedPlugin {
+export default class EmbedPlugin extends Plugin {
 
     static pluginName = "embed";
-
-    /**
-     * Initialize the plugin with an editor reference.
-     * @param {object} editor - RichTextEditor component instance
-     */
-    init(editor) {
-        this._editor = editor;
-    }
 
     /**
      * Return toolbar item descriptors for embed insertion.
@@ -42,10 +35,4 @@ export default class EmbedPlugin {
         }];
     }
 
-    /**
-     * Clean up plugin resources.
-     */
-    destroy() {
-        this._editor = null;
-    }
 }

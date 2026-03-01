@@ -11,7 +11,9 @@
  */
 
 
-export default class PlaceholderPlugin {
+import Plugin from '../Plugin.js';
+
+export default class PlaceholderPlugin extends Plugin {
 
     static get pluginName() {
         return "placeholder";

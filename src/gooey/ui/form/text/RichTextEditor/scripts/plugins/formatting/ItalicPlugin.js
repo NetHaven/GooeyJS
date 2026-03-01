@@ -1,13 +1,12 @@
 import { toggleMark, markActive } from '../../state/Commands.js';
+import Plugin from '../Plugin.js';
 
 /**
  * ItalicPlugin provides italic mark toggling via Mod-I keybinding
  * and a toolbar button. Delegates to the toggleMark command.
  */
-export default class ItalicPlugin {
+export default class ItalicPlugin extends Plugin {
     static get pluginName() { return 'italic'; }
-
-    init(editor) { this._editor = editor; }
 
     keymap() {
         return { 'Mod-i': toggleMark('italic') };
@@ -23,6 +22,4 @@ export default class ItalicPlugin {
             icon: 'italic'
         }];
     }
-
-    destroy() { this._editor = null; }
 }

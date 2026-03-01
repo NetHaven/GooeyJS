@@ -6,19 +6,12 @@
  */
 
 import { setAlignment } from "../../state/Commands.js";
+import Plugin from "../Plugin.js";
 
 
-export default class AlignmentPlugin {
+export default class AlignmentPlugin extends Plugin {
 
     static pluginName = "alignment";
-
-    /**
-     * Initialize the plugin with an editor reference.
-     * @param {object} editor - RichTextEditor component instance
-     */
-    init(editor) {
-        this._editor = editor;
-    }
 
     /**
      * Return toolbar item descriptors for text alignment.
@@ -89,10 +82,4 @@ export default class AlignmentPlugin {
         }
     }
 
-    /**
-     * Clean up plugin resources.
-     */
-    destroy() {
-        this._editor = null;
-    }
 }

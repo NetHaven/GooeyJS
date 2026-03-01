@@ -1,18 +1,13 @@
 import { setMark } from '../../state/Commands.js';
+import Plugin from '../Plugin.js';
 
 /**
  * BackgroundColorPlugin provides background color formatting via toolbar
  * color picker. No keybinding. Delegates to the setMark command with
  * color attributes.
  */
-export default class BackgroundColorPlugin {
+export default class BackgroundColorPlugin extends Plugin {
     static get pluginName() { return 'backgroundColor'; }
-
-    init(editor) { this._editor = editor; }
-
-    keymap() {
-        return {};
-    }
 
     toolbarItems() {
         return [{
@@ -23,6 +18,4 @@ export default class BackgroundColorPlugin {
             icon: 'backgroundColor'
         }];
     }
-
-    destroy() { this._editor = null; }
 }

@@ -16,9 +16,10 @@ import {
     _findMediaNodeAtPos
 } from "../../commands/MediaCommands.js";
 import { Selection } from "../../model/Position.js";
+import Plugin from "../Plugin.js";
 
 
-export default class ImagePlugin {
+export default class ImagePlugin extends Plugin {
 
     /**
      * Unique plugin name for registry identification.

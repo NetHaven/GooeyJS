@@ -1,17 +1,12 @@
 import { toggleMark, markActive } from '../../state/Commands.js';
+import Plugin from '../Plugin.js';
 
 /**
  * SuperscriptPlugin provides superscript mark toggling via toolbar button.
  * No keybinding. Delegates to the toggleMark command.
  */
-export default class SuperscriptPlugin {
+export default class SuperscriptPlugin extends Plugin {
     static get pluginName() { return 'superscript'; }
-
-    init(editor) { this._editor = editor; }
-
-    keymap() {
-        return {};
-    }
 
     toolbarItems() {
         return [{
@@ -23,6 +18,4 @@ export default class SuperscriptPlugin {
             icon: 'superscript'
         }];
     }
-
-    destroy() { this._editor = null; }
 }

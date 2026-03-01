@@ -6,19 +6,12 @@
  */
 
 import { toggleBulletList } from "../../state/Commands.js";
+import Plugin from "../Plugin.js";
 
 
-export default class BulletListPlugin {
+export default class BulletListPlugin extends Plugin {
 
     static pluginName = "bulletList";
-
-    /**
-     * Initialize the plugin with an editor reference.
-     * @param {object} editor - RichTextEditor component instance
-     */
-    init(editor) {
-        this._editor = editor;
-    }
 
     /**
      * Return the keymap contributed by this plugin.
@@ -48,10 +41,4 @@ export default class BulletListPlugin {
         }];
     }
 
-    /**
-     * Clean up plugin resources.
-     */
-    destroy() {
-        this._editor = null;
-    }
 }

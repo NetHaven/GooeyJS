@@ -7,20 +7,13 @@
  */
 
 import { setMark } from "../../state/Commands.js";
+import Plugin from "../Plugin.js";
 
 
-export default class AutolinkPlugin {
+export default class AutolinkPlugin extends Plugin {
 
     static get pluginName() {
         return "autolink";
-    }
-
-    /**
-     * Called when plugin is registered with the editor.
-     * @param {object} editor - RichTextEditor instance
-     */
-    init(editor) {
-        this._editor = editor;
     }
 
     /**
@@ -65,10 +58,4 @@ export default class AutolinkPlugin {
         ];
     }
 
-    /**
-     * Cleanup when plugin is unregistered.
-     */
-    destroy() {
-        this._editor = null;
-    }
 }

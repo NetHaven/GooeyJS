@@ -1,17 +1,12 @@
 import { toggleMark, markActive } from '../../state/Commands.js';
+import Plugin from '../Plugin.js';
 
 /**
  * SubscriptPlugin provides subscript mark toggling via toolbar button.
  * No keybinding. Delegates to the toggleMark command.
  */
-export default class SubscriptPlugin {
+export default class SubscriptPlugin extends Plugin {
     static get pluginName() { return 'subscript'; }
-
-    init(editor) { this._editor = editor; }
-
-    keymap() {
-        return {};
-    }
 
     toolbarItems() {
         return [{
@@ -23,6 +18,4 @@ export default class SubscriptPlugin {
             icon: 'subscript'
         }];
     }
-
-    destroy() { this._editor = null; }
 }

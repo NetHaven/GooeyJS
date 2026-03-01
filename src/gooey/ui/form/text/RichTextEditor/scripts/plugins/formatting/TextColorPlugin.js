@@ -1,17 +1,12 @@
 import { setMark } from '../../state/Commands.js';
+import Plugin from '../Plugin.js';
 
 /**
  * TextColorPlugin provides text color formatting via toolbar color picker.
  * No keybinding. Delegates to the setMark command with color attributes.
  */
-export default class TextColorPlugin {
+export default class TextColorPlugin extends Plugin {
     static get pluginName() { return 'textColor'; }
-
-    init(editor) { this._editor = editor; }
-
-    keymap() {
-        return {};
-    }
 
     toolbarItems() {
         return [{
@@ -22,6 +17,4 @@ export default class TextColorPlugin {
             icon: 'textColor'
         }];
     }
-
-    destroy() { this._editor = null; }
 }

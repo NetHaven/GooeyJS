@@ -9,18 +9,12 @@
  */
 
 
-export default class DragHandlePlugin {
+import Plugin from '../Plugin.js';
+
+export default class DragHandlePlugin extends Plugin {
 
     static get pluginName() {
         return "dragHandle";
-    }
-
-    /**
-     * Called when plugin is registered with the editor.
-     * @param {object} editor - RichTextEditor instance
-     */
-    init(editor) {
-        this._editor = editor;
     }
 
     /**
@@ -38,10 +32,4 @@ export default class DragHandlePlugin {
         ];
     }
 
-    /**
-     * Cleanup when plugin is unregistered.
-     */
-    destroy() {
-        this._editor = null;
-    }
 }

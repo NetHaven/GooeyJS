@@ -23,19 +23,12 @@ import {
     deleteBackward,
     insertText
 } from "../../state/Commands.js";
+import Plugin from "../Plugin.js";
 
 
-export default class ListKeymapPlugin {
+export default class ListKeymapPlugin extends Plugin {
 
     static pluginName = "listKeymap";
-
-    /**
-     * Initialize the plugin with an editor reference.
-     * @param {object} editor - RichTextEditor component instance
-     */
-    init(editor) {
-        this._editor = editor;
-    }
 
     /**
      * Return the keymap contributed by this plugin.
@@ -65,10 +58,4 @@ export default class ListKeymapPlugin {
         return [];
     }
 
-    /**
-     * Clean up plugin resources.
-     */
-    destroy() {
-        this._editor = null;
-    }
 }

@@ -6,19 +6,12 @@
  */
 
 import { heading } from "../../state/Commands.js";
+import Plugin from "../Plugin.js";
 
 
-export default class HeadingPlugin {
+export default class HeadingPlugin extends Plugin {
 
     static pluginName = "heading";
-
-    /**
-     * Initialize the plugin with an editor reference.
-     * @param {object} editor - RichTextEditor component instance
-     */
-    init(editor) {
-        this._editor = editor;
-    }
 
     /**
      * Return the keymap contributed by this plugin.
@@ -63,10 +56,4 @@ export default class HeadingPlugin {
         }];
     }
 
-    /**
-     * Clean up plugin resources.
-     */
-    destroy() {
-        this._editor = null;
-    }
 }

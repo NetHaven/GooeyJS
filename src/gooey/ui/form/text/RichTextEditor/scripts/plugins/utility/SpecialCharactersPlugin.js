@@ -8,23 +8,12 @@
  */
 
 
-export default class SpecialCharactersPlugin {
+import Plugin from '../Plugin.js';
+
+export default class SpecialCharactersPlugin extends Plugin {
 
     static get pluginName() {
         return "specialCharacters";
-    }
-
-    constructor() {
-        /** @type {object|null} */
-        this._editor = null;
-    }
-
-    /**
-     * Called when plugin is registered with the editor.
-     * @param {object} editor - RichTextEditor instance
-     */
-    init(editor) {
-        this._editor = editor;
     }
 
     /**
@@ -41,13 +30,6 @@ export default class SpecialCharactersPlugin {
                 command: () => this._openSpecialCharsDialog()
             }
         ];
-    }
-
-    /**
-     * Cleanup when plugin is unregistered.
-     */
-    destroy() {
-        this._editor = null;
     }
 
     // =========================================================================

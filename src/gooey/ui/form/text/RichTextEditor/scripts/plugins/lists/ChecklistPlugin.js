@@ -7,19 +7,12 @@
  */
 
 import { toggleChecklist } from "../../state/Commands.js";
+import Plugin from "../Plugin.js";
 
 
-export default class ChecklistPlugin {
+export default class ChecklistPlugin extends Plugin {
 
     static pluginName = "checklist";
-
-    /**
-     * Initialize the plugin with an editor reference.
-     * @param {object} editor - RichTextEditor component instance
-     */
-    init(editor) {
-        this._editor = editor;
-    }
 
     /**
      * Return the keymap contributed by this plugin.
@@ -47,10 +40,4 @@ export default class ChecklistPlugin {
         }];
     }
 
-    /**
-     * Clean up plugin resources.
-     */
-    destroy() {
-        this._editor = null;
-    }
 }
