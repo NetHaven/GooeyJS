@@ -20,7 +20,7 @@ export default class PlaylistParser {
             case 'm3u':
                 return this.#parseM3U(content, url);
             case 'pls':
-                return this.#parsePLS(content);
+                return this.#parsePLS(content, url);
             case 'xspf':
                 return this.#parseXSPF(content);
             default:
@@ -65,9 +65,10 @@ export default class PlaylistParser {
     /**
      * Parse PLS playlist format
      * @param {string} content - Playlist content
+     * @param {string} [baseUrl] - Base URL for resolving relative paths
      * @returns {Array<{src: string, title: string}>}
      */
-    static #parsePLS(content) {
+    static #parsePLS(content, baseUrl) {
         const lines = content.split('\n');
         const entries = {};
 
@@ -88,10 +89,17 @@ export default class PlaylistParser {
             }
         }
 
-        return Object.values(entries).filter(e => e.src).map(e => ({
-            src: e.src,
-            title: e.title || ''
-        }));
+        return Object.values(entries).filter(e => e.src).map(e => {
+            let src = e.src;
+            if (baseUrl) {
+                try {
+                    src = new URL(src, baseUrl).href;
+                } catch {
+                    // Keep original src if URL resolution fails (e.g., malformed path)
+                }
+            }
+            return { src, title: e.title || '' };
+        });
     }
 
     /**
