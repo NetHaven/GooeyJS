@@ -2,10 +2,10 @@
  * CharacterCountPlugin exposes character and word count via the stateDidUpdate hook.
  *
  * On every state update, walks the document tree to count characters and words.
- * Fires a 'charactercount' event on the editor with { characters, words } data.
+ * Fires a RichTextEditorEvent.CHARACTERCOUNT event on the editor with { characters, words } data.
  * Provides getCharacterCount() and getWordCount() public methods for querying.
  */
-
+import RichTextEditorEvent from '../../../../../../events/form/text/RichTextEditorEvent.js';
 
 export default class CharacterCountPlugin {
 
@@ -93,7 +93,7 @@ export default class CharacterCountPlugin {
 
         // Fire event on editor
         if (this._editor && typeof this._editor.fireEvent === "function") {
-            this._editor.fireEvent("charactercount", {
+            this._editor.fireEvent(RichTextEditorEvent.CHARACTERCOUNT, {
                 characters: this._characterCount,
                 words: this._wordCount
             });

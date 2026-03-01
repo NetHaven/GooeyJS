@@ -16,6 +16,7 @@ export default class RichTextEditorEvent extends Event {
     static REPLACE_DONE = "replacedone";
     static PLUGIN_LOADED = "pluginloaded";
     static PLUGIN_ERROR = "pluginerror";
+    static CHARACTERCOUNT = "charactercount";
 
     // Lifecycle events
     static CONTENT_SET = "contentSet";

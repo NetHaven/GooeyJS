@@ -2002,6 +2002,7 @@ export default class RichTextEditor extends TextElement {
         this.addValidEvent(RichTextEditorEvent.UNHIGHLIGHT);
         this.addValidEvent(RichTextEditorEvent.PLUGIN_LOADED);
         this.addValidEvent(RichTextEditorEvent.PLUGIN_ERROR);
+        this.addValidEvent(RichTextEditorEvent.CHARACTERCOUNT);
 
         // Lifecycle events
         this.addValidEvent(RichTextEditorEvent.CONTENT_SET);
