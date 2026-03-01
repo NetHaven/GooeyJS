@@ -3,11 +3,11 @@ import Logger from '../logging/Logger.js';
 export default class Template {
     /**
      * Activates a template by cloning its content into a target element
-     * @param {string} id - The template element's ID
+     * @param {string} id - The template element's ID (un-prefixed, e.g. "ui-Button")
      * @param {Element} [target=document.body] - The element to append the cloned content to
      */
     static activate(id, target = document.body) {
-        const template = document.getElementById(id);
+        const template = document.getElementById('gooey-' + id);
         if (template) {
             const clone = document.importNode(template.content, true);
             target.appendChild(clone);
@@ -15,10 +15,34 @@ export default class Template {
     }
 
     static _loading = new Map();
+    static _registry = null;
+
+    /**
+     * Returns the hidden template registry node, creating it lazily in document.head if needed.
+     * The registry node keeps all GooeyJS templates out of document.body and isolated from
+     * the user's page DOM.
+     * @returns {HTMLElement} - The hidden registry div
+     */
+    static _getRegistry() {
+        if (!Template._registry) {
+            const existing = document.getElementById('gooey-template-registry');
+            if (existing) {
+                Template._registry = existing;
+            } else {
+                const div = document.createElement('div');
+                div.id = 'gooey-template-registry';
+                div.setAttribute('aria-hidden', 'true');
+                div.style.cssText = 'display:none;position:absolute;width:0;height:0;overflow:hidden;';
+                document.head.appendChild(div);
+                Template._registry = div;
+            }
+        }
+        return Template._registry;
+    }
 
     static load(templateName, templateId, retryCount = 0) {
         // Check if already loaded (race condition protection)
-        if (document.getElementById(templateId)) {
+        if (document.getElementById('gooey-' + templateId)) {
             return Promise.resolve();
         }
 
@@ -59,7 +83,7 @@ export default class Template {
                 }
 
                 // Final check before DOM injection
-                if (!document.getElementById(templateId)) {
+                if (!document.getElementById('gooey-' + templateId)) {
                     // Extract template directory path for resolving relative URLs
                     const templateDir = templateName.substring(0, templateName.lastIndexOf('/') + 1);
 
@@ -82,9 +106,12 @@ export default class Template {
                     }
 
                     for (const template of templates) {
-                        // Avoid duplicates
+                        // Namespace the template ID with 'gooey-' prefix to prevent collisions
+                        // with user page element IDs. Callers always pass un-prefixed IDs.
+                        template.id = 'gooey-' + template.id;
+                        // Avoid duplicates, then append to isolated registry node (not document.body)
                         if (!document.getElementById(template.id)) {
-                            document.body.appendChild(document.adoptNode(template));
+                            Template._getRegistry().appendChild(document.adoptNode(template));
                         }
                     }
                     Logger.info({ code: "TEMPLATE_LOADED", templateId }, "Template loaded successfully: %s", templateId);
