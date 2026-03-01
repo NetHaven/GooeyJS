@@ -2,6 +2,39 @@ import Container from '../../../Container.js';
 import Template from '../../../../util/Template.js';
 import StatusBarEvent from '../../../../events/layout/StatusBarEvent.js';
 
+/**
+ * Sanitize HTML to remove dangerous elements and attributes before injection.
+ * Parses input as HTML directly (does not pre-escape), then removes script
+ * tags, event handlers, and javascript: URLs.
+ * @param {string} html - Raw HTML string
+ * @returns {string} Sanitized HTML safe for innerHTML injection
+ */
+function _sanitizeHTML(html) {
+    if (!html) return '';
+
+    const temp = document.createElement('div');
+    temp.innerHTML = html;
+
+    // Remove dangerous elements
+    temp.querySelectorAll('script, iframe, object, embed, link[rel="stylesheet"], meta')
+        .forEach(el => el.remove());
+
+    // Walk all remaining elements and remove dangerous attributes
+    temp.querySelectorAll('*').forEach(el => {
+        Array.from(el.attributes).forEach(attr => {
+            const name = attr.name.toLowerCase();
+            const value = attr.value;
+            if (name.startsWith('on')) {
+                el.removeAttribute(attr.name);
+            } else if (value && value.trim().toLowerCase().startsWith('javascript:')) {
+                el.removeAttribute(attr.name);
+            }
+        });
+    });
+
+    return temp.innerHTML;
+}
+
 export default class StatusBar extends Container {
     constructor() {
         super();
@@ -98,8 +131,10 @@ export default class StatusBar extends Container {
     }
 
     /**
-     * Add a status item programmatically.
-     * @param {string} content - Text or HTML content for the item
+     * Add a status item with plain text content. Content is rendered as text,
+     * not HTML — this is safe by default and prevents XSS injection.
+     * Use addStatusItemHTML() for rich content that requires HTML markup.
+     * @param {string} content - Plain text content for the item
      * @param {string} [position="left"] - Slot position: "left", "center", or "right"
      * @returns {HTMLElement} The created span element reference
      */
@@ -110,7 +145,33 @@ export default class StatusBar extends Container {
         }
 
         const span = document.createElement("span");
-        span.innerHTML = content;
+        span.textContent = content;
+        span.setAttribute("slot", position);
+
+        this._managedItems.add(span);
+        this.appendChild(span);
+
+        this.fireEvent(StatusBarEvent.ITEM_ADDED, { item: span, position: position });
+
+        return span;
+    }
+
+    /**
+     * Add a status item with HTML content. Content is sanitized to remove
+     * script tags, event handlers, and javascript: URLs before injection.
+     * Prefer addStatusItem() for plain text content.
+     * @param {string} html - HTML content for the item
+     * @param {string} [position="left"] - Slot position: "left", "center", or "right"
+     * @returns {HTMLElement} The created span element reference
+     */
+    addStatusItemHTML(html, position = "left") {
+        const validPositions = ["left", "center", "right"];
+        if (!validPositions.includes(position)) {
+            position = "left";
+        }
+
+        const span = document.createElement("span");
+        span.innerHTML = _sanitizeHTML(html);
         span.setAttribute("slot", position);
 
         this._managedItems.add(span);
