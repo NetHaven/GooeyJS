@@ -2,40 +2,58 @@ import Container from '../../../Container.js';
 import LayoutType from '../../../layout/Layout/scripts/LayoutType.js';
 import Template from '../../../../util/Template.js';
 
+// Allowed HTML tags and their permitted attributes
+const ALLOWED_TAGS = new Set(['b', 'i', 'u', 'em', 'strong', 'span', 'p', 'br',
+    'ul', 'ol', 'li', 'a', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+    'blockquote', 'code', 'pre', 'table', 'thead', 'tbody', 'tr', 'td', 'th',
+    'div', 'hr', 'small', 'sub', 'sup', 'mark', 'del', 'ins']);
+
+const ALLOWED_ATTRS = new Set(['class', 'id', 'style', 'href', 'target', 'title',
+    'colspan', 'rowspan', 'align', 'valign']);
+
 /**
- * Sanitize HTML to prevent XSS attacks
- * Removes script tags, event handlers, and javascript: URLs
+ * Sanitize HTML using a DOM-based allowlist approach.
+ * Parses input as HTML directly (does not pre-escape), then removes
+ * elements not in ALLOWED_TAGS (replacing them with their text content)
+ * and strips disallowed, on* event, and javascript: URL attributes.
  * @param {string} html - Raw HTML string
- * @returns {string} Sanitized HTML
+ * @returns {string} Sanitized HTML with safe markup preserved
  */
 function sanitizeHTML(html) {
     if (!html) return '';
 
-    // Create temporary element to parse HTML
+    // Parse as HTML directly (do NOT pre-escape as textContent)
     const temp = document.createElement('div');
-    temp.textContent = html; // First escape as text
-    const escaped = temp.innerHTML;
+    temp.innerHTML = html;
 
-    // Parse as HTML
-    temp.innerHTML = escaped;
+    // Walk and sanitize all elements
+    const walker = document.createTreeWalker(temp, NodeFilter.SHOW_ELEMENT);
+    const toRemove = [];
 
-    // Remove dangerous elements
-    const scripts = temp.querySelectorAll('script, iframe, object, embed');
-    scripts.forEach(el => el.remove());
+    let node = walker.nextNode();
+    while (node) {
+        const tagName = node.tagName.toLowerCase();
+        if (!ALLOWED_TAGS.has(tagName)) {
+            toRemove.push(node);
+        } else {
+            // Remove disallowed attributes
+            Array.from(node.attributes).forEach(attr => {
+                const name = attr.name.toLowerCase();
+                const value = attr.value;
+                if (!ALLOWED_ATTRS.has(name) || name.startsWith('on')) {
+                    node.removeAttribute(attr.name);
+                } else if (value && value.trim().toLowerCase().startsWith('javascript:')) {
+                    node.removeAttribute(attr.name);
+                }
+            });
+        }
+        node = walker.nextNode();
+    }
 
-    // Remove event handlers and javascript: URLs
-    const allElements = temp.querySelectorAll('*');
-    allElements.forEach(el => {
-        // Remove on* event attributes
-        Array.from(el.attributes).forEach(attr => {
-            if (attr.name.startsWith('on')) {
-                el.removeAttribute(attr.name);
-            }
-            // Remove javascript: URLs
-            if (attr.value && attr.value.trim().toLowerCase().startsWith('javascript:')) {
-                el.removeAttribute(attr.name);
-            }
-        });
+    // Remove disallowed elements (replace with their text content to preserve text)
+    toRemove.forEach(el => {
+        const text = document.createTextNode(el.textContent);
+        el.parentNode?.replaceChild(text, el);
     });
 
     return temp.innerHTML;
