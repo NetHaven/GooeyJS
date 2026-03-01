@@ -236,6 +236,7 @@ export default class CodeBlock extends UIComponent {
             const tokens = this._tokenizer.tokenize(code);
             const highlightedHTML = this._tokenizer.render(tokens);
 
+            // highlightedHTML is produced by tokenizer.render() which escapes all content via Tokenizer.escapeHTML()
             this.highlightedCode.innerHTML = highlightedHTML;
             this._showHighlightedCode();
             this._updateLineNumbers();

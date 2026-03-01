@@ -43,6 +43,11 @@ export default class Tokenizer {
      * Render an array of tokens into an HTML string of <span> elements.
      * Text tokens are rendered as plain escaped text nodes.
      *
+     * SECURITY: All token values are HTML-escaped via Tokenizer.escapeHTML()
+     * before injection. This method is the single authoritative safe renderer
+     * for the tokenizer pipeline. Subclasses MUST call Tokenizer.escapeHTML()
+     * on every token value if they override this method.
+     *
      * @param {Array<{type: string, value: string}>} tokens
      * @returns {string} HTML string safe for innerHTML assignment
      */
