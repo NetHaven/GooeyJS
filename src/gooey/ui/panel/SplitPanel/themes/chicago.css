@@ -1,0 +1,82 @@
+/* SplitPanel - Chicago structural override */
+
+:host {
+    background: var(--chicago-face, #C0C0C0);
+}
+
+.splitpanel-pane {
+    background: var(--chicago-face, #C0C0C0);
+    border: none;
+}
+
+.splitpanel-divider {
+    /* Raised bevel */
+    border: none;
+    border-top: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-left: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-right: 1px solid var(--chicago-border-shadow, #808080);
+    border-bottom: 1px solid var(--chicago-border-shadow, #808080);
+    background: var(--chicago-face, #C0C0C0);
+    position: relative;
+}
+
+.splitpanel-divider:hover {
+    background: var(--chicago-face, #C0C0C0);
+}
+
+.splitpanel-divider:active,
+:host(.splitpanel-dragging) .splitpanel-divider {
+    /* Sunken bevel: inverted */
+    border-top: 1px solid var(--chicago-border-shadow, #808080);
+    border-left: 1px solid var(--chicago-border-shadow, #808080);
+    border-right: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-bottom: 1px solid var(--chicago-border-light, #FFFFFF);
+}
+
+/* Horizontal orientation (left/right split) */
+:host([orientation="horizontal"]) .splitpanel-divider {
+    width: 4px;
+    min-width: 4px;
+    cursor: col-resize;
+}
+
+/* Grip handle for horizontal divider: 3 vertical lines */
+:host([orientation="horizontal"]) .splitpanel-divider::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: block;
+    width: 3px;
+    height: 16px;
+    border-left: 1px solid var(--chicago-border-shadow, #808080);
+    border-right: 1px solid var(--chicago-border-shadow, #808080);
+    box-shadow:
+        -1px 0 0 var(--chicago-border-light, #FFFFFF),
+        1px 0 0 var(--chicago-border-light, #FFFFFF);
+}
+
+/* Vertical orientation (top/bottom split) */
+:host([orientation="vertical"]) .splitpanel-divider {
+    height: 4px;
+    min-height: 4px;
+    cursor: row-resize;
+}
+
+/* Grip handle for vertical divider: 3 horizontal lines */
+:host([orientation="vertical"]) .splitpanel-divider::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: block;
+    width: 16px;
+    height: 3px;
+    border-top: 1px solid var(--chicago-border-shadow, #808080);
+    border-bottom: 1px solid var(--chicago-border-shadow, #808080);
+    box-shadow:
+        0 -1px 0 var(--chicago-border-light, #FFFFFF),
+        0 1px 0 var(--chicago-border-light, #FFFFFF);
+}

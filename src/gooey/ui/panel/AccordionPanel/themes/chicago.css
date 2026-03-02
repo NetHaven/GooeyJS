@@ -1,0 +1,68 @@
+/* AccordionPanel - Chicago structural override */
+
+:host {
+    border: 1px solid var(--chicago-border-dark, #000000);
+    background: var(--chicago-face, #C0C0C0);
+    border-radius: 0;
+}
+
+.accordion-item {
+    border-bottom: 1px solid var(--chicago-border-shadow, #808080);
+}
+
+.accordion-item:last-child {
+    border-bottom: none;
+}
+
+.accordion-header {
+    /* Raised bevel */
+    border: none;
+    border-top: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-left: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-right: 1px solid var(--chicago-border-shadow, #808080);
+    border-bottom: 1px solid var(--chicago-border-shadow, #808080);
+    box-shadow: inset -1px -1px 0 var(--chicago-border-dark, #000000);
+    background: var(--chicago-face, #C0C0C0);
+    color: var(--chicago-text, #000000);
+    font-size: 11px;
+    font-family: var(--chicago-font-family, "MS Sans Serif", "Microsoft Sans Serif", Tahoma, Arial, sans-serif);
+    padding: 4px 8px;
+    min-height: 18px;
+}
+
+.accordion-header:hover {
+    background: var(--chicago-face, #C0C0C0);
+}
+
+.accordion-header.active {
+    /* Sunken bevel: inverted */
+    border-top: 1px solid var(--chicago-border-shadow, #808080);
+    border-left: 1px solid var(--chicago-border-shadow, #808080);
+    border-right: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-bottom: 1px solid var(--chicago-border-light, #FFFFFF);
+    box-shadow: inset 1px 1px 0 var(--chicago-border-dark, #000000);
+    font-weight: normal;
+}
+
+.accordion-arrow {
+    color: var(--chicago-text, #000000);
+    font-size: 9px;
+}
+
+.accordion-title {
+    font-size: 11px;
+    color: var(--chicago-text, #000000);
+}
+
+.accordion-content {
+    background: var(--chicago-face, #C0C0C0);
+    border: none;
+    padding: 4px;
+    margin: 0;
+}
+
+.accordion-content:empty {
+    padding: 0;
+    border: none;
+    margin: 0;
+}

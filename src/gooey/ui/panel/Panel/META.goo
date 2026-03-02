@@ -9,7 +9,7 @@
   ],
   "themes": {
     "default": "base",
-    "available": ["base", "classic"]
+    "available": ["base", "chicago", "classic"]
   },
   "tokens": {
     "gooey-panel-bg": {

@@ -1,0 +1,10 @@
+/* Panel - Chicago structural override */
+
+:host {
+    background: var(--chicago-face, #C0C0C0);
+    border: none;
+}
+
+:host([border]) {
+    border: 1px solid var(--chicago-border-dark, #000000);
+}
