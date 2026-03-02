@@ -1,0 +1,84 @@
+/* Button - Chicago structural override */
+
+button {
+    /* Raised bevel: top/left highlight, bottom/right shadow */
+    border: none;
+    border-top: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-left: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-right: 1px solid var(--chicago-border-shadow, #808080);
+    border-bottom: 1px solid var(--chicago-border-shadow, #808080);
+    box-shadow:
+        inset -1px -1px 0 var(--chicago-border-dark, #000000),
+        inset 1px 1px 0 var(--chicago-border-highlight, #DFDFDF);
+    background-color: var(--chicago-face, #C0C0C0);
+    color: var(--chicago-text, #000000);
+    padding: 4px 12px;
+    border-radius: 0;
+}
+
+button:active {
+    /* Sunken bevel: inverted borders */
+    border-top: 1px solid var(--chicago-border-shadow, #808080);
+    border-left: 1px solid var(--chicago-border-shadow, #808080);
+    border-right: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-bottom: 1px solid var(--chicago-border-light, #FFFFFF);
+    box-shadow:
+        inset 1px 1px 0 var(--chicago-border-dark, #000000),
+        inset -1px -1px 0 var(--chicago-border-highlight, #DFDFDF);
+    padding: 5px 11px 3px 13px;
+}
+
+button:focus {
+    outline: 1px dotted var(--chicago-text, #000000);
+    outline-offset: -3px;
+}
+
+/* Default button emphasis: 1px black inner outline */
+:host([default]) button {
+    box-shadow:
+        inset -1px -1px 0 var(--chicago-border-dark, #000000),
+        inset 1px 1px 0 var(--chicago-border-highlight, #DFDFDF),
+        inset -2px -2px 0 var(--chicago-border-dark, #000000),
+        inset 2px 2px 0 var(--chicago-border-dark, #000000);
+}
+
+:host([default]) button:active {
+    box-shadow:
+        inset 1px 1px 0 var(--chicago-border-dark, #000000),
+        inset -1px -1px 0 var(--chicago-border-highlight, #DFDFDF);
+}
+
+/* Disabled state: embossed text */
+:host([disabled]) button {
+    color: var(--chicago-text-disabled, #808080);
+    text-shadow: 1px 1px 0 var(--chicago-text-disabled-highlight, #FFFFFF);
+    cursor: not-allowed;
+}
+
+:host([disabled]) button:hover,
+:host([disabled]) button:active {
+    /* Maintain raised bevel on hover/active when disabled */
+    border-top: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-left: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-right: 1px solid var(--chicago-border-shadow, #808080);
+    border-bottom: 1px solid var(--chicago-border-shadow, #808080);
+    box-shadow:
+        inset -1px -1px 0 var(--chicago-border-dark, #000000),
+        inset 1px 1px 0 var(--chicago-border-highlight, #DFDFDF);
+    padding: 4px 12px;
+}
+
+/* Icon and text styling */
+button img {
+    margin-right: 4px;
+    display: block;
+}
+
+button span {
+    display: inline-block;
+    line-height: 1;
+}
+
+button img:only-child {
+    margin-right: 0;
+}

@@ -1,0 +1,106 @@
+/* ToggleButton - Chicago structural override */
+
+.toggle-button,
+button {
+    /* Raised bevel: top/left highlight, bottom/right shadow */
+    border: none;
+    border-top: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-left: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-right: 1px solid var(--chicago-border-shadow, #808080);
+    border-bottom: 1px solid var(--chicago-border-shadow, #808080);
+    box-shadow:
+        inset -1px -1px 0 var(--chicago-border-dark, #000000),
+        inset 1px 1px 0 var(--chicago-border-highlight, #DFDFDF);
+    background-color: var(--chicago-face, #C0C0C0);
+    color: var(--chicago-text, #000000);
+    padding: 4px 8px;
+    border-radius: 0;
+    outline: none;
+}
+
+.toggle-button:active,
+button:active {
+    /* Sunken bevel: inverted borders */
+    border-top: 1px solid var(--chicago-border-shadow, #808080);
+    border-left: 1px solid var(--chicago-border-shadow, #808080);
+    border-right: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-bottom: 1px solid var(--chicago-border-light, #FFFFFF);
+    box-shadow:
+        inset 1px 1px 0 var(--chicago-border-dark, #000000),
+        inset -1px -1px 0 var(--chicago-border-highlight, #DFDFDF);
+}
+
+.toggle-button:focus,
+button:focus {
+    outline: 1px dotted var(--chicago-text, #000000);
+    outline-offset: -3px;
+}
+
+/* Pressed/toggled state: sunken bevel, gray face with dither indicator */
+:host(.pressed) .toggle-button,
+:host(.pressed) button {
+    background-color: var(--chicago-face, #C0C0C0);
+    background-image: var(--chicago-dither-50);
+    background-size: 2px 2px;
+    color: var(--chicago-text, #000000);
+    border-top: 1px solid var(--chicago-border-shadow, #808080);
+    border-left: 1px solid var(--chicago-border-shadow, #808080);
+    border-right: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-bottom: 1px solid var(--chicago-border-light, #FFFFFF);
+    box-shadow:
+        inset 1px 1px 0 var(--chicago-border-dark, #000000),
+        inset -1px -1px 0 var(--chicago-border-highlight, #DFDFDF);
+}
+
+:host(.pressed) .toggle-button:active,
+:host(.pressed) button:active {
+    background-image: none;
+}
+
+/* Disabled state: embossed text */
+:host([disabled]) .toggle-button,
+:host([disabled]) button {
+    color: var(--chicago-text-disabled, #808080);
+    text-shadow: 1px 1px 0 var(--chicago-text-disabled-highlight, #FFFFFF);
+    cursor: not-allowed;
+}
+
+:host([disabled]) .toggle-button:hover,
+:host([disabled]) button:hover,
+:host([disabled]) .toggle-button:active,
+:host([disabled]) button:active {
+    /* Maintain raised bevel when disabled */
+    border-top: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-left: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-right: 1px solid var(--chicago-border-shadow, #808080);
+    border-bottom: 1px solid var(--chicago-border-shadow, #808080);
+    box-shadow:
+        inset -1px -1px 0 var(--chicago-border-dark, #000000),
+        inset 1px 1px 0 var(--chicago-border-highlight, #DFDFDF);
+}
+
+:host([disabled].pressed) .toggle-button,
+:host([disabled].pressed) button {
+    background-image: var(--chicago-dither-50);
+    background-size: 2px 2px;
+    color: var(--chicago-text-disabled, #808080);
+    text-shadow: 1px 1px 0 var(--chicago-text-disabled-highlight, #FFFFFF);
+}
+
+/* Icon and text styling */
+.toggle-button img,
+button img {
+    margin-right: 4px;
+    display: block;
+}
+
+.toggle-button span,
+button span {
+    display: inline-block;
+    line-height: 1;
+}
+
+.toggle-button img:only-child,
+button img:only-child {
+    margin-right: 0;
+}

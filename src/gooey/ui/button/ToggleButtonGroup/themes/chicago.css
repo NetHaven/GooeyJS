@@ -1,0 +1,95 @@
+/* ToggleButtonGroup - Chicago structural override */
+
+:host {
+    gap: 0;
+    /* Raised bevel for group container */
+    border-top: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-left: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-right: 1px solid var(--chicago-border-shadow, #808080);
+    border-bottom: 1px solid var(--chicago-border-shadow, #808080);
+    background-color: var(--chicago-face, #C0C0C0);
+}
+
+.toggle-button-group {
+    gap: 0;
+}
+
+/* Horizontal layout (default) - flush buttons with separator */
+:host(:not([orientation="vertical"])) ::slotted(gooeyui-togglebutton) {
+    margin: 0;
+    border: none;
+}
+
+:host(:not([orientation="vertical"])) ::slotted(gooeyui-togglebutton) .toggle-button,
+:host(:not([orientation="vertical"])) ::slotted(gooeyui-togglebutton) button {
+    border: none;
+    border-radius: 0;
+    margin: 0;
+}
+
+:host(:not([orientation="vertical"])) ::slotted(gooeyui-togglebutton:not(:last-child)) .toggle-button,
+:host(:not([orientation="vertical"])) ::slotted(gooeyui-togglebutton:not(:last-child)) button {
+    border-right: 1px solid var(--chicago-border-shadow, #808080);
+}
+
+/* Vertical layout */
+:host([orientation="vertical"]) ::slotted(gooeyui-togglebutton) {
+    margin: 0;
+    border: none;
+}
+
+:host([orientation="vertical"]) ::slotted(gooeyui-togglebutton) .toggle-button,
+:host([orientation="vertical"]) ::slotted(gooeyui-togglebutton) button {
+    border: none;
+    border-radius: 0;
+    margin: 0;
+}
+
+:host([orientation="vertical"]) ::slotted(gooeyui-togglebutton:not(:last-child)) .toggle-button,
+:host([orientation="vertical"]) ::slotted(gooeyui-togglebutton:not(:last-child)) button {
+    border-bottom: 1px solid var(--chicago-border-shadow, #808080);
+}
+
+/* Spaced layout: individual raised bevels with gap */
+:host([spaced]) {
+    gap: 2px;
+    border: none;
+    background-color: transparent;
+}
+
+:host([spaced]) .toggle-button-group {
+    gap: 2px;
+}
+
+:host([spaced]) ::slotted(gooeyui-togglebutton) {
+    border-top: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-left: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-right: 1px solid var(--chicago-border-shadow, #808080);
+    border-bottom: 1px solid var(--chicago-border-shadow, #808080);
+}
+
+:host([spaced]) ::slotted(gooeyui-togglebutton) .toggle-button,
+:host([spaced]) ::slotted(gooeyui-togglebutton) button {
+    border-top: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-left: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-right: 1px solid var(--chicago-border-shadow, #808080);
+    border-bottom: 1px solid var(--chicago-border-shadow, #808080);
+    border-radius: 0;
+}
+
+:host([spaced]) ::slotted(gooeyui-togglebutton:not(:last-child)) .toggle-button,
+:host([spaced]) ::slotted(gooeyui-togglebutton:not(:last-child)) button {
+    border-right: 1px solid var(--chicago-border-shadow, #808080);
+}
+
+:host([spaced][orientation="vertical"]) ::slotted(gooeyui-togglebutton:not(:last-child)) .toggle-button,
+:host([spaced][orientation="vertical"]) ::slotted(gooeyui-togglebutton:not(:last-child)) button {
+    border-right: 1px solid var(--chicago-border-shadow, #808080);
+    border-bottom: 1px solid var(--chicago-border-shadow, #808080);
+}
+
+/* Disabled state: no opacity reduction per Chicago spec */
+:host([disabled]) {
+    opacity: 1.0;
+    pointer-events: none;
+}
