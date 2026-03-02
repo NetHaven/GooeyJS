@@ -1,0 +1,57 @@
+/* RadioButton - Chicago structural override */
+
+input[type="radio"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 12px;
+    height: 12px;
+    background-color: var(--chicago-face, #C0C0C0);
+    cursor: pointer;
+    margin: 0;
+    margin-right: 4px;
+    position: relative;
+    border-radius: 50%;
+    /* Ring border with sunken bevel effect */
+    border: 1px solid var(--chicago-border-dark, #000000);
+    box-shadow:
+        inset 1px 1px 0 var(--chicago-border-shadow, #808080),
+        inset -1px -1px 0 var(--chicago-border-highlight, #DFDFDF),
+        1px 1px 0 var(--chicago-border-light, #FFFFFF);
+}
+
+input[type="radio"]:checked {
+    background-color: var(--chicago-face, #C0C0C0);
+}
+
+/* Selected dot: 4x4 centered black dot */
+input[type="radio"]:checked::after {
+    content: "";
+    position: absolute;
+    left: 3px;
+    top: 3px;
+    width: 4px;
+    height: 4px;
+    background-color: var(--chicago-text, #000000);
+    border-radius: 50%;
+}
+
+input[type="radio"]:focus {
+    outline: 1px dotted var(--chicago-text, #000000);
+    outline-offset: 2px;
+}
+
+/* Disabled state */
+input[type="radio"]:disabled {
+    background-color: var(--chicago-face, #C0C0C0);
+    cursor: not-allowed;
+}
+
+input[type="radio"]:disabled:checked::after {
+    background-color: var(--chicago-text-disabled, #808080);
+}
+
+/* Disabled text label */
+:host([disabled]) {
+    color: var(--chicago-text-disabled, #808080);
+    text-shadow: 1px 1px 0 var(--chicago-text-disabled-highlight, #FFFFFF);
+}

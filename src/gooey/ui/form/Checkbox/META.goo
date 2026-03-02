@@ -9,7 +9,7 @@
   ],
   "themes": {
     "default": "base",
-    "available": ["base", "classic", "janus"]
+    "available": ["base", "classic", "janus", "chicago"]
   },
   "tokens": {
     "gooey-checkbox-focus-ring-color": {

@@ -1,0 +1,63 @@
+/* Checkbox - Chicago structural override */
+
+input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 13px;
+    height: 13px;
+    background-color: #FFFFFF;
+    cursor: pointer;
+    margin: 0;
+    margin-right: 4px;
+    position: relative;
+    border-radius: 0;
+    /* Sunken bevel: dark outer, shadow inner top-left, highlight inner bottom-right */
+    border: 1px solid var(--chicago-border-dark, #000000);
+    box-shadow:
+        inset 1px 1px 0 var(--chicago-border-shadow, #808080),
+        inset -1px -1px 0 var(--chicago-border-light, #FFFFFF);
+}
+
+input[type="checkbox"]:checked {
+    background-color: #FFFFFF;
+}
+
+/* Checkmark glyph: L-shaped rotated 45deg */
+input[type="checkbox"]:checked::after {
+    content: "";
+    position: absolute;
+    left: 2px;
+    top: 0px;
+    width: 4px;
+    height: 8px;
+    border: solid var(--chicago-text, #000000);
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+/* Indeterminate state: 50% dither pattern */
+input[type="checkbox"]:indeterminate {
+    background-image: var(--chicago-dither-50);
+    background-size: 2px 2px;
+}
+
+input[type="checkbox"]:focus {
+    outline: 1px dotted var(--chicago-text, #000000);
+    outline-offset: 2px;
+}
+
+/* Disabled state */
+input[type="checkbox"]:disabled {
+    background-color: var(--chicago-face, #C0C0C0);
+    cursor: not-allowed;
+}
+
+input[type="checkbox"]:disabled:checked::after {
+    border-color: var(--chicago-text-disabled, #808080);
+}
+
+/* Disabled text label */
+:host([disabled]) {
+    color: var(--chicago-text-disabled, #808080);
+    text-shadow: 1px 1px 0 var(--chicago-text-disabled-highlight, #FFFFFF);
+}
