@@ -1,0 +1,115 @@
+/* RTEToolbar - Chicago theme */
+
+:host {
+    --gooey-rte-toolbar-bg: #C0C0C0;
+    --gooey-rte-toolbar-border-color: #808080;
+    --gooey-rte-toolbar-btn-color: #000000;
+    --gooey-rte-toolbar-btn-hover-bg: #C0C0C0;
+    --gooey-rte-toolbar-btn-hover-border: #808080;
+    --gooey-rte-toolbar-btn-active-bg: #000080;
+    --gooey-rte-toolbar-btn-active-color: #FFFFFF;
+    --gooey-rte-toolbar-status-color: #808080;
+}
+
+/* Raised toolbar container */
+.rte-toolbar-container {
+    border: none;
+    border-top: 1px solid #FFFFFF;
+    border-left: 1px solid #FFFFFF;
+    border-right: 1px solid #808080;
+    border-bottom: 1px solid #808080;
+    background: #C0C0C0;
+    padding: 2px;
+    gap: 1px;
+}
+
+/* Raised bevel buttons */
+.rte-tb-btn {
+    border: none;
+    border-top: 1px solid #FFFFFF;
+    border-left: 1px solid #FFFFFF;
+    border-right: 1px solid #808080;
+    border-bottom: 1px solid #808080;
+    border-radius: 0;
+    background: #C0C0C0;
+    padding: 2px;
+    width: 22px;
+    height: 22px;
+}
+
+.rte-tb-btn:hover {
+    border-top: 1px solid #FFFFFF;
+    border-left: 1px solid #FFFFFF;
+    border-right: 1px solid #808080;
+    border-bottom: 1px solid #808080;
+}
+
+/* Pressed/active state: sunken bevel */
+.rte-tb-btn.active,
+.rte-tb-btn:active {
+    border-top: 1px solid #808080;
+    border-left: 1px solid #808080;
+    border-right: 1px solid #FFFFFF;
+    border-bottom: 1px solid #FFFFFF;
+    background: #A0A0A0;
+}
+
+.rte-tb-btn:focus-visible {
+    outline: 1px dotted #000000;
+    outline-offset: -3px;
+}
+
+/* Dropdown selects: sunken border */
+.rte-tb-dropdown {
+    border: none;
+    border-top: 1px solid #808080;
+    border-left: 1px solid #808080;
+    border-right: 1px solid #FFFFFF;
+    border-bottom: 1px solid #FFFFFF;
+    border-radius: 0;
+    background: #FFFFFF;
+    color: #000000;
+    font-size: 11px;
+    padding: 2px 18px 2px 4px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23000'/%3E%3C/svg%3E");
+}
+
+.rte-tb-dropdown:focus {
+    outline: 1px dotted #000000;
+    outline-offset: -2px;
+}
+
+/* Separator: etched pattern */
+.rte-toolbar-separator {
+    width: 2px;
+    border-left: 1px solid #808080;
+    border-right: 1px solid #FFFFFF;
+    background: none;
+    margin: 0 2px;
+}
+
+/* Color popover: raised bevel, hard shadow */
+.rte-color-popover {
+    border-radius: 0;
+    background: #C0C0C0;
+    border: none;
+    border-top: 1px solid #FFFFFF;
+    border-left: 1px solid #FFFFFF;
+    border-right: 1px solid #808080;
+    border-bottom: 1px solid #808080;
+    box-shadow: 2px 2px 0 #000000;
+}
+
+.rte-color-swatch {
+    border-radius: 0;
+    border-color: #808080;
+}
+
+.rte-color-input {
+    border-radius: 0;
+    border: none;
+    border-top: 1px solid #808080;
+    border-left: 1px solid #808080;
+    border-right: 1px solid #FFFFFF;
+    border-bottom: 1px solid #FFFFFF;
+}
