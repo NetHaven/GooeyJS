@@ -1,0 +1,181 @@
+/* GooeyJS Chicago Theme Overrides */
+/* Applied via: <gooey-theme name="chicago" href="themes/chicago.css" active> */
+/* This file redefines :root custom properties from styles.css for the Chicago retro aesthetic. */
+/* For structural overrides (3D bevels, sunken fields), see each component's themes/chicago.css file. */
+
+:root {
+    /* ===== Surface Colors (System Gray) ===== */
+    --gooey-color-surface: #C0C0C0;
+    --gooey-color-surface-hover: #D4D0C8;
+    --gooey-color-surface-active: #C0C0C0;
+    --gooey-color-surface-raised: #FFFFFF;
+    --gooey-color-surface-sunken: #FFFFFF;
+    --gooey-color-surface-disabled: #C0C0C0;
+
+    /* ===== Accent / Primary (Navy Blue) ===== */
+    --gooey-color-primary: #000080;
+    --gooey-color-primary-text: #FFFFFF;
+
+    /* ===== Text Colors ===== */
+    --gooey-color-text: #000000;
+    --gooey-color-text-muted: #808080;
+    --gooey-color-text-disabled: #808080;
+    --gooey-color-text-link: #0000FF;
+
+    /* ===== Border Colors ===== */
+    --gooey-color-border: #808080;
+    --gooey-color-border-light: #DFDFDF;
+
+    /* ===== Focus (Dotted Outline) ===== */
+    --gooey-color-focus: #000000;
+    --gooey-focus-width: 1px;
+    --gooey-focus-style: dotted;
+    --gooey-focus-offset: -3px;
+
+    /* ===== Status Colors ===== */
+    --gooey-color-info: #0000FF;
+    --gooey-color-success: #00FF00;
+    --gooey-color-warning: #FFFF00;
+    --gooey-color-error: #FF0000;
+
+    /* ===== Typography (MS Sans Serif) ===== */
+    --gooey-font-family: "MS Sans Serif", "Microsoft Sans Serif", Tahoma, Arial, sans-serif;
+    --gooey-font-family-mono: Fixedsys, Terminal, "Lucida Console", "Courier New", monospace;
+    --gooey-font-size-xs: 11px;
+    --gooey-font-size-sm: 11px;
+    --gooey-font-size-md: 11px;
+    --gooey-font-size-lg: 11px;
+    --gooey-line-height: 1.2;
+
+    /* ===== Spacing (2px Base Unit) ===== */
+    --gooey-spacing-xs: 2px;
+    --gooey-spacing-sm: 4px;
+    --gooey-spacing-md: 6px;
+    --gooey-spacing-lg: 8px;
+    --gooey-spacing-xl: 16px;
+
+    /* ===== Borders (Flat, No Radius) ===== */
+    --gooey-border-width: 1px;
+    --gooey-border-style: solid;
+    --gooey-border-radius: 0;
+
+    /* ===== Sizing ===== */
+    --gooey-control-min-height: 20px;
+    --gooey-control-min-width: 20px;
+    --gooey-icon-size: 16px;
+
+    /* ===== Shadows (Hard Pixel Shadows -- No Blur) ===== */
+    --gooey-shadow-sm: 2px 2px 0 #000000;
+    --gooey-shadow-md: 2px 2px 0 #000000;
+    --gooey-shadow-lg: 2px 2px 0 #000000;
+
+    /* ===== Opacity ===== */
+    --gooey-opacity-disabled: 1.0;
+    --gooey-opacity-modal-backdrop: 0.4;
+
+    /* ===== Chicago-Specific: 3D System Colors ===== */
+    --chicago-face: #C0C0C0;
+    --chicago-text: #000000;
+    --chicago-text-disabled: #808080;
+    --chicago-text-disabled-highlight: #FFFFFF;
+    --chicago-highlight: #000080;
+    --chicago-highlight-text: #FFFFFF;
+    --chicago-highlight-inactive: #808080;
+    --chicago-highlight-inactive-text: #000000;
+
+    /* ===== Chicago-Specific: 3D Bevel Colors ===== */
+    --chicago-border-dark: #000000;
+    --chicago-border-shadow: #808080;
+    --chicago-border-light: #FFFFFF;
+    --chicago-border-face: #C0C0C0;
+    --chicago-border-highlight: #DFDFDF;
+
+    /* ===== Chicago-Specific: Desktop ===== */
+    --chicago-desktop: #008080;
+
+    /* ===== Chicago-Specific: Window Chrome ===== */
+    --chicago-window-active: #000080;
+    --chicago-window-active-text: #FFFFFF;
+    --chicago-window-inactive: #808080;
+    --chicago-window-inactive-text: #000000;
+
+    /* ===== Chicago-Specific: Tooltip ===== */
+    --chicago-tooltip-bg: #FFFFE1;
+    --chicago-tooltip-text: #000000;
+    --chicago-tooltip-border: #000000;
+
+    /* ===== Chicago-Specific: Layout Metrics ===== */
+    --chicago-control-height: 20px;
+    --chicago-titlebar-height: 20px;
+    --chicago-menubar-height: 18px;
+    --chicago-statusbar-height: 18px;
+    --chicago-scrollbar-size: 16px;
+    --chicago-icon-sm: 16px;
+    --chicago-icon-lg: 32px;
+
+    /* ===== Chicago-Specific: Scrollbar Tokens ===== */
+    --chicago-scrollbar-track: #C0C0C0;
+    --chicago-scrollbar-thumb: #C0C0C0;
+    --chicago-scrollbar-thumb-border-light: #FFFFFF;
+    --chicago-scrollbar-thumb-border-dark: #000000;
+    --chicago-scrollbar-thumb-border-shadow: #808080;
+    --chicago-scrollbar-button-face: #C0C0C0;
+    --chicago-scrollbar-button-border-light: #FFFFFF;
+    --chicago-scrollbar-button-border-dark: #000000;
+    --chicago-scrollbar-button-border-shadow: #808080;
+    --chicago-scrollbar-arrow: #000000;
+    --chicago-scrollbar-grip: #000000;
+
+    /* ===== Chicago-Specific: Dither Pattern ===== */
+    --chicago-dither-50: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='2' height='2'%3E%3Crect x='0' y='0' width='1' height='1' fill='%23C0C0C0'/%3E%3Crect x='1' y='1' width='1' height='1' fill='%23C0C0C0'/%3E%3Crect x='1' y='0' width='1' height='1' fill='%23FFFFFF'/%3E%3Crect x='0' y='1' width='1' height='1' fill='%23FFFFFF'/%3E%3C/svg%3E");
+}
+
+/* ===== Chicago Scrollbar Base Pattern ===== */
+/* Provides scrollbar styling when Chicago theme is active via document.adoptedStyleSheets */
+/* Individual scrollable components inherit these styles in subsequent phases */
+
+::-webkit-scrollbar {
+    width: var(--chicago-scrollbar-size, 16px);
+    height: var(--chicago-scrollbar-size, 16px);
+}
+
+::-webkit-scrollbar-track {
+    background: var(--chicago-scrollbar-track, #C0C0C0);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--chicago-scrollbar-thumb, #C0C0C0);
+    border: 1px solid;
+    border-color: var(--chicago-scrollbar-thumb-border-light, #FFFFFF) var(--chicago-scrollbar-thumb-border-dark, #000000) var(--chicago-scrollbar-thumb-border-dark, #000000) var(--chicago-scrollbar-thumb-border-light, #FFFFFF);
+    box-shadow: inset 1px 1px 0 var(--chicago-scrollbar-thumb-border-light, #FFFFFF), inset -1px -1px 0 var(--chicago-scrollbar-thumb-border-shadow, #808080);
+    /* Grip lines: 3 horizontal lines centered on the thumb */
+    background-image: linear-gradient(
+        to bottom,
+        transparent 4px,
+        var(--chicago-scrollbar-grip, #000000) 4px, var(--chicago-scrollbar-grip, #000000) 5px,
+        transparent 5px,
+        transparent 7px,
+        var(--chicago-scrollbar-grip, #000000) 7px, var(--chicago-scrollbar-grip, #000000) 8px,
+        transparent 8px,
+        transparent 10px,
+        var(--chicago-scrollbar-grip, #000000) 10px, var(--chicago-scrollbar-grip, #000000) 11px,
+        transparent 11px
+    );
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 6px 16px;
+}
+
+::-webkit-scrollbar-button {
+    background: var(--chicago-scrollbar-button-face, #C0C0C0);
+    border: 1px solid;
+    border-color: var(--chicago-scrollbar-button-border-light, #FFFFFF) var(--chicago-scrollbar-button-border-dark, #000000) var(--chicago-scrollbar-button-border-dark, #000000) var(--chicago-scrollbar-button-border-light, #FFFFFF);
+    box-shadow: inset 1px 1px 0 var(--chicago-scrollbar-button-border-light, #FFFFFF), inset -1px -1px 0 var(--chicago-scrollbar-button-border-shadow, #808080);
+    display: block;
+    width: 16px;
+    height: 16px;
+}
+
+::-webkit-scrollbar-corner {
+    background: var(--chicago-face, #C0C0C0);
+}
