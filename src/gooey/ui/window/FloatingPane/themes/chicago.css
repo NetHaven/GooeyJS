@@ -1,0 +1,13 @@
+/* FloatingPane - Chicago structural override */
+
+:host {
+    background-color: #C0C0C0;
+    /* raised bevel border matching window inner frame */
+    border-top: 1px solid #FFFFFF;
+    border-left: 1px solid #FFFFFF;
+    border-right: 1px solid #808080;
+    border-bottom: 1px solid #808080;
+    box-shadow:
+        inset -1px -1px 0 #000000,
+        inset 1px 1px 0 #DFDFDF;
+}
