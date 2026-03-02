@@ -1,0 +1,222 @@
+/* Badge - Chicago structural override */
+/* Flat 1px borders with 16-color palette variants */
+
+.badge {
+    border-radius: 0;
+    transition: none;
+}
+
+/* ----------------------------------------
+   Sizes - proportions
+   ---------------------------------------- */
+
+/* Small */
+:host([size="small"]) .badge {
+    min-width: 14px;
+    min-height: 14px;
+    padding: 1px 3px;
+    font-size: 9px;
+    gap: 2px;
+}
+
+/* Medium (default) */
+.badge,
+:host([size="medium"]) .badge {
+    min-width: 18px;
+    min-height: 18px;
+    padding: 2px 4px;
+    font-size: 10px;
+    gap: 3px;
+}
+
+/* Large */
+:host([size="large"]) .badge {
+    min-width: 22px;
+    min-height: 22px;
+    padding: 3px 6px;
+    font-size: 11px;
+    gap: 4px;
+}
+
+/* ----------------------------------------
+   Variants (Filled) - 16-color palette
+   ---------------------------------------- */
+
+/* Default - neutral gray with flat border */
+.badge,
+:host([variant="default"]) .badge {
+    background-color: #C0C0C0;
+    color: #000000;
+    border: 1px solid #000000;
+}
+
+/* Primary - navy blue */
+:host([variant="primary"]) .badge {
+    background-color: #000080;
+    color: #FFFFFF;
+    border: 1px solid #000000;
+}
+
+/* Success - green */
+:host([variant="success"]) .badge {
+    background-color: #008000;
+    color: #FFFFFF;
+    border: 1px solid #000000;
+}
+
+/* Warning - bright yellow */
+:host([variant="warning"]) .badge {
+    background-color: #FFFF00;
+    color: #000000;
+    border: 1px solid #000000;
+}
+
+/* Error - red */
+:host([variant="error"]) .badge {
+    background-color: #FF0000;
+    color: #FFFFFF;
+    border: 1px solid #000000;
+}
+
+/* Info - blue */
+:host([variant="info"]) .badge {
+    background-color: #0000FF;
+    color: #FFFFFF;
+    border: 1px solid #000000;
+}
+
+/* ----------------------------------------
+   Outline Variants
+   ---------------------------------------- */
+
+:host([outline]) .badge,
+:host([outline][variant="default"]) .badge {
+    background-color: #FFFFFF;
+    color: #000000;
+    border: 1px solid #000000;
+}
+
+:host([outline][variant="primary"]) .badge {
+    background-color: #FFFFFF;
+    color: #000080;
+    border: 1px solid #000080;
+}
+
+:host([outline][variant="success"]) .badge {
+    background-color: #FFFFFF;
+    color: #008000;
+    border: 1px solid #008000;
+}
+
+:host([outline][variant="warning"]) .badge {
+    background-color: #FFFFFF;
+    color: #808000;
+    border: 1px solid #808000;
+}
+
+:host([outline][variant="error"]) .badge {
+    background-color: #FFFFFF;
+    color: #FF0000;
+    border: 1px solid #FF0000;
+}
+
+:host([outline][variant="info"]) .badge {
+    background-color: #FFFFFF;
+    color: #0000FF;
+    border: 1px solid #0000FF;
+}
+
+/* ----------------------------------------
+   Pill Shape
+   ---------------------------------------- */
+
+:host([pill]) .badge {
+    border-radius: 8px;
+}
+
+/* ----------------------------------------
+   Dot Mode
+   ---------------------------------------- */
+
+:host([dot]) .badge {
+    min-width: 8px;
+    min-height: 8px;
+    width: 8px;
+    height: 8px;
+    padding: 0;
+    border-radius: 50%;
+    border-width: 1px;
+    gap: 0;
+}
+
+:host([dot][size="small"]) .badge {
+    min-width: 6px;
+    min-height: 6px;
+    width: 6px;
+    height: 6px;
+}
+
+:host([dot][size="large"]) .badge {
+    min-width: 10px;
+    min-height: 10px;
+    width: 10px;
+    height: 10px;
+}
+
+/* ----------------------------------------
+   Icon Sizes
+   ---------------------------------------- */
+
+.badge-icon {
+    width: 10px;
+    height: 10px;
+}
+
+:host([size="small"]) .badge-icon {
+    width: 8px;
+    height: 8px;
+}
+
+:host([size="large"]) .badge-icon {
+    width: 12px;
+    height: 12px;
+}
+
+/* ----------------------------------------
+   Disabled State
+   ---------------------------------------- */
+
+:host([disabled]) .badge {
+    color: #808080;
+    text-shadow: 1px 1px 0 #FFFFFF;
+}
+
+/* ----------------------------------------
+   Focus State
+   ---------------------------------------- */
+
+.badge:focus-visible {
+    outline: 1px dotted #000000;
+    outline-offset: 1px;
+}
+
+/* ----------------------------------------
+   Pulse Animation - Simple blink
+   ---------------------------------------- */
+
+@keyframes badge-blink {
+    0%, 100% {
+        visibility: visible;
+    }
+    50% {
+        visibility: hidden;
+    }
+}
+
+:host([pulse]:not([position])) .badge {
+    animation: badge-blink 1s infinite step-end;
+}
+
+:host([pulse][position]) .badge {
+    animation: badge-blink 1s infinite step-end;
+}
