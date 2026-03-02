@@ -9,7 +9,7 @@
   ],
   "themes": {
     "default": "base",
-    "available": ["base", "classic", "janus"]
+    "available": ["base", "classic", "janus", "chicago"]
   },
   "tokens": {
     "gooey-progressbar-track-bg": {

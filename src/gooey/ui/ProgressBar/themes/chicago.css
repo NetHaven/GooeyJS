@@ -1,0 +1,37 @@
+/* ProgressBar - Chicago structural override */
+
+.progress-bar {
+    /* Sunken bevel: top/left shadow, bottom/right highlight */
+    border-top: 1px solid var(--chicago-border-shadow, #808080);
+    border-left: 1px solid var(--chicago-border-shadow, #808080);
+    border-right: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-bottom: 1px solid var(--chicago-border-light, #FFFFFF);
+    box-shadow: inset 1px 1px 0 var(--chicago-border-dark, #000000);
+    background: #FFFFFF;
+    border-radius: 0;
+    height: 16px;
+}
+
+.progress-fill {
+    background: var(--chicago-highlight, #000080);
+    transition: width 0.1s linear;
+}
+
+.progress-bar.indeterminate .progress-fill {
+    animation: progress-indeterminate 1.5s infinite linear;
+    background: var(--chicago-highlight, #000080);
+}
+
+.progress-text {
+    font-size: 11px;
+    color: var(--chicago-text, #000000);
+}
+
+/* Disabled state: no opacity change */
+:host([disabled]) {
+    opacity: 1;
+}
+
+:host([disabled]) .progress-fill {
+    background: var(--chicago-text-disabled, #808080);
+}

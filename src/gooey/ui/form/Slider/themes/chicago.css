@@ -1,0 +1,117 @@
+/* Slider - Chicago structural override */
+
+.slider-track {
+    height: 4px;
+    /* Sunken bevel: top/left shadow, bottom/right highlight */
+    border-top: 1px solid var(--chicago-border-shadow, #808080);
+    border-left: 1px solid var(--chicago-border-shadow, #808080);
+    border-right: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-bottom: 1px solid var(--chicago-border-light, #FFFFFF);
+    box-shadow: inset 1px 1px 0 var(--chicago-border-dark, #000000);
+    background: var(--chicago-face, #C0C0C0);
+    border-radius: 0;
+    overflow: visible;
+}
+
+/* No fill bar in Chicago slider */
+.slider-fill {
+    display: none;
+}
+
+/* Raised bevel thumb */
+.slider-thumb {
+    width: 10px;
+    height: 20px;
+    border-top: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-left: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-right: 1px solid var(--chicago-border-shadow, #808080);
+    border-bottom: 1px solid var(--chicago-border-shadow, #808080);
+    box-shadow:
+        inset -1px -1px 0 var(--chicago-border-dark, #000000),
+        inset 1px 1px 0 var(--chicago-border-highlight, #DFDFDF);
+    background: var(--chicago-face, #C0C0C0);
+    border-radius: 0;
+    cursor: pointer;
+}
+
+.slider-thumb:hover {
+    transform: translate(-50%, -50%);
+}
+
+/* Sunken bevel on active (inverted borders) */
+.slider-thumb:active,
+.slider-thumb.active {
+    border-top: 1px solid var(--chicago-border-shadow, #808080);
+    border-left: 1px solid var(--chicago-border-shadow, #808080);
+    border-right: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-bottom: 1px solid var(--chicago-border-light, #FFFFFF);
+    box-shadow:
+        inset 1px 1px 0 var(--chicago-border-dark, #000000),
+        inset -1px -1px 0 var(--chicago-border-highlight, #DFDFDF);
+    transform: translate(-50%, -50%);
+}
+
+.slider-thumb:focus-visible {
+    outline: 1px dotted var(--chicago-text, #000000);
+    outline-offset: 2px;
+}
+
+/* Tick marks */
+.slider-tick {
+    width: 1px;
+    height: 6px;
+    background: var(--chicago-border-dark, #000000);
+}
+
+.slider-tick-label {
+    font-size: 11px;
+    color: var(--chicago-text, #000000);
+}
+
+/* Tooltip */
+.slider-tooltip {
+    background: var(--chicago-tooltip-bg, #FFFFE1);
+    color: var(--chicago-text, #000000);
+    border: 1px solid var(--chicago-border-dark, #000000);
+    border-radius: 0;
+    font-size: 11px;
+    padding: 2px 4px;
+    box-shadow: none;
+}
+
+/* Disabled state: no opacity change, embossed text pattern */
+:host([disabled]) {
+    opacity: 1;
+    pointer-events: none;
+}
+
+:host([disabled]) .slider-thumb {
+    background: var(--chicago-face, #C0C0C0);
+    cursor: not-allowed;
+}
+
+:host([disabled]) .slider-tick-label {
+    color: var(--chicago-text-disabled, #808080);
+    text-shadow: 1px 1px 0 var(--chicago-text-disabled-highlight, #FFFFFF);
+}
+
+/* =========== Vertical Orientation =========== */
+
+:host([orientation="vertical"]) .slider-track {
+    width: 4px;
+    height: 100%;
+}
+
+:host([orientation="vertical"]) .slider-thumb {
+    width: 20px;
+    height: 10px;
+}
+
+:host([orientation="vertical"]) .slider-thumb:hover {
+    transform: translate(-50%, 50%);
+}
+
+:host([orientation="vertical"]) .slider-thumb:active,
+:host([orientation="vertical"]) .slider-thumb.active {
+    transform: translate(-50%, 50%);
+}
