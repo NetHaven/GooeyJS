@@ -1,0 +1,66 @@
+/* ContextMenu - Chicago theme */
+
+:host {
+    display: none;
+    position: absolute;
+    z-index: var(--gooey-contextmenu-z-index, var(--gooey-z-dropdown));
+}
+
+.ui-ContextMenu {
+    background-color: var(--chicago-face, #C0C0C0);
+    border: none;
+    border-top: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-left: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-right: 1px solid var(--chicago-border-shadow, #808080);
+    border-bottom: 1px solid var(--chicago-border-shadow, #808080);
+    box-shadow:
+        inset -1px -1px 0 var(--chicago-border-dark, #000000),
+        inset 1px 1px 0 var(--chicago-border-highlight, #DFDFDF);
+    outline: 1px solid var(--chicago-border-dark, #000000);
+    min-width: 150px;
+    padding: 2px 0;
+    font-family: var(--chicago-font-family, "MS Sans Serif", "Microsoft Sans Serif", Tahoma, Arial, sans-serif);
+    font-size: 11px;
+}
+
+:host([active]) {
+    display: block;
+}
+
+/* Nested MenuItem styles within ContextMenu */
+::slotted(ui-MenuItem),
+::slotted(ui-CheckboxMenuItem) {
+    display: block;
+    width: 100%;
+    cursor: pointer;
+    padding: 4px 6px;
+    border: none;
+    background: none;
+    text-align: left;
+}
+
+::slotted(ui-MenuItem:hover),
+::slotted(ui-CheckboxMenuItem:hover) {
+    background-color: var(--chicago-highlight, #000080);
+    color: var(--chicago-highlight-text, #FFFFFF);
+}
+
+::slotted(ui-MenuItem[disabled]),
+::slotted(ui-CheckboxMenuItem[disabled]) {
+    color: var(--chicago-text-disabled, #808080);
+    cursor: default;
+}
+
+::slotted(ui-MenuItem[disabled]:hover),
+::slotted(ui-CheckboxMenuItem[disabled]:hover) {
+    background-color: transparent;
+    color: var(--chicago-text-disabled, #808080);
+}
+
+::slotted(ui-MenuItemSeparator) {
+    height: 0;
+    border-top: 1px solid var(--chicago-border-shadow, #808080);
+    border-bottom: 1px solid var(--chicago-border-light, #FFFFFF);
+    margin: 2px 2px;
+    background: none;
+}

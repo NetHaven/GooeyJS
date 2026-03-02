@@ -1,0 +1,113 @@
+/* WaffleMenuItem - Chicago theme */
+
+:host {
+    display: flex;
+}
+
+.waffle-item {
+    width: var(--waffle-item-size, 96px);
+    height: var(--waffle-item-size, 96px);
+    padding: 8px 4px;
+    border: 1px solid transparent;
+    border-radius: 0;
+    background: var(--chicago-face, #C0C0C0);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-family: var(--chicago-font-family, "MS Sans Serif", "Microsoft Sans Serif", Tahoma, Arial, sans-serif);
+}
+
+.waffle-item:hover {
+    background: var(--chicago-highlight, #000080);
+    color: var(--chicago-highlight-text, #FFFFFF);
+}
+
+.waffle-item:hover .waffle-item-label {
+    color: var(--chicago-highlight-text, #FFFFFF);
+}
+
+/* Sunken bevel on press */
+.waffle-item:active {
+    border-top: 1px solid var(--chicago-border-shadow, #808080);
+    border-left: 1px solid var(--chicago-border-shadow, #808080);
+    border-right: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-bottom: 1px solid var(--chicago-border-light, #FFFFFF);
+    box-shadow:
+        inset 1px 1px 0 var(--chicago-border-dark, #000000),
+        inset -1px -1px 0 var(--chicago-border-highlight, #DFDFDF);
+}
+
+.waffle-item:focus {
+    outline: 1px dotted var(--chicago-text, #000000);
+    outline-offset: -1px;
+}
+
+.waffle-item-icon {
+    position: relative;
+    width: var(--waffle-item-icon-size, 48px);
+    height: var(--waffle-item-icon-size, 48px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.waffle-item-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 0;
+}
+
+.waffle-item-badge {
+    display: none;
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 0;
+    background: var(--gooey-wafflemenuitem-badge-bg, var(--gooey-color-error));
+    color: var(--gooey-wafflemenuitem-badge-color, #FFFFFF);
+    font-size: 11px;
+    font-weight: bold;
+    line-height: 18px;
+    text-align: center;
+}
+
+:host([badge]) .waffle-item-badge {
+    display: block;
+}
+
+.waffle-item-label {
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--chicago-text, #000000);
+    text-align: center;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Disabled state: embossed text */
+:host([disabled]) .waffle-item {
+    color: var(--chicago-text-disabled, #808080);
+    text-shadow: 1px 1px 0 var(--chicago-text-disabled-highlight, #FFFFFF);
+    opacity: 1;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* No icon state */
+:host(:not([icon])) .waffle-item-icon {
+    display: none;
+}
+
+/* No label state */
+:host(:not([label])) .waffle-item-label {
+    display: none;
+}

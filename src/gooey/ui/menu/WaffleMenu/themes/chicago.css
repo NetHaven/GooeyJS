@@ -1,0 +1,210 @@
+/* WaffleMenu - Chicago theme */
+
+:host {
+    display: inline-block;
+    position: relative;
+}
+
+/* Trigger Button - raised bevel */
+.waffle-trigger {
+    width: var(--gooey-wafflemenu-trigger-size, 40px);
+    height: var(--gooey-wafflemenu-trigger-size, 40px);
+    padding: 4px;
+    border: none;
+    border-top: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-left: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-right: 1px solid var(--chicago-border-shadow, #808080);
+    border-bottom: 1px solid var(--chicago-border-shadow, #808080);
+    box-shadow:
+        inset -1px -1px 0 var(--chicago-border-dark, #000000),
+        inset 1px 1px 0 var(--chicago-border-highlight, #DFDFDF);
+    border-radius: 0;
+    background: var(--chicago-face, #C0C0C0);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.waffle-trigger:hover {
+    background: var(--chicago-face, #C0C0C0);
+}
+
+/* Sunken bevel on press */
+.waffle-trigger:active {
+    border-top: 1px solid var(--chicago-border-shadow, #808080);
+    border-left: 1px solid var(--chicago-border-shadow, #808080);
+    border-right: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-bottom: 1px solid var(--chicago-border-light, #FFFFFF);
+    box-shadow:
+        inset 1px 1px 0 var(--chicago-border-dark, #000000),
+        inset -1px -1px 0 var(--chicago-border-highlight, #DFDFDF);
+}
+
+.waffle-trigger:focus {
+    outline: 1px dotted var(--chicago-text, #000000);
+    outline-offset: -3px;
+}
+
+.waffle-icon {
+    fill: var(--chicago-text, #000000);
+}
+
+.waffle-custom-icon {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+}
+
+/* Backdrop */
+.waffle-backdrop {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: transparent;
+    z-index: 998;
+}
+
+:host([active]) .waffle-backdrop {
+    display: block;
+}
+
+:host([closeonclickoutside="false"]) .waffle-backdrop {
+    pointer-events: none;
+}
+
+/* Panel - raised bevel */
+.waffle-panel {
+    display: none;
+    position: absolute;
+    background: var(--chicago-face, #C0C0C0);
+    border: none;
+    border-top: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-left: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-right: 1px solid var(--chicago-border-shadow, #808080);
+    border-bottom: 1px solid var(--chicago-border-shadow, #808080);
+    box-shadow:
+        inset -1px -1px 0 var(--chicago-border-dark, #000000),
+        inset 1px 1px 0 var(--chicago-border-highlight, #DFDFDF);
+    outline: 1px solid var(--chicago-border-dark, #000000);
+    border-radius: 0;
+    z-index: 999;
+    min-width: 200px;
+    width: var(--waffle-panel-width, auto);
+    max-height: var(--waffle-panel-max-height, 400px);
+    overflow: hidden;
+}
+
+:host([active]) .waffle-panel {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Position variants */
+:host([position="bottom-start"]) .waffle-panel {
+    top: 100%;
+    left: 0;
+    margin-top: 4px;
+}
+
+:host([position="bottom-end"]) .waffle-panel {
+    top: 100%;
+    right: 0;
+    margin-top: 4px;
+}
+
+:host([position="top-start"]) .waffle-panel {
+    bottom: 100%;
+    left: 0;
+    margin-bottom: 4px;
+}
+
+:host([position="top-end"]) .waffle-panel {
+    bottom: 100%;
+    right: 0;
+    margin-bottom: 4px;
+}
+
+/* Header */
+.waffle-header {
+    display: none;
+    padding: 4px 8px;
+    border-bottom: 1px solid var(--chicago-border-shadow, #808080);
+    align-items: center;
+    justify-content: space-between;
+}
+
+:host([title]) .waffle-header {
+    display: flex;
+}
+
+.waffle-title {
+    font-weight: bold;
+    font-size: 11px;
+    color: var(--chicago-text, #000000);
+    font-family: var(--chicago-font-family, "MS Sans Serif", "Microsoft Sans Serif", Tahoma, Arial, sans-serif);
+}
+
+/* Close button - raised bevel */
+.waffle-close {
+    width: 16px;
+    height: 14px;
+    border: none;
+    border-top: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-left: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-right: 1px solid var(--chicago-border-shadow, #808080);
+    border-bottom: 1px solid var(--chicago-border-shadow, #808080);
+    box-shadow:
+        inset -1px -1px 0 var(--chicago-border-dark, #000000),
+        inset 1px 1px 0 var(--chicago-border-highlight, #DFDFDF);
+    border-radius: 0;
+    background: var(--chicago-face, #C0C0C0);
+    color: var(--chicago-text, #000000);
+    cursor: pointer;
+    font-size: 11px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.waffle-close:hover {
+    background: var(--chicago-face, #C0C0C0);
+}
+
+/* Grid */
+.waffle-grid {
+    display: grid;
+    grid-template-columns: repeat(var(--waffle-columns, 3), var(--waffle-item-size, 96px));
+    gap: var(--gooey-wafflemenu-gap, 4px);
+    padding: 8px;
+    overflow-y: auto;
+    max-height: calc(var(--waffle-panel-max-height, 400px) - 60px);
+}
+
+/* Footer */
+.waffle-footer {
+    display: none;
+    padding: 4px 8px;
+    border-top: 1px solid var(--chicago-border-shadow, #808080);
+}
+
+.waffle-footer.has-content {
+    display: block;
+}
+
+/* Disabled state */
+:host([disabled]) .waffle-trigger {
+    color: var(--chicago-text-disabled, #808080);
+    text-shadow: 1px 1px 0 var(--chicago-text-disabled-highlight, #FFFFFF);
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* Slotted items */
+::slotted(gooeyui-wafflemenuitem) {
+    display: flex;
+}
