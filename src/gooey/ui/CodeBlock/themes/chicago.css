@@ -1,0 +1,116 @@
+/* CodeBlock - Chicago theme */
+
+:host {
+    --gooey-codeblock-font-family: "Fixedsys", "Terminal", "Lucida Console", "Courier New", monospace;
+    --gooey-codeblock-font-size: 11px;
+    --gooey-codeblock-bg: #FFFFFF;
+    --gooey-codeblock-border-radius: 0;
+    --gooey-codeblock-header-bg: #C0C0C0;
+    --gooey-codeblock-label-color: #000000;
+    --gooey-codeblock-copy-bg: #C0C0C0;
+    --gooey-codeblock-copy-color: #000000;
+    --gooey-codeblock-copy-bg-hover: #C0C0C0;
+    --gooey-codeblock-linenumber-bg: #C0C0C0;
+    --gooey-codeblock-linenumber-color: #808080;
+    --gooey-codeblock-code-color: #000000;
+}
+
+.codeblock-container {
+    background: #FFFFFF;
+    border: none;
+    border-top: 1px solid #808080;
+    border-left: 1px solid #808080;
+    border-right: 1px solid #FFFFFF;
+    border-bottom: 1px solid #FFFFFF;
+    box-shadow:
+        inset 1px 1px 0 #000000,
+        inset -1px -1px 0 #DFDFDF;
+    border-radius: 0;
+    font-family: "Fixedsys", "Terminal", "Lucida Console", "Courier New", monospace;
+    font-size: 11px;
+    color: #000000;
+}
+
+.codeblock-header {
+    background: #C0C0C0;
+    border-bottom: 1px solid #808080;
+    padding: 2px 4px;
+    min-height: 18px;
+}
+
+.language-label {
+    color: #000000;
+    text-transform: lowercase;
+}
+
+.copy-button {
+    border: none;
+    border-top: 1px solid #FFFFFF;
+    border-left: 1px solid #FFFFFF;
+    border-right: 1px solid #808080;
+    border-bottom: 1px solid #808080;
+    box-shadow:
+        inset -1px -1px 0 #000000,
+        inset 1px 1px 0 #DFDFDF;
+    background: #C0C0C0;
+    color: #000000;
+    padding: 2px 8px;
+    min-height: 18px;
+    border-radius: 0;
+    cursor: pointer;
+}
+
+.copy-button:active {
+    border-top: 1px solid #808080;
+    border-left: 1px solid #808080;
+    border-right: 1px solid #FFFFFF;
+    border-bottom: 1px solid #FFFFFF;
+    box-shadow:
+        inset 1px 1px 0 #000000,
+        inset -1px -1px 0 #DFDFDF;
+}
+
+.copy-button:focus {
+    outline: 1px dotted #000000;
+    outline-offset: -3px;
+}
+
+.copy-button:disabled {
+    color: #808080;
+    text-shadow: 1px 1px 0 #FFFFFF;
+    cursor: not-allowed;
+}
+
+.line-numbers {
+    background: #C0C0C0;
+    color: #808080;
+    border-right: 1px solid #808080;
+    padding: 4px 8px 4px 4px;
+}
+
+/* Disabled state */
+:host([disabled]) .codeblock-container {
+    background-color: #C0C0C0;
+}
+
+:host([disabled]) .code-content {
+    background-color: #C0C0C0;
+    color: #808080;
+}
+
+:host([disabled]) .copy-button {
+    pointer-events: none;
+}
+
+/* Syntax highlighting - 16-color palette */
+.code-highlighted .syntax-keyword     { color: #000080; font-weight: bold; }
+.code-highlighted .syntax-string      { color: #008000; }
+.code-highlighted .syntax-number      { color: #800080; }
+.code-highlighted .syntax-comment     { color: #808080; font-style: italic; }
+.code-highlighted .syntax-tag-name    { color: #000080; font-weight: bold; }
+.code-highlighted .syntax-attr-name   { color: #800000; }
+.code-highlighted .syntax-attr-value  { color: #008000; }
+.code-highlighted .syntax-punctuation { color: #000000; }
+.code-highlighted .syntax-entity      { color: #800080; }
+.code-highlighted .syntax-doctype     { color: #808080; }
+.code-highlighted .syntax-operator    { color: #000000; font-weight: bold; }

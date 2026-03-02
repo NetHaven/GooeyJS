@@ -1,0 +1,13 @@
+/* ToolbarSeparator - Chicago structural override */
+
+:host {
+    margin: 2px 4px;
+    width: 2px;
+    height: auto;
+    align-self: stretch;
+    background: none;
+    border-radius: 0;
+    /* Etched vertical line: shadow left, highlight right */
+    border-left: 1px solid var(--chicago-border-shadow, #808080);
+    border-right: 1px solid var(--chicago-border-light, #FFFFFF);
+}

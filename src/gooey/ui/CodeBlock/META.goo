@@ -9,7 +9,7 @@
   ],
   "themes": {
     "default": "base",
-    "available": ["base", "classic", "dark", "janus"]
+    "available": ["base", "classic", "dark", "janus", "chicago"]
   },
   "tokens": {
     "gooey-codeblock-font-family": {
