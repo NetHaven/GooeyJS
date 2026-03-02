@@ -1,0 +1,18 @@
+/* Tree - Chicago structural override */
+
+:host {
+    /* Sunken bevel: top/left shadow, bottom/right highlight */
+    border-top: 1px solid var(--chicago-border-shadow, #808080);
+    border-left: 1px solid var(--chicago-border-shadow, #808080);
+    border-right: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-bottom: 1px solid var(--chicago-border-light, #FFFFFF);
+    box-shadow: inset 1px 1px 0 var(--chicago-border-dark, #000000);
+    background: #FFFFFF;
+}
+
+.ui-Tree {
+    background: #FFFFFF;
+    font-size: 11px;
+    font-family: var(--chicago-font-family, "MS Sans Serif", "Microsoft Sans Serif", Tahoma, Arial, sans-serif);
+    border: none;
+}
