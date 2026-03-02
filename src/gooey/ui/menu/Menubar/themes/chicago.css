@@ -1,0 +1,30 @@
+/* Menubar - Chicago theme */
+
+:host, :host(.ui-Toolbar) {
+    display: block;
+}
+
+:host {
+    display: flex !important;
+    height: var(--chicago-menubar-height, 18px);
+    width: 100%;
+    background: var(--chicago-face, #C0C0C0);
+    border-bottom: 1px solid var(--chicago-border-shadow, #808080);
+    font-family: var(--chicago-font-family, "MS Sans Serif", "Microsoft Sans Serif", Tahoma, Arial, sans-serif);
+    font-size: 11px;
+}
+
+.menuHeader {
+    cursor: default;
+    padding: 4px 6px;
+    color: var(--chicago-text, #000000);
+    font-size: 11px;
+    line-height: 1.2;
+    user-select: none;
+}
+
+.menuHeader[active], .menuHeader:hover {
+    background-color: var(--chicago-highlight, #000080);
+    color: var(--chicago-highlight-text, #FFFFFF);
+    user-select: none;
+}

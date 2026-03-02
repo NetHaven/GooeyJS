@@ -1,0 +1,10 @@
+/* MenuItemSeparator - Chicago theme */
+
+:host {
+    display: block;
+    height: 2px;
+    margin: 2px 2px;
+    border-top: 1px solid var(--chicago-border-shadow, #808080);
+    border-bottom: 1px solid var(--chicago-border-light, #FFFFFF);
+    background: none;
+}

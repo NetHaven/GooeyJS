@@ -1,0 +1,21 @@
+/* Menu - Chicago theme */
+
+:host {
+    background: var(--chicago-face, #C0C0C0);
+    border: none;
+    border-top: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-left: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-right: 1px solid var(--chicago-border-shadow, #808080);
+    border-bottom: 1px solid var(--chicago-border-shadow, #808080);
+    box-shadow:
+        inset -1px -1px 0 var(--chicago-border-dark, #000000),
+        inset 1px 1px 0 var(--chicago-border-highlight, #DFDFDF);
+    outline: 1px solid var(--chicago-border-dark, #000000);
+    cursor: default;
+    display: flex;
+    padding: 2px 0;
+    position: absolute;
+    z-index: var(--gooey-menu-z-index, var(--gooey-z-dropdown));
+    font-family: var(--chicago-font-family, "MS Sans Serif", "Microsoft Sans Serif", Tahoma, Arial, sans-serif);
+    font-size: 11px;
+}

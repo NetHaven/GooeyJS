@@ -9,7 +9,7 @@
   ],
   "themes": {
     "default": "base",
-    "available": ["base", "classic", "dark", "janus"]
+    "available": ["base", "chicago", "classic", "dark", "janus"]
   },
   "tokens": {
     "gooey-tabpanel-strip-bg": {

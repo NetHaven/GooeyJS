@@ -1,0 +1,6 @@
+/* Tab - Chicago structural override */
+
+:host {
+    background-color: var(--chicago-face, #C0C0C0);
+    padding: 4px;
+}
