@@ -9,7 +9,7 @@
   ],
   "themes": {
     "default": "base",
-    "available": ["base", "dark", "janus", "classic"]
+    "available": ["base", "dark", "janus", "classic", "chicago"]
   },
   "tokens": {},
   "attributes": {

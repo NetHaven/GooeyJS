@@ -1,0 +1,4 @@
+/* Chicago theme provided via global theme architecture.
+   See: src/themes/chicago.css (global theme overrides)
+   See: each component's themes/chicago.css file (structural overrides)
+   This file is intentionally empty for backward compatibility with switchTheme('chicago'). */

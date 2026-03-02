@@ -1,0 +1,16 @@
+/* Application - Chicago structural override */
+/* Root container with neutral surface and Chicago font cascade */
+
+:host {
+    background: #C0C0C0;
+    font-family: "MS Sans Serif", "Microsoft Sans Serif", "Tahoma", "Arial", sans-serif;
+    font-size: 8pt;
+    line-height: 1.2;
+    color: #000000;
+
+    /* Tooltip tokens cascade to all child components */
+    --gooey-tooltip-bg: #FFFFE1;
+    --gooey-tooltip-color: #000000;
+    --gooey-tooltip-border-color: #000000;
+    --gooey-tooltip-shadow: none;
+}
