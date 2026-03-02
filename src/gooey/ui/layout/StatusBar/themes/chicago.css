@@ -1,0 +1,44 @@
+/* StatusBar - Chicago structural override */
+
+:host {
+    background-color: var(--chicago-face, #C0C0C0);
+    color: var(--chicago-text, #000000);
+    font-family: "MS Sans Serif", "Microsoft Sans Serif", "Tahoma", "Arial", sans-serif;
+    font-size: 11px;
+    height: 18px;
+    min-height: 18px;
+    border-radius: 0;
+}
+
+/* Bottom position: highlight on top edge */
+:host([position="bottom"]) {
+    border-top: none;
+    box-shadow: inset 0 1px 0 var(--chicago-border-light, #FFFFFF);
+}
+
+/* Top position: shadow on bottom edge */
+:host([position="top"]) {
+    border-bottom: none;
+    box-shadow: inset 0 -1px 0 var(--chicago-border-shadow, #808080);
+}
+
+/* Section panels with sunken bevel inset */
+.statusbar-panel {
+    padding: 0 2px;
+    border: 1px solid;
+    border-color: var(--chicago-border-shadow, #808080) var(--chicago-border-light, #FFFFFF) var(--chicago-border-light, #FFFFFF) var(--chicago-border-shadow, #808080);
+    margin: 1px;
+}
+
+/* Etched divider between slotted items */
+::slotted(*:not(:first-child)) {
+    border-left: 1px solid var(--chicago-border-shadow, #808080);
+    box-shadow: inset 1px 0 0 var(--chicago-border-light, #FFFFFF);
+    padding-left: 4px;
+}
+
+/* Disabled state */
+:host([disabled]) {
+    color: var(--chicago-text-disabled, #808080);
+    text-shadow: 1px 1px 0 var(--chicago-text-disabled-highlight, #FFFFFF);
+}
