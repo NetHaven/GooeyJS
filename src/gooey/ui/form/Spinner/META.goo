@@ -9,7 +9,7 @@
   ],
   "themes": {
     "default": "base",
-    "available": ["base", "classic", "janus"]
+    "available": ["base", "chicago", "classic", "janus"]
   },
   "tokens": {
     "gooey-spinner-opacity-disabled": {

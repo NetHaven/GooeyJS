@@ -1,0 +1,77 @@
+/* Spinner - Chicago structural override */
+
+input[type="number"] {
+    /* Sunken bevel input */
+    border-top: 1px solid var(--chicago-border-shadow, #808080);
+    border-left: 1px solid var(--chicago-border-shadow, #808080);
+    border-right: none;
+    border-bottom: 1px solid var(--chicago-border-light, #FFFFFF);
+    box-shadow: inset 1px 1px 0 var(--chicago-border-dark, #000000);
+    background: #FFFFFF;
+    color: var(--chicago-text, #000000);
+    font-size: 11px;
+    font-family: var(--chicago-font-family, "MS Sans Serif", "Microsoft Sans Serif", Tahoma, Arial, sans-serif);
+    border-radius: 0;
+    padding: 2px 4px;
+}
+
+input[type="number"]::selection {
+    background: var(--chicago-highlight, #000080);
+    color: var(--chicago-highlight-text, #FFFFFF);
+}
+
+input[type="number"]:focus {
+    outline: none;
+}
+
+.increment-btn,
+.decrement-btn {
+    /* Raised bevel buttons */
+    border: none;
+    border-top: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-left: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-right: 1px solid var(--chicago-border-shadow, #808080);
+    border-bottom: 1px solid var(--chicago-border-shadow, #808080);
+    box-shadow: inset -1px -1px 0 var(--chicago-border-dark, #000000);
+    background: var(--chicago-face, #C0C0C0);
+    min-width: 16px;
+    font-size: 6px;
+    color: var(--chicago-text, #000000);
+    border-radius: 0;
+}
+
+.increment-btn {
+    border-bottom: 1px solid var(--chicago-border-shadow, #808080);
+}
+
+.increment-btn:hover,
+.decrement-btn:hover {
+    background: var(--chicago-face, #C0C0C0);
+}
+
+.increment-btn:active,
+.decrement-btn:active {
+    /* Sunken bevel: inverted */
+    border-top: 1px solid var(--chicago-border-shadow, #808080);
+    border-left: 1px solid var(--chicago-border-shadow, #808080);
+    border-right: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-bottom: 1px solid var(--chicago-border-light, #FFFFFF);
+    box-shadow: inset 1px 1px 0 var(--chicago-border-dark, #000000);
+}
+
+/* Disabled state: embossed text, not opacity */
+:host([disabled]) input[type="number"] {
+    background: var(--chicago-face, #C0C0C0);
+    color: var(--chicago-text-disabled, #808080);
+    opacity: 1;
+    cursor: not-allowed;
+}
+
+:host([disabled]) .increment-btn,
+:host([disabled]) .decrement-btn {
+    color: var(--chicago-text-disabled, #808080);
+    text-shadow: 1px 1px 0 var(--chicago-text-disabled-highlight, #FFFFFF);
+    opacity: 1;
+    background: var(--chicago-face, #C0C0C0);
+    cursor: not-allowed;
+}

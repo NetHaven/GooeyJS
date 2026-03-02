@@ -1,0 +1,147 @@
+/* ColorPicker - Chicago structural override */
+
+:host {
+    font-family: var(--chicago-font-family, "MS Sans Serif", "Microsoft Sans Serif", Tahoma, Arial, sans-serif);
+    font-size: 11px;
+}
+
+.colorpicker-button {
+    /* Raised bevel */
+    border: none;
+    border-top: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-left: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-right: 1px solid var(--chicago-border-shadow, #808080);
+    border-bottom: 1px solid var(--chicago-border-shadow, #808080);
+    box-shadow:
+        inset -1px -1px 0 var(--chicago-border-dark, #000000),
+        inset 1px 1px 0 var(--chicago-border-highlight, #DFDFDF);
+    background: var(--chicago-face, #C0C0C0);
+    border-radius: 0;
+    height: auto;
+    min-width: 40px;
+    padding: 2px 4px;
+}
+
+.colorpicker-button:hover {
+    background: var(--chicago-face, #C0C0C0);
+}
+
+.colorpicker-button:active,
+:host(.colorpicker-open) .colorpicker-button {
+    /* Sunken bevel: inverted */
+    border-top: 1px solid var(--chicago-border-shadow, #808080);
+    border-left: 1px solid var(--chicago-border-shadow, #808080);
+    border-right: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-bottom: 1px solid var(--chicago-border-light, #FFFFFF);
+    box-shadow:
+        inset 1px 1px 0 var(--chicago-border-dark, #000000),
+        inset -1px -1px 0 var(--chicago-border-highlight, #DFDFDF);
+}
+
+.colorpicker-button:focus {
+    outline: 1px dotted var(--chicago-text, #000000);
+    outline-offset: -3px;
+    /* Keep raised bevel border on focus */
+    border-top: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-left: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-right: 1px solid var(--chicago-border-shadow, #808080);
+    border-bottom: 1px solid var(--chicago-border-shadow, #808080);
+}
+
+.colorpicker-display {
+    border: 1px solid var(--chicago-border-dark, #000000);
+    border-radius: 0;
+}
+
+.colorpicker-arrow {
+    color: var(--chicago-text, #000000);
+}
+
+.colorpicker-dropdown {
+    /* Raised bevel + outer outline */
+    border: none;
+    border-top: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-left: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-right: 1px solid var(--chicago-border-shadow, #808080);
+    border-bottom: 1px solid var(--chicago-border-shadow, #808080);
+    background: var(--chicago-face, #C0C0C0);
+    border-radius: 0;
+    box-shadow: none;
+    outline: 1px solid var(--chicago-border-dark, #000000);
+}
+
+.colorpicker-swatch {
+    border: 1px solid var(--chicago-border-dark, #000000);
+    border-radius: 0;
+}
+
+.colorpicker-swatch:hover {
+    border: 1px solid var(--chicago-border-dark, #000000);
+    box-shadow: 0 0 0 1px var(--chicago-highlight, #000080);
+}
+
+.colorpicker-swatch:focus {
+    border: 1px dotted var(--chicago-highlight, #000080);
+}
+
+.colorpicker-hex-input {
+    /* Sunken bevel input */
+    border-top: 1px solid var(--chicago-border-shadow, #808080);
+    border-left: 1px solid var(--chicago-border-shadow, #808080);
+    border-right: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-bottom: 1px solid var(--chicago-border-light, #FFFFFF);
+    box-shadow: inset 1px 1px 0 var(--chicago-border-dark, #000000);
+    background: #FFFFFF;
+    color: var(--chicago-text, #000000);
+    font-size: 11px;
+    border-radius: 0;
+}
+
+.colorpicker-hex-input:focus {
+    outline: none;
+    border-top: 1px solid var(--chicago-border-shadow, #808080);
+    border-left: 1px solid var(--chicago-border-shadow, #808080);
+    border-right: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-bottom: 1px solid var(--chicago-border-light, #FFFFFF);
+}
+
+.colorpicker-custom {
+    border-top: 1px solid var(--chicago-border-shadow, #808080);
+}
+
+.colorpicker-custom-label {
+    font-size: 11px;
+    color: var(--chicago-text, #000000);
+}
+
+.colorpicker-native-input {
+    border: 1px solid var(--chicago-border-dark, #000000);
+    border-radius: 0;
+}
+
+/* Disabled state: embossed text, not opacity */
+:host([disabled]) {
+    opacity: 1;
+}
+
+:host([disabled]) .colorpicker-button {
+    color: var(--chicago-text-disabled, #808080);
+    text-shadow: 1px 1px 0 var(--chicago-text-disabled-highlight, #FFFFFF);
+    cursor: not-allowed;
+    /* Maintain raised bevel when disabled */
+    border-top: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-left: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-right: 1px solid var(--chicago-border-shadow, #808080);
+    border-bottom: 1px solid var(--chicago-border-shadow, #808080);
+    box-shadow:
+        inset -1px -1px 0 var(--chicago-border-dark, #000000),
+        inset 1px 1px 0 var(--chicago-border-highlight, #DFDFDF);
+}
+
+:host([disabled]) .colorpicker-hex-input,
+:host([disabled]) .colorpicker-native-input {
+    opacity: 1;
+    cursor: not-allowed;
+    background: var(--chicago-face, #C0C0C0);
+    color: var(--chicago-text-disabled, #808080);
+}

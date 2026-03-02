@@ -1,0 +1,38 @@
+/* DatePicker - Chicago structural override */
+
+input[type="date"] {
+    /* Sunken bevel input */
+    border-top: 1px solid var(--chicago-border-shadow, #808080);
+    border-left: 1px solid var(--chicago-border-shadow, #808080);
+    border-right: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-bottom: 1px solid var(--chicago-border-light, #FFFFFF);
+    box-shadow: inset 1px 1px 0 var(--chicago-border-dark, #000000);
+    background: #FFFFFF;
+    color: var(--chicago-text, #000000);
+    font-size: 11px;
+    font-family: var(--chicago-font-family, "MS Sans Serif", "Microsoft Sans Serif", Tahoma, Arial, sans-serif);
+    border-radius: 0;
+    padding: 2px 4px;
+}
+
+input[type="date"]:focus {
+    outline: none;
+}
+
+input[type="date"]:focus-visible {
+    outline: 1px dotted var(--chicago-text, #000000);
+    outline-offset: -3px;
+}
+
+input[type="date"]::selection {
+    background: var(--chicago-highlight, #000080);
+    color: var(--chicago-highlight-text, #FFFFFF);
+}
+
+/* Disabled state: embossed text, not opacity */
+:host([disabled]) input[type="date"] {
+    background: var(--chicago-face, #C0C0C0);
+    color: var(--chicago-text-disabled, #808080);
+    opacity: 1;
+    cursor: not-allowed;
+}
