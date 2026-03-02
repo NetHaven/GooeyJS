@@ -1,0 +1,43 @@
+/* ListBox - Chicago structural override */
+
+:host {
+    display: inline-block;
+    width: 100%;
+}
+
+select {
+    /* Sunken bevel border */
+    border-top: 1px solid var(--chicago-border-shadow, #808080);
+    border-left: 1px solid var(--chicago-border-shadow, #808080);
+    border-right: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-bottom: 1px solid var(--chicago-border-light, #FFFFFF);
+    box-shadow: inset 1px 1px 0 var(--chicago-border-dark, #000000);
+    background: #FFFFFF;
+    color: var(--chicago-text, #000000);
+    font-size: 11px;
+    border-radius: 0;
+    padding: 1px;
+    width: 100%;
+}
+
+select:focus {
+    outline: none;
+}
+
+select option:checked,
+select:focus option:checked {
+    background: var(--chicago-highlight, #000080);
+    color: var(--chicago-highlight-text, #FFFFFF);
+}
+
+select:not(:focus) option:checked {
+    background: var(--chicago-highlight-inactive, #808080);
+    color: var(--chicago-highlight-inactive-text, #000000);
+}
+
+:host([disabled]) select {
+    background: var(--chicago-face, #C0C0C0);
+    color: var(--chicago-text-disabled, #808080);
+    opacity: 1;
+    cursor: not-allowed;
+}

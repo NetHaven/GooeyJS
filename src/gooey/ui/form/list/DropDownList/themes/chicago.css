@@ -1,0 +1,48 @@
+/* DropDownList - Chicago structural override */
+
+:host {
+    display: inline-block;
+}
+
+select {
+    /* Sunken bevel border */
+    border-top: 1px solid var(--chicago-border-shadow, #808080);
+    border-left: 1px solid var(--chicago-border-shadow, #808080);
+    border-right: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-bottom: 1px solid var(--chicago-border-light, #FFFFFF);
+    box-shadow: inset 1px 1px 0 var(--chicago-border-dark, #000000);
+    background: #FFFFFF;
+    color: var(--chicago-text, #000000);
+    font-size: 11px;
+    border-radius: 0;
+    padding: 1px 16px 1px 2px;
+    appearance: none;
+    -webkit-appearance: none;
+    /* Custom dropdown arrow via background image */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3Crect width='16' height='16' fill='%23C0C0C0'/%3E%3Crect x='0' y='0' width='15' height='1' fill='%23FFFFFF'/%3E%3Crect x='0' y='0' width='1' height='15' fill='%23FFFFFF'/%3E%3Crect x='15' y='0' width='1' height='16' fill='%23808080'/%3E%3Crect x='0' y='15' width='16' height='1' fill='%23808080'/%3E%3Crect x='14' y='1' width='1' height='14' fill='%23000000'/%3E%3Crect x='1' y='14' width='14' height='1' fill='%23000000'/%3E%3Cpolygon points='5,6 11,6 8,10' fill='%23000000'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right center;
+    background-size: 16px 16px;
+}
+
+select:focus {
+    outline: none;
+}
+
+select option:checked {
+    background: var(--chicago-highlight, #000080);
+    color: var(--chicago-highlight-text, #FFFFFF);
+}
+
+:host([disabled]) select,
+:host([disabled]) {
+    opacity: 1;
+    cursor: not-allowed;
+}
+
+:host([disabled]) select {
+    background-color: var(--chicago-face, #C0C0C0);
+    color: var(--chicago-text-disabled, #808080);
+    /* Preserve the arrow on disabled state */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3Crect width='16' height='16' fill='%23C0C0C0'/%3E%3Crect x='0' y='0' width='15' height='1' fill='%23FFFFFF'/%3E%3Crect x='0' y='0' width='1' height='15' fill='%23FFFFFF'/%3E%3Crect x='15' y='0' width='1' height='16' fill='%23808080'/%3E%3Crect x='0' y='15' width='16' height='1' fill='%23808080'/%3E%3Crect x='14' y='1' width='1' height='14' fill='%23000000'/%3E%3Crect x='1' y='14' width='14' height='1' fill='%23000000'/%3E%3Cpolygon points='5,6 11,6 8,10' fill='%23808080'/%3E%3C/svg%3E");
+}

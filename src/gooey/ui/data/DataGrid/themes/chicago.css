@@ -1,0 +1,209 @@
+/* DataGrid - Chicago structural override */
+
+:host {
+    border: 1px solid var(--chicago-border-dark, #000000);
+    border-radius: 0;
+    font-size: 11px;
+}
+
+.datagrid-container {
+    background: var(--chicago-face, #C0C0C0);
+    color: var(--chicago-text, #000000);
+}
+
+/* Header Viewport */
+.datagrid-header-viewport {
+    background: var(--chicago-face, #C0C0C0);
+    border-bottom: 1px solid var(--chicago-border-dark, #000000);
+}
+
+/* Column Headers: raised bevel */
+.datagrid-column-header {
+    border-top: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-left: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-right: 1px solid var(--chicago-border-shadow, #808080);
+    border-bottom: 1px solid var(--chicago-border-shadow, #808080);
+    box-shadow: inset -1px -1px 0 var(--chicago-border-dark, #000000);
+    background: var(--chicago-face, #C0C0C0);
+    font-weight: normal;
+    font-size: 11px;
+    padding: 2px 8px;
+    min-height: 18px;
+}
+
+.datagrid-column-header:hover {
+    background: var(--chicago-face, #C0C0C0);
+}
+
+/* Pressed column header: sunken bevel */
+.datagrid-column-header:active {
+    border-top: 1px solid var(--chicago-border-shadow, #808080);
+    border-left: 1px solid var(--chicago-border-shadow, #808080);
+    border-right: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-bottom: 1px solid var(--chicago-border-light, #FFFFFF);
+    box-shadow: inset 1px 1px 0 var(--chicago-border-dark, #000000);
+    padding: 3px 7px 1px 9px;
+}
+
+.datagrid-column-header.sorted {
+    background: var(--chicago-face, #C0C0C0);
+}
+
+/* Row Styles */
+.datagrid-row {
+    border-bottom: 1px solid var(--chicago-border-shadow, #808080);
+    background: #FFFFFF;
+    min-height: 16px;
+    transition: none;
+}
+
+.datagrid-row:hover {
+    background: #FFFFFF;
+}
+
+.datagrid-row.selected {
+    background: var(--chicago-highlight, #000080);
+    color: var(--chicago-highlight-text, #FFFFFF);
+}
+
+.datagrid-row.selected:hover {
+    background: var(--chicago-highlight, #000080);
+}
+
+/* No alternating row colors */
+.datagrid-row:nth-child(even) {
+    background: #FFFFFF;
+}
+
+.datagrid-row:nth-child(even):hover {
+    background: #FFFFFF;
+}
+
+.datagrid-row.selected:nth-child(even) {
+    background: var(--chicago-highlight, #000080);
+}
+
+/* Cell Styles */
+.datagrid-cell {
+    padding: 0 4px;
+    border-right: 1px solid var(--chicago-border-shadow, #808080);
+}
+
+.datagrid-cell.selected {
+    outline: 1px dotted var(--chicago-text, #000000);
+    outline-offset: -1px;
+    background: transparent;
+}
+
+.datagrid-row.selected .datagrid-cell.selected {
+    outline-color: var(--chicago-highlight-text, #FFFFFF);
+    background: transparent;
+}
+
+/* Cell Editor */
+.datagrid-cell-editor {
+    border: 1px solid var(--chicago-border-dark, #000000);
+    border-radius: 0;
+    background: #FFFFFF;
+    color: var(--chicago-text, #000000);
+}
+
+/* Filter Input: sunken bevel */
+.datagrid-filter-input {
+    border-top: 1px solid var(--chicago-border-shadow, #808080);
+    border-left: 1px solid var(--chicago-border-shadow, #808080);
+    border-right: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-bottom: 1px solid var(--chicago-border-light, #FFFFFF);
+    box-shadow: inset 1px 1px 0 var(--chicago-border-dark, #000000);
+    background: #FFFFFF;
+    border-radius: 0;
+    font-size: 11px;
+}
+
+.datagrid-filter-input:focus {
+    outline: none;
+    border-top: 1px solid var(--chicago-border-shadow, #808080);
+    border-left: 1px solid var(--chicago-border-shadow, #808080);
+    border-right: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-bottom: 1px solid var(--chicago-border-light, #FFFFFF);
+}
+
+/* Focus styling */
+:host(:focus) {
+    outline: 1px dotted var(--chicago-text, #000000);
+    outline-offset: -1px;
+}
+
+:host(:focus) .datagrid-container {
+    border-color: var(--chicago-border-dark, #000000);
+}
+
+/* Scrollbar styling */
+.datagrid-body-viewport::-webkit-scrollbar {
+    width: var(--chicago-scrollbar-size, 16px);
+    height: var(--chicago-scrollbar-size, 16px);
+}
+
+.datagrid-body-viewport::-webkit-scrollbar-track {
+    background: var(--chicago-scrollbar-track, #C0C0C0);
+}
+
+.datagrid-body-viewport::-webkit-scrollbar-thumb {
+    background: var(--chicago-scrollbar-thumb, #C0C0C0);
+    border: 1px solid;
+    border-color: var(--chicago-scrollbar-thumb-border-light, #FFFFFF) var(--chicago-scrollbar-thumb-border-dark, #000000) var(--chicago-scrollbar-thumb-border-dark, #000000) var(--chicago-scrollbar-thumb-border-light, #FFFFFF);
+    box-shadow:
+        inset 1px 1px 0 var(--chicago-scrollbar-thumb-border-light, #FFFFFF),
+        inset -1px -1px 0 var(--chicago-scrollbar-thumb-border-shadow, #808080);
+    background-image: linear-gradient(
+        to bottom,
+        transparent 4px,
+        var(--chicago-scrollbar-grip, #000000) 4px, var(--chicago-scrollbar-grip, #000000) 5px,
+        transparent 5px,
+        transparent 7px,
+        var(--chicago-scrollbar-grip, #000000) 7px, var(--chicago-scrollbar-grip, #000000) 8px,
+        transparent 8px,
+        transparent 10px,
+        var(--chicago-scrollbar-grip, #000000) 10px, var(--chicago-scrollbar-grip, #000000) 11px,
+        transparent 11px
+    );
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 6px 16px;
+    border-radius: 0;
+}
+
+.datagrid-body-viewport::-webkit-scrollbar-thumb:hover {
+    background-color: var(--chicago-scrollbar-thumb, #C0C0C0);
+}
+
+.datagrid-body-viewport::-webkit-scrollbar-button {
+    background: var(--chicago-scrollbar-button-face, #C0C0C0);
+    border: 1px solid;
+    border-color: var(--chicago-scrollbar-button-border-light, #FFFFFF) var(--chicago-scrollbar-button-border-dark, #000000) var(--chicago-scrollbar-button-border-dark, #000000) var(--chicago-scrollbar-button-border-light, #FFFFFF);
+    box-shadow:
+        inset 1px 1px 0 var(--chicago-scrollbar-button-border-light, #FFFFFF),
+        inset -1px -1px 0 var(--chicago-scrollbar-button-border-shadow, #808080);
+    display: block;
+    width: 16px;
+    height: 16px;
+}
+
+.datagrid-body-viewport::-webkit-scrollbar-corner {
+    background: var(--chicago-face, #C0C0C0);
+}
+
+/* Disabled state */
+:host([disabled]) {
+    opacity: 1;
+    pointer-events: none;
+}
+
+:host([disabled]) .datagrid-container {
+    color: var(--chicago-text-disabled, #808080);
+}
+
+/* Column resize handle */
+.column-resize-handle:hover {
+    background-color: rgba(0, 0, 0, 0.2);
+}

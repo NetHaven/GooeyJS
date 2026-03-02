@@ -1,0 +1,122 @@
+/* ComboBox - Chicago structural override */
+
+:host {
+    font-size: 11px;
+}
+
+.combobox-input {
+    /* Sunken bevel */
+    border-top: 1px solid var(--chicago-border-shadow, #808080);
+    border-left: 1px solid var(--chicago-border-shadow, #808080);
+    border-right: none;
+    border-bottom: 1px solid var(--chicago-border-light, #FFFFFF);
+    box-shadow: inset 1px 1px 0 var(--chicago-border-dark, #000000);
+    background: #FFFFFF;
+    color: var(--chicago-text, #000000);
+    font-size: 11px;
+    border-radius: 0;
+    padding: 2px 4px;
+}
+
+.combobox-input:focus {
+    border-top: 1px solid var(--chicago-border-shadow, #808080);
+    border-left: 1px solid var(--chicago-border-shadow, #808080);
+    border-right: none;
+    border-bottom: 1px solid var(--chicago-border-light, #FFFFFF);
+    outline: none;
+}
+
+.combobox-input::selection {
+    background: var(--chicago-highlight, #000080);
+    color: var(--chicago-highlight-text, #FFFFFF);
+}
+
+.combobox-input::placeholder {
+    color: var(--chicago-text-disabled, #808080);
+}
+
+/* Raised bevel dropdown button */
+.combobox-button {
+    border: none;
+    border-top: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-left: 1px solid var(--chicago-border-shadow, #808080);
+    border-right: 1px solid var(--chicago-border-shadow, #808080);
+    border-bottom: 1px solid var(--chicago-border-shadow, #808080);
+    box-shadow:
+        inset -1px -1px 0 var(--chicago-border-dark, #000000),
+        inset 1px 1px 0 var(--chicago-border-highlight, #DFDFDF);
+    background: var(--chicago-face, #C0C0C0);
+    min-width: 16px;
+    border-radius: 0;
+    padding: 0;
+    font-size: 8px;
+}
+
+.combobox-button:hover {
+    background: var(--chicago-face, #C0C0C0);
+}
+
+/* Pressed / dropdown open: sunken bevel */
+.combobox-button:active,
+:host(.dropdown-open) .combobox-button {
+    border-top: 1px solid var(--chicago-border-shadow, #808080);
+    border-left: 1px solid var(--chicago-border-shadow, #808080);
+    border-right: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-bottom: 1px solid var(--chicago-border-light, #FFFFFF);
+    box-shadow:
+        inset 1px 1px 0 var(--chicago-border-dark, #000000),
+        inset -1px -1px 0 var(--chicago-border-highlight, #DFDFDF);
+    background: var(--chicago-face, #C0C0C0);
+}
+
+/* Dropdown panel */
+.combobox-dropdown {
+    background: #FFFFFF;
+    border-top: 1px solid var(--chicago-border-shadow, #808080);
+    border-left: 1px solid var(--chicago-border-shadow, #808080);
+    border-right: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-bottom: 1px solid var(--chicago-border-light, #FFFFFF);
+    box-shadow: none;
+    border-radius: 0;
+}
+
+.combobox-list {
+    font-size: 11px;
+}
+
+.combobox-list option {
+    padding: 1px 4px;
+}
+
+.combobox-list option:hover {
+    background: var(--chicago-highlight, #000080);
+    color: var(--chicago-highlight-text, #FFFFFF);
+}
+
+.combobox-list option:checked {
+    background: var(--chicago-highlight, #000080);
+    color: var(--chicago-highlight-text, #FFFFFF);
+}
+
+/* Disabled state */
+:host([disabled]) .combobox-input {
+    background: var(--chicago-face, #C0C0C0);
+    color: var(--chicago-text-disabled, #808080);
+    text-shadow: 1px 1px 0 var(--chicago-text-disabled-highlight, #FFFFFF);
+    opacity: 1;
+    cursor: not-allowed;
+}
+
+:host([disabled]) .combobox-button {
+    opacity: 1;
+    cursor: not-allowed;
+    color: var(--chicago-text-disabled, #808080);
+}
+
+/* Focused state override */
+:host(.focused) .combobox-input {
+    border-top: 1px solid var(--chicago-border-shadow, #808080);
+    border-left: 1px solid var(--chicago-border-shadow, #808080);
+    border-right: none;
+    border-bottom: 1px solid var(--chicago-border-light, #FFFFFF);
+}
