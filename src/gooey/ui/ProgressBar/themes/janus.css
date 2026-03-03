@@ -1,19 +1,16 @@
-/* ProgressBar - Janus structural override */
+/* ProgressBar - Janus theme */
 
 .progress-bar {
     height: 16px;
     background-color: #ffffff;
     overflow: hidden;
     /* sunken border */
-    border-top: 1px solid #808080;
-    border-left: 1px solid #808080;
-    border-right: 1px solid #ffffff;
-    border-bottom: 1px solid #ffffff;
-    box-shadow: inset 1px 1px 0 #000000;
+    border: 1px solid #000000;
+    box-shadow: inset 1px 1px 0 #808080;
 }
 
 .progress-fill {
-    background-color: #000080;
+    background-color: #0000C0;
 }
 
 .progress-bar.indeterminate .progress-fill {
