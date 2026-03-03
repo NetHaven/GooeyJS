@@ -1,53 +1,68 @@
-/* Slider - Classic structural override */
+/* Slider - Classic theme compliance (CLS-11) */
+/* Slim gray track, blue striped thumb with bevel, fill bar hidden */
 
-/* Kill all animations and transitions */
-:host,
-.slider-fill,
-.slider-thumb,
-.slider-tooltip {
+/* Kill animations and transitions at host level */
+:host {
     animation: none !important;
     transition: none !important;
 }
 
+/* Track — slim gray with outer shadow */
 .slider-track {
-    height: 4px;
-    background-color: #ffffff;
-    border: 1px solid #000000;
-    border-radius: 0;
-    overflow: hidden;
+    height: 3px;
+    background-color: #AAA;
+    border: 1px solid #222;
+    border-radius: 2px;
+    box-shadow: -1px -1px #AAA, 1px 1px #FFF;
+    margin: 0 5px;
 }
 
+/* Fill bar — hidden (uniform gray track only) */
 .slider-fill {
-    background-color: #0000A5;
-    border-radius: 0;
+    display: none;
 }
 
+/* Thumb — blue striped with bevel */
 .slider-thumb {
-    border-radius: 0;
-    background-color: #c0c0c0;
-    /* bevel effect */
-    border-top: 1px solid #ffffff;
-    border-left: 1px solid #ffffff;
-    border-right: 1px solid #000000;
-    border-bottom: 1px solid #000000;
-    box-shadow: none;
-    width: 12px;
-    height: 22px;
+    width: 14px;
+    height: 13px;
+    border-radius: 2px;
+    background:
+        repeating-linear-gradient(
+            90deg,
+            transparent 0px,
+            transparent 1px,
+            var(--gooey-color-primary-5) 1px,
+            var(--gooey-color-primary-5) 2px
+        ),
+        var(--gooey-color-primary-4);
+    box-shadow:
+        inset 1px 1px 0 var(--gooey-color-primary-5),
+        inset -1px -1px 0 var(--gooey-color-primary-3);
 }
 
 .slider-thumb:hover {
     transform: translate(-50%, -50%);
 }
 
+/* Active thumb — darker blue with adjusted texture */
 .slider-thumb:active,
 .slider-thumb.active {
-    /* pressed: swap border colors */
-    border-top: 1px solid #000000;
-    border-left: 1px solid #000000;
-    border-right: 1px solid #ffffff;
-    border-bottom: 1px solid #ffffff;
+    background:
+        repeating-linear-gradient(
+            90deg,
+            transparent 0px,
+            transparent 1px,
+            var(--gooey-color-primary-4) 1px,
+            var(--gooey-color-primary-4) 2px
+        ),
+        var(--gooey-color-primary-3);
+    box-shadow:
+        inset 1px 1px 0 var(--gooey-color-primary-4),
+        inset -1px -1px 0 var(--gooey-color-primary-2);
 }
 
+/* Tooltip — retain classic styling */
 .slider-tooltip {
     border-radius: 0;
     border: 1px solid #000000;
@@ -63,10 +78,10 @@
     color: #000000;
 }
 
-/* Vertical orientation adjustments */
+/* Vertical orientation — swap thumb dimensions */
 :host([orientation="vertical"]) .slider-thumb {
-    width: 22px;
-    height: 12px;
+    width: 13px;
+    height: 14px;
 }
 
 :host([orientation="vertical"]) .slider-thumb:hover {
