@@ -1,45 +1,73 @@
 /* Window - Classic structural override */
 
+/* ── Inactive Window (default) ──────────────────────────── */
 :host {
-    background-color: #DDDDDD;
-    border: 1px solid #000000;
-    /* Classic Mac 1px drop shadow */
-    box-shadow: 1px 1px 0 #000000;
+    background-color: #ddd;
+    border: 1px solid #555;
+    box-shadow: none;
 }
 
+/* ── Active Window ──────────────────────────────────────── */
+:host([active]),
+:host(:focus-within) {
+    background-color: var(--gooey-color-window-frame);
+    border: 1px solid #000000;
+    box-shadow:
+        1px 1px 0 #000,
+        inset 1px 0 0 #fff,
+        inset 0 1px 0 #fff,
+        inset -1px 0 0 #999,
+        inset 0 -1px 0 #999;
+}
+
+/* ── Titlebar (shared structure) ────────────────────────── */
 .WindowTitlebar {
-    /* Horizontal stripes pattern */
-    background:
-        repeating-linear-gradient(
-            to bottom,
-            #DDDDDD 0px,
-            #DDDDDD 1px,
-            #000000 1px,
-            #000000 2px
-        );
     height: 20px;
     display: flex;
     align-items: center;
     user-select: none;
     position: relative;
     padding: 0 4px;
-    font-family: "ChicagoFLF", Chicago, sans-serif;
+    font-family: "Charcoal", "ChicagoFLF", Chicago, sans-serif;
     font-size: 12px;
     font-weight: bold;
-    color: #000000;
-    background-clip: padding-box;
+    color: #777;
+    background: #ddd;
 }
 
+/* ── Titlebar (active state — striped background) ───────── */
+:host([active]) .WindowTitlebar,
+:host(:focus-within) .WindowTitlebar {
+    color: #000000;
+    background:
+        repeating-linear-gradient(
+            0deg,
+            #DDDDDD 0px,
+            #DDDDDD 1px,
+            #000000 1px,
+            #000000 2px
+        );
+}
+
+/* ── Title Text ─────────────────────────────────────────── */
 .WindowTitleText {
     flex: 1;
     text-align: center;
-    background: #DDDDDD;
+    background: #ddd;
     padding: 0 6px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
+/* Mask stripes behind title text when active */
+:host([active]) .WindowTitleText,
+:host(:focus-within) .WindowTitleText {
+    background: var(--gooey-color-window-frame);
+    padding: 0 6px;
+}
+
+/* ── Control Buttons ────────────────────────────────────── */
 .WindowControlButtons {
     display: flex;
     align-items: center;
@@ -53,24 +81,59 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 12px;
-    height: 12px;
+    width: 11px;
+    height: 11px;
     padding: 0;
-    margin: 0;
+    margin: 2px 1px 5px;
     border: 1px solid #000000;
-    background: #DDDDDD;
+    background: linear-gradient(to bottom right, #999, #fff);
+    box-shadow:
+        inset 1px 1px 0 #ccc,
+        inset 2px 2px 0 #fff,
+        inset -1px -1px 0 #777,
+        inset -2px -2px 0 #aaa;
     color: #000000;
-    font-size: 8px;
+    font-size: 7px;
     line-height: 1;
     cursor: pointer;
+    visibility: hidden;
+}
+
+/* Show control buttons only when window is active */
+:host([active]) .WindowControlButtons button,
+:host(:focus-within) .WindowControlButtons button {
+    visibility: visible;
 }
 
 .WindowControlButtons button:active {
-    background: #000000;
-    color: #DDDDDD;
+    background: linear-gradient(to bottom right, #444, #bbb);
+    box-shadow:
+        inset 1px 1px 0 #555,
+        inset 2px 2px 0 #666,
+        inset -1px -1px 0 #aaa,
+        inset -2px -2px 0 #bbb;
 }
 
-/* Resize Handles */
+/* ── Window Body (.WindowContent) ───────────────────────── */
+
+/* Inactive window body */
+.WindowContent {
+    margin: 4px;
+    background: #eee;
+    border: 1px solid #555;
+    color: #555;
+}
+
+/* Active window body */
+:host([active]) .WindowContent,
+:host(:focus-within) .WindowContent {
+    background: #DDDDDD;
+    border: 1px solid #000;
+    box-shadow: 1px 1px 0 #fff, -1px -1px 0 #fff;
+    color: #000000;
+}
+
+/* ── Resize Handles ─────────────────────────────────────── */
 .WindowResizeHandles {
     position: absolute;
     top: 0;
@@ -106,10 +169,7 @@
     border-bottom: 2px solid #808080;
 }
 
-.WindowContent {
-    margin: 4px;
-}
-
+/* ── Button Bar ─────────────────────────────────────────── */
 .WindowButtonbar {
     display: flex;
     height: 28px;
@@ -126,40 +186,42 @@
     border: 1px solid #000000;
     border-radius: 3px;
     background-color: #DDDDDD;
-    /* Platinum subtle bevel */
     box-shadow:
-        inset -1px -1px 0 #999999,
-        inset 1px 1px 0 #FFFFFF;
-    font-family: "ChicagoFLF", Chicago, sans-serif;
+        inset 1px 1px 0 #DDDDDD,
+        inset 2px 2px 0 #fff,
+        inset -1px -1px 1px #555;
+    font-family: "Charcoal", "ChicagoFLF", Chicago, sans-serif;
     font-size: 12px;
+    font-weight: bold;
 }
 
 .WindowButtonbar button:active {
-    /* Inverted bevel on press */
+    background-color: #666666;
+    color: #ffffff;
     box-shadow:
-        inset 1px 1px 0 #999999,
-        inset -1px -1px 0 #FFFFFF;
+        inset 1px 1px 1px #333,
+        inset -1px -1px 1px #999;
 }
 
 .WindowButtonbar button:focus {
-    outline: 1px dotted #000000;
+    outline: 2px solid var(--gooey-color-primary-3);
     outline-offset: -3px;
 }
 
-/* Disabled button emboss effect (CLSC-10) */
 .WindowButtonbar button:disabled {
-    color: #7F7F7F;
-    text-shadow: 1px 1px 0 #FFFFFF;
+    color: #777;
+    border-color: #888;
+    box-shadow: none;
     cursor: not-allowed;
 }
 
 .WindowButtonbar button:disabled:hover,
 .WindowButtonbar button:disabled:active {
-    box-shadow:
-        inset -1px -1px 0 #999999,
-        inset 1px 1px 0 #FFFFFF;
+    background-color: #DDDDDD;
+    box-shadow: none;
 }
 
+/* ── Modal ──────────────────────────────────────────────── */
 .uiWindowModal {
     background-color: rgba(0, 0, 0, 0.4);
 }
@@ -168,7 +230,7 @@
     z-index: 1600;
 }
 
-/* Dialog Alert Styles */
+/* ── Dialog Alert Styles ────────────────────────────────── */
 .DialogAlert-container {
     display: flex;
     align-items: flex-start;
@@ -188,7 +250,7 @@
     word-wrap: break-word;
 }
 
-/* Dialog Info Styles */
+/* ── Dialog Info Styles ─────────────────────────────────── */
 .DialogInfo-container {
     display: flex;
     align-items: flex-start;
@@ -208,7 +270,7 @@
     word-wrap: break-word;
 }
 
-/* Dialog Confirm Styles */
+/* ── Dialog Confirm Styles ──────────────────────────────── */
 .DialogConfirm-container {
     display: flex;
     align-items: flex-start;
@@ -228,7 +290,7 @@
     word-wrap: break-word;
 }
 
-/* Dialog Prompt Styles */
+/* ── Dialog Prompt Styles ───────────────────────────────── */
 .DialogPrompt-container {
     display: flex;
     align-items: flex-start;
@@ -259,12 +321,11 @@
     padding: 2px 4px;
     background-color: #FFFFFF;
     color: #000000;
-    /* Classic Mac sunken input: 1px black border */
     border: 1px solid #000000;
     box-shadow: inset 1px 1px 0 #999999;
 }
 
-/* Alert Dialog specific - buttonbar centered, no cancel button */
+/* ── Alert Dialog ───────────────────────────────────────── */
 :host([dialogtype="alert"]) .WindowButtonbar {
     justify-content: center;
 }
@@ -273,7 +334,7 @@
     display: none;
 }
 
-/* Info Dialog specific - buttonbar centered, no cancel button */
+/* ── Info Dialog ────────────────────────────────────────── */
 :host([dialogtype="info"]) .WindowButtonbar {
     justify-content: center;
 }
