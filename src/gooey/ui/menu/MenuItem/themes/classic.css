@@ -1,4 +1,4 @@
-/* MenuItem - Classic Mac (Platinum) structural override */
+/* MenuItem - Classic structural override */
 
 /* Icon area: checkmark glyph space */
 .MenuItemIcon {
@@ -28,10 +28,11 @@
     width: 50px;
 }
 
-/* Active/selected state: inverted blue selection (CLSC-07) */
+/* Active/selected state: #339 selection with side inset shadows */
 :host([active]) {
-    background-color: #0000A5 !important;
+    background-color: var(--gooey-color-primary-2) !important;
     color: #FFFFFF;
+    box-shadow: inset 1px 0 var(--gooey-color-primary-3), inset -1px 0 #008;
 }
 
 :host([active]) .MenuItemShortcut {
@@ -56,24 +57,25 @@
     border-left-color: #FFFFFF;
 }
 
-/* Disabled state: emboss effect (CLSC-10) */
+/* Disabled state: no emboss text-shadow */
 :host([disabled]) {
     opacity: 1;
-    color: #7F7F7F;
-    text-shadow: 1px 1px 0 #FFFFFF;
+    color: #777;
     cursor: default;
+    /* No text-shadow emboss */
 }
 
 :host([disabled]) .MenuItemText {
-    text-shadow: 1px 1px 0 #FFFFFF;
+    color: #777;
+    /* No text-shadow emboss */
 }
 
 :host([disabled]) .MenuItemShortcut {
-    color: #7F7F7F;
+    color: #777;
 }
 
 /* Disabled + hover: do NOT show blue selection highlight */
 :host([disabled][active]) {
     background-color: transparent !important;
-    color: #7F7F7F;
+    color: #777;
 }

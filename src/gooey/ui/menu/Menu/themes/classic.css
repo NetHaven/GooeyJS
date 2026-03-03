@@ -1,9 +1,12 @@
-/* Menu - Classic Mac (Platinum) structural override */
+/* Menu - Classic structural override */
 
 :host {
-    /* Classic Mac: 1px black border, white background, 1px drop shadow */
+    /* Classic: gray panel with inset bevel and outer drop shadow */
     border: 1px solid #000000;
     border-radius: 0;
-    background-color: #FFFFFF;
-    box-shadow: 1px 1px 0 #000000;
+    background-color: #ddd;
+    box-shadow:
+        inset 1px 1px #fff,
+        inset -1px -1px #888,
+        1px 1px #000;
 }

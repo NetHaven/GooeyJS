@@ -1,9 +1,11 @@
-/* MenuItemSeparator - Classic Mac (Platinum) structural override */
+/* MenuItemSeparator - Classic structural override */
 
 :host {
-    /* Classic Mac separator: single gray horizontal rule */
-    height: 1px;
-    margin: 2px 4px;
+    /* Classic double-line etched separator */
+    height: auto;
+    margin: 2px 0;
     border: none;
-    border-top: 1px solid #A0A0A0;
+    border-top: 1px solid #888;
+    border-bottom: 1px solid #fff;
+    display: block;
 }

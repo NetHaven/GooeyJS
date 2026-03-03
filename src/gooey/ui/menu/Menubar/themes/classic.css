@@ -1,7 +1,7 @@
-/* Menubar - Classic Mac (Platinum) structural override */
+/* Menubar - Classic structural override */
 
 :host {
-    /* Classic Mac menu bar: Platinum gray with black bottom border */
+    /* Classic menu bar: Platinum gray with black bottom border */
     background-color: #DDDDDD;
     border-bottom: 1px solid #000000;
 }
@@ -10,14 +10,14 @@
     padding: 2px 8px;
 }
 
-/* Active/open menu header: inverted blue selection (CLSC-07) */
+/* Active/open menu header: #339 selection via primary-2 */
 .menuHeader[active], .menuHeader:hover {
-    background-color: #0000A5;
+    background-color: var(--gooey-color-primary-2);
     color: #FFFFFF;
 }
 
-/* Disabled menu header: emboss effect (CLSC-10) */
+/* Disabled menu header: no emboss text-shadow */
 .menuHeader[disabled] {
-    color: #7F7F7F;
-    text-shadow: 1px 1px 0 #FFFFFF;
+    color: #777;
+    /* No text-shadow emboss */
 }
