@@ -23,3 +23,40 @@ select option:checked {
     color: #808080;
     cursor: not-allowed;
 }
+
+/* 17px Janus scrollbar */
+select::-webkit-scrollbar {
+    width: 17px;
+    height: 17px;
+}
+
+select::-webkit-scrollbar-track {
+    background: #c0c0c0;
+    border: 1px solid #000000;
+}
+
+select::-webkit-scrollbar-thumb {
+    background: #c0c0c0;
+    border: 1px solid #000000;
+    box-shadow:
+        inset 1px 1px #ffffff,
+        inset -2px -2px #808080;
+}
+
+select::-webkit-scrollbar-button {
+    width: 16px;
+    height: 16px;
+    background: #c0c0c0;
+    border: 1px solid #000000;
+    box-shadow:
+        inset 1px 1px #ffffff,
+        inset -2px -2px #808080;
+}
+
+select::-webkit-scrollbar-button:active {
+    box-shadow: inset 1px 1px #808080;
+}
+
+select::-webkit-scrollbar-corner {
+    background: #c0c0c0;
+}

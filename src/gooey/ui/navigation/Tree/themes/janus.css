@@ -6,3 +6,40 @@
     border: 1px solid #000000;
     box-shadow: inset 1px 1px 0 #808080;
 }
+
+/* 17px Janus scrollbar */
+.ui-Tree::-webkit-scrollbar {
+    width: 17px;
+    height: 17px;
+}
+
+.ui-Tree::-webkit-scrollbar-track {
+    background: #c0c0c0;
+    border: 1px solid #000000;
+}
+
+.ui-Tree::-webkit-scrollbar-thumb {
+    background: #c0c0c0;
+    border: 1px solid #000000;
+    box-shadow:
+        inset 1px 1px #ffffff,
+        inset -2px -2px #808080;
+}
+
+.ui-Tree::-webkit-scrollbar-button {
+    width: 16px;
+    height: 16px;
+    background: #c0c0c0;
+    border: 1px solid #000000;
+    box-shadow:
+        inset 1px 1px #ffffff,
+        inset -2px -2px #808080;
+}
+
+.ui-Tree::-webkit-scrollbar-button:active {
+    box-shadow: inset 1px 1px #808080;
+}
+
+.ui-Tree::-webkit-scrollbar-corner {
+    background: #c0c0c0;
+}
