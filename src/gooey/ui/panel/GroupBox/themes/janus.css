@@ -1,12 +1,9 @@
-/* GroupBox - Janus structural override */
+/* GroupBox - Janus theme */
 
 .ui-GroupBox-content {
     background-color: #c0c0c0;
-    /* etched border effect */
-    border-top: 1px solid #808080;
-    border-left: 1px solid #808080;
-    border-right: 1px solid #ffffff;
-    border-bottom: 1px solid #ffffff;
+    /* etched border: black outer + inner bevel */
+    border: 1px solid #000000;
     box-shadow:
         inset 1px 1px 0 #ffffff,
         inset -1px -1px 0 #808080;
