@@ -1,52 +1,41 @@
-/* Slider - Janus structural override */
+/* Slider - Janus theme */
 
 .slider-track {
     height: 4px;
     background-color: #ffffff;
     overflow: hidden;
     /* sunken border */
-    border-top: 1px solid #808080;
-    border-left: 1px solid #808080;
-    border-right: 1px solid #ffffff;
-    border-bottom: 1px solid #ffffff;
-    box-shadow: inset 1px 1px 0 #000000;
+    border: 1px solid #000000;
+    box-shadow: inset 1px 1px 0 #808080;
 }
 
 .slider-fill {
-    background-color: #000080;
+    display: none;
 }
 
 .slider-thumb {
     background-color: #c0c0c0;
     /* raised button */
-    border-top: 1px solid #ffffff;
-    border-left: 1px solid #ffffff;
-    border-right: 1px solid #808080;
-    border-bottom: 1px solid #808080;
-    box-shadow: 1px 1px 0 #000000;
+    border: 1px solid #000000;
+    box-shadow:
+        inset 1px 1px 0 #ffffff,
+        inset -2px -2px 0 #808080;
     border-radius: 0;
     width: 12px;
     height: 22px;
 }
 
-.slider-thumb:hover {
-    transform: translate(-50%, -50%);
-}
-
 .slider-thumb:active,
 .slider-thumb.active {
-    /* pressed: invert borders */
-    border-top: 1px solid #808080;
-    border-left: 1px solid #808080;
-    border-right: 1px solid #ffffff;
-    border-bottom: 1px solid #ffffff;
-    box-shadow: none;
+    /* pressed: sunken bevel */
+    border: 1px solid #000000;
+    box-shadow: inset 1px 1px 0 #808080;
 }
 
 .slider-tooltip {
     background: #c0c0c0;
     color: #000000;
-    border: 1px solid #808080;
+    border: 1px solid #000000;
     border-radius: 0;
 }
 
