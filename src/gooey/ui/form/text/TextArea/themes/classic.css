@@ -1,25 +1,32 @@
 /* TextArea - Classic structural override */
 
 textarea {
-    /* Classic Mac sunken field */
+    /* Classic sunken field with outer recessed shadow */
     border: 1px solid #000000;
     background-color: #FFFFFF;
     padding: 2px 4px;
     border-radius: 0;
-    box-shadow: none;
+    box-shadow: -1px -1px #888;
     resize: both;
 }
 
 textarea:focus {
-    outline: 1px dotted #000000;
+    outline: 2px solid var(--gooey-color-primary-3);
     outline-offset: -3px;
 }
 
+textarea::selection {
+    background-color: var(--gooey-color-selection-bg);
+    color: var(--gooey-color-selection-fg);
+}
+
 textarea:disabled {
-    color: #7F7F7F;
-    text-shadow: 1px 1px 0 #FFFFFF;
+    color: #808080;
     background-color: #DDDDDD;
+    border-color: #555;
+    box-shadow: 0 0 0 1px #ddd;
     cursor: not-allowed;
+    /* No text-shadow emboss */
 }
 
 textarea::placeholder {
