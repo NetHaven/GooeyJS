@@ -25,9 +25,9 @@
     color: #808080;
 }
 
-/* Active state - navy blue highlight */
+/* Active state - pure blue highlight */
 :host([active]) {
-    background-color: #000080 !important;
+    background-color: #0000C0 !important;
     color: #ffffff;
 }
 
@@ -35,7 +35,23 @@
     color: #ffffff;
 }
 
-/* Disabled state */
+/* Focus state - dotted outline */
+:host(:focus) {
+    outline: 1px dotted #000000;
+    outline-offset: -1px;
+}
+
+/* Selected + focused = yellow dotted outline */
+:host([active]:focus) {
+    outline: 1px dotted #ffff3f;
+    outline-offset: -1px;
+}
+
+/* Disabled state - gray text, no emboss */
+:host([disabled]) {
+    color: #808080;
+}
+
 :host([disabled]) .MenuItemText {
-    text-shadow: 1px 1px 0 #ffffff;
+    text-shadow: none;
 }
