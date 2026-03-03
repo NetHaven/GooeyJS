@@ -10,12 +10,8 @@ input[type="checkbox"] {
     margin: 0;
     margin-right: 4px;
     position: relative;
-    /* sunken border */
-    border-top: 1px solid #808080;
-    border-left: 1px solid #808080;
-    border-right: 1px solid #ffffff;
-    border-bottom: 1px solid #ffffff;
-    box-shadow: inset 1px 1px 0 #000000;
+    border: 1px solid #000000;
+    border-radius: 0;
 }
 
 input[type="checkbox"]:checked {
