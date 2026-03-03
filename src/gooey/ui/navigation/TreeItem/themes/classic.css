@@ -11,16 +11,18 @@
     padding: 1px 4px;
     border-radius: 0;
     transition: none !important;
+    /* Tree item background matches tree container */
+    background-color: #eee;
 }
 
 .ui-TreeItem-content:hover {
-    background-color: #EEEEEE;
+    background-color: #e0e0e0;
 }
 
-/* Selected state - Classic Mac blue */
+/* Selected state - black background (unique to Tree in Classic) */
 :host(.selected) .ui-TreeItem-content {
-    background-color: #0000A5;
-    color: #FFFFFF;
+    background-color: #000;
+    color: #fff;
 }
 
 /* Disclosure triangle - replace default expander */
@@ -45,10 +47,10 @@
     left: 50%;
 }
 
-/* Collapsed state - right-pointing disclosure triangle */
+/* Collapsed state - right-pointing disclosure triangle (blue primary-4) */
 .ui-TreeItem-expander:not(.expanded)::before {
     border: 5px solid transparent;
-    border-left: 7px solid #000000;
+    border-left: 7px solid var(--gooey-color-primary-4);
     border-right: none;
     margin-top: -5px;
     margin-left: -3px;
@@ -61,10 +63,15 @@
 
 .ui-TreeItem-expander.expanded::before {
     border: 5px solid transparent;
-    border-top: 7px solid #000000;
+    border-top: 7px solid var(--gooey-color-primary-4);
     border-bottom: none;
     margin-top: -3px;
     margin-left: -5px;
+}
+
+/* Expanded items show darker triangle (active color) */
+.ui-TreeItem-expander.expanded::before {
+    border-top-color: var(--gooey-color-primary-2);
 }
 
 .ui-TreeItem-icon {
@@ -90,22 +97,23 @@
     opacity: 1;
 }
 
-/* Focus state - dotted outline */
+/* Focus state - solid blue ring */
 :host(:focus) {
     outline: none;
 }
 
 .ui-TreeItem-content:focus-visible {
-    outline: 1px dotted #000000;
+    outline: 2px solid var(--gooey-color-primary-3);
     outline-offset: -1px;
 }
 
-/* Disabled state - emboss effect */
+/* Disabled state - no emboss text-shadow */
 :host([disabled]) .ui-TreeItem-content {
     color: #A0A0A0;
-    text-shadow: 1px 1px 0 #FFFFFF;
+    /* No emboss text-shadow */
 }
 
+/* Disabled expander triangles - gray */
 :host([disabled]) .ui-TreeItem-expander::before {
     border-left-color: #A0A0A0;
     border-top-color: #A0A0A0;
@@ -121,18 +129,18 @@
 }
 
 .ui-TreeItem-content.drop-before {
-    border-top: 2px solid #0000A5;
+    border-top: 2px solid var(--gooey-color-primary-3);
     border-radius: 0;
 }
 
 .ui-TreeItem-content.drop-after {
-    border-bottom: 2px solid #0000A5;
+    border-bottom: 2px solid var(--gooey-color-primary-3);
     border-radius: 0;
 }
 
 .ui-TreeItem-content.drop-inside {
-    background-color: rgba(0, 0, 165, 0.2);
-    border: 1px dashed #0000A5;
+    background-color: rgba(153, 153, 255, 0.2);
+    border: 1px dashed var(--gooey-color-primary-3);
     border-radius: 0;
 }
 
