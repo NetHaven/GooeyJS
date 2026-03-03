@@ -1,17 +1,18 @@
-/* Toolbar - Classic Mac (OS 7/8/9) structural override */
-/* Platinum toolbar styling (CLSC-09) */
+/* Toolbar - Classic structural override */
+/* Platinum toolbar styling — bottom border inset shadow */
 
 :host {
-    /* Classic Mac toolbar border */
+    /* Classic toolbar: bottom edge with inset shadow */
     border-bottom: 1px solid #000000;
+    box-shadow: inset 0 -1px 0 #888;
 
-    /* Button sizing variables -- Classic Mac smaller proportions */
+    /* Button sizing variables — Classic smaller proportions */
     --button-height: 32px;
     --button-width: 32px;
     --button-line-height: 32px;
 }
 
-/* Button size variants - Classic Mac proportions */
+/* Button size variants - Classic proportions */
 :host([buttonsize='tiny']) {
     --button-height: 24px;
     --button-width: 24px;
@@ -42,8 +43,7 @@
     --button-line-height: 64px;
 }
 
-/* Disabled: Classic Mac emboss effect (CLSC-10) */
+/* Disabled: no emboss text-shadow */
 :host([disabled]) {
     color: #7F7F7F;
-    text-shadow: 1px 1px 0 #FFFFFF;
 }

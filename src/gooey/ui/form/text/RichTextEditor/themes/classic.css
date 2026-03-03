@@ -3,7 +3,8 @@
 .rte-shell {
     background-color: #FFFFFF;
     border: 1px solid #000000;
-    box-shadow: none;
+    /* Outer recessed shadow matching Classic text field style */
+    box-shadow: -1px -1px #888;
 }
 
 .rte-toolbar {
@@ -15,8 +16,8 @@
     background-color: #FFFFFF;
 }
 
+/* Disabled: no emboss text-shadow */
 :host([disabled]) .rte-content {
     background-color: #DDDDDD;
     color: #7F7F7F;
-    text-shadow: 1px 1px 0 #FFFFFF;
 }

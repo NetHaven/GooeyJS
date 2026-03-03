@@ -176,20 +176,19 @@
 }
 
 /* ----------------------------------------
-   Disabled State - Classic Mac Emboss (CLSC-10)
+   Disabled State - no emboss text-shadow
    ---------------------------------------- */
 
 :host([disabled]) .badge {
     color: #7F7F7F;
-    text-shadow: 1px 1px 0 #FFFFFF;
 }
 
 /* ----------------------------------------
-   Focus State - Classic Mac Dotted (CLSC-11)
+   Focus State - solid blue ring
    ---------------------------------------- */
 
 .badge:focus-visible {
-    outline: 1px dotted #000000;
+    outline: 2px solid var(--gooey-color-primary-3);
     outline-offset: 1px;
 }
 

@@ -38,14 +38,14 @@
 }
 
 .toast-close-btn:focus-visible {
-    outline: 1px dotted #000000;
-    outline-offset: -3px;
+    outline: 2px solid var(--gooey-color-primary-3);
+    outline-offset: -2px;
 }
 
 /* Action button focus */
 .toast-action-btn:focus-visible {
-    outline: 1px dotted #000000;
-    outline-offset: -3px;
+    outline: 2px solid var(--gooey-color-primary-3);
+    outline-offset: -2px;
 }
 
 /* Progress bar within toast - flat, no animation */
@@ -57,8 +57,7 @@
     border-radius: 0;
 }
 
-/* Disabled: Classic Mac emboss effect (CLSC-10) */
+/* Disabled: no emboss text-shadow */
 :host([disabled]) .toast-message {
     color: #7F7F7F;
-    text-shadow: 1px 1px 0 #FFFFFF;
 }

@@ -21,8 +21,7 @@
     border-left-color: #000000;
 }
 
-/* Disabled: Classic emboss effect */
+/* Disabled: no emboss text-shadow */
 :host([disabled]) {
     color: #7F7F7F;
-    text-shadow: 1px 1px 0 #FFFFFF;
 }
