@@ -1,12 +1,10 @@
-/* Spinner - Janus structural override */
+/* Spinner - Janus theme */
 
 input[type="number"] {
     /* sunken border */
-    border-top: 1px solid #808080;
-    border-left: 1px solid #808080;
+    border: 1px solid #000000;
     border-right: none;
-    border-bottom: 1px solid #ffffff;
-    box-shadow: inset 1px 1px 0 #000000;
+    box-shadow: inset 1px 1px 0 #808080;
     -moz-appearance: textfield;
 }
 
@@ -27,24 +25,36 @@ input[type="number"]:focus {
     width: 16px;
     font-size: 8px;
     /* raised button */
-    border-top: 1px solid #ffffff;
-    border-left: 1px solid #ffffff;
-    border-right: 1px solid #808080;
-    border-bottom: 1px solid #808080;
-    box-shadow: inset -1px -1px 0 #000000;
+    border: 1px solid #000000;
+    box-shadow:
+        inset 1px 1px 0 #ffffff,
+        inset -2px -2px 0 #808080;
 }
 
 .increment-btn:active,
 .decrement-btn:active {
-    border-top: 1px solid #808080;
-    border-left: 1px solid #808080;
-    border-right: 1px solid #ffffff;
-    border-bottom: 1px solid #ffffff;
-    box-shadow: inset 1px 1px 0 #000000;
+    border: 1px solid #000000;
+    box-shadow: inset 1px 1px 0 #808080;
 }
 
 .increment-btn:disabled,
 .decrement-btn:disabled {
     cursor: not-allowed;
     color: #808080;
+    position: relative;
+}
+
+.increment-btn:disabled::after,
+.decrement-btn:disabled::after {
+    content: '';
+    position: absolute;
+    top: 2px; left: 2px; right: 2px; bottom: 2px;
+    background-image:
+        linear-gradient(45deg, #c0c0c0 25%, transparent 25%),
+        linear-gradient(-45deg, #c0c0c0 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #c0c0c0 75%),
+        linear-gradient(-45deg, transparent 75%, #c0c0c0 75%);
+    background-size: 2px 2px;
+    background-position: 0 0, 0 1px, 1px -1px, -1px 0px;
+    pointer-events: none;
 }
