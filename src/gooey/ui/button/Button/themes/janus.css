@@ -1,50 +1,80 @@
 /* Button - Janus structural override */
 
 button {
-    /* chiseled raised border */
-    border: none;
-    border-top: 1px solid #ffffff;
-    border-left: 1px solid #ffffff;
-    border-right: 1px solid #808080;
-    border-bottom: 1px solid #808080;
+    position: relative;
+    border: 1px solid #000000;
+    border-radius: 2.5px;
+    min-width: 70px;
+    padding: 2px 8px;
     box-shadow:
-        inset -1px -1px 0 #000000,
-        inset 1px 1px 0 #dfdfdf;
-    padding: 4px 12px;
+        inset -1px -1px 0 #808080,
+        inset 1px 1px 0 #ffffff,
+        inset -2px -2px 0 #808080,
+        inset 2px 2px 0 #ffffff;
+}
+
+button:focus::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    bottom: 3px;
+    left: 6px;
+    right: 6px;
+    border: 1px dotted #808080;
+    border-radius: 1px;
+    pointer-events: none;
 }
 
 button:active {
-    /* Pressed state - inverted borders */
-    border-top: 1px solid #808080;
-    border-left: 1px solid #808080;
-    border-right: 1px solid #ffffff;
-    border-bottom: 1px solid #ffffff;
+    padding: 3px 7px 1px 9px;
     box-shadow:
         inset 1px 1px 0 #000000,
-        inset -1px -1px 0 #dfdfdf;
-    padding: 5px 11px 3px 13px;
+        inset -1px -1px 0 #000000,
+        inset 2px 2px 0 #808080;
 }
 
-button:focus {
-    outline: 1px dotted #000000;
-    outline-offset: -4px;
+button.primary,
+button[default] {
+    box-shadow:
+        inset 1px 1px 0 #000000,
+        inset -1px -1px 0 #000000,
+        inset -2px -2px 0 #808080,
+        inset 2px 2px 0 #ffffff,
+        inset -3px -3px 0 #808080,
+        inset 3px 3px 0 #ffffff;
 }
 
-/* Disabled state */
 :host([disabled]) button {
+    color: #808080;
     text-shadow: 1px 1px 0 #ffffff;
+}
+
+:host([disabled]) button::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    right: 3px;
+    bottom: 3px;
+    background-image:
+        linear-gradient(45deg, #c0c0c0 25%, transparent 25%),
+        linear-gradient(-45deg, #c0c0c0 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #c0c0c0 75%),
+        linear-gradient(-45deg, transparent 75%, #c0c0c0 75%);
+    background-size: 2px 2px;
+    background-position: 0 0, 0 1px, 1px -1px, -1px 0px;
+    pointer-events: none;
 }
 
 :host([disabled]) button:hover,
 :host([disabled]) button:active {
-    border-top: 1px solid #ffffff;
-    border-left: 1px solid #ffffff;
-    border-right: 1px solid #808080;
-    border-bottom: 1px solid #808080;
+    border: 1px solid #000000;
     box-shadow:
-        inset -1px -1px 0 #000000,
-        inset 1px 1px 0 #dfdfdf;
-    padding: 4px 12px;
+        inset -1px -1px 0 #808080,
+        inset 1px 1px 0 #ffffff,
+        inset -2px -2px 0 #808080,
+        inset 2px 2px 0 #ffffff;
+    padding: 2px 8px;
 }
 
 /* Icon and text styling */
