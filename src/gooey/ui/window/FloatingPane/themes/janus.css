@@ -2,12 +2,10 @@
 
 :host {
     background-color: #c0c0c0;
-    /* raised border */
-    border-top: 1px solid #ffffff;
-    border-left: 1px solid #ffffff;
-    border-right: 1px solid #808080;
-    border-bottom: 1px solid #808080;
+    border: 1px solid #000000;
     box-shadow:
-        inset -1px -1px 0 #000000,
-        inset 1px 1px 0 #dfdfdf;
+        inset -1px -1px 0 #808080,
+        inset 1px 1px 0 #ffffff,
+        inset -2px -2px 0 #808080,
+        inset 2px 2px 0 #ffffff;
 }

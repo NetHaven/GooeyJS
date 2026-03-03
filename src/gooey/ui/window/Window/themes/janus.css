@@ -1,27 +1,27 @@
 /* Window - Janus structural override */
 
 :host {
-    /* raised window border */
-    border-top: 1px solid #ffffff;
-    border-left: 1px solid #ffffff;
-    border-right: 1px solid #808080;
-    border-bottom: 1px solid #808080;
-    box-shadow:
-        inset -1px -1px 0 #000000,
-        inset 1px 1px 0 #dfdfdf,
-        2px 2px 0 #000000;
+    background: #c0c0c0;
+    border: 1px solid #000000;
+    padding: 2px;
 }
 
 .WindowTitlebar {
-    background: linear-gradient(to right, #000080, #1084d0);
-    color: #ffffff;
-    font-weight: bold;
+    background: #ffffff;
+    color: #000000;
+    font-weight: normal;
     height: 18px;
     user-select: none;
     display: flex;
     align-items: center;
-    border-bottom: 1px solid #808080;
+    border: 1px solid #000000;
     padding: 0 2px;
+}
+
+:host([active]) .WindowTitlebar {
+    background: #0000C0;
+    color: #ffffff;
+    font-weight: bold;
 }
 
 .WindowTitleText {
@@ -45,37 +45,26 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 16px;
+    width: 24px;
+    min-width: 0;
     height: 14px;
     padding: 0;
     margin: 0;
-    background: #c0c0c0;
+    background-color: #c0c0c0;
     color: #000000;
     font-size: 9px;
     line-height: 1;
     cursor: pointer;
-    border-top: 1px solid #ffffff;
-    border-left: 1px solid #ffffff;
-    border-right: 1px solid #808080;
-    border-bottom: 1px solid #808080;
-    box-shadow:
-        inset -1px -1px 0 #000000,
-        inset 1px 1px 0 #dfdfdf;
+    border: 0;
+    border-left: 1px solid #000000;
+    border-radius: 0;
+    background-repeat: no-repeat;
+    background-position: 7px 4px;
 }
 
 .WindowControlButtons button:active {
-    border-top: 1px solid #808080;
-    border-left: 1px solid #808080;
-    border-right: 1px solid #ffffff;
-    border-bottom: 1px solid #ffffff;
-    box-shadow:
-        inset 1px 1px 0 #000000,
-        inset -1px -1px 0 #dfdfdf;
-}
-
-.WindowCloseBtn:hover {
-    background: #c42b1c;
-    color: #ffffff;
+    box-shadow: inset 1px 1px 0 #808080;
+    background-position: 8px 5px;
 }
 
 /* Resize Handles */
@@ -120,6 +109,10 @@
 }
 
 .WindowContent {
+    background: #ffffff;
+    color: #000000;
+    border: 1px solid #000000;
+    border-top: 0;
     margin: 4px;
 }
 
@@ -136,24 +129,20 @@
     width: 75px;
     min-height: 23px;
     cursor: pointer;
-    /* chiseled raised button */
-    border-top: 1px solid #ffffff;
-    border-left: 1px solid #ffffff;
-    border-right: 1px solid #808080;
-    border-bottom: 1px solid #808080;
+    border: 1px solid #000000;
     box-shadow:
-        inset -1px -1px 0 #000000,
-        inset 1px 1px 0 #dfdfdf;
+        inset -1px -1px 0 #808080,
+        inset 1px 1px 0 #ffffff,
+        inset -2px -2px 0 #808080,
+        inset 2px 2px 0 #ffffff;
 }
 
 .WindowButtonbar button:active {
-    border-top: 1px solid #808080;
-    border-left: 1px solid #808080;
-    border-right: 1px solid #ffffff;
-    border-bottom: 1px solid #ffffff;
     box-shadow:
-        inset 1px 1px 0 #000000,
-        inset -1px -1px 0 #dfdfdf;
+        inset 1px 1px 0 #808080,
+        inset -1px -1px 0 #ffffff,
+        inset 2px 2px 0 #808080,
+        inset -2px -2px 0 #ffffff;
 }
 
 .uiWindowModal {
@@ -255,12 +244,7 @@
     padding: 2px 4px;
     background-color: #ffffff;
     color: #000000;
-    /* sunken input */
-    border-top: 1px solid #808080;
-    border-left: 1px solid #808080;
-    border-right: 1px solid #ffffff;
-    border-bottom: 1px solid #ffffff;
-    box-shadow: inset 1px 1px 0 #000000;
+    border: 1px solid #000000;
 }
 
 /* Alert Dialog specific - buttonbar centered, no cancel button */
