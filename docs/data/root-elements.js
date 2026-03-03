@@ -64,7 +64,7 @@ const rootElements = [
   {
     "name": "Theme",
     "tagName": "gooey-theme",
-    "description": "A non-visual component for declarative theme registration and activation. Loads theme CSS containing custom property overrides and registers the complete theme configuration with ThemeManager. Per-component structural overrides are auto-discovered from META.goo metadata; explicit gooey-theme-override children are only needed for non-standard CSS file paths. Supports theme inheritance via the extends attribute and on-demand font loading via the FontFace API. Only one theme can be active at a time (radio-button behavior).",
+    "description": "A non-visual component for declarative theme registration and activation. Loads theme CSS containing custom property overrides and registers the complete theme configuration with ThemeManager. Per-component structural overrides are auto-discovered from META.goo metadata; explicit gooey-theme-override children are only needed for non-standard CSS file paths. Supports theme inheritance via the extends attribute and on-demand font loading via the FontFace API. Only one theme can be active at a time (radio-button behavior). Built-in themes include base (default), dark, janus, classic, and chicago.",
     "inherits": [],
     "attributes": [
       {
@@ -121,9 +121,9 @@ const rootElements = [
         "code": "<gooey-theme name=\"classic\" href=\"themes/classic.css\"></gooey-theme>\n\n<gooey-theme name=\"classic-dark\" href=\"themes/classic-dark.css\" extends=\"classic\" active></gooey-theme>"
       },
       {
-        "title": "Theme with Custom Fonts",
-        "description": "Load custom fonts when the theme activates using the FontFace API.",
-        "code": "<gooey-theme \n  name=\"retro\" \n  href=\"themes/retro.css\" \n  fonts=\"themes/retro-fonts\"\n  font-faces='[{\"family\": \"RetroFont\", \"file\": \"retro.woff2\", \"weight\": \"normal\"}]'\n  active>\n</gooey-theme>"
+        "title": "Chicago Theme with Custom Fonts",
+        "description": "Load the Chicago retro theme with its bundled classic fonts for authentic retro rendering.",
+        "code": "<gooey-theme \n  name=\"chicago\" \n  href=\"themes/chicago.css\" \n  fonts=\"themes/classic-fonts\"\n  font-faces='[{\"family\": \"ChicagoFLF\", \"file\": \"ChicagoFLF.woff2\", \"weight\": \"normal\"}, {\"family\": \"Geneva\", \"file\": \"Geneva.woff2\", \"weight\": \"normal\"}]'\n  active>\n</gooey-theme>"
       },
       {
         "title": "Theme Switching",
