@@ -1,32 +1,20 @@
-/* ColorPicker - Janus structural override */
+/* ColorPicker - Janus theme */
 
 .colorpicker-button {
     padding: 2px 4px;
     min-width: 40px;
     height: 24px;
     /* raised button */
-    border-top: 1px solid #ffffff;
-    border-left: 1px solid #ffffff;
-    border-right: 1px solid #808080;
-    border-bottom: 1px solid #808080;
+    border: 1px solid #000000;
     box-shadow:
-        inset -1px -1px 0 #000000,
-        inset 1px 1px 0 #dfdfdf;
-}
-
-.colorpicker-button:hover {
-    background-color: #d4d4d4;
+        inset 1px 1px 0 #ffffff,
+        inset -2px -2px 0 #808080;
 }
 
 .colorpicker-button:active,
 :host(.colorpicker-open) .colorpicker-button {
-    border-top: 1px solid #808080;
-    border-left: 1px solid #808080;
-    border-right: 1px solid #ffffff;
-    border-bottom: 1px solid #ffffff;
-    box-shadow:
-        inset 1px 1px 0 #000000,
-        inset -1px -1px 0 #dfdfdf;
+    border: 1px solid #000000;
+    box-shadow: inset 1px 1px 0 #808080;
 }
 
 .colorpicker-button:focus {
@@ -39,10 +27,8 @@
     height: 16px;
     margin-right: 4px;
     /* sunken color display */
-    border-top: 1px solid #808080;
-    border-left: 1px solid #808080;
-    border-right: 1px solid #ffffff;
-    border-bottom: 1px solid #ffffff;
+    border: 1px solid #000000;
+    box-shadow: inset 1px 1px 0 #808080;
 }
 
 .colorpicker-arrow {
@@ -55,14 +41,9 @@
     min-width: 160px;
     max-width: 180px;
     padding: 4px;
-    /* raised dropdown */
-    border-top: 1px solid #ffffff;
-    border-left: 1px solid #ffffff;
-    border-right: 1px solid #808080;
-    border-bottom: 1px solid #808080;
-    box-shadow:
-        inset -1px -1px 0 #000000,
-        2px 2px 0 #000000;
+    /* flat border + drop shadow */
+    border: 1px solid #000000;
+    box-shadow: 2px 2px 0 #000000;
 }
 
 .colorpicker-palette {
@@ -76,19 +57,11 @@
     width: 20px;
     height: 20px;
     cursor: pointer;
-    /* sunken swatch */
-    border-top: 1px solid #808080;
-    border-left: 1px solid #808080;
-    border-right: 1px solid #ffffff;
-    border-bottom: 1px solid #ffffff;
+    border: 1px solid #000000;
 }
 
 .colorpicker-swatch:hover {
-    /* Raised on hover */
-    border-top: 1px solid #ffffff;
-    border-left: 1px solid #ffffff;
-    border-right: 1px solid #808080;
-    border-bottom: 1px solid #808080;
+    box-shadow: inset 1px 1px 0 #ffffff, inset -2px -2px 0 #808080;
 }
 
 .colorpicker-swatch:focus {
@@ -120,11 +93,8 @@
     background-color: #ffffff;
     color: #000000;
     /* sunken input */
-    border-top: 1px solid #808080;
-    border-left: 1px solid #808080;
-    border-right: 1px solid #ffffff;
-    border-bottom: 1px solid #ffffff;
-    box-shadow: inset 1px 1px 0 #000000;
+    border: 1px solid #000000;
+    box-shadow: inset 1px 1px 0 #808080;
 }
 
 .colorpicker-hex-input:focus {
@@ -136,11 +106,7 @@
     height: 20px;
     cursor: pointer;
     padding: 0;
-    /* sunken input */
-    border-top: 1px solid #808080;
-    border-left: 1px solid #808080;
-    border-right: 1px solid #ffffff;
-    border-bottom: 1px solid #ffffff;
+    border: 1px solid #000000;
 }
 
 /* Disabled state */
@@ -152,5 +118,19 @@
 
 :host([disabled]) .colorpicker-button {
     color: #808080;
-    text-shadow: 1px 1px 0 #ffffff;
+    position: relative;
+}
+
+:host([disabled]) .colorpicker-button::after {
+    content: '';
+    position: absolute;
+    top: 3px; left: 3px; right: 3px; bottom: 3px;
+    background-image:
+        linear-gradient(45deg, #c0c0c0 25%, transparent 25%),
+        linear-gradient(-45deg, #c0c0c0 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #c0c0c0 75%),
+        linear-gradient(-45deg, transparent 75%, #c0c0c0 75%);
+    background-size: 2px 2px;
+    background-position: 0 0, 0 1px, 1px -1px, -1px 0px;
+    pointer-events: none;
 }
