@@ -2,64 +2,65 @@
 
 .toggle-button,
 button {
-    /* chiseled raised border */
-    border: none;
-    border-top: 1px solid #ffffff;
-    border-left: 1px solid #ffffff;
-    border-right: 1px solid #808080;
-    border-bottom: 1px solid #808080;
+    position: relative;
+    border: 1px solid #000000;
+    border-radius: 2.5px;
+    padding: 2px 8px;
     box-shadow:
-        inset -1px -1px 0 #000000,
-        inset 1px 1px 0 #dfdfdf;
-    padding: 4px 8px;
+        inset -1px -1px 0 #808080,
+        inset 1px 1px 0 #ffffff,
+        inset -2px -2px 0 #808080,
+        inset 2px 2px 0 #ffffff;
     outline: none;
+}
+
+.toggle-button:focus::after,
+button:focus::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    bottom: 3px;
+    left: 6px;
+    right: 6px;
+    border: 1px dotted #808080;
+    border-radius: 1px;
+    pointer-events: none;
 }
 
 .toggle-button:active,
 button:active {
-    /* Pressed state - inverted borders */
-    border-top: 1px solid #808080;
-    border-left: 1px solid #808080;
-    border-right: 1px solid #ffffff;
-    border-bottom: 1px solid #ffffff;
+    padding: 3px 7px 1px 9px;
     box-shadow:
         inset 1px 1px 0 #000000,
-        inset -1px -1px 0 #dfdfdf;
+        inset -1px -1px 0 #000000,
+        inset 2px 2px 0 #808080;
 }
 
-.toggle-button:focus,
-button:focus {
-    outline: 1px dotted #000000;
-    outline-offset: -3px;
-}
-
-/* Pressed/toggled state - navy blue */
+/* Pressed/toggled state - pure blue */
 :host(.pressed) .toggle-button,
 :host(.pressed) button {
-    background-color: #000080;
+    background-color: #0000C0;
     color: #ffffff;
-    border-top: 1px solid #808080;
-    border-left: 1px solid #808080;
-    border-right: 1px solid #ffffff;
-    border-bottom: 1px solid #ffffff;
+    border: 1px solid #000000;
     box-shadow:
         inset 1px 1px 0 #000000,
-        inset -1px -1px 0 #dfdfdf;
+        inset 2px 2px 0 #808080;
 }
 
 :host(.pressed) .toggle-button:hover,
 :host(.pressed) button:hover {
-    background-color: #000066;
+    background-color: #0000A0;
 }
 
 :host(.pressed) .toggle-button:active,
 :host(.pressed) button:active {
-    background-color: #000050;
+    background-color: #000080;
 }
 
 /* Disabled state */
 :host([disabled]) .toggle-button,
 :host([disabled]) button {
+    color: #808080;
     text-shadow: 1px 1px 0 #ffffff;
 }
 
@@ -67,13 +68,13 @@ button:focus {
 :host([disabled]) button:hover,
 :host([disabled]) .toggle-button:active,
 :host([disabled]) button:active {
-    border-top: 1px solid #ffffff;
-    border-left: 1px solid #ffffff;
-    border-right: 1px solid #808080;
-    border-bottom: 1px solid #808080;
+    border: 1px solid #000000;
     box-shadow:
-        inset -1px -1px 0 #000000,
-        inset 1px 1px 0 #dfdfdf;
+        inset -1px -1px 0 #808080,
+        inset 1px 1px 0 #ffffff,
+        inset -2px -2px 0 #808080,
+        inset 2px 2px 0 #ffffff;
+    padding: 2px 8px;
 }
 
 :host([disabled].pressed) .toggle-button,
