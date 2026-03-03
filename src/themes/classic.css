@@ -17,6 +17,19 @@
     --gooey-color-primary: #0000A5;
     --gooey-color-primary-text: #FFFFFF;
 
+    /* ===== Primary Color Ramp (7-stop) ===== */
+    --gooey-color-primary-0: #000;
+    --gooey-color-primary-1: #005;
+    --gooey-color-primary-2: #339;
+    --gooey-color-primary-3: #66c;
+    --gooey-color-primary-4: #99f;
+    --gooey-color-primary-5: #ccf;
+    --gooey-color-primary-6: #eee;
+
+    /* ===== Selection Colors (Lavender) ===== */
+    --gooey-color-selection-bg: #ccf;
+    --gooey-color-selection-fg: #000;
+
     /* ===== Text Colors ===== */
     --gooey-color-text: #000000;
     --gooey-color-text-muted: #555555;
@@ -27,14 +40,17 @@
     --gooey-color-border: #000000;
     --gooey-color-border-light: #A0A0A0;
 
-    /* ===== Focus (Classic Mac Dotted Rectangle) ===== */
-    --gooey-color-focus: #000000;
-    --gooey-focus-width: 1px;
-    --gooey-focus-style: dotted;
-    --gooey-focus-offset: -3px;
+    /* ===== Window Frame ===== */
+    --gooey-color-window-frame: #CCCCCC;
+
+    /* ===== Focus (Solid Blue Ring) ===== */
+    --gooey-color-focus: var(--gooey-color-primary-3);
+    --gooey-focus-width: 2px;
+    --gooey-focus-style: solid;
+    --gooey-focus-offset: 0;
 
     /* ===== Typography (Chicago / Geneva / Monaco) ===== */
-    --gooey-font-family: "ChicagoFLF", "Chicago", Geneva, sans-serif;
+    --gooey-font-family: "Charcoal", "ChicagoFLF", "Chicago", Geneva, sans-serif;
     --gooey-font-family-mono: "Monaco", monospace;
     --gooey-font-size-xs: 9px;
     --gooey-font-size-sm: 9px;
