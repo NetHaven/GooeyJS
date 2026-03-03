@@ -5,14 +5,19 @@ input[type="checkbox"] {
     -webkit-appearance: none;
     width: 12px;
     height: 12px;
-    background-color: #FFFFFF;
+    background-color: #ddd;
     border: 1px solid #000000;
     border-radius: 0;
     cursor: pointer;
     margin: 0;
     margin-right: 4px;
     position: relative;
-    box-shadow: none;
+    box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #888;
+}
+
+input[type="checkbox"]:active {
+    background-color: #777;
+    box-shadow: inset 1px 1px 0 #555, inset -1px -1px 0 #999;
 }
 
 input[type="checkbox"]:checked {
@@ -23,30 +28,33 @@ input[type="checkbox"]:checked::after {
     content: "";
     position: absolute;
     left: 1px;
-    top: 0px;
-    width: 4px;
-    height: 8px;
-    border: solid #000000;
-    border-width: 0 2px 2px 0;
-    transform: rotate(45deg);
+    top: 3px;
+    width: 10px;
+    height: 5px;
+    border: none;
+    border-bottom: 1.5px solid #000000;
+    border-left: 1.5px solid #000000;
+    transform: rotate(-45deg);
+    box-shadow: -1px 1px 0 rgba(0, 0, 0, 0.3);
 }
 
 input[type="checkbox"]:focus {
-    outline: 1px dotted #000000;
+    outline: 2px solid var(--gooey-color-primary-3);
     outline-offset: 3px;
 }
 
 :host([disabled]) input[type="checkbox"] {
-    opacity: 0.5;
+    border-color: #888;
+    box-shadow: none;
     cursor: not-allowed;
 }
 
 :host([disabled]) input[type="checkbox"]:checked::after {
-    border-color: #7F7F7F;
+    border-color: #888;
+    box-shadow: none;
 }
 
-/* Disabled label emboss effect */
+/* Disabled label */
 :host([disabled]) .CheckboxLabel {
     color: #7F7F7F;
-    text-shadow: 1px 1px 0 #FFFFFF;
 }
