@@ -1,9 +1,9 @@
-/* Toolbar - Janus structural override */
+/* Toolbar - Janus theme */
 
 :host {
-    /* toolbar border */
-    border-bottom: 1px solid #808080;
-    box-shadow: 0 1px 0 #ffffff;
+    /* raised toolbar bottom edge */
+    border-bottom: 1px solid #000000;
+    box-shadow: inset 0 -1px 0 #808080;
 
     /* Button sizing variables */
     --button-height: 32px;
