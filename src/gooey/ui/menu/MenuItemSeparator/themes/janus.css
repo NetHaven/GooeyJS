@@ -3,7 +3,6 @@
 :host {
     height: 2px;
     margin: 2px 4px;
-    /* etched line */
-    border-top: 1px solid #808080;
-    border-bottom: 1px solid #ffffff;
+    border-top: 1px solid #000000;
+    border-bottom: 1px solid #808080;
 }

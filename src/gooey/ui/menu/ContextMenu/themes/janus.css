@@ -1,14 +1,10 @@
 /* ContextMenu - Janus structural override */
 
 .ui-ContextMenu {
-    /* raised menu border + drop shadow */
-    border-top: 1px solid #ffffff;
-    border-left: 1px solid #ffffff;
-    border-right: 1px solid #808080;
-    border-bottom: 1px solid #808080;
-    box-shadow:
-        inset -1px -1px 0 #000000,
-        2px 2px 0 #000000;
+    color: #000000;
+    background-color: #ffffff;
+    border: 1px solid #000000;
+    /* NO bevels or box-shadow */
 }
 
 /* Nested MenuItem styles within ContextMenu */
@@ -21,7 +17,7 @@
 
 ::slotted(ui-MenuItem:hover),
 ::slotted(ui-CheckboxMenuItem:hover) {
-    background-color: #000080;
+    background-color: #0000C0;
     color: #ffffff;
 }
 

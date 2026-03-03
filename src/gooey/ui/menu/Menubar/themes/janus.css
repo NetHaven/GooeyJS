@@ -1,9 +1,8 @@
 /* Menubar - Janus structural override */
 
 :host {
-    /* subtle bottom border */
-    border-bottom: 1px solid #808080;
-    box-shadow: 0 1px 0 #ffffff;
+    border-bottom: 1px solid #000000;
+    box-shadow: 0 1px 0 #808080;
 }
 
 .menuHeader {
@@ -11,6 +10,6 @@
 }
 
 .menuHeader[active], .menuHeader:hover {
-    background-color: #000080;
+    background-color: #0000C0;
     color: #ffffff;
 }
