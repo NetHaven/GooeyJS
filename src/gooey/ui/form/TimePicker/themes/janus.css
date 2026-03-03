@@ -1,17 +1,14 @@
-/* TimePicker - Janus structural override */
+/* TimePicker - Janus theme */
 
 input[type="time"] {
     /* sunken border */
-    border-top: 1px solid #808080;
-    border-left: 1px solid #808080;
-    border-right: 1px solid #ffffff;
-    border-bottom: 1px solid #ffffff;
-    box-shadow: inset 1px 1px 0 #000000;
+    border: 1px solid #000000;
+    box-shadow: inset 1px 1px 0 #808080;
 }
 
 input[type="time"]:focus {
-    outline: none;
-    border-color: #000080;
+    outline: 1px dotted #000000;
+    outline-offset: -2px;
 }
 
 input[type="time"]:disabled {
