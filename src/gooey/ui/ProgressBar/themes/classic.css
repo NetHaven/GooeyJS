@@ -1,32 +1,48 @@
-/* ProgressBar - Classic Mac (OS 7/8/9) structural override */
-/* Flat progress bar, killed indeterminate animation (CLSC-13) */
+/* ProgressBar - Classic theme compliance (CLS-10) */
+/* Beveled gray track, 7-stop primary gradient fill, indeterminate animation */
 
-/* Kill all animations and transitions */
-:host,
-.progress-fill {
-    animation: none !important;
-    transition: none !important;
-}
-
-/* Flat Classic Mac progress track */
+/* Progress track */
 .progress-bar {
-    height: 16px;
-    background-color: #FFFFFF;
+    height: 12px;
+    background-color: #BBBBBB;
     border: 1px solid #000000;
     border-radius: 0;
     overflow: hidden;
+    box-shadow:
+        1px 1px #ffffff,
+        -1px -1px #AAAAAA,
+        inset 1px 1px #888888,
+        inset -1px -1px #DDDDDD;
 }
 
-/* Classic Mac blue fill - flat, no stripes */
+/* Fill bar — 7-stop primary color ramp gradient (metallic sheen) */
 .progress-fill {
-    background-color: #0000A5;
+    background: linear-gradient(
+        to bottom,
+        #339,
+        #66c,
+        #99f,
+        #ccf,
+        #eee,
+        #ccf,
+        #99f,
+        #66c,
+        #339,
+        #005
+    );
+    border-right: 1px solid #000000;
     border-radius: 0;
 }
 
-/* Indeterminate: static position (no animation) */
+/* Indeterminate animation */
+@keyframes indeterminate {
+    0%   { margin-left: -50%; }
+    100% { margin-left: 100%; }
+}
+
 .progress-bar.indeterminate .progress-fill {
-    width: 30%;
-    animation: none !important;
+    width: 50%;
+    animation: indeterminate 1s infinite linear;
 }
 
 /* Progress text */
