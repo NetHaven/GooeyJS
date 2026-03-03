@@ -5,7 +5,7 @@
 }
 
 .combobox-input {
-    /* Classic Mac sunken field */
+    /* Classic sunken field */
     border: 1px solid #000000;
     border-right: none;
     background-color: #FFFFFF;
@@ -28,28 +28,32 @@
     outline: none;
     min-width: 16px;
     border: 1px solid #000000;
-    /* Platinum subtle raised bevel */
+    /* 4-layer inset bevel with outer edge shadow */
     box-shadow:
-        inset 1px 1px 0 #FFFFFF,
-        inset -1px -1px 0 #999999;
+        inset 1px 1px 0 #ddd,
+        inset 2px 2px 0 #fff,
+        inset -1px -1px 0 #777,
+        inset -2px -2px 0 #aaa,
+        -1px 0 #aaa;
 }
 
-.combobox-button:hover {
-    background-color: #EEEEEE;
-}
+/* No hover highlight */
 
 .combobox-button:active,
 :host(.dropdown-open) .combobox-button {
     background-color: #DDDDDD;
     /* Pressed: inverted bevel */
     box-shadow:
-        inset -1px -1px 0 #FFFFFF,
-        inset 1px 1px 0 #999999;
+        inset 1px 1px 0 #444,
+        inset 2px 2px 0 #555,
+        inset -1px -1px 0 #ddd,
+        inset -2px -2px 0 #fff,
+        -1px 0 #aaa;
 }
 
 .combobox-dropdown {
     background-color: #FFFFFF;
-    /* Classic Mac sunken border */
+    /* Classic sunken border */
     border: 1px solid #000000;
     box-shadow: none;
 }
@@ -61,19 +65,19 @@
 }
 
 .combobox-list option:hover {
-    background-color: #0000A5;
-    color: #FFFFFF;
+    background-color: var(--gooey-color-selection-bg);
+    color: var(--gooey-color-selection-fg);
 }
 
 .combobox-list option:checked {
-    background-color: #0000A5;
-    color: #FFFFFF;
+    background-color: var(--gooey-color-selection-bg);
+    color: var(--gooey-color-selection-fg);
 }
 
 /* Focus state */
 :host(.focused) .combobox-input {
-    outline: 1px dotted #000000;
-    outline-offset: -3px;
+    outline: 2px solid var(--gooey-color-primary-3);
+    outline-offset: -2px;
 }
 
 /* Disabled state */
@@ -85,11 +89,11 @@
 :host([disabled]) .combobox-input {
     background-color: #DDDDDD;
     color: #7F7F7F;
-    text-shadow: 1px 1px 0 #FFFFFF;
+    /* No text-shadow emboss */
 }
 
 :host([disabled]) .combobox-button {
     background-color: #DDDDDD;
     color: #7F7F7F;
-    text-shadow: 1px 1px 0 #FFFFFF;
+    /* No text-shadow emboss */
 }

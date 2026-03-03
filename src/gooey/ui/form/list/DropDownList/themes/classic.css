@@ -3,14 +3,15 @@
 select {
     background-color: #DDDDDD;
     cursor: pointer;
-    /* Classic Mac border */
     border: 1px solid #000000;
     border-radius: 0;
-    box-shadow: none;
+    /* Inset bevel - recessed appearance */
+    box-shadow: inset 1px 1px #fff, inset -1px -1px #aaa;
 }
 
 select:focus {
-    outline: 1px dotted #000000;
+    /* Solid blue focus ring */
+    outline: 2px solid var(--gooey-color-primary-3);
     outline-offset: -2px;
 }
 
@@ -23,5 +24,5 @@ select:focus {
 :host([disabled]) select {
     background-color: #DDDDDD;
     color: #7F7F7F;
-    text-shadow: 1px 1px 0 #FFFFFF;
+    /* No emboss text-shadow */
 }
