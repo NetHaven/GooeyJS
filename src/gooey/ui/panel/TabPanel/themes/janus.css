@@ -2,31 +2,40 @@
 
 :host(.vertical) .tab-strip {
     border-bottom: none;
-    border-right: 1px solid #808080;
+    border-right: 1px solid #000000;
     width: 120px;
 }
 
 .tab-content {
-    /* raised border */
-    border-top: 1px solid #ffffff;
-    border-left: 1px solid #ffffff;
-    border-right: 1px solid #808080;
-    border-bottom: 1px solid #808080;
-    box-shadow: inset -1px -1px 0 #000000;
+    /* raised content area border */
+    border: 1px solid #000000;
+    box-shadow:
+        inset -1px -1px 0 #808080,
+        inset 1px 1px 0 #ffffff,
+        inset -2px -2px 0 #808080,
+        inset 2px 2px 0 #ffffff;
 }
 
 .tab-header {
     margin-right: -1px;
-    /* raised tab */
-    border-top: 1px solid #ffffff;
-    border-left: 1px solid #ffffff;
-    border-right: 1px solid #808080;
-    border-bottom: none;
+    border-bottom: 0;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    min-width: 0;
+    padding: 2px 10px;
+    border: 1px solid #000000;
+    border-bottom: 0;
+    box-shadow:
+        inset -1px 0 0 #808080,
+        inset 1px 1px 0 #ffffff,
+        inset -2px 0 0 #808080,
+        inset 2px 2px 0 #ffffff;
 }
 
 :host(.vertical) .tab-header {
-    border-right: none;
-    border-bottom: 1px solid #808080;
+    border: 1px solid #000000;
+    border-right: 0;
+    border-bottom: 0;
     margin-right: 0;
     margin-bottom: -1px;
 }
@@ -36,18 +45,19 @@
 }
 
 .tab-header.active {
-    font-weight: bold;
+    margin: -2px -2px -1px;
+    padding: 0px 12px 4px;
+    background-color: #ffffff;
+    color: #000000;
+    box-shadow: none;
+    font-weight: normal;
     z-index: 1;
-    /* Active tab sits on top of content */
-    border-bottom: 1px solid #c0c0c0;
-    margin-bottom: -1px;
 }
 
 :host(.vertical) .tab-header.active {
-    border-bottom: 1px solid #808080;
-    border-right: 1px solid #c0c0c0;
-    margin-right: -1px;
-    margin-bottom: 0;
+    margin: 0 -1px 0 0;
+    border: 1px solid #000000;
+    border-right: 0;
 }
 
 .tab-header:focus {
@@ -56,12 +66,11 @@
 }
 
 .tab-close-button {
-    /* small button */
     background-color: #c0c0c0;
-    border-top: 1px solid #ffffff;
-    border-left: 1px solid #ffffff;
-    border-right: 1px solid #808080;
-    border-bottom: 1px solid #808080;
+    border: 1px solid #000000;
+    box-shadow:
+        inset -1px -1px 0 #808080,
+        inset 1px 1px 0 #ffffff;
 }
 
 .tab-close-button:hover {
@@ -70,10 +79,9 @@
 }
 
 .tab-close-button:active {
-    border-top: 1px solid #808080;
-    border-left: 1px solid #808080;
-    border-right: 1px solid #ffffff;
-    border-bottom: 1px solid #ffffff;
+    box-shadow:
+        inset 1px 1px 0 #000000,
+        inset -1px -1px 0 #808080;
 }
 
 .tab-close-button:focus {
@@ -82,17 +90,17 @@
 
 /* Tab Drag and Drop Styles */
 .tab-header.drag-over-left {
-    border-left: 2px solid #000080;
+    border-left: 2px solid #0000C0;
 }
 
 .tab-header.drag-over-right {
-    border-right: 2px solid #000080;
+    border-right: 2px solid #0000C0;
 }
 
 .tab-header.drag-over-top {
-    border-top: 2px solid #000080;
+    border-top: 2px solid #0000C0;
 }
 
 .tab-header.drag-over-bottom {
-    border-bottom: 2px solid #000080;
+    border-bottom: 2px solid #0000C0;
 }
