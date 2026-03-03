@@ -1,5 +1,6 @@
-/* FormPanel - Classic Mac (OS 7/8/9) structural override */
-/* Classic Mac form layout */
+/* FormPanel - Classic structural override */
+/* Classic form layout — layout-only container, inherits global Classic tokens */
+/* CLS-17: Token cascade verified — no hardcoded #0000A5 or emboss text-shadow */
 
 :host {
     grid-template-columns: 30% 65% 5%;

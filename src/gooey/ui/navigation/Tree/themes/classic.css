@@ -1,26 +1,62 @@
 /* Tree - Classic structural override */
 
 .ui-Tree {
-    background-color: #FFFFFF;
+    background-color: #eee;
     border: 1px solid #000000;
     border-radius: 0;
+    /* Outer recessed shadow */
+    box-shadow: -1px -1px #888, 1px 1px #fff;
 }
 
-/* Classic Mac scrollbar styling */
+/* Classic scrollbar - shared pattern */
 .ui-Tree::-webkit-scrollbar {
     width: 16px;
     height: 16px;
 }
 
 .ui-Tree::-webkit-scrollbar-track {
-    background: #DDDDDD;
+    background: #aaa;
+    box-shadow: inset 1px 1px #777, inset 2px 2px #888, inset -1px -1px #ccc, inset -2px -2px #bbb;
+    border: 1px solid #000;
 }
 
 .ui-Tree::-webkit-scrollbar-thumb {
-    background: #AAAAAA;
-    border: 1px solid #000000;
+    background:
+        repeating-linear-gradient(
+            90deg,
+            transparent 0px,
+            transparent 1px,
+            var(--gooey-color-primary-5) 1px,
+            var(--gooey-color-primary-5) 2px
+        ),
+        var(--gooey-color-primary-4);
+    box-shadow: inset 1px 1px 0 var(--gooey-color-primary-5), inset -1px -1px 0 var(--gooey-color-primary-3), 0 1px #777, 0 2px #888;
 }
 
 .ui-Tree::-webkit-scrollbar-thumb:hover {
-    background: #999999;
+    background:
+        repeating-linear-gradient(
+            90deg,
+            transparent 0px,
+            transparent 1px,
+            var(--gooey-color-primary-5) 1px,
+            var(--gooey-color-primary-5) 2px
+        ),
+        var(--gooey-color-primary-4);
+}
+
+.ui-Tree::-webkit-scrollbar-thumb:active {
+    background:
+        repeating-linear-gradient(
+            90deg,
+            transparent 0px,
+            transparent 1px,
+            var(--gooey-color-primary-4) 1px,
+            var(--gooey-color-primary-4) 2px
+        ),
+        var(--gooey-color-primary-3);
+}
+
+.ui-Tree::-webkit-scrollbar-corner {
+    background: #aaa;
 }

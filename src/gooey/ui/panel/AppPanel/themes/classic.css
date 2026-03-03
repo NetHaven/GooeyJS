@@ -1,7 +1,6 @@
-/* AppPanel - Classic Mac (OS 7/8/9) structural override */
-/* Mostly handled by theme CSS (background-color, font-family, font-size). */
-/* Minimal structural override for Classic Mac appearance. */
+/* AppPanel - Classic structural override */
+/* Platinum surface — uses global token for background */
 
 :host {
-    background-color: #DDDDDD;
+    background-color: var(--gooey-color-surface);
 }
