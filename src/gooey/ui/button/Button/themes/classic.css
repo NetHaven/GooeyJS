@@ -1,55 +1,66 @@
 /* Button - Classic structural override */
 
 button {
-    /* Classic Mac Platinum button: 1px black border, subtle bevel */
     border: 1px solid #000000;
     background-color: #DDDDDD;
     box-shadow:
-        inset -1px -1px 0 #999999,
-        inset 1px 1px 0 #FFFFFF;
-    padding: 3px 12px;
+        inset 1px 1px 0 #DDDDDD,
+        inset 2px 2px 0 #fff,
+        inset -1px -1px 1px #555;
+    padding: 2px 10px;
+    min-width: 58px;
+    font-weight: bold;
     border-radius: 3px;
 }
 
-button:hover {
-    background-color: #EEEEEE;
-}
-
 button:active {
-    /* Inverted bevel on press */
-    border: 1px solid #000000;
+    background-color: #666666;
+    color: #ffffff;
     box-shadow:
-        inset 1px 1px 0 #999999,
-        inset -1px -1px 0 #FFFFFF;
-    padding: 4px 11px 2px 13px;
+        inset 1px 1px 1px #333,
+        inset -1px -1px 1px #999;
+    /* No padding shift — reference does not shift content on press */
 }
 
 button:focus {
-    /* Classic Mac dotted focus rectangle (CLSC-11) */
-    outline: 1px dotted #000000;
+    outline: 2px solid var(--gooey-color-primary-3);
     outline-offset: -3px;
 }
 
-/* Default button heavy outline (CLSC-05) */
+/* Default button ring via ::before pseudo-element */
 :host([default]) button {
-    border: 2px solid #000000;
+    border: 1px solid #000000;
     border-radius: 4px;
+    position: relative;
 }
 
-/* Disabled state: emboss effect (CLSC-10) */
+:host([default]) button::before {
+    content: "";
+    position: absolute;
+    inset: -3px;
+    border-radius: 4px;
+    pointer-events: none;
+    box-shadow:
+        0px 0px 0px 1px #000000,
+        inset 1px 1px 0 #DDDDDD,
+        inset -1px -1px 0 #737373,
+        inset 0 0 0 2px #ADADAD;
+}
+
+/* Disabled state */
 :host([disabled]) button {
-    color: #7F7F7F;
-    text-shadow: 1px 1px 0 #FFFFFF;
+    color: #777;
+    border-color: #888;
+    box-shadow: none;
     cursor: not-allowed;
+    /* No text-shadow emboss — reference does not use emboss on disabled */
 }
 
 :host([disabled]) button:hover,
 :host([disabled]) button:active {
     background-color: #DDDDDD;
-    box-shadow:
-        inset -1px -1px 0 #999999,
-        inset 1px 1px 0 #FFFFFF;
-    padding: 3px 12px;
+    box-shadow: none;
+    padding: 2px 10px;
 }
 
 /* Icon and text styling */
