@@ -1,16 +1,13 @@
-/* AccordionPanel - Janus structural override */
+/* AccordionPanel - Janus theme */
 
 :host {
-    /* sunken border */
-    border-top: 1px solid #808080;
-    border-left: 1px solid #808080;
-    border-right: 1px solid #ffffff;
-    border-bottom: 1px solid #ffffff;
-    box-shadow: inset 1px 1px 0 #000000;
+    /* sunken container border */
+    border: 1px solid #000000;
+    box-shadow: inset 1px 1px 0 #808080;
 }
 
 .accordion-item {
-    border-bottom: 1px solid #808080;
+    border-bottom: 1px solid #000000;
 }
 
 .accordion-item:last-child {
@@ -19,21 +16,19 @@
 
 .accordion-header {
     /* raised button header */
-    border-top: 1px solid #ffffff;
-    border-left: 1px solid #ffffff;
-    border-right: 1px solid #808080;
-    border-bottom: 1px solid #808080;
+    border: 1px solid #000000;
+    box-shadow:
+        inset 1px 1px 0 #ffffff,
+        inset -2px -2px 0 #808080;
 }
 
 .accordion-header.active {
-    /* Active/expanded state - navy blue with inverted borders */
-    background-color: #000080;
+    /* Active/expanded state - pure blue */
+    background-color: #0000C0;
     color: #ffffff;
     font-weight: bold;
-    border-top: 1px solid #808080;
-    border-left: 1px solid #808080;
-    border-right: 1px solid #ffffff;
-    border-bottom: 1px solid #ffffff;
+    border: 1px solid #000000;
+    box-shadow: inset 1px 1px 0 #808080;
 }
 
 .accordion-arrow {
@@ -48,10 +43,8 @@
     background-color: #ffffff;
     margin: 1px;
     /* sunken content area */
-    border-top: 1px solid #808080;
-    border-left: 1px solid #808080;
-    border-right: 1px solid #ffffff;
-    border-bottom: 1px solid #ffffff;
+    border: 1px solid #000000;
+    box-shadow: inset 1px 1px 0 #808080;
 }
 
 .accordion-content:empty {
