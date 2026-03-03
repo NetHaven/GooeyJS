@@ -10,39 +10,49 @@
     pointer-events: none;
 }
 
-/* Disabled state - emboss effect on text */
+/* Disabled state - no emboss text-shadow */
 :host([disabled]) .datagrid-container {
     color: #A0A0A0;
-    text-shadow: 1px 1px 0 #FFFFFF;
+    /* No text-shadow emboss */
 }
 
 .datagrid-container {
-    background-color: #FFFFFF;
+    background-color: #eee;
     color: #000000;
 }
 
 /* Header Viewport */
 .datagrid-header-viewport {
-    background-color: #DDDDDD;
+    background-color: #ccc;
     border-bottom: 1px solid #000000;
 }
 
-/* Column headers - flat, no gradients */
+/* Column headers - inset bevel, normal font-weight */
 .datagrid-column-header {
     padding: 4px 8px;
-    border-right: 1px solid #A0A0A0;
-    background: #DDDDDD;
-    font-weight: bold;
+    border: 1px solid #333;
+    border-top-color: #666;
+    border-left-color: #666;
+    border-right-color: #333;
+    border-bottom-color: #333;
+    background: #ccc;
+    font-weight: normal;
     color: #000000;
     min-height: 24px;
+    box-shadow: inset 1px 1px #fff, inset -1px -1px #888;
 }
 
-.datagrid-column-header:hover {
-    background: #EEEEEE;
-}
+/* Column header hover - no distinct hover in Classic style */
 
+/* Column header active/pressed state */
+.datagrid-column-header:active,
 .datagrid-column-header.sorted {
-    background: #CCCCCC;
+    background: #888;
+    color: #fff;
+    border-color: #444;
+    border-top-color: #111;
+    border-left-color: #111;
+    box-shadow: inset 1px 1px #555, inset -1px -1px #aaa;
 }
 
 .sort-indicator {
@@ -56,13 +66,13 @@
 
 /* Filter Viewport */
 .datagrid-filter-viewport {
-    background-color: #DDDDDD;
+    background-color: #ccc;
     border-bottom: 1px solid #000000;
 }
 
 .datagrid-filter-cell {
     padding: 4px;
-    border-right: 1px solid #A0A0A0;
+    border-right: 1px solid #888;
 }
 
 .datagrid-filter-input {
@@ -76,60 +86,60 @@
 
 .datagrid-filter-input:focus {
     outline: none;
-    border-color: #0000A5;
+    border-color: var(--gooey-color-primary-3);
 }
 
 .datagrid-filter-input::placeholder {
     color: #A0A0A0;
 }
 
-/* Row Styles - 1px #A0A0A0 grid lines */
+/* Row Styles - white dividers */
 .datagrid-row {
-    border-bottom: 1px solid #A0A0A0;
-    background-color: #FFFFFF;
+    border-bottom: 1px solid #fff; /* White divider */
+    background-color: #eee;
     transition: none;
 }
 
 .datagrid-row:hover {
-    background-color: #EEEEEE;
+    background-color: #e0e0e0;
 }
 
 .datagrid-row.selected {
-    background-color: #0000A5;
-    color: #FFFFFF;
+    background-color: var(--gooey-color-selection-bg);
+    color: var(--gooey-color-selection-fg);
 }
 
 .datagrid-row.selected:hover {
-    background-color: #0000CC;
+    background-color: var(--gooey-color-selection-bg);
 }
 
-/* Alternating row colors */
+/* Uniform row background - no alternating (reference shows uniform #eee) */
 .datagrid-row:nth-child(even) {
-    background-color: #F5F5F5;
+    background-color: #eee;
 }
 
 .datagrid-row:nth-child(even):hover {
-    background-color: #EEEEEE;
+    background-color: #e0e0e0;
 }
 
 .datagrid-row.selected:nth-child(even) {
-    background-color: #0000A5;
+    background-color: var(--gooey-color-selection-bg);
 }
 
-/* Cell Styles */
+/* Cell Styles - white cell dividers */
 .datagrid-cell {
     padding: 0 8px;
-    border-right: 1px solid #A0A0A0;
+    border-right: 1px solid #fff;
 }
 
 .datagrid-cell.selected {
-    outline: 1px solid #0000A5;
+    outline: 1px solid var(--gooey-color-selection-bg);
     outline-offset: -1px;
-    background-color: rgba(0, 0, 165, 0.1);
+    background-color: rgba(204, 204, 255, 0.2);
 }
 
 .datagrid-row.selected .datagrid-cell.selected {
-    outline-color: #FFFFFF;
+    outline-color: #000;
     background-color: transparent;
 }
 
@@ -144,7 +154,7 @@
 }
 
 .datagrid-cell-editor {
-    border: 1px solid #0000A5;
+    border: 1px solid var(--gooey-color-primary-3);
     border-radius: 0;
     background-color: #FFFFFF;
     color: #000000;
@@ -152,23 +162,23 @@
 
 /* Focus styling */
 :host(:focus) {
-    outline: 1px dotted #000000;
+    outline: 2px solid var(--gooey-color-primary-3);
     outline-offset: -1px;
     box-shadow: none;
 }
 
-/* Classic Mac scrollbar styling */
+/* Classic scrollbar styling */
 .datagrid-body-viewport::-webkit-scrollbar {
     width: 16px;
     height: 16px;
 }
 
 .datagrid-body-viewport::-webkit-scrollbar-track {
-    background: #DDDDDD;
+    background: #CCCCCC;
 }
 
 .datagrid-body-viewport::-webkit-scrollbar-thumb {
-    background: #AAAAAA;
+    background: var(--gooey-color-primary-4);
     border: 1px solid #000000;
 }
 
@@ -176,8 +186,12 @@
     background: #999999;
 }
 
+.datagrid-body-viewport::-webkit-scrollbar-thumb:active {
+    background: var(--gooey-color-primary-3);
+}
+
 .datagrid-body-viewport::-webkit-scrollbar-corner {
-    background: #DDDDDD;
+    background: #CCCCCC;
 }
 
 /* Hidden slot container */
