@@ -18,20 +18,29 @@
 
 .tab-content {
     border: 1px solid #000000;
-    background: #FFFFFF;
+    background: #eee;
     border-radius: 0;
+    box-shadow:
+        inset 1px 1px 0 #ccc,
+        inset 2px 2px 0 #fff,
+        inset -1px -1px 0 #999,
+        inset -2px -2px 0 #bbb;
+    margin-top: -4px; /* Overlap tabs by 4px */
 }
 
 .tab-header {
     border: 1px solid #000000;
     border-bottom: none;
     border-radius: 0;
-    background-color: #DDDDDD;
+    background-color: #CCCCCC;
     padding: 4px 12px;
+    height: 23px;
+    box-sizing: border-box;
     transition: none !important;
     color: #000000;
     font-weight: normal;
     box-shadow: none;
+    cursor: pointer;
 }
 
 :host(.vertical) .tab-header {
@@ -40,16 +49,19 @@
     border-radius: 0;
 }
 
-.tab-header:hover {
-    background-color: #EEEEEE;
+/* Hover: no highlight - Classic style has no distinct hover on tabs */
+
+.tab-header:active {
+    background-color: #666;
+    color: #fff;
 }
 
 .tab-header.active {
-    background-color: #FFFFFF;
-    border-bottom: 1px solid #FFFFFF;
-    border-color: #000000;
-    border-bottom-color: #FFFFFF;
-    border-width: 1px;
+    background-color: #eee;
+    border: 1px solid #000000;
+    border-bottom: 1px solid #eee; /* Blends into panel */
+    height: 25px;
+    box-sizing: border-box;
     margin-bottom: -1px;
     z-index: 1;
     font-weight: bold;
@@ -58,23 +70,22 @@
 }
 
 :host(.vertical) .tab-header.active {
-    background-color: #FFFFFF;
-    border-right: 1px solid #FFFFFF;
+    background-color: #eee;
+    border-right: 1px solid #eee;
     border-color: #000000;
-    border-right-color: #FFFFFF;
-    border-width: 1px;
+    border-right-color: #eee;
     margin-right: -1px;
     margin-bottom: 0;
     box-shadow: none;
 }
 
 .tab-header:focus {
-    outline: 1px dotted #000000;
+    outline: 2px solid var(--gooey-color-primary-3);
     outline-offset: -2px;
 }
 
 .tab-close-button {
-    background-color: #DDDDDD;
+    background-color: #CCCCCC;
     border: 1px solid #000000;
     border-radius: 0;
 }
@@ -92,25 +103,25 @@
     outline: 1px dotted #000000;
 }
 
-/* Disabled state - emboss effect */
+/* Disabled state - no emboss text-shadow */
 :host([disabled]) .tab-header {
     color: #A0A0A0;
-    text-shadow: 1px 1px 0 #FFFFFF;
+    /* No text-shadow emboss */
 }
 
 /* Drag and Drop */
 .tab-header.drag-over-left {
-    border-left: 2px solid #0000A5;
+    border-left: 2px solid var(--gooey-color-primary-2);
 }
 
 .tab-header.drag-over-right {
-    border-right: 2px solid #0000A5;
+    border-right: 2px solid var(--gooey-color-primary-2);
 }
 
 .tab-header.drag-over-top {
-    border-top: 2px solid #0000A5;
+    border-top: 2px solid var(--gooey-color-primary-2);
 }
 
 .tab-header.drag-over-bottom {
-    border-bottom: 2px solid #0000A5;
+    border-bottom: 2px solid var(--gooey-color-primary-2);
 }
