@@ -1,21 +1,60 @@
-/* ListBox - Classic structural override */
+/* ListBox - Classic compliance (CLS-13) */
 
 select {
-    /* Classic Mac sunken field */
     border: 1px solid #000000;
     background-color: #FFFFFF;
     border-radius: 0;
-    box-shadow: none;
+    /* Outer recessed shadow */
+    box-shadow: -1px -1px #888, 1px 1px #fff;
 }
 
 select:focus {
-    outline: 1px dotted #000000;
+    /* Solid blue focus ring - not dotted black */
+    outline: 2px solid var(--gooey-color-primary-3);
     outline-offset: -2px;
+    box-shadow: none;
 }
 
 select option:checked {
-    background-color: #0000A5;
-    color: #FFFFFF;
+    /* Lavender selection with black text */
+    background-color: var(--gooey-color-selection-bg);
+    color: var(--gooey-color-selection-fg);
+}
+
+/* Scrollbar styling - shared Classic pattern */
+select::-webkit-scrollbar {
+    width: 16px;
+}
+
+select::-webkit-scrollbar-track {
+    background: #aaa;
+    box-shadow: inset 1px 1px #777, inset 2px 2px #888, inset -1px -1px #ccc, inset -2px -2px #bbb;
+    border: 1px solid #000;
+}
+
+select::-webkit-scrollbar-thumb {
+    background:
+        repeating-linear-gradient(
+            90deg,
+            transparent 0px,
+            transparent 1px,
+            var(--gooey-color-primary-5) 1px,
+            var(--gooey-color-primary-5) 2px
+        ),
+        var(--gooey-color-primary-4);
+    box-shadow: inset 1px 1px 0 var(--gooey-color-primary-5), inset -1px -1px 0 var(--gooey-color-primary-3);
+}
+
+select::-webkit-scrollbar-thumb:active {
+    background:
+        repeating-linear-gradient(
+            90deg,
+            transparent 0px,
+            transparent 1px,
+            var(--gooey-color-primary-4) 1px,
+            var(--gooey-color-primary-4) 2px
+        ),
+        var(--gooey-color-primary-3);
 }
 
 /* Disabled state */

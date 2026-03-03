@@ -167,31 +167,45 @@
     box-shadow: none;
 }
 
-/* Classic scrollbar styling */
+/* Classic scrollbar - shared pattern */
 .datagrid-body-viewport::-webkit-scrollbar {
     width: 16px;
     height: 16px;
 }
 
 .datagrid-body-viewport::-webkit-scrollbar-track {
-    background: #CCCCCC;
+    background: #aaa;
+    box-shadow: inset 1px 1px #777, inset 2px 2px #888, inset -1px -1px #ccc, inset -2px -2px #bbb;
+    border: 1px solid #000;
 }
 
 .datagrid-body-viewport::-webkit-scrollbar-thumb {
-    background: var(--gooey-color-primary-4);
-    border: 1px solid #000000;
-}
-
-.datagrid-body-viewport::-webkit-scrollbar-thumb:hover {
-    background: #999999;
+    background:
+        repeating-linear-gradient(
+            90deg,
+            transparent 0px,
+            transparent 1px,
+            var(--gooey-color-primary-5) 1px,
+            var(--gooey-color-primary-5) 2px
+        ),
+        var(--gooey-color-primary-4);
+    box-shadow: inset 1px 1px 0 var(--gooey-color-primary-5), inset -1px -1px 0 var(--gooey-color-primary-3), 0 1px #777, 0 2px #888;
 }
 
 .datagrid-body-viewport::-webkit-scrollbar-thumb:active {
-    background: var(--gooey-color-primary-3);
+    background:
+        repeating-linear-gradient(
+            90deg,
+            transparent 0px,
+            transparent 1px,
+            var(--gooey-color-primary-4) 1px,
+            var(--gooey-color-primary-4) 2px
+        ),
+        var(--gooey-color-primary-3);
 }
 
 .datagrid-body-viewport::-webkit-scrollbar-corner {
-    background: #CCCCCC;
+    background: #aaa;
 }
 
 /* Hidden slot container */
