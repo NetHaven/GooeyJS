@@ -1,0 +1,81 @@
+/* Toast - Janus structural override */
+/* Flat black border, raised bevel, no animations */
+
+/* Kill all animations and transitions globally */
+:host,
+:host(.toast-showing),
+:host(.toast-hiding),
+:host([position^="bottom"].toast-showing),
+:host([position^="bottom"].toast-hiding),
+.toast-container,
+.toast-progress-bar {
+    animation: none !important;
+    transition: none !important;
+}
+
+/* Ensure showing state is immediately visible */
+:host(.toast-showing) {
+    opacity: 1;
+    transform: none;
+}
+
+/* Ensure hiding state is immediately hidden */
+:host(.toast-hiding) {
+    opacity: 0;
+    transform: none;
+}
+
+/* Flat Janus toast container with raised bevel */
+.toast-container {
+    background: #c0c0c0;
+    border: 1px solid #000000;
+    border-radius: 0;
+    box-shadow:
+        inset 1px 1px 0 #ffffff,
+        inset -1px -1px 0 #808080,
+        2px 2px 0 #000000;
+}
+
+/* Close button - raised bevel styling */
+.toast-close-btn {
+    border-radius: 0;
+    border: none;
+    border-top: 1px solid #ffffff;
+    border-left: 1px solid #ffffff;
+    border-right: 1px solid #808080;
+    border-bottom: 1px solid #808080;
+    background: #c0c0c0;
+}
+
+/* Close button pressed: inverted sunken borders */
+.toast-close-btn:active {
+    border-top: 1px solid #808080;
+    border-left: 1px solid #808080;
+    border-right: 1px solid #ffffff;
+    border-bottom: 1px solid #ffffff;
+}
+
+.toast-close-btn:focus-visible {
+    outline: 1px dotted #000000;
+    outline-offset: -3px;
+}
+
+/* Action button focus */
+.toast-action-btn:focus-visible {
+    outline: 1px dotted #000000;
+    outline-offset: -3px;
+}
+
+/* Progress bar - flat, no rounded corners */
+.toast-progress {
+    border-radius: 0;
+}
+
+.toast-progress-bar {
+    border-radius: 0;
+}
+
+/* Disabled: gray text, no emboss text-shadow per Janus convention */
+:host([disabled]) .toast-message {
+    color: #808080;
+}
