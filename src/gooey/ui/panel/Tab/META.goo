@@ -9,7 +9,7 @@
   ],
   "themes": {
     "default": "base",
-    "available": ["base", "chicago", "classic"]
+    "available": ["base", "chicago", "classic", "janus"]
   },
   "tokens": {
     "gooey-tab-bg": {

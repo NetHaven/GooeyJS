@@ -1,0 +1,5 @@
+/* Tab - Janus structural override */
+:host {
+    background-color: #ffffff;
+    border-radius: 0;
+}

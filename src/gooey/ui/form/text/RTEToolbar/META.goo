@@ -9,7 +9,7 @@
   ],
   "themes": {
     "default": "base",
-    "available": ["base", "dark", "janus", "chicago"]
+    "available": ["base", "dark", "janus", "chicago", "classic"]
   },
   "tokens": {
     "gooey-rte-toolbar-bg": {

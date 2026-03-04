@@ -1,0 +1,100 @@
+/* RTEToolbar - Classic theme */
+
+:host {
+    --gooey-rte-toolbar-bg: #DDDDDD;
+    --gooey-rte-toolbar-border-color: #888;
+    --gooey-rte-toolbar-btn-color: #000000;
+    --gooey-rte-toolbar-btn-hover-bg: #EEEEEE;
+    --gooey-rte-toolbar-btn-hover-border: #888;
+    --gooey-rte-toolbar-btn-active-bg: var(--gooey-color-primary-2);
+    --gooey-rte-toolbar-btn-active-color: #FFFFFF;
+    --gooey-rte-toolbar-status-color: #555555;
+}
+
+/* Recessed toolbar container */
+.rte-toolbar-container {
+    background: #DDDDDD;
+    box-shadow: -1px -1px 0 #888;
+    border-radius: 0;
+    padding: 2px;
+    gap: 1px;
+}
+
+/* Flat buttons */
+.rte-tb-btn {
+    border: 1px solid transparent;
+    border-radius: 0;
+    background: #DDDDDD;
+    padding: 2px;
+    width: 22px;
+    height: 22px;
+}
+
+.rte-tb-btn:hover {
+    background: #EEEEEE;
+    border-color: #888;
+}
+
+/* Active/toggled state */
+.rte-tb-btn.active,
+.rte-tb-btn:active {
+    background: var(--gooey-color-primary-2);
+    color: #fff;
+}
+
+/* Solid focus ring */
+.rte-tb-btn:focus-visible {
+    outline: 2px solid var(--gooey-color-primary-3);
+    outline-offset: 0;
+}
+
+/* Disabled: no emboss text-shadow */
+.rte-tb-btn:disabled {
+    text-shadow: none;
+    color: #7F7F7F;
+}
+
+/* Sunken dropdown field */
+.rte-tb-dropdown {
+    border: 1px solid #000;
+    box-shadow: -1px -1px 0 #888;
+    background: #FFFFFF;
+    border-radius: 0;
+    color: #000000;
+    font-size: 11px;
+    padding: 2px 18px 2px 4px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23000'/%3E%3C/svg%3E");
+}
+
+.rte-tb-dropdown:focus {
+    outline: 2px solid var(--gooey-color-primary-3);
+    outline-offset: 0;
+}
+
+/* Etched separator */
+.rte-toolbar-separator {
+    width: 2px;
+    border-left: 1px solid #888;
+    border-right: 1px solid #fff;
+    background: none;
+    margin: 0 2px;
+}
+
+/* Color popover */
+.rte-color-popover {
+    background: #DDDDDD;
+    border: 1px solid #000;
+    box-shadow: 1px 1px 0 #000;
+    border-radius: 0;
+}
+
+.rte-color-swatch {
+    border-radius: 0;
+    border-color: #888;
+}
+
+.rte-color-input {
+    border: 1px solid #000;
+    box-shadow: -1px -1px 0 #888;
+    border-radius: 0;
+}
