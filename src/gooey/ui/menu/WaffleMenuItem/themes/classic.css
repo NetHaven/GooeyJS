@@ -7,7 +7,7 @@
     --waffle-item-icon-size: 48px;
     --waffle-item-bg: transparent;
     --waffle-item-hover-bg: #EEEEEE;
-    --waffle-item-active-bg: #0000A5;
+    --waffle-item-active-bg: var(--gooey-color-primary);
     --waffle-item-label-color: #000000;
     --waffle-item-border-radius: 0;
     --waffle-badge-bg: #CC0000;
@@ -26,7 +26,7 @@
 }
 
 .waffle-item:active {
-    background: #0000A5;
+    background: var(--gooey-color-primary);
     color: #FFFFFF;
 }
 

@@ -72,11 +72,11 @@
    ---------------------------------------- */
 /* classic.css does NOT include syntax highlighting colors, so all syntax colors go here */
 
-.code-highlighted .syntax-keyword     { color: #0000A5; font-weight: bold; }
+.code-highlighted .syntax-keyword     { color: var(--gooey-color-primary); font-weight: bold; }
 .code-highlighted .syntax-string      { color: #008000; }
 .code-highlighted .syntax-number      { color: #CC0000; }
 .code-highlighted .syntax-comment     { color: #7F7F7F; font-style: italic; }
-.code-highlighted .syntax-tag-name    { color: #0000A5; font-weight: bold; }
+.code-highlighted .syntax-tag-name    { color: var(--gooey-color-primary); font-weight: bold; }
 .code-highlighted .syntax-attr-name   { color: #555555; }
 .code-highlighted .syntax-attr-value  { color: #008000; }
 .code-highlighted .syntax-punctuation { color: #000000; }

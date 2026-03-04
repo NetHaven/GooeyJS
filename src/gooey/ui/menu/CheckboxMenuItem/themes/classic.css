@@ -35,7 +35,7 @@
 
 /* Active/selected state: inverted blue selection (CLSC-07) */
 :host([active]) {
-    background-color: #0000A5 !important;
+    background-color: var(--gooey-color-primary) !important;
     color: #FFFFFF;
 }
 

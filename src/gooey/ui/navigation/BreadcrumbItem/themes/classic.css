@@ -9,13 +9,13 @@
 .breadcrumb-link {
     border-radius: 0;
     transition: none !important;
-    color: #0000A5;
+    color: var(--gooey-color-primary);
 }
 
 .breadcrumb-link:hover {
     text-decoration: underline;
     background-color: transparent;
-    color: #0000A5;
+    color: var(--gooey-color-primary);
 }
 
 .breadcrumb-link:active {

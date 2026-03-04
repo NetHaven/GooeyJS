@@ -52,7 +52,7 @@
 
 /* Primary - Classic Mac blue */
 :host([variant="primary"]) .badge {
-    background-color: #0000A5;
+    background-color: var(--gooey-color-primary);
     color: #FFFFFF;
     border: 1px solid #000000;
 }
@@ -80,7 +80,7 @@
 
 /* Info - Classic Mac blue */
 :host([variant="info"]) .badge {
-    background-color: #0000A5;
+    background-color: var(--gooey-color-primary);
     color: #FFFFFF;
     border: 1px solid #000000;
 }
@@ -98,8 +98,8 @@
 
 :host([outline][variant="primary"]) .badge {
     background-color: transparent;
-    color: #0000A5;
-    border: 1px solid #0000A5;
+    color: var(--gooey-color-primary);
+    border: 1px solid var(--gooey-color-primary);
 }
 
 :host([outline][variant="success"]) .badge {
@@ -122,8 +122,8 @@
 
 :host([outline][variant="info"]) .badge {
     background-color: transparent;
-    color: #0000A5;
-    border: 1px solid #0000A5;
+    color: var(--gooey-color-primary);
+    border: 1px solid var(--gooey-color-primary);
 }
 
 /* ----------------------------------------

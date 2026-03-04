@@ -19,7 +19,7 @@
 
 ::slotted(ui-MenuItem:hover),
 ::slotted(ui-CheckboxMenuItem:hover) {
-    background-color: #0000A5;
+    background-color: var(--gooey-color-primary);
     color: #FFFFFF;
 }
 

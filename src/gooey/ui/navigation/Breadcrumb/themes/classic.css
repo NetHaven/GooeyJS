@@ -30,7 +30,7 @@
 
 .breadcrumb-collapsed-item:hover,
 .breadcrumb-collapsed-item:focus {
-    background-color: #0000A5;
+    background-color: var(--gooey-color-primary);
     color: #FFFFFF;
 }
 
