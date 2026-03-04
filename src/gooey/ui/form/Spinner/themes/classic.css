@@ -44,7 +44,7 @@ input[type="number"]:focus {
 
 :host([disabled]) input[type="number"] {
     color: #7F7F7F;
-    text-shadow: 1px 1px 0 #FFFFFF;
+    text-shadow: none;
     background-color: #DDDDDD;
 }
 
@@ -52,5 +52,5 @@ input[type="number"]:focus {
 :host([disabled]) .decrement-btn {
     cursor: not-allowed;
     color: #7F7F7F;
-    text-shadow: 1px 1px 0 #FFFFFF;
+    text-shadow: none;
 }

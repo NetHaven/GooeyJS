@@ -56,7 +56,7 @@ button:focus {
 :host([disabled]) .toggle-button,
 :host([disabled]) button {
     color: #7F7F7F;
-    text-shadow: 1px 1px 0 #FFFFFF;
+    text-shadow: none;
     cursor: not-allowed;
 }
 
@@ -74,7 +74,7 @@ button:focus {
 :host([disabled].pressed) button {
     background-color: #CCCCCC;
     color: #7F7F7F;
-    text-shadow: 1px 1px 0 #FFFFFF;
+    text-shadow: none;
 }
 
 /* Icon and text styling */

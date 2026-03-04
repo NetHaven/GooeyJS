@@ -35,5 +35,5 @@
 /* Disabled: Classic Mac emboss (CLSC-10) */
 :host([disabled]) .breadcrumb-link {
     color: #7F7F7F;
-    text-shadow: 1px 1px 0 #FFFFFF;
+    text-shadow: none;
 }

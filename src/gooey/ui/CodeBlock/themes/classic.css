@@ -43,7 +43,7 @@
 .copy-button:disabled {
     cursor: not-allowed;
     color: #7F7F7F;
-    text-shadow: 1px 1px 0 #FFFFFF;
+    text-shadow: none;
 }
 
 /* Line numbers */
