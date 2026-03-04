@@ -14,8 +14,8 @@
 }
 
 .WindowTitlebar {
-    background: #000080;
-    color: #FFFFFF;
+    background: var(--chicago-window-active, #000080);
+    color: var(--chicago-window-active-text, #FFFFFF);
     font-weight: bold;
     font-size: 11px;
     height: 18px;
@@ -26,18 +26,18 @@
 }
 
 :host(:not([active])) .WindowTitlebar {
-    background: #808080;
-    color: #000000;
+    background: var(--chicago-window-inactive, #808080);
+    color: var(--chicago-window-inactive-text, #000000);
 }
 
 :host(:not(:focus-within)) .WindowTitlebar {
-    background: #808080;
-    color: #000000;
+    background: var(--chicago-window-inactive, #808080);
+    color: var(--chicago-window-inactive-text, #000000);
 }
 
 :host([active]) .WindowTitlebar {
-    background: #000080;
-    color: #FFFFFF;
+    background: var(--chicago-window-active, #000080);
+    color: var(--chicago-window-active-text, #FFFFFF);
 }
 
 .WindowTitleText {
