@@ -40,6 +40,7 @@
 
     /* ===== Typography (MS Sans Serif) ===== */
     --gooey-font-family: "MS Sans Serif", "Microsoft Sans Serif", Tahoma, Arial, sans-serif;
+    --chicago-font-family: "MS Sans Serif", "Microsoft Sans Serif", Tahoma, Arial, sans-serif;
     --gooey-font-family-mono: Fixedsys, Terminal, "Lucida Console", "Courier New", monospace;
     --gooey-font-size-xs: 11px;
     --gooey-font-size-sm: 11px;
@@ -87,11 +88,7 @@
     --chicago-border-dark: #000000;
     --chicago-border-shadow: #808080;
     --chicago-border-light: #FFFFFF;
-    --chicago-border-face: #C0C0C0;
     --chicago-border-highlight: #DFDFDF;
-
-    /* ===== Chicago-Specific: Desktop ===== */
-    --chicago-desktop: #008080;
 
     /* ===== Chicago-Specific: Window Chrome ===== */
     --chicago-window-active: #000080;
@@ -101,17 +98,10 @@
 
     /* ===== Chicago-Specific: Tooltip ===== */
     --chicago-tooltip-bg: #FFFFE1;
-    --chicago-tooltip-text: #000000;
-    --chicago-tooltip-border: #000000;
 
     /* ===== Chicago-Specific: Layout Metrics ===== */
-    --chicago-control-height: 20px;
-    --chicago-titlebar-height: 20px;
     --chicago-menubar-height: 18px;
-    --chicago-statusbar-height: 18px;
     --chicago-scrollbar-size: 16px;
-    --chicago-icon-sm: 16px;
-    --chicago-icon-lg: 32px;
 
     /* ===== Chicago-Specific: Scrollbar Tokens ===== */
     --chicago-scrollbar-track: #C0C0C0;
@@ -123,7 +113,6 @@
     --chicago-scrollbar-button-border-light: #FFFFFF;
     --chicago-scrollbar-button-border-dark: #000000;
     --chicago-scrollbar-button-border-shadow: #808080;
-    --chicago-scrollbar-arrow: #000000;
     --chicago-scrollbar-grip: #000000;
 
     /* ===== Chicago-Specific: Dither Pattern ===== */
