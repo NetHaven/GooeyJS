@@ -1,0 +1,46 @@
+/* Breadcrumb - Janus structural override */
+/* Flat borders, no transitions, Janus blue selection */
+
+:host {
+    transition: none !important;
+}
+
+/* Ellipsis button - flat with raised bevel */
+::slotted(.breadcrumb-ellipsis) {
+    border-radius: 0;
+    border: 1px solid #000000;
+    box-shadow:
+        inset -1px -1px 0 #808080,
+        inset 1px 1px 0 #ffffff;
+    transition: none !important;
+}
+
+::slotted(.breadcrumb-ellipsis:focus) {
+    outline: 1px dotted #000000;
+    outline-offset: -3px;
+}
+
+/* Collapsed items dropdown - flat with drop shadow */
+.breadcrumb-collapsed-menu {
+    border-radius: 0;
+    border: 1px solid #000000;
+    background-color: #ffffff;
+    box-shadow: 2px 2px 0 #000000;
+}
+
+/* Collapsed item hover - Janus blue selection */
+.breadcrumb-collapsed-item {
+    transition: none !important;
+}
+
+.breadcrumb-collapsed-item:hover,
+.breadcrumb-collapsed-item:focus {
+    background-color: #0000C0;
+    color: #ffffff;
+}
+
+/* Disabled */
+:host([disabled]) {
+    color: #808080;
+    text-shadow: none;
+}

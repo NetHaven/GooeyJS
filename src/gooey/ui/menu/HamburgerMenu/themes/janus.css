@@ -1,0 +1,93 @@
+/* HamburgerMenu - Janus structural override */
+/* Flat borders, raised bevels, no animations */
+
+/* Kill ALL animations and transitions */
+:host,
+:host *,
+.hamburger-panel,
+.hamburger-backdrop,
+.hamburger-icon .bar {
+    animation: none !important;
+    transition: none !important;
+}
+
+/* Hamburger icon bars */
+.hamburger-icon .bar {
+    background-color: #000000;
+    border-radius: 0;
+}
+
+/* Hamburger button */
+.hamburger-button:hover {
+    background-color: #c0c0c0;
+}
+
+.hamburger-button:focus {
+    outline: 1px dotted #000000;
+    outline-offset: -3px;
+}
+
+/* Navigation Panel: Janus raised bevel */
+.hamburger-panel {
+    border: 1px solid #000000;
+    background-color: #c0c0c0;
+    box-shadow:
+        inset 1px 1px 0 #ffffff,
+        inset -1px -1px 0 #808080,
+        2px 2px 0 #000000;
+    border-radius: 0;
+}
+
+/* Panel header */
+.panel-header {
+    border-bottom: 1px solid #000000;
+}
+
+/* Close button: raised bevel */
+.close-button {
+    width: 16px;
+    height: 16px;
+    padding: 0;
+    border-top: 1px solid #ffffff;
+    border-left: 1px solid #ffffff;
+    border-right: 1px solid #808080;
+    border-bottom: 1px solid #808080;
+    background-color: #c0c0c0;
+    font-size: 12px;
+    line-height: 14px;
+    text-align: center;
+    cursor: pointer;
+    color: #000000;
+}
+
+.close-button:hover {
+    background-color: #c0c0c0;
+}
+
+.close-button:active {
+    border-top: 1px solid #808080;
+    border-left: 1px solid #808080;
+    border-right: 1px solid #ffffff;
+    border-bottom: 1px solid #ffffff;
+}
+
+.close-button:focus {
+    outline: 1px dotted #000000;
+    outline-offset: -3px;
+}
+
+/* Disabled state */
+:host([disabled]) .hamburger-button {
+    opacity: 1;
+    color: #808080;
+    text-shadow: none;
+}
+
+:host([disabled]) .hamburger-icon .bar {
+    background-color: #808080;
+}
+
+/* Backdrop */
+.hamburger-backdrop {
+    background-color: rgba(0, 0, 0, 0.3);
+}

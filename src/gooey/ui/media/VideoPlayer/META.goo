@@ -9,7 +9,7 @@
   ],
   "themes": {
     "default": "base",
-    "available": ["base", "classic", "dark", "minimal"]
+    "available": ["base", "classic", "dark", "minimal", "janus"]
   },
   "tokens": {
     "gooey-videoplayer-bg": {

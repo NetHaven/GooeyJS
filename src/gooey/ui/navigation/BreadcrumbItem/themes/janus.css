@@ -1,0 +1,39 @@
+/* BreadcrumbItem - Janus structural override */
+/* Flat links, no transitions, Janus blue active */
+
+:host {
+    transition: none !important;
+}
+
+/* Link - flat, no transitions */
+.breadcrumb-link {
+    border-radius: 0;
+    transition: none !important;
+    color: #0000C0;
+}
+
+.breadcrumb-link:hover {
+    text-decoration: underline;
+    background-color: transparent;
+    color: #0000C0;
+}
+
+.breadcrumb-link:active {
+    background-color: transparent;
+}
+
+.breadcrumb-link:focus {
+    outline: 1px dotted #000000;
+    outline-offset: -3px;
+}
+
+/* Active/current item */
+:host([active]) .breadcrumb-link {
+    color: #000000;
+}
+
+/* Disabled */
+:host([disabled]) .breadcrumb-link {
+    color: #808080;
+    text-shadow: none;
+}
