@@ -7,8 +7,8 @@
 }
 
 .WindowTitlebar {
-    background: #ffffff;
-    color: #000000;
+    background: var(--gooey-color-title-bar-inactive-bg, #ffffff);
+    color: var(--gooey-color-title-bar-inactive-fg, #000000);
     font-weight: normal;
     height: 18px;
     user-select: none;

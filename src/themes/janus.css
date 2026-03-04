@@ -33,9 +33,11 @@
     --gooey-focus-offset: -4px;
 
     /* ===== Selection Inverse (Yellow on Blue) ===== */
+    /* Used by component themes via hardcoded value — wire in future */
     --gooey-color-selection-inverse: #ffff3f;
 
     /* ===== Inactive Window Title Bar ===== */
+    /* Consumed by Window janus.css */
     --gooey-color-title-bar-inactive-bg: #ffffff;
     --gooey-color-title-bar-inactive-fg: #000000;
 

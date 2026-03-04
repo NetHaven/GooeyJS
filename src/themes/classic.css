@@ -17,14 +17,11 @@
     --gooey-color-primary: #0000A5;
     --gooey-color-primary-text: #FFFFFF;
 
-    /* ===== Primary Color Ramp (7-stop) ===== */
-    --gooey-color-primary-0: #000;
-    --gooey-color-primary-1: #005;
+    /* ===== Primary Color Ramp (4-stop) ===== */
     --gooey-color-primary-2: #339;
     --gooey-color-primary-3: #66c;
     --gooey-color-primary-4: #99f;
     --gooey-color-primary-5: #ccf;
-    --gooey-color-primary-6: #eee;
 
     /* ===== Selection Colors (Lavender) ===== */
     --gooey-color-selection-bg: #ccf;
