@@ -160,6 +160,17 @@ html, body, gooeyui-apppanel {
     --gooey-shadow-md: 0 2px 8px rgba(0, 0, 0, 0.15);
     --gooey-shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.2);
 
+    /* ===== Overlays (semi-transparent interaction states) ===== */
+    --gooey-color-overlay-hover: rgba(0, 0, 0, 0.05);
+    --gooey-color-overlay-active: rgba(0, 0, 0, 0.1);
+
+    /* ===== Tooltip ===== */
+    --gooey-color-tooltip-bg: #333333;
+    --gooey-color-tooltip-text: #ffffff;
+
+    /* ===== Danger / Destructive ===== */
+    --gooey-color-danger: #c42b1c;
+
     /* ===== Opacity ===== */
     --gooey-opacity-disabled: 0.5;
     --gooey-opacity-modal-backdrop: 0.5;

@@ -50,12 +50,12 @@ button:focus {
 
 :host(.pressed) .toggle-button:hover,
 :host(.pressed) button:hover {
-    background-color: var(--gooey-togglebutton-pressed-bg-hover, #000066);
+    background-color: var(--gooey-togglebutton-pressed-bg-hover, var(--gooey-color-primary));
 }
 
 :host(.pressed) .toggle-button:active,
 :host(.pressed) button:active {
-    background-color: var(--gooey-togglebutton-pressed-bg-active, #000050);
+    background-color: var(--gooey-togglebutton-pressed-bg-active, var(--gooey-color-primary));
 }
 
 /* Disabled state */

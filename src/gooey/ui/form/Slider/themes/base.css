@@ -42,7 +42,7 @@
     border-radius: 50%;
     transform: translate(-50%, -50%);
     cursor: pointer;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+    box-shadow: var(--gooey-slider-thumb-shadow, var(--gooey-shadow-sm));
     z-index: 2;
     outline: none;
 }
@@ -97,8 +97,8 @@
 .slider-tooltip {
     display: none;
     position: absolute;
-    background: var(--gooey-color-surface-raised, #333);
-    color: var(--gooey-color-text-inverse, #fff);
+    background: var(--gooey-slider-tooltip-bg, var(--gooey-color-tooltip-bg));
+    color: var(--gooey-slider-tooltip-color, var(--gooey-color-tooltip-text));
     padding: 2px 6px;
     border-radius: 3px;
     font-size: 11px;

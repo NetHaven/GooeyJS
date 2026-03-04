@@ -63,7 +63,7 @@
     right: 0;
     z-index: 1000;
     border: 2px inset var(--gooey-combobox-dropdown-border-color, var(--gooey-color-border));
-    border-top: 1px solid var(--gooey-combobox-dropdown-top-border-color, #808080);
+    border-top: 1px solid var(--gooey-combobox-dropdown-top-border-color, var(--gooey-color-border));
     background-color: var(--gooey-combobox-dropdown-bg, var(--gooey-color-surface-raised));
     max-height: 200px;
     overflow-y: auto;

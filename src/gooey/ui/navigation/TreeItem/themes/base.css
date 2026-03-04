@@ -22,7 +22,7 @@
 }
 
 .ui-TreeItem-content:hover {
-    background-color: var(--gooey-treeitem-hover-bg, rgba(0, 0, 0, 0.1));
+    background-color: var(--gooey-treeitem-hover-bg, var(--gooey-color-overlay-active));
 }
 
 :host(.selected) .ui-TreeItem-content {
@@ -110,13 +110,13 @@
 }
 
 .ui-TreeItem-content.drop-inside {
-    background-color: var(--gooey-treeitem-drop-inside-bg, rgba(1, 0, 130, 0.2));
+    background-color: var(--gooey-treeitem-drop-inside-bg, color-mix(in srgb, var(--gooey-color-primary) 20%, transparent));
     border: 2px dashed var(--gooey-treeitem-drop-color, var(--gooey-color-primary));
     border-radius: 4px;
 }
 
 .ui-TreeItem-content.drop-invalid {
-    background-color: rgba(255, 0, 0, 0.1);
+    background-color: var(--gooey-treeitem-drop-invalid-bg, color-mix(in srgb, var(--gooey-color-error) 10%, transparent));
     border: 2px dashed var(--gooey-treeitem-drop-invalid-color, var(--gooey-color-error));
     border-radius: 4px;
     cursor: not-allowed;

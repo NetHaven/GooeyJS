@@ -8,20 +8,20 @@
     line-height: var(--gooey-breadcrumb-line-height, var(--gooey-line-height));
     color: var(--gooey-breadcrumb-text-color, var(--gooey-color-text-muted));
     --breadcrumb-link-color: var(--gooey-breadcrumb-link-color, var(--gooey-color-text-link));
-    --breadcrumb-link-hover-color: var(--gooey-breadcrumb-link-hover-color, #004499);
-    --breadcrumb-link-hover-bg: var(--gooey-breadcrumb-link-hover-bg, rgba(0, 102, 204, 0.08));
-    --breadcrumb-link-active-bg: var(--gooey-breadcrumb-link-active-bg, rgba(0, 102, 204, 0.15));
+    --breadcrumb-link-hover-color: var(--gooey-breadcrumb-link-hover-color, var(--gooey-color-primary));
+    --breadcrumb-link-hover-bg: var(--gooey-breadcrumb-link-hover-bg, var(--gooey-color-overlay-hover));
+    --breadcrumb-link-active-bg: var(--gooey-breadcrumb-link-active-bg, var(--gooey-color-overlay-active));
     --breadcrumb-separator-color: var(--gooey-breadcrumb-separator-color, var(--gooey-color-text-disabled));
     --breadcrumb-separator-gap: var(--gooey-breadcrumb-separator-gap, var(--gooey-spacing-md));
     --breadcrumb-max-text-width: var(--gooey-breadcrumb-max-text-width, 200px);
     --breadcrumb-active-color: var(--gooey-breadcrumb-active-color, var(--gooey-color-text-muted));
     --breadcrumb-ellipsis-color: var(--gooey-breadcrumb-ellipsis-color, var(--gooey-color-text-link));
-    --breadcrumb-ellipsis-hover-bg: var(--gooey-breadcrumb-ellipsis-hover-bg, rgba(0, 102, 204, 0.1));
-    --breadcrumb-focus-ring: var(--gooey-breadcrumb-focus-ring, 2px solid #010082);
+    --breadcrumb-ellipsis-hover-bg: var(--gooey-breadcrumb-ellipsis-hover-bg, var(--gooey-color-overlay-hover));
+    --breadcrumb-focus-ring: var(--gooey-breadcrumb-focus-ring, 2px solid var(--gooey-color-focus));
     --breadcrumb-menu-bg: var(--gooey-breadcrumb-menu-bg, var(--gooey-color-surface-raised));
     --breadcrumb-menu-border: var(--gooey-breadcrumb-menu-border, var(--gooey-color-border-light));
     --breadcrumb-menu-shadow: var(--gooey-breadcrumb-menu-shadow, var(--gooey-shadow-md));
-    --breadcrumb-menu-item-hover-bg: var(--gooey-breadcrumb-menu-item-hover-bg, #f0f0f0);
+    --breadcrumb-menu-item-hover-bg: var(--gooey-breadcrumb-menu-item-hover-bg, var(--gooey-color-surface-hover));
     --breadcrumb-menu-z-index: var(--gooey-breadcrumb-menu-z-index, var(--gooey-z-dropdown));
 }
 

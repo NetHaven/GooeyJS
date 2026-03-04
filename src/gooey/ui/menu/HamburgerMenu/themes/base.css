@@ -18,7 +18,7 @@
 }
 
 .hamburger-button:hover {
-    background-color: var(--gooey-hamburgermenu-button-hover-bg, rgba(0, 0, 0, 0.05));
+    background-color: var(--gooey-hamburgermenu-button-hover-bg, var(--gooey-color-overlay-hover));
 }
 
 .hamburger-button:focus {
@@ -84,7 +84,7 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: var(--gooey-hamburgermenu-backdrop-bg, rgba(0, 0, 0, 0.5));
+    background-color: var(--gooey-hamburgermenu-backdrop-bg, rgba(0, 0, 0, var(--gooey-opacity-modal-backdrop)));
     z-index: 998;
 }
 
@@ -180,13 +180,13 @@
     background: transparent;
     font-size: 24px;
     cursor: pointer;
-    color: var(--gooey-hamburgermenu-close-color, #666);
+    color: var(--gooey-hamburgermenu-close-color, var(--gooey-color-text-disabled));
     line-height: 1;
 }
 
 .close-button:hover {
     color: var(--gooey-hamburgermenu-close-hover-color, var(--gooey-color-text-muted));
-    background-color: var(--gooey-hamburgermenu-close-hover-bg, rgba(0, 0, 0, 0.05));
+    background-color: var(--gooey-hamburgermenu-close-hover-bg, var(--gooey-color-overlay-hover));
 }
 
 .close-button:focus {

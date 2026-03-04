@@ -61,16 +61,16 @@
 }
 
 .WindowControlButtons button:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: var(--gooey-window-control-hover-bg, rgba(255, 255, 255, 0.2));
 }
 
 .WindowCloseBtn:hover {
     background: var(--gooey-color-danger, #c42b1c) !important;
-    color: #ffffff !important;
+    color: var(--gooey-window-close-hover-color, var(--gooey-color-primary-text)) !important;
 }
 
 .WindowControlButtons button:active {
-    background: rgba(0, 0, 0, 0.2);
+    background: var(--gooey-window-control-active-bg, rgba(0, 0, 0, 0.2));
 }
 
 /* Resize Handles */

@@ -85,7 +85,7 @@
 .toast-close-btn {
     background: none;
     border: none;
-    color: var(--gooey-toast-close-color, #666666);
+    color: var(--gooey-toast-close-color, var(--gooey-color-text-disabled));
     cursor: pointer;
     font-size: 18px;
     padding: 4px;
@@ -107,7 +107,7 @@
     left: 0;
     right: 0;
     height: 3px;
-    background: var(--gooey-toast-progress-track-bg, rgba(0, 0, 0, 0.08));
+    background: var(--gooey-toast-progress-track-bg, var(--gooey-color-border-light));
     overflow: hidden;
 }
 

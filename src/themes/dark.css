@@ -38,6 +38,17 @@
     --gooey-color-warning: #f0883e;
     --gooey-color-error: #f25c5c;
 
+    /* ===== Overlays (inverted for dark surfaces) ===== */
+    --gooey-color-overlay-hover: rgba(255, 255, 255, 0.08);
+    --gooey-color-overlay-active: rgba(255, 255, 255, 0.12);
+
+    /* ===== Tooltip ===== */
+    --gooey-color-tooltip-bg: #4a4a4a;
+    --gooey-color-tooltip-text: #e0e0e0;
+
+    /* ===== Danger / Destructive ===== */
+    --gooey-color-danger: #e74c3c;
+
     /* ===== Shadows (deeper for dark surfaces) ===== */
     --gooey-shadow-sm: 2px 2px 5px rgba(0, 0, 0, 0.5);
     --gooey-shadow-md: 0 2px 8px rgba(0, 0, 0, 0.4);
