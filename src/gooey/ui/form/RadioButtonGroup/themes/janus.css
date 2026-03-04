@@ -1,0 +1,4 @@
+/* RadioButtonGroup - Janus structural override */
+:host {
+    border-radius: 0;
+}

@@ -1,0 +1,123 @@
+/* VideoPlayer - Chicago theme */
+/* Raised bevel controls, gray surface, no animations */
+
+/* Controls container - raised bevel */
+.controls-container {
+    background: #C0C0C0;
+    border-top: 1px solid #000000;
+    box-shadow: inset 0 1px 0 #FFFFFF;
+    transition: none !important;
+}
+
+/* Buttons - raised bevel */
+button {
+    background: #C0C0C0;
+    border: 1px solid #000000;
+    box-shadow:
+        inset -1px -1px 0 #808080,
+        inset 1px 1px 0 #FFFFFF;
+    color: #000000;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 0;
+    transition: none !important;
+}
+
+/* No hover highlight in Chicago */
+button:hover {
+    background: #C0C0C0;
+}
+
+/* Sunken bevel on press */
+button:active {
+    box-shadow:
+        inset 1px 1px 0 #808080,
+        inset -1px -1px 0 #FFFFFF;
+}
+
+/* Dotted focus ring */
+button:focus-visible {
+    outline: 1px dotted #000000;
+    outline-offset: -3px;
+}
+
+/* Emboss disabled pattern */
+button:disabled {
+    color: #808080;
+    text-shadow: 1px 1px 0 #FFFFFF;
+    cursor: not-allowed;
+}
+
+button:disabled:hover {
+    background: #C0C0C0;
+}
+
+/* Progress bar and volume slider - sunken track */
+.progress-bar,
+.volume-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 4px;
+    background: #C0C0C0;
+    border: 1px solid #000000;
+    box-shadow: inset 1px 1px 0 #808080;
+    border-radius: 0;
+    cursor: pointer;
+    outline: none;
+}
+
+/* Slider thumbs - raised bevel */
+.progress-bar::-webkit-slider-thumb,
+.volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    background: #C0C0C0;
+    border: 1px solid #000000;
+    box-shadow:
+        inset -1px -1px 0 #808080,
+        inset 1px 1px 0 #FFFFFF;
+    border-radius: 0;
+    cursor: pointer;
+    transition: none !important;
+}
+
+.progress-bar::-webkit-slider-thumb:hover,
+.volume-slider::-webkit-slider-thumb:hover {
+    transform: none;
+    background: #C0C0C0;
+}
+
+.progress-bar::-moz-range-thumb,
+.volume-slider::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    background: #C0C0C0;
+    border: 1px solid #000000;
+    box-shadow:
+        inset -1px -1px 0 #808080,
+        inset 1px 1px 0 #FFFFFF;
+    border-radius: 0;
+    cursor: pointer;
+}
+
+/* Runnable tracks */
+.progress-bar::-webkit-slider-runnable-track,
+.volume-slider::-webkit-slider-runnable-track {
+    height: 4px;
+    background: #C0C0C0;
+    border-radius: 0;
+}
+
+.progress-bar::-moz-range-track,
+.volume-slider::-moz-range-track {
+    height: 4px;
+    background: #C0C0C0;
+    border-radius: 0;
+}
+
+/* Time display */
+.time-display {
+    color: #000000;
+}

@@ -1,0 +1,4 @@
+/* RadioButtonGroup - Chicago structural override */
+:host {
+    border-radius: 0;
+}
