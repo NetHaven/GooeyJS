@@ -52,9 +52,9 @@
 
 /* Primary - blue */
 :host([variant="primary"]) .badge {
-    background-color: #000080;
+    background-color: #0000C0;
     color: #ffffff;
-    border: 2px outset #000080;
+    border: 2px outset #0000C0;
 }
 
 /* Success - green */
@@ -98,8 +98,8 @@
 
 :host([outline][variant="primary"]) .badge {
     background-color: #ffffff;
-    color: #000080;
-    border: 1px solid #000080;
+    color: #0000C0;
+    border: 1px solid #0000C0;
 }
 
 :host([outline][variant="success"]) .badge {
