@@ -54,7 +54,7 @@ button:active {
 
 :host(.pressed) .toggle-button:active,
 :host(.pressed) button:active {
-    background-color: #000080;
+    background-color: #0000C0;
 }
 
 /* Disabled state */

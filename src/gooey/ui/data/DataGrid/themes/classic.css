@@ -6,14 +6,27 @@
 }
 
 :host([disabled]) {
-    opacity: 0.5;
     pointer-events: none;
 }
 
-/* Disabled state - no emboss text-shadow */
+/* Disabled state - color-based, no opacity, no emboss text-shadow */
 :host([disabled]) .datagrid-container {
     color: #A0A0A0;
-    /* No text-shadow emboss */
+    text-shadow: none;
+}
+
+:host([disabled]) .datagrid-column-header {
+    color: #A0A0A0;
+    text-shadow: none;
+}
+
+:host([disabled]) .datagrid-row:hover {
+    background-color: #eee;
+}
+
+:host([disabled]) .datagrid-row.selected {
+    background-color: #ddd;
+    color: #A0A0A0;
 }
 
 .datagrid-container {
