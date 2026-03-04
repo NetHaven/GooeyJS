@@ -41,3 +41,58 @@ select:not(:focus) option:checked {
     opacity: 1;
     cursor: not-allowed;
 }
+
+/* Scrollbar styling */
+select::-webkit-scrollbar {
+    width: var(--chicago-scrollbar-size, 16px);
+    height: var(--chicago-scrollbar-size, 16px);
+}
+
+select::-webkit-scrollbar-track {
+    background: var(--chicago-scrollbar-track, #C0C0C0);
+}
+
+select::-webkit-scrollbar-thumb {
+    background: var(--chicago-scrollbar-thumb, #C0C0C0);
+    border: 1px solid;
+    border-color: var(--chicago-scrollbar-thumb-border-light, #FFFFFF) var(--chicago-scrollbar-thumb-border-dark, #000000) var(--chicago-scrollbar-thumb-border-dark, #000000) var(--chicago-scrollbar-thumb-border-light, #FFFFFF);
+    box-shadow:
+        inset 1px 1px 0 var(--chicago-scrollbar-thumb-border-light, #FFFFFF),
+        inset -1px -1px 0 var(--chicago-scrollbar-thumb-border-shadow, #808080);
+    background-image: linear-gradient(
+        to bottom,
+        transparent 4px,
+        var(--chicago-scrollbar-grip, #000000) 4px, var(--chicago-scrollbar-grip, #000000) 5px,
+        transparent 5px,
+        transparent 7px,
+        var(--chicago-scrollbar-grip, #000000) 7px, var(--chicago-scrollbar-grip, #000000) 8px,
+        transparent 8px,
+        transparent 10px,
+        var(--chicago-scrollbar-grip, #000000) 10px, var(--chicago-scrollbar-grip, #000000) 11px,
+        transparent 11px
+    );
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 6px 16px;
+    border-radius: 0;
+}
+
+select::-webkit-scrollbar-thumb:hover {
+    background-color: var(--chicago-scrollbar-thumb, #C0C0C0);
+}
+
+select::-webkit-scrollbar-button {
+    background: var(--chicago-scrollbar-button-face, #C0C0C0);
+    border: 1px solid;
+    border-color: var(--chicago-scrollbar-button-border-light, #FFFFFF) var(--chicago-scrollbar-button-border-dark, #000000) var(--chicago-scrollbar-button-border-dark, #000000) var(--chicago-scrollbar-button-border-light, #FFFFFF);
+    box-shadow:
+        inset 1px 1px 0 var(--chicago-scrollbar-button-border-light, #FFFFFF),
+        inset -1px -1px 0 var(--chicago-scrollbar-button-border-shadow, #808080);
+    display: block;
+    width: 16px;
+    height: 16px;
+}
+
+select::-webkit-scrollbar-corner {
+    background: var(--chicago-face, #C0C0C0);
+}
