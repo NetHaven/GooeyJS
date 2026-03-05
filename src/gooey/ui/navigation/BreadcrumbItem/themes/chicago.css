@@ -1,0 +1,39 @@
+/* BreadcrumbItem - Chicago theme */
+/* Flat links, no transitions, navy active */
+
+:host {
+    transition: none !important;
+}
+
+/* Link - flat, no transitions */
+.breadcrumb-link {
+    border-radius: 0;
+    transition: none !important;
+    color: var(--chicago-highlight, #000080);
+}
+
+.breadcrumb-link:hover {
+    text-decoration: underline;
+    background-color: transparent;
+    color: var(--chicago-highlight, #000080);
+}
+
+.breadcrumb-link:active {
+    background-color: transparent;
+}
+
+.breadcrumb-link:focus {
+    outline: 1px dotted var(--chicago-text, #000000);
+    outline-offset: -3px;
+}
+
+/* Active/current item */
+:host([active]) .breadcrumb-link {
+    color: var(--chicago-text, #000000);
+}
+
+/* Disabled */
+:host([disabled]) .breadcrumb-link {
+    color: var(--chicago-text-disabled, #808080);
+    text-shadow: 1px 1px 0 var(--chicago-text-disabled-highlight, #FFFFFF);
+}

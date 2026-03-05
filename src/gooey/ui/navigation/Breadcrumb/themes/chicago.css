@@ -1,0 +1,57 @@
+/* Breadcrumb - Chicago theme */
+/* Flat borders, no transitions, navy selection */
+
+:host {
+    transition: none !important;
+    font-family: var(--chicago-font-family, "MS Sans Serif", "Microsoft Sans Serif", Tahoma, Arial, sans-serif);
+    font-size: 11px;
+}
+
+/* Ellipsis button - raised bevel */
+::slotted(.breadcrumb-ellipsis) {
+    border-radius: 0;
+    border: 1px solid;
+    border-color: var(--chicago-border-light, #FFFFFF) var(--chicago-border-dark, #000000) var(--chicago-border-dark, #000000) var(--chicago-border-light, #FFFFFF);
+    box-shadow: inset 1px 1px 0 var(--chicago-border-highlight, #DFDFDF), inset -1px -1px 0 var(--chicago-border-shadow, #808080);
+    background-color: var(--chicago-face, #C0C0C0);
+    transition: none !important;
+}
+
+::slotted(.breadcrumb-ellipsis:active) {
+    border-color: var(--chicago-border-dark, #000000) var(--chicago-border-light, #FFFFFF) var(--chicago-border-light, #FFFFFF) var(--chicago-border-dark, #000000);
+    box-shadow: inset 1px 1px 0 var(--chicago-border-shadow, #808080);
+}
+
+::slotted(.breadcrumb-ellipsis:focus) {
+    outline: 1px dotted var(--chicago-text, #000000);
+    outline-offset: -3px;
+}
+
+/* Collapsed items dropdown - raised bevel with drop shadow */
+.breadcrumb-collapsed-menu {
+    border-radius: 0;
+    border: 1px solid;
+    border-color: var(--chicago-border-light, #FFFFFF) var(--chicago-border-shadow, #808080) var(--chicago-border-shadow, #808080) var(--chicago-border-light, #FFFFFF);
+    outline: 1px solid var(--chicago-border-dark, #000000);
+    background-color: var(--chicago-face, #C0C0C0);
+    box-shadow: 2px 2px 0 var(--chicago-border-dark, #000000);
+}
+
+/* Collapsed item hover - navy selection */
+.breadcrumb-collapsed-item {
+    transition: none !important;
+    padding: 4px 6px;
+}
+
+.breadcrumb-collapsed-item:hover,
+.breadcrumb-collapsed-item:focus {
+    background-color: var(--chicago-highlight, #000080);
+    color: var(--chicago-highlight-text, #FFFFFF);
+}
+
+/* Disabled */
+:host([disabled]) {
+    opacity: 1;
+    color: var(--chicago-text-disabled, #808080);
+    text-shadow: 1px 1px 0 var(--chicago-text-disabled-highlight, #FFFFFF);
+}

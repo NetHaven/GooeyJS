@@ -1,0 +1,93 @@
+/* HamburgerMenu - Chicago theme */
+/* Raised bevel panel, 3D system buttons, no animations */
+
+/* Kill ALL animations and transitions */
+:host,
+:host *,
+.hamburger-panel,
+.hamburger-backdrop,
+.hamburger-icon .bar {
+    animation: none !important;
+    transition: none !important;
+}
+
+/* Hamburger icon bars */
+.hamburger-icon .bar {
+    background-color: var(--chicago-text, #000000);
+    border-radius: 0;
+}
+
+/* Hamburger button */
+.hamburger-button:hover {
+    background-color: var(--chicago-face, #C0C0C0);
+}
+
+.hamburger-button:focus {
+    outline: 1px dotted var(--chicago-text, #000000);
+    outline-offset: -3px;
+}
+
+/* Navigation Panel: Chicago raised bevel */
+.hamburger-panel {
+    border: 1px solid var(--chicago-border-dark, #000000);
+    background-color: var(--chicago-face, #C0C0C0);
+    box-shadow:
+        inset 1px 1px 0 var(--chicago-border-light, #FFFFFF),
+        inset -1px -1px 0 var(--chicago-border-shadow, #808080),
+        2px 2px 0 var(--chicago-border-dark, #000000);
+    border-radius: 0;
+    font-family: var(--chicago-font-family, "MS Sans Serif", "Microsoft Sans Serif", Tahoma, Arial, sans-serif);
+    font-size: 11px;
+}
+
+/* Panel header */
+.panel-header {
+    border-bottom: 1px solid var(--chicago-border-shadow, #808080);
+    box-shadow: 0 1px 0 var(--chicago-border-light, #FFFFFF);
+}
+
+/* Close button: raised 3D bevel */
+.close-button {
+    width: 16px;
+    height: 16px;
+    padding: 0;
+    border: 1px solid;
+    border-color: var(--chicago-border-light, #FFFFFF) var(--chicago-border-dark, #000000) var(--chicago-border-dark, #000000) var(--chicago-border-light, #FFFFFF);
+    box-shadow: inset 1px 1px 0 var(--chicago-border-highlight, #DFDFDF), inset -1px -1px 0 var(--chicago-border-shadow, #808080);
+    background-color: var(--chicago-face, #C0C0C0);
+    font-size: 12px;
+    line-height: 14px;
+    text-align: center;
+    cursor: pointer;
+    color: var(--chicago-text, #000000);
+}
+
+.close-button:hover {
+    background-color: var(--chicago-face, #C0C0C0);
+}
+
+.close-button:active {
+    border-color: var(--chicago-border-dark, #000000) var(--chicago-border-light, #FFFFFF) var(--chicago-border-light, #FFFFFF) var(--chicago-border-dark, #000000);
+    box-shadow: inset 1px 1px 0 var(--chicago-border-shadow, #808080);
+}
+
+.close-button:focus {
+    outline: 1px dotted var(--chicago-text, #000000);
+    outline-offset: -3px;
+}
+
+/* Disabled state: dithered pattern */
+:host([disabled]) .hamburger-button {
+    opacity: 1;
+    color: var(--chicago-text-disabled, #808080);
+    text-shadow: 1px 1px 0 var(--chicago-text-disabled-highlight, #FFFFFF);
+}
+
+:host([disabled]) .hamburger-icon .bar {
+    background-color: var(--chicago-text-disabled, #808080);
+}
+
+/* Backdrop */
+.hamburger-backdrop {
+    background-color: rgba(0, 0, 0, 0.3);
+}
