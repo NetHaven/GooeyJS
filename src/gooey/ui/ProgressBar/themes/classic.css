@@ -19,16 +19,16 @@
 .progress-fill {
     background: linear-gradient(
         to bottom,
-        #339,
-        #66c,
-        #99f,
-        #ccf,
-        #eee,
-        #ccf,
-        #99f,
-        #66c,
-        #339,
-        #005
+        var(--gooey-color-primary-2),
+        var(--gooey-color-primary-3),
+        var(--gooey-color-primary-4),
+        var(--gooey-color-primary-5),
+        var(--gooey-color-primary-6),
+        var(--gooey-color-primary-5),
+        var(--gooey-color-primary-4),
+        var(--gooey-color-primary-3),
+        var(--gooey-color-primary-2),
+        var(--gooey-color-primary-1)
     );
     border-right: 1px solid #000000;
     border-radius: 0;
