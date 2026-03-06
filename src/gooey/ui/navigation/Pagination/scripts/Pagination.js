@@ -242,6 +242,412 @@ export default class Pagination extends UIComponent {
     }
 
     // =========================================================================
+    // Lifecycle
+    // =========================================================================
+
+    connectedCallback() {
+        super.connectedCallback?.();
+
+        // Register events
+        this.addValidEvent(PaginationEvent.PAGE_CHANGE);
+        this.addValidEvent(PaginationEvent.BEFORE_PAGE_CHANGE);
+        this.addValidEvent(PaginationEvent.PAGE_SIZE_CHANGE);
+        this.addValidEvent(PaginationEvent.PAGE_DATA_CHANGE);
+        this.addValidEvent(PaginationEvent.PAGE_ACTIVE);
+        this.addValidEvent(PaginationEvent.FIRST_PAGE);
+        this.addValidEvent(PaginationEvent.LAST_PAGE);
+        this.addValidEvent(PaginationEvent.STORE_BOUND);
+        this.addValidEvent(PaginationEvent.STORE_UNBOUND);
+        this.addValidEvent(PaginationEvent.DATAGRID_BOUND);
+        this.addValidEvent(PaginationEvent.DATAGRID_UNBOUND);
+
+        // Initialize from attributes
+        this._initFromAttributes();
+
+        // Attach internal event listeners
+        this._attachListeners();
+
+        // Bind to store/datagrid if attributes present
+        if (this.hasAttribute("store")) {
+            this.bindStore(this.getAttribute("store"));
+        }
+        if (this.hasAttribute("datagrid")) {
+            this.bindDataGrid(this.getAttribute("datagrid"));
+        }
+
+        // Initial render
+        this._render();
+    }
+
+    // =========================================================================
+    // Initialization
+    // =========================================================================
+
+    _initFromAttributes() {
+        // Clamp currentpage to valid range
+        const tp = this.totalPages;
+        if (tp > 0) {
+            const cp = this.currentpage;
+            if (cp < 1) {
+                this.currentpage = 1;
+            } else if (cp > tp) {
+                this.currentpage = tp;
+            }
+        }
+    }
+
+    // =========================================================================
+    // Page List Algorithm
+    // =========================================================================
+
+    _buildPageList() {
+        const currentPage = this.currentpage;
+        const totalPages = this.totalPages;
+        const pageRange = this.pagerange;
+        const marginPages = this.marginpages;
+
+        if (totalPages === 0) return [];
+
+        // If pageRange === 0, show all pages (no compression)
+        if (pageRange === 0) {
+            const pages = [];
+            for (let i = 1; i <= totalPages; i++) {
+                pages.push({ type: "page", page: i });
+            }
+            return pages;
+        }
+
+        // Compute inner window
+        const innerStart = Math.max(1, currentPage - pageRange);
+        const innerEnd = Math.min(totalPages, currentPage + pageRange);
+
+        // Compute margins
+        const leftMarginEnd = Math.min(marginPages, totalPages);
+        const rightMarginStart = Math.max(1, totalPages - marginPages + 1);
+
+        const result = [];
+        const seen = new Set();
+
+        // a. Add left margin pages
+        const leftPages = [];
+        for (let i = 1; i <= leftMarginEnd; i++) {
+            leftPages.push(i);
+        }
+
+        // b. Check gap between left margin end and inner window start
+        const hasLeftGap = leftMarginEnd < innerStart - 1;
+        const leftGapIsOne = leftMarginEnd === innerStart - 2;
+
+        // Determine which left margin pages to add
+        for (let i = 0; i < leftPages.length; i++) {
+            const page = leftPages[i];
+            // If hidefirstonellipsis and there IS a left ellipsis, omit last left-margin page
+            if (this.hidefirstonellipsis && hasLeftGap && !leftGapIsOne && i === leftPages.length - 1) {
+                continue;
+            }
+            if (!seen.has(page)) {
+                result.push({ type: "page", page });
+                seen.add(page);
+            }
+        }
+
+        // Insert left ellipsis or bridge page
+        if (hasLeftGap) {
+            if (leftGapIsOne) {
+                // Gap is exactly 1 page — show that page instead of ellipsis
+                const bridgePage = leftMarginEnd + 1;
+                if (!seen.has(bridgePage)) {
+                    result.push({ type: "page", page: bridgePage });
+                    seen.add(bridgePage);
+                }
+            } else {
+                result.push({ type: "ellipsis" });
+            }
+        }
+
+        // c. Add inner window pages
+        for (let i = innerStart; i <= innerEnd; i++) {
+            if (!seen.has(i)) {
+                result.push({ type: "page", page: i });
+                seen.add(i);
+            }
+        }
+
+        // d. Check gap between inner window end and right margin start
+        const hasRightGap = innerEnd < rightMarginStart - 1;
+        const rightGapIsOne = innerEnd === rightMarginStart - 2;
+
+        if (hasRightGap) {
+            if (rightGapIsOne) {
+                // Gap is exactly 1 page — show that page instead of ellipsis
+                const bridgePage = innerEnd + 1;
+                if (!seen.has(bridgePage)) {
+                    result.push({ type: "page", page: bridgePage });
+                    seen.add(bridgePage);
+                }
+            } else {
+                result.push({ type: "ellipsis" });
+            }
+        }
+
+        // e. Add right margin pages
+        const rightPages = [];
+        for (let i = rightMarginStart; i <= totalPages; i++) {
+            rightPages.push(i);
+        }
+
+        for (let i = 0; i < rightPages.length; i++) {
+            const page = rightPages[i];
+            // If hidelastonellipsis and there IS a right ellipsis, omit first right-margin page
+            if (this.hidelastonellipsis && hasRightGap && !rightGapIsOne && i === 0) {
+                continue;
+            }
+            if (!seen.has(page)) {
+                result.push({ type: "page", page: page });
+                seen.add(page);
+            }
+        }
+
+        return result;
+    }
+
+    // =========================================================================
+    // Rendering
+    // =========================================================================
+
+    _render() {
+        // Guard: don't render before DOM is ready
+        if (!this._container) return;
+
+        const totalPages = this.totalPages;
+        const currentPage = this.currentpage;
+
+        // Hide entire bar if hideonlyone and totalPages <= 1
+        if (this.hideonlyone && totalPages <= 1) {
+            this._container.style.display = "none";
+            return;
+        }
+        this._container.style.display = "";
+
+        // Remove existing dynamic page buttons and ellipsis elements
+        const dynamicItems = this._controls.querySelectorAll(".pagination-page, .pagination-ellipsis");
+        dynamicItems.forEach(item => item.remove());
+
+        // First button
+        const firstLi = this._controls.querySelector(".pagination-first");
+        if (firstLi) {
+            firstLi.style.display = this.showfirst ? "" : "none";
+            const firstBtn = firstLi.querySelector("button");
+            if (firstBtn) {
+                firstBtn.textContent = this.firsttext;
+                if (this.isFirstPage) {
+                    firstLi.classList.add("disabled");
+                    firstBtn.disabled = true;
+                } else {
+                    firstLi.classList.remove("disabled");
+                    firstBtn.disabled = false;
+                }
+            }
+        }
+
+        // Previous button
+        const prevLi = this._controls.querySelector(".pagination-previous");
+        if (prevLi) {
+            const prevBtn = prevLi.querySelector("button");
+            if (this.showprevious) {
+                if (this.autohideprevious && this.isFirstPage) {
+                    prevLi.style.display = "none";
+                } else {
+                    prevLi.style.display = "";
+                    if (prevBtn) {
+                        if (this.isFirstPage) {
+                            prevLi.classList.add("disabled");
+                            prevBtn.disabled = true;
+                        } else {
+                            prevLi.classList.remove("disabled");
+                            prevBtn.disabled = false;
+                        }
+                    }
+                }
+            } else {
+                prevLi.style.display = "none";
+            }
+            if (prevBtn) {
+                prevBtn.textContent = this.previoustext;
+            }
+        }
+
+        // Next button
+        const nextLi = this._controls.querySelector(".pagination-next");
+        if (nextLi) {
+            const nextBtn = nextLi.querySelector("button");
+            if (this.shownext) {
+                if (this.autohidenext && this.isLastPage) {
+                    nextLi.style.display = "none";
+                } else {
+                    nextLi.style.display = "";
+                    if (nextBtn) {
+                        if (this.isLastPage) {
+                            nextLi.classList.add("disabled");
+                            nextBtn.disabled = true;
+                        } else {
+                            nextLi.classList.remove("disabled");
+                            nextBtn.disabled = false;
+                        }
+                    }
+                }
+            } else {
+                nextLi.style.display = "none";
+            }
+            if (nextBtn) {
+                nextBtn.textContent = this.nexttext;
+            }
+        }
+
+        // Last button
+        const lastLi = this._controls.querySelector(".pagination-last");
+        if (lastLi) {
+            lastLi.style.display = this.showlast ? "" : "none";
+            const lastBtn = lastLi.querySelector("button");
+            if (lastBtn) {
+                lastBtn.textContent = this.lasttext;
+                if (this.isLastPage) {
+                    lastLi.classList.add("disabled");
+                    lastBtn.disabled = true;
+                } else {
+                    lastLi.classList.remove("disabled");
+                    lastBtn.disabled = false;
+                }
+            }
+        }
+
+        // Page number buttons
+        if (this.showpagenumbers) {
+            const pageList = this._buildPageList();
+            const nextRef = this._controls.querySelector(".pagination-next");
+
+            for (const entry of pageList) {
+                if (entry.type === "page") {
+                    const li = document.createElement("li");
+                    li.className = "pagination-item pagination-page";
+
+                    const btn = document.createElement("button");
+                    btn.type = "button";
+
+                    // Determine label
+                    let label;
+                    if (this._pageLabelFormatter) {
+                        label = this._pageLabelFormatter({ page: entry.page });
+                    } else if (this.pagelabelformat) {
+                        label = this.pagelabelformat.replace("{page}", entry.page);
+                    } else {
+                        label = String(entry.page);
+                    }
+                    btn.textContent = label;
+                    btn.setAttribute("aria-label", `Page ${entry.page}`);
+
+                    if (entry.page === currentPage) {
+                        li.classList.add("active");
+                        btn.setAttribute("aria-current", "page");
+                    }
+
+                    li.appendChild(btn);
+                    this._controls.insertBefore(li, nextRef);
+                } else if (entry.type === "ellipsis") {
+                    const li = document.createElement("li");
+                    li.className = "pagination-item pagination-ellipsis";
+                    li.setAttribute("aria-hidden", "true");
+
+                    const span = document.createElement("span");
+                    span.textContent = this.ellipsistext;
+
+                    li.appendChild(span);
+                    this._controls.insertBefore(li, nextRef);
+                }
+            }
+        }
+
+        // Size changer
+        if (this._sizeChanger) {
+            this._sizeChanger.style.display = this.showsizechanger ? "" : "none";
+            if (this.showsizechanger && this._sizeSelect) {
+                // Populate options
+                this._sizeSelect.innerHTML = "";
+                const options = this.sizechangeroptions.split(",").map(s => s.trim()).filter(Boolean);
+                const currentSize = this.pagesize;
+                for (const optVal of options) {
+                    const option = document.createElement("option");
+                    option.value = optVal;
+                    option.textContent = optVal;
+                    if (parseInt(optVal) === currentSize) {
+                        option.selected = true;
+                    }
+                    this._sizeSelect.appendChild(option);
+                }
+            }
+        }
+
+        // Go input / Go button
+        if (this._goContainer) {
+            this._goContainer.style.display = this.showgoinput ? "" : "none";
+        }
+        if (this._goButton) {
+            this._goButton.style.display = this.showgobutton ? "" : "none";
+            this._goButton.textContent = this.gobuttontext;
+        }
+        if (this._goInput && totalPages > 0) {
+            this._goInput.max = totalPages;
+        }
+
+        // Navigator
+        this._renderNavigator();
+    }
+
+    _renderNavigator() {
+        if (!this._navigator) return;
+
+        if (!this.shownavigator) {
+            this._navigator.style.display = "none";
+            return;
+        }
+        this._navigator.style.display = "";
+
+        const data = {
+            currentPage: this.currentpage,
+            totalPages: this.totalPages,
+            totalRecords: this.totalrecords,
+            rangeStart: this.rangeStart,
+            rangeEnd: this.rangeEnd,
+            pageSize: this.pagesize
+        };
+
+        let text;
+        if (this._navigatorFormatter) {
+            text = this._navigatorFormatter(data);
+        } else {
+            const format = this.navigatorformat.toUpperCase();
+            switch (format) {
+                case NavigatorFormat.PAGES:
+                    text = `Page ${data.currentPage} of ${data.totalPages}`;
+                    break;
+                case NavigatorFormat.ITEMS:
+                    if (data.totalRecords === 0) {
+                        text = "Showing 0 of 0 items";
+                    } else {
+                        text = `Showing ${data.rangeEnd - data.rangeStart + 1} of ${data.totalRecords} items`;
+                    }
+                    break;
+                case NavigatorFormat.RANGE:
+                default:
+                    text = `${data.rangeStart}-${data.rangeEnd} of ${data.totalRecords}`;
+                    break;
+            }
+        }
+
+        this._navigator.textContent = text;
+    }
+
+    // =========================================================================
     // Stub Methods (filled in Plan 03 / Phase 66)
     // =========================================================================
 
