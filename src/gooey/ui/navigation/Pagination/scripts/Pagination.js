@@ -36,7 +36,24 @@ export default class Pagination extends UIComponent {
     set totalrecords(val) { this.setAttribute("totalrecords", val); }
 
     get pagesize() { return parseInt(this.getAttribute("pagesize")) || 10; }
-    set pagesize(val) { this.setAttribute("pagesize", val); }
+    set pagesize(val) {
+        const oldVal = this.pagesize;
+        this.setAttribute("pagesize", val);
+        const newVal = parseInt(val);
+        if (oldVal !== newVal && !isNaN(newVal)) {
+            this.fireEvent(PaginationEvent.PAGE_SIZE_CHANGE, {
+                pagination: this,
+                pageSize: newVal,
+                previousPageSize: oldVal,
+                currentPage: this.currentpage,
+                totalPages: this.totalPages
+            });
+            // Reset to page 1 if current page exceeds new total pages
+            if (this.currentpage > this.totalPages && this.totalPages > 0) {
+                this.currentpage = 1;
+            }
+        }
+    }
 
     get currentpage() { return parseInt(this.getAttribute("currentpage")) || 1; }
     set currentpage(val) { this.setAttribute("currentpage", val); }
@@ -173,7 +190,7 @@ export default class Pagination extends UIComponent {
 
     setNavigatorFormatter(fn) {
         this._navigatorFormatter = fn;
-        this._render();
+        this._renderNavigator();
     }
 
     setPageLabelFormatter(fn) {
@@ -187,7 +204,13 @@ export default class Pagination extends UIComponent {
 
     refresh() { this._render(); }
 
-    reset() { this.currentpage = 1; }
+    reset() {
+        if (this.currentpage !== 1) {
+            this.currentpage = 1;
+        } else {
+            this._render();
+        }
+    }
 
     // =========================================================================
     // attributeChangedCallback
@@ -544,6 +567,7 @@ export default class Pagination extends UIComponent {
                         label = String(entry.page);
                     }
                     btn.textContent = label;
+                    btn.dataset.page = entry.page;
                     btn.setAttribute("aria-label", `Page ${entry.page}`);
 
                     if (entry.page === currentPage) {
@@ -648,14 +672,218 @@ export default class Pagination extends UIComponent {
     }
 
     // =========================================================================
-    // Stub Methods (filled in Plan 03 / Phase 66)
+    // Event Listeners
     // =========================================================================
 
-    _attachListeners() {}
+    _attachListeners() {
+        // Delegated click handler on controls
+        this._controls.addEventListener("click", (event) => {
+            const button = event.target.closest("button");
+            if (!button || button.disabled) return;
+
+            const firstLi = button.closest(".pagination-first");
+            if (firstLi) {
+                this.firstPage();
+                return;
+            }
+
+            const lastLi = button.closest(".pagination-last");
+            if (lastLi) {
+                this.lastPage();
+                return;
+            }
+
+            const prevLi = button.closest(".pagination-previous");
+            if (prevLi) {
+                this.previousPage();
+                return;
+            }
+
+            const nextLi = button.closest(".pagination-next");
+            if (nextLi) {
+                this.nextPage();
+                return;
+            }
+
+            const pageLi = button.closest(".pagination-page");
+            if (pageLi) {
+                const pageNumber = parseInt(button.dataset.page);
+                if (!isNaN(pageNumber)) {
+                    this._onPageClick(pageNumber);
+                }
+                return;
+            }
+        });
+
+        // Size changer — setter fires PAGE_SIZE_CHANGE and handles page reset
+        if (this._sizeSelect) {
+            this._sizeSelect.addEventListener("change", () => {
+                const newValue = parseInt(this._sizeSelect.value);
+                if (isNaN(newValue) || newValue <= 0) return;
+                this.pagesize = newValue;
+            });
+        }
+
+        // Go-to-page input (Enter key)
+        if (this._goInput) {
+            this._goInput.addEventListener("keydown", (event) => {
+                if (event.key === "Enter") {
+                    const page = parseInt(this._goInput.value);
+                    if (!isNaN(page)) {
+                        this.goToPage(page);
+                    }
+                    this._goInput.value = "";
+                }
+            });
+        }
+
+        // Go button click
+        if (this._goButton) {
+            this._goButton.addEventListener("click", () => {
+                if (this._goInput) {
+                    const page = parseInt(this._goInput.value);
+                    if (!isNaN(page)) {
+                        this.goToPage(page);
+                    }
+                    this._goInput.value = "";
+                }
+            });
+        }
+    }
+
+    // =========================================================================
+    // Page Click Handler
+    // =========================================================================
+
+    _onPageClick(pageNumber) {
+        if (pageNumber === this.currentpage) {
+            this.fireEvent(PaginationEvent.PAGE_ACTIVE, {
+                pagination: this,
+                currentPage: pageNumber
+            });
+            return;
+        }
+        this.goToPage(pageNumber);
+    }
+
+    // =========================================================================
+    // Navigation — goToPage (cancelable)
+    // =========================================================================
+
+    goToPage(pageNumber) {
+        pageNumber = parseInt(pageNumber);
+        if (isNaN(pageNumber) || pageNumber < 1 || pageNumber > this.totalPages) return;
+        if (this.disabled) return;
+        if (pageNumber === this.currentpage) return;
+
+        const direction = this._getDirection(this.currentpage, pageNumber);
+
+        // Fire cancelable before-page-change event
+        const proceed = this.fireEvent(PaginationEvent.BEFORE_PAGE_CHANGE, {
+            pagination: this,
+            currentPage: this.currentpage,
+            targetPage: pageNumber,
+            direction
+        }, { cancelable: true });
+
+        if (!proceed) return;
+
+        this.currentpage = pageNumber;
+    }
+
+    // =========================================================================
+    // Current Page Changed Handler
+    // =========================================================================
 
     _onCurrentPageChanged(oldPage, newPage) {
+        const totalPages = this.totalPages;
+
+        // Clamp to valid range
+        if (totalPages > 0) {
+            if (newPage < 1) {
+                newPage = 1;
+                this.setAttribute("currentpage", String(newPage));
+            } else if (newPage > totalPages) {
+                newPage = totalPages;
+                this.setAttribute("currentpage", String(newPage));
+            }
+        }
+
+        const direction = this._getDirection(oldPage, newPage);
+
+        this.fireEvent(PaginationEvent.PAGE_CHANGE, {
+            pagination: this,
+            currentPage: newPage,
+            previousPage: oldPage,
+            totalPages: totalPages,
+            direction,
+            rangeStart: this.rangeStart,
+            rangeEnd: this.rangeEnd
+        });
+
+        if (newPage === 1) {
+            this.fireEvent(PaginationEvent.FIRST_PAGE, { pagination: this });
+        }
+        if (newPage === totalPages) {
+            this.fireEvent(PaginationEvent.LAST_PAGE, { pagination: this });
+        }
+
         this._render();
     }
+
+    // =========================================================================
+    // Direction Helper
+    // =========================================================================
+
+    _getDirection(fromPage, toPage) {
+        if (toPage === 1) return "first";
+        if (toPage === this.totalPages) return "last";
+        if (toPage === fromPage + 1) return "next";
+        if (toPage === fromPage - 1) return "previous";
+        return "jump";
+    }
+
+    // =========================================================================
+    // Navigation Methods
+    // =========================================================================
+
+    nextPage() {
+        if (!this.disabled && !this.isLastPage) {
+            this.goToPage(this.currentpage + 1);
+        }
+    }
+
+    previousPage() {
+        if (!this.disabled && !this.isFirstPage) {
+            this.goToPage(this.currentpage - 1);
+        }
+    }
+
+    firstPage() {
+        if (!this.disabled) {
+            this.goToPage(1);
+        }
+    }
+
+    lastPage() {
+        if (!this.disabled) {
+            this.goToPage(this.totalPages);
+        }
+    }
+
+    // =========================================================================
+    // Lifecycle — Disconnect
+    // =========================================================================
+
+    disconnectedCallback() {
+        super.disconnectedCallback?.();
+        this.unbindStore();
+        this.unbindDataGrid();
+    }
+
+    // =========================================================================
+    // Store/DataGrid Stubs (Phase 66)
+    // =========================================================================
 
     bindStore(storeId) {}
     unbindStore() {}
