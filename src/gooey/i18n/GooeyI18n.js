@@ -43,6 +43,12 @@ export default class GooeyI18n {
     /** @type {string|string[]} Fallback locale or ordered fallback chain */
     static _fallbackLocale = "";
 
+    /** @type {string} Default namespace for messages when no prefix is given */
+    static _defaultNamespace = "translation";
+
+    /** @type {string[]} Fallback namespace chain -- tried when key not found in target namespace */
+    static _fallbackNamespace = [];
+
     /**
      * Message store: { locale: { namespace: { key: value } } }
      * Default namespace is "translation".
@@ -144,6 +150,9 @@ export default class GooeyI18n {
      * @param {Object} [options.datetimeFormats={}] - Named datetime format presets keyed by locale
      * @param {Object} [options.numberFormats={}] - Named number format presets keyed by locale
      * @param {Object} [options.defaultRichTextElements=null] - Default rich text element factories for MessageFormat
+     * @param {string} [options.defaultNamespace="translation"] - Default namespace for messages
+     * @param {string|string[]} [options.fallbackNamespace=[]] - Namespace(s) to try when key not found in target namespace
+     * @param {boolean} [options.debug=false] - Enable debug mode (console logging)
      */
     static init(options = {}) {
         const {
@@ -158,8 +167,17 @@ export default class GooeyI18n {
             keySeparator = ".",
             datetimeFormats = {},
             numberFormats = {},
-            defaultRichTextElements = null
+            defaultRichTextElements = null,
+            defaultNamespace = "translation",
+            fallbackNamespace = [],
+            debug = false
         } = options;
+
+        // Store namespace configuration
+        this._defaultNamespace = defaultNamespace;
+        this._fallbackNamespace = Array.isArray(fallbackNamespace)
+            ? fallbackNamespace
+            : (fallbackNamespace ? [fallbackNamespace] : []);
 
         // Store options
         this._options = {
@@ -168,12 +186,13 @@ export default class GooeyI18n {
             silentTranslationWarn,
             silentFallbackWarn,
             nsSeparator,
-            keySeparator
+            keySeparator,
+            debug
         };
 
-        // Process messages: wrap under "translation" namespace if not already namespaced
+        // Process messages: wrap under default namespace if not already namespaced
         for (const loc of Object.keys(messages)) {
-            this._messages[loc] = { translation: messages[loc] };
+            this._messages[loc] = { [this._defaultNamespace]: messages[loc] };
         }
 
         // Process named datetime format presets
@@ -375,20 +394,28 @@ export default class GooeyI18n {
         // Step 4: Build locale chain
         const localeChain = this._buildLocaleChain(options);
 
-        // Step 3 + 5 + 6: Try each locale in chain
+        // Step 3 + 5 + 6: Try each locale in chain with namespace fallback
         for (const loc of localeChain) {
-            // Step 3: Context resolution -- try key_context first
-            if (options.context) {
-                const contextKeypath = keypath + "_" + options.context;
-                const contextValue = this._resolveKey(loc, namespace, contextKeypath);
-                const contextResult = this._processResolvedValue(contextValue, loc, options);
-                if (contextResult !== undefined) return contextResult;
+            // Build namespace chain: [specified namespace, ...fallbackNamespaces]
+            const nsChain = [namespace];
+            for (const fns of this._fallbackNamespace) {
+                if (!nsChain.includes(fns)) nsChain.push(fns);
             }
 
-            // Step 5: Nested keypath resolution
-            const value = this._resolveKey(loc, namespace, keypath);
-            const result = this._processResolvedValue(value, loc, options);
-            if (result !== undefined) return result;
+            for (const ns of nsChain) {
+                // Step 3: Context resolution -- try key_context first
+                if (options.context) {
+                    const contextKeypath = keypath + "_" + options.context;
+                    const contextValue = this._resolveKey(loc, ns, contextKeypath);
+                    const contextResult = this._processResolvedValue(contextValue, loc, options);
+                    if (contextResult !== undefined) return contextResult;
+                }
+
+                // Step 5: Nested keypath resolution
+                const value = this._resolveKey(loc, ns, keypath);
+                const result = this._processResolvedValue(value, loc, options);
+                if (result !== undefined) return result;
+            }
         }
 
         // Step 8: Missing key handling
@@ -405,7 +432,7 @@ export default class GooeyI18n {
      * @param {Object} messages - Message object
      */
     static setLocaleMessages(locale, messages) {
-        this._messages[locale] = { translation: messages };
+        this._messages[locale] = { [this._defaultNamespace]: messages };
     }
 
     /**
@@ -417,10 +444,13 @@ export default class GooeyI18n {
      */
     static mergeLocaleMessages(locale, messages) {
         if (!this._messages[locale]) {
-            this._messages[locale] = { translation: {} };
+            this._messages[locale] = { [this._defaultNamespace]: {} };
         }
-        this._messages[locale].translation = this._deepMerge(
-            this._messages[locale].translation,
+        if (!this._messages[locale][this._defaultNamespace]) {
+            this._messages[locale][this._defaultNamespace] = {};
+        }
+        this._messages[locale][this._defaultNamespace] = this._deepMerge(
+            this._messages[locale][this._defaultNamespace],
             messages
         );
     }
@@ -432,7 +462,7 @@ export default class GooeyI18n {
      * @returns {Object|undefined} Message object or undefined
      */
     static getLocaleMessages(locale) {
-        return this._messages[locale]?.translation;
+        return this._messages[locale]?.[this._defaultNamespace];
     }
 
     /**
@@ -687,11 +717,98 @@ export default class GooeyI18n {
     }
 
     /**
-     * Clear all caches (formatter instances and message ASTs).
+     * Clear the URL-to-JSON resource cache.
+     * Forces re-fetching of locale files on next load.
+     */
+    static clearResourceCache() {
+        this._resourceCache.clear();
+    }
+
+    /**
+     * Clear all caches (formatter instances, message ASTs, and resource cache).
      */
     static clearAllCaches() {
         this.clearFormatterCache();
         this.clearMessageCache();
+        this.clearResourceCache();
+    }
+
+    /**
+     * Load messages for a specific namespace from a URL.
+     * Uses retry (3 attempts, exponential backoff) and timeout (10s).
+     * Caches the result in _resourceCache.
+     *
+     * @param {string} locale - Locale identifier
+     * @param {string} namespace - Namespace to store messages under
+     * @param {string} url - URL to JSON messages file
+     * @returns {Promise<void>} Resolves when messages are loaded and stored
+     */
+    static async loadNamespace(locale, namespace, url) {
+        // Check resource cache first
+        const cached = this._resourceCache.get(url);
+        if (cached) {
+            this.setNamespaceMessages(locale, namespace, cached);
+            return;
+        }
+
+        const MAX_RETRIES = 3;
+        const TIMEOUT_MS = 10000;
+        let lastError;
+
+        for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS);
+
+                const response = await fetch(url, {
+                    method: "GET",
+                    signal: controller.signal,
+                    cache: "default",
+                    headers: {
+                        "Accept": "application/json,*/*"
+                    }
+                });
+
+                clearTimeout(timeoutId);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const messages = await response.json();
+                this._resourceCache.set(url, messages);
+                this.setNamespaceMessages(locale, namespace, messages);
+                return;
+            } catch (err) {
+                lastError = err;
+                if (attempt < MAX_RETRIES - 1) {
+                    const delay = Math.pow(2, attempt) * 200;
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                }
+            }
+        }
+
+        throw lastError;
+    }
+
+    /**
+     * Re-fetch locale messages from their registered lazy URLs.
+     * Clears cached entries for the specified locales and re-loads.
+     *
+     * @param {string[]} locales - Array of locale identifiers to reload
+     * @returns {Promise<void>} Resolves when all locales have been reloaded
+     */
+    static async reloadLocales(locales) {
+        const promises = [];
+        for (const loc of locales) {
+            const url = this._lazyLocales.get(loc);
+            if (url) {
+                // Remove from resource cache so it re-fetches
+                this._resourceCache.delete(url);
+                promises.push(this._loadLocaleFromURL(loc, url));
+            }
+        }
+        await Promise.all(promises);
     }
 
     // ── Formatting Methods ────────────────────────────────────────────
@@ -1007,7 +1124,7 @@ export default class GooeyI18n {
                 keypath: key.substring(idx + sep.length)
             };
         }
-        return { namespace: "translation", keypath: key };
+        return { namespace: this._defaultNamespace, keypath: key };
     }
 
     /**
