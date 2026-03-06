@@ -2,6 +2,7 @@ import UIComponent from '../../../UIComponent.js';
 import Template from '../../../../util/Template.js';
 import PaginationEvent from '../../../../events/navigation/PaginationEvent.js';
 import DataStoreEvent from '../../../../events/data/DataStoreEvent.js';
+import DataGridEvent from '../../../../events/data/DataGridEvent.js';
 import NavigatorFormat from './NavigatorFormat.js';
 
 export default class Pagination extends UIComponent {
@@ -1035,9 +1036,160 @@ export default class Pagination extends UIComponent {
     }
 
     // =========================================================================
-    // DataGrid Binding (stubs for Task 2)
+    // DataGrid Binding
     // =========================================================================
 
-    bindDataGrid(gridId) {}
-    unbindDataGrid() {}
+    bindDataGrid(gridIdOrElement) {
+        this.unbindDataGrid();
+
+        let grid;
+        if (typeof gridIdOrElement === 'string') {
+            grid = document.getElementById(gridIdOrElement);
+        } else {
+            grid = gridIdOrElement;
+        }
+
+        if (grid && grid.tagName && grid.tagName.toLowerCase() === 'gooeyui-datagrid') {
+            this._connectToDataGrid(grid);
+        } else if (typeof gridIdOrElement === 'string') {
+            this._waitForDataGrid(gridIdOrElement);
+        }
+    }
+
+    _waitForDataGrid(gridId) {
+        const TIMEOUT_MS = 10000;
+        const startTime = Date.now();
+
+        if (this._gridWaitObserver) {
+            this._gridWaitObserver.disconnect();
+            this._gridWaitObserver = null;
+        }
+
+        this._gridWaitObserver = new MutationObserver((mutations, observer) => {
+            if (Date.now() - startTime > TIMEOUT_MS) {
+                observer.disconnect();
+                this._gridWaitObserver = null;
+                return;
+            }
+
+            const grid = document.getElementById(gridId);
+            if (grid && grid.tagName.toLowerCase() === 'gooeyui-datagrid') {
+                observer.disconnect();
+                this._gridWaitObserver = null;
+                this._connectToDataGrid(grid);
+            }
+        });
+
+        this._gridWaitObserver.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+
+        setTimeout(() => {
+            if (this._gridWaitObserver) {
+                this._gridWaitObserver.disconnect();
+                this._gridWaitObserver = null;
+            }
+        }, TIMEOUT_MS);
+    }
+
+    _connectToDataGrid(grid) {
+        this._datagrid = grid;
+
+        // If the DataGrid has a store binding, bind to that store too
+        if (typeof grid.getStoreElement === 'function') {
+            const storeElement = grid.getStoreElement();
+            if (storeElement) {
+                this.bindStore(storeElement);
+            }
+        }
+
+        // If no store but grid has data, derive totalrecords
+        if (!this._store && typeof grid.getDisplayData === 'function') {
+            const displayData = grid.getDisplayData();
+            this._gridFullData = displayData;
+            this.totalrecords = displayData.length;
+        }
+
+        // Subscribe to grid events
+        const onSortOrFilter = () => {
+            this.currentpage = 1;
+            if (typeof this._datagrid.getDisplayData === 'function') {
+                this._gridFullData = this._datagrid.getDisplayData();
+                this.totalrecords = this._gridFullData.length;
+            }
+            this._syncWithDataGrid();
+        };
+
+        const onDataChanged = () => {
+            if (typeof this._datagrid.getDisplayData === 'function') {
+                this._gridFullData = this._datagrid.getDisplayData();
+                this.totalrecords = this._gridFullData.length;
+            }
+            this._syncWithDataGrid();
+        };
+
+        this._gridListeners = [
+            [DataGridEvent.SORT_CHANGED, onSortOrFilter],
+            [DataGridEvent.FILTER_CHANGED, onSortOrFilter],
+            [DataGridEvent.DATA_CHANGED, onDataChanged]
+        ];
+
+        for (const [eventName, handler] of this._gridListeners) {
+            this._datagrid.addEventListener(eventName, handler);
+        }
+
+        this.fireEvent(PaginationEvent.DATAGRID_BOUND, {
+            pagination: this,
+            datagrid: grid
+        });
+
+        // Initial sync
+        this._syncWithDataGrid();
+    }
+
+    _syncWithDataGrid() {
+        if (!this._datagrid) return;
+
+        // Determine source data for slicing
+        let allData;
+        if (this._store) {
+            allData = this._store.getData();
+        } else if (this._gridFullData) {
+            allData = this._gridFullData;
+        } else if (typeof this._datagrid.getDisplayData === 'function') {
+            allData = this._datagrid.getDisplayData();
+        } else {
+            return;
+        }
+
+        const startIndex = (this.currentpage - 1) * this.pagesize;
+        const endIndex = startIndex + this.pagesize;
+        const slicedData = allData.slice(startIndex, endIndex);
+
+        if (typeof this._datagrid.setData === 'function') {
+            this._datagrid.setData(slicedData);
+        }
+    }
+
+    unbindDataGrid() {
+        if (this._gridWaitObserver) {
+            this._gridWaitObserver.disconnect();
+            this._gridWaitObserver = null;
+        }
+
+        if (this._datagrid) {
+            for (const [eventName, handler] of this._gridListeners) {
+                this._datagrid.removeEventListener(eventName, handler);
+            }
+
+            this.fireEvent(PaginationEvent.DATAGRID_UNBOUND, {
+                pagination: this
+            });
+        }
+
+        this._gridListeners = [];
+        this._datagrid = null;
+        this._gridFullData = null;
+    }
 }
