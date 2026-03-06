@@ -461,6 +461,9 @@ export default class Pagination extends UIComponent {
         const dynamicItems = this._controls.querySelectorAll(".pagination-page, .pagination-ellipsis");
         dynamicItems.forEach(item => item.remove());
 
+        // Determine if entire component is disabled
+        const componentDisabled = this.disabled;
+
         // First button
         const firstLi = this._controls.querySelector(".pagination-first");
         if (firstLi) {
@@ -468,12 +471,17 @@ export default class Pagination extends UIComponent {
             const firstBtn = firstLi.querySelector("button");
             if (firstBtn) {
                 firstBtn.textContent = this.firsttext;
-                if (this.isFirstPage) {
+                const isDisabled = componentDisabled || this.isFirstPage;
+                if (isDisabled) {
                     firstLi.classList.add("disabled");
                     firstBtn.disabled = true;
+                    firstBtn.setAttribute("tabindex", "-1");
+                    firstBtn.setAttribute("aria-disabled", "true");
                 } else {
                     firstLi.classList.remove("disabled");
                     firstBtn.disabled = false;
+                    firstBtn.setAttribute("tabindex", "0");
+                    firstBtn.removeAttribute("aria-disabled");
                 }
             }
         }
@@ -488,12 +496,17 @@ export default class Pagination extends UIComponent {
                 } else {
                     prevLi.style.display = "";
                     if (prevBtn) {
-                        if (this.isFirstPage) {
+                        const isDisabled = componentDisabled || this.isFirstPage;
+                        if (isDisabled) {
                             prevLi.classList.add("disabled");
                             prevBtn.disabled = true;
+                            prevBtn.setAttribute("tabindex", "-1");
+                            prevBtn.setAttribute("aria-disabled", "true");
                         } else {
                             prevLi.classList.remove("disabled");
                             prevBtn.disabled = false;
+                            prevBtn.setAttribute("tabindex", "0");
+                            prevBtn.removeAttribute("aria-disabled");
                         }
                     }
                 }
@@ -515,12 +528,17 @@ export default class Pagination extends UIComponent {
                 } else {
                     nextLi.style.display = "";
                     if (nextBtn) {
-                        if (this.isLastPage) {
+                        const isDisabled = componentDisabled || this.isLastPage;
+                        if (isDisabled) {
                             nextLi.classList.add("disabled");
                             nextBtn.disabled = true;
+                            nextBtn.setAttribute("tabindex", "-1");
+                            nextBtn.setAttribute("aria-disabled", "true");
                         } else {
                             nextLi.classList.remove("disabled");
                             nextBtn.disabled = false;
+                            nextBtn.setAttribute("tabindex", "0");
+                            nextBtn.removeAttribute("aria-disabled");
                         }
                     }
                 }
@@ -539,12 +557,17 @@ export default class Pagination extends UIComponent {
             const lastBtn = lastLi.querySelector("button");
             if (lastBtn) {
                 lastBtn.textContent = this.lasttext;
-                if (this.isLastPage) {
+                const isDisabled = componentDisabled || this.isLastPage;
+                if (isDisabled) {
                     lastLi.classList.add("disabled");
                     lastBtn.disabled = true;
+                    lastBtn.setAttribute("tabindex", "-1");
+                    lastBtn.setAttribute("aria-disabled", "true");
                 } else {
                     lastLi.classList.remove("disabled");
                     lastBtn.disabled = false;
+                    lastBtn.setAttribute("tabindex", "0");
+                    lastBtn.removeAttribute("aria-disabled");
                 }
             }
         }
@@ -578,6 +601,14 @@ export default class Pagination extends UIComponent {
                     if (entry.page === currentPage) {
                         li.classList.add("active");
                         btn.setAttribute("aria-current", "page");
+                        btn.setAttribute("tabindex", componentDisabled ? "-1" : "0");
+                    } else {
+                        btn.setAttribute("tabindex", "-1");
+                    }
+
+                    if (componentDisabled) {
+                        btn.setAttribute("aria-disabled", "true");
+                        btn.disabled = true;
                     }
 
                     li.appendChild(btn);
@@ -683,6 +714,7 @@ export default class Pagination extends UIComponent {
     _attachListeners() {
         // Delegated click handler on controls
         this._controls.addEventListener("click", (event) => {
+            if (this.disabled) return;
             const button = event.target.closest("button");
             if (!button || button.disabled) return;
 
@@ -723,6 +755,7 @@ export default class Pagination extends UIComponent {
         // Size changer — setter fires PAGE_SIZE_CHANGE and handles page reset
         if (this._sizeSelect) {
             this._sizeSelect.addEventListener("change", () => {
+                if (this.disabled) return;
                 const newValue = parseInt(this._sizeSelect.value);
                 if (isNaN(newValue) || newValue <= 0) return;
                 this.pagesize = newValue;
@@ -732,6 +765,7 @@ export default class Pagination extends UIComponent {
         // Go-to-page input (Enter key)
         if (this._goInput) {
             this._goInput.addEventListener("keydown", (event) => {
+                if (this.disabled) return;
                 if (event.key === "Enter") {
                     const page = parseInt(this._goInput.value);
                     if (!isNaN(page)) {
@@ -745,6 +779,7 @@ export default class Pagination extends UIComponent {
         // Go button click
         if (this._goButton) {
             this._goButton.addEventListener("click", () => {
+                if (this.disabled) return;
                 if (this._goInput) {
                     const page = parseInt(this._goInput.value);
                     if (!isNaN(page)) {
