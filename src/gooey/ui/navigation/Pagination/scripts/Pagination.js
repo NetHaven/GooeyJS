@@ -1,5 +1,6 @@
 import UIComponent from '../../../UIComponent.js';
 import Template from '../../../../util/Template.js';
+import Key from '../../../../io/Key.js';
 import PaginationEvent from '../../../../events/navigation/PaginationEvent.js';
 import DataStoreEvent from '../../../../events/data/DataStoreEvent.js';
 import DataGridEvent from '../../../../events/data/DataGridEvent.js';
@@ -294,6 +295,9 @@ export default class Pagination extends UIComponent {
 
         // Attach internal event listeners
         this._attachListeners();
+
+        // Keyboard navigation on controls
+        this._controls.addEventListener("keydown", (e) => this._onKeyDown(e));
 
         // Bind to store/datagrid if attributes present
         if (this.hasAttribute("store")) {
@@ -788,6 +792,58 @@ export default class Pagination extends UIComponent {
                     this._goInput.value = "";
                 }
             });
+        }
+    }
+
+    // =========================================================================
+    // Keyboard Navigation
+    // =========================================================================
+
+    // Handles keyboard navigation: ArrowLeft, ArrowRight, Home, End, Enter, Space
+    _onKeyDown(event) {
+        if (this.disabled) return;
+
+        const focused = this.shadowRoot.activeElement;
+        if (!focused || focused.tagName !== "BUTTON" || !focused.closest(".pagination-controls")) return;
+
+        const buttons = [...this._controls.querySelectorAll('.pagination-item:not(.pagination-ellipsis) button:not([aria-disabled="true"])')];
+        const idx = buttons.indexOf(focused);
+
+        switch (event.key) {
+            case Key.ARROW_RIGHT: {
+                if (idx >= 0 && idx < buttons.length - 1) {
+                    buttons[idx + 1].focus();
+                }
+                event.preventDefault();
+                break;
+            }
+            case Key.ARROW_LEFT: {
+                if (idx > 0) {
+                    buttons[idx - 1].focus();
+                }
+                event.preventDefault();
+                break;
+            }
+            case Key.HOME: {
+                if (buttons.length > 0) {
+                    buttons[0].focus();
+                }
+                event.preventDefault();
+                break;
+            }
+            case Key.END: {
+                if (buttons.length > 0) {
+                    buttons[buttons.length - 1].focus();
+                }
+                event.preventDefault();
+                break;
+            }
+            case Key.ENTER:
+            case Key.SPACE: {
+                focused.click();
+                event.preventDefault();
+                break;
+            }
         }
     }
 
