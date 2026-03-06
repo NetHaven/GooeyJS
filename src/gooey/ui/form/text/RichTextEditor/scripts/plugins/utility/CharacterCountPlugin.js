@@ -5,7 +5,7 @@
  * Fires a RichTextEditorEvent.CHARACTERCOUNT event on the editor with { characters, words } data.
  * Provides getCharacterCount() and getWordCount() public methods for querying.
  */
-import RichTextEditorEvent from '../../../../../../events/form/text/RichTextEditorEvent.js';
+import RichTextEditorEvent from '../../../../../../../events/form/text/RichTextEditorEvent.js';
 import Plugin from '../Plugin.js';
 
 export default class CharacterCountPlugin extends Plugin {

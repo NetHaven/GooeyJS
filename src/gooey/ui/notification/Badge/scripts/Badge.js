@@ -1,5 +1,5 @@
-import UIComponent from '../../UIComponent.js';
-import Template from '../../../util/Template.js';
+import UIComponent from '../../../UIComponent.js';
+import Template from '../../../../util/Template.js';
 
 /**
  * Badge component for displaying status indicators, counts, or labels.
