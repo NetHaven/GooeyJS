@@ -97,6 +97,14 @@ export default class GooeyI18n {
     /** @type {function|null} Custom message compiler replacing default ICU MessageFormat */
     static _messageCompiler = null;
 
+    /** @type {Map<string, {type: string, name: string, process: function}>} Registered post-processors */
+    static _postProcessors = new Map([
+        ['trim', { type: 'postProcessor', name: 'trim', process: (value) => value.trim() }]
+    ]);
+
+    /** @type {string[]} Global post-processors applied to all translations */
+    static _globalPostProcessors = [];
+
     /** @type {Map<string, Promise>} Locale string to in-flight load Promise */
     static _loadingLocales = new Map();
 
@@ -160,6 +168,7 @@ export default class GooeyI18n {
      * @param {string|string[]} [options.fallbackNamespace=[]] - Namespace(s) to try when key not found in target namespace
      * @param {boolean} [options.debug=false] - Enable debug mode (console logging)
      * @param {function} [options.messageCompiler=null] - Custom message compiler replacing default ICU MessageFormat
+     * @param {string[]} [options.postProcessors=[]] - Global post-processor names applied to all translations
      */
     static init(options = {}) {
         const {
@@ -178,7 +187,8 @@ export default class GooeyI18n {
             defaultNamespace = "translation",
             fallbackNamespace = [],
             debug = false,
-            messageCompiler = null
+            messageCompiler = null,
+            postProcessors = []
         } = options;
 
         // Store debug flag
@@ -186,6 +196,9 @@ export default class GooeyI18n {
 
         // Store custom message compiler
         this._messageCompiler = messageCompiler || null;
+
+        // Store global post-processor names (does NOT clear user-registered post-processors)
+        this._globalPostProcessors = postProcessors || [];
 
         // Store namespace configuration
         this._defaultNamespace = defaultNamespace;
@@ -375,6 +388,29 @@ export default class GooeyI18n {
         };
     }
 
+    // ── Post-Processor Registration ────────────────────────────────────
+
+    /**
+     * Register a named post-processor for translation output transformation.
+     * Post-processors run after ICU formatting and before final return.
+     *
+     * @param {string} name - Unique processor name
+     * @param {Object} processor - Processor definition
+     * @param {string} [processor.type="postProcessor"] - Processor type
+     * @param {function} processor.process - Transform function (value, key, options, i18n) => string
+     * @throws {Error} If processor lacks a process() function
+     */
+    static registerPostProcessor(name, processor) {
+        if (!processor || typeof processor.process !== 'function') {
+            throw new Error(`Post-processor "${name}" must have a process() function`);
+        }
+        this._postProcessors.set(name, {
+            type: processor.type || 'postProcessor',
+            name: name,
+            process: processor.process
+        });
+    }
+
     // ── Direction ───────────────────────────────────────────────────────
 
     /**
@@ -459,6 +495,11 @@ export default class GooeyI18n {
             const displayKey = typeof key === 'string' ? key : key[key.length - 1];
             const exists = this.te(displayKey, effectiveLocale);
             return exists ? `[${displayKey}]` : `\u26a0[${displayKey}]`;
+        }
+
+        // Stash original key for post-processors
+        if (!options._originalKey) {
+            options._originalKey = typeof key === 'string' ? key : key[key.length - 1];
         }
 
         // Step 2: Namespace resolution
@@ -1190,9 +1231,8 @@ export default class GooeyI18n {
     }
 
     /**
-     * Post-process a translated value.
-     * Phase 60: no-op, returns value as-is.
-     * Phase 63: fills in post-processing pipeline.
+     * Post-process a translated value through registered post-processors.
+     * Global post-processors run first, then per-call post-processors.
      *
      * @param {string} value - Translated string
      * @param {Object} options - Translation options
@@ -1200,6 +1240,32 @@ export default class GooeyI18n {
      * @private
      */
     static _postProcess(value, options) {
+        if (typeof value !== "string") return value;
+
+        // Determine which post-processors to run
+        let processorNames = [];
+
+        // Global post-processors first
+        if (this._globalPostProcessors.length > 0) {
+            processorNames.push(...this._globalPostProcessors);
+        }
+
+        // Per-call post-processors
+        if (options.postProcess) {
+            const perCall = Array.isArray(options.postProcess) ? options.postProcess : [options.postProcess];
+            processorNames.push(...perCall);
+        }
+
+        if (processorNames.length === 0) return value;
+
+        // Apply each post-processor in order
+        for (const name of processorNames) {
+            const processor = this._postProcessors.get(name);
+            if (processor) {
+                value = processor.process(value, options._originalKey || '', options, this);
+            }
+        }
+
         return value;
     }
 
