@@ -2,6 +2,7 @@ import UIComponent from '../../../UIComponent.js';
 import ContextMenuEvent from '../../../../events/menu/ContextMenuEvent.js';
 import MouseEvent from '../../../../events/MouseEvent.js';
 import ContextMenuManager from './ContextMenuManager.js';
+import Template from '../../../../util/Template.js';
 
 export default class ContextMenu extends UIComponent {
     constructor() {
@@ -10,11 +11,9 @@ export default class ContextMenu extends UIComponent {
         // Store existing children (menu items) before clearing
         const existingChildren = Array.from(this.children);
 
-        // Override the template to use ContextMenu template
+        // Activate the ContextMenu template into the shadow root
         this.innerHTML = '';
-        const template = document.getElementById("ui-ContextMenu");
-        const clone = document.importNode(template.content, true);
-        this.shadowRoot.appendChild(clone);
+        Template.activate("ui-ContextMenu", this.shadowRoot);
 
         this._contextMenuElement = this.shadowRoot.querySelector('.ui-ContextMenu');
 

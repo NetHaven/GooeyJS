@@ -5,7 +5,7 @@
   "tagName": "checkboxmenuitem",
   "script": "CheckboxMenuItem.js",
   "templates": [
-    { "id": "ui-CheckboxmenuItem", "file": "CheckboxMenuItem.html" }
+    { "id": "ui-CheckboxMenuItem", "file": "CheckboxMenuItem.html" }
   ],
   "themes": {
     "default": "base",
