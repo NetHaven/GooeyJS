@@ -12,6 +12,8 @@ export default class ComponentRegistry {
     static _attributeAliases = new Map();
     // Maps tagName -> token metadata object from META.goo tokens section
     static _tokenMeta = new Map();
+    // Maps tagName -> locale config object from META.goo locales section
+    static _localeConfigs = new Map();
 
     /**
      * Register a component's metadata
@@ -265,6 +267,7 @@ export default class ComponentRegistry {
         this._componentPaths.clear();
         this._attributeAliases.clear();
         this._tokenMeta.clear();
+        this._localeConfigs.clear();
     }
 
     /**
@@ -319,5 +322,23 @@ export default class ComponentRegistry {
      */
     static getTokenMeta(tagName) {
         return this._tokenMeta.get(tagName.toLowerCase()) || null;
+    }
+
+    /**
+     * Store locale configuration for a component
+     * @param {string} tagName - Custom element tag name
+     * @param {Object} config - Locale config from META.goo locales section
+     */
+    static setLocaleConfig(tagName, config) {
+        this._localeConfigs.set(tagName.toLowerCase(), config);
+    }
+
+    /**
+     * Get locale configuration for a component
+     * @param {string} tagName - Custom element tag name
+     * @returns {Object|null} Locale config or null if not registered
+     */
+    static getLocaleConfig(tagName) {
+        return this._localeConfigs.get(tagName.toLowerCase()) || null;
     }
 }

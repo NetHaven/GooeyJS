@@ -38,6 +38,12 @@ export default class UIComponent extends GooeyElement {
         this._i18nScope = null;
         this._localeCleanup = null;
 
+        // Auto-set i18n scope if component has locale config registered
+        const localeConfig = ComponentRegistry.getLocaleConfig(tagName);
+        if (localeConfig) {
+            this._i18nScope = tagName;
+        }
+
         // MVC additions (optional - only if used)
         this._model = null;
         this._controller = null;

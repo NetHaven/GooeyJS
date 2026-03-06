@@ -3,6 +3,7 @@ import Template from '../../../util/Template.js';
 import MetaLoader from '../../../util/MetaLoader.js';
 import ComponentRegistry from '../../../util/ComponentRegistry.js';
 import GooeyI18n from '../../GooeyI18n.js';
+import LanguageDetector from '../../LanguageDetector.js';
 import I18nEvent from '../../../events/i18n/I18nEvent.js';
 
 /**
@@ -244,10 +245,12 @@ export default class I18n extends GooeyElement {
             }
         }
 
-        // Detect attribute -- LanguageDetector is Phase 62, log and defer
+        // Language detection via LanguageDetector
         if (detect) {
-            if (debug) {
-                console.debug(`[gooey-i18n] Language detection strategy "${detect}" is deferred to Phase 62 (LanguageDetector).`);
+            const order = detect.split(',').map(s => s.trim()).filter(Boolean);
+            const detected = LanguageDetector.detect({ order });
+            if (detected && detected !== locale) {
+                GooeyI18n.locale = detected;
             }
         }
 

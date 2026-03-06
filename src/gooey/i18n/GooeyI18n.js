@@ -88,6 +88,9 @@ export default class GooeyI18n {
     /** @type {Map<string, Promise>} Locale string to in-flight load Promise */
     static _loadingLocales = new Map();
 
+    /** @type {Map<string, {tagName: string, componentPath: string, localeConfig: Object}>} Component locale registrations */
+    static _componentLocales = new Map();
+
     /**
      * Named datetime format definitions keyed by locale.
      * Structure: { locale: { formatName: IntlDateTimeFormatOptions } }
@@ -251,6 +254,11 @@ export default class GooeyI18n {
         }
 
         this._invokeLocaleChangedCallbacks(locale, oldLocale);
+
+        // Load component-local locales for the new locale
+        if (this._componentLocales.size > 0) {
+            this._loadComponentLocalesForLocale(locale);
+        }
     }
 
     // ── Fallback Locale ─────────────────────────────────────────────────
@@ -480,6 +488,45 @@ export default class GooeyI18n {
             this._messages[locale][namespace],
             messages
         );
+    }
+
+    /**
+     * Register a component's locale configuration for automatic loading on locale switch.
+     * Called by the Component loader when a META.goo has a locales field.
+     *
+     * @param {string} tagName - Component tag name (serves as namespace)
+     * @param {string} componentPath - Path to the component directory
+     * @param {Object} localeConfig - Locale config from META.goo locales field
+     */
+    static registerComponentLocale(tagName, componentPath, localeConfig) {
+        this._componentLocales.set(tagName, { tagName, componentPath, localeConfig });
+    }
+
+    /**
+     * Load component-local locale files for a given locale.
+     * Called during locale switch to ensure component translations are available.
+     *
+     * @param {string} locale - Target locale to load
+     * @returns {Promise<void>}
+     * @private
+     */
+    static async _loadComponentLocalesForLocale(locale) {
+        // Dynamic import to avoid circular dependency at module parse time
+        const { default: MetaLoader } = await import("../util/MetaLoader.js");
+
+        const loadPromises = [];
+        for (const [tagName, entry] of this._componentLocales) {
+            const promise = MetaLoader.loadComponentLocale(
+                entry.componentPath, entry.localeConfig, locale
+            ).then(messages => {
+                if (messages) {
+                    this.setNamespaceMessages(locale, tagName, messages);
+                }
+            });
+            loadPromises.push(promise);
+        }
+
+        await Promise.all(loadPromises);
     }
 
     /**

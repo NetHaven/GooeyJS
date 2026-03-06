@@ -343,6 +343,44 @@ export default class MetaLoader {
     }
 
     /**
+     * Load a component's locale JSON file or inline messages.
+     * @param {string} componentPath - Full path to the component directory
+     * @param {Object} localeConfig - The locales object from META.goo
+     * @param {Object} [localeConfig.inline] - Inline messages keyed by locale
+     * @param {string} [localeConfig.directory='locales/'] - Directory containing locale JSON files
+     * @param {string} locale - Target locale string
+     * @returns {Promise<Object|null>} Parsed messages object, or null if not found
+     */
+    static async loadComponentLocale(componentPath, localeConfig, locale) {
+        // Check for inline messages first
+        if (localeConfig.inline && localeConfig.inline[locale]) {
+            return localeConfig.inline[locale];
+        }
+
+        // Build path to locale JSON file
+        const directory = localeConfig.directory || 'locales/';
+        const localePath = `${componentPath}/${directory}${locale}.json`;
+
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+            const response = await fetch(localePath, { signal: controller.signal });
+            clearTimeout(timeoutId);
+
+            if (!response.ok) {
+                // 404 is expected -- not all locales exist for every component
+                return null;
+            }
+
+            return await response.json();
+        } catch (error) {
+            // Network errors, aborts, parse errors -- all non-fatal for locale loading
+            return null;
+        }
+    }
+
+    /**
      * Clear CSS cache (useful for development hot reload)
      */
     static clearCache() {

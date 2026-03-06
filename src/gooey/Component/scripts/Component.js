@@ -3,6 +3,7 @@ import ComponentEvent from '../../events/ComponentEvent.js';
 import Template from '../../util/Template.js';
 import MetaLoader from '../../util/MetaLoader.js';
 import ComponentRegistry from '../../util/ComponentRegistry.js';
+import GooeyI18n from '../../i18n/GooeyI18n.js';
 import Logger from '../../logging/Logger.js';
 
 // Store ComponentEvent reference for use in wrapped callbacks
@@ -113,6 +114,31 @@ export default class Component extends Observable {
                 } catch (themeError) {
                     Logger.warn(themeError, { code: "THEME_LOAD_FAILED", tagName: fullTagName }, "Failed to load theme CSS for %s", fullTagName);
                 }
+            }
+
+            // Load component locales if META.goo declares a locales field
+            if (meta.locales) {
+                ComponentRegistry.setLocaleConfig(fullTagName, meta.locales);
+
+                const currentLocale = GooeyI18n.locale || meta.locales.default || 'en';
+                const localeMessages = await MetaLoader.loadComponentLocale(this._href, meta.locales, currentLocale);
+                if (localeMessages) {
+                    GooeyI18n.setNamespaceMessages(currentLocale, fullTagName, localeMessages);
+                }
+
+                // Load fallback locale if different from current
+                const fallback = Array.isArray(GooeyI18n.fallbackLocale)
+                    ? GooeyI18n.fallbackLocale[0]
+                    : GooeyI18n.fallbackLocale;
+                if (fallback && fallback !== currentLocale) {
+                    const fallbackMessages = await MetaLoader.loadComponentLocale(this._href, meta.locales, fallback);
+                    if (fallbackMessages) {
+                        GooeyI18n.setNamespaceMessages(fallback, fullTagName, fallbackMessages);
+                    }
+                }
+
+                // Register for automatic locale-switch loading
+                GooeyI18n.registerComponentLocale(fullTagName, this._href, meta.locales);
             }
 
             // Build paths for module and template using META.goo configuration
