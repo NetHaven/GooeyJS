@@ -1,0 +1,92 @@
+/* Pagination - Classic structural override */
+
+.pagination-item button {
+    border: 1px solid #000000;
+    background-color: #DDDDDD;
+    box-shadow:
+        inset 1px 1px 0 #DDDDDD,
+        inset 2px 2px 0 #fff,
+        inset -1px -1px 1px #555;
+    font-weight: bold;
+    border-radius: 3px;
+    color: #000000;
+}
+
+.pagination-item button:hover {
+    background-color: #E8E8E8;
+}
+
+.pagination-item button:active {
+    background-color: #666666;
+    color: #ffffff;
+    box-shadow:
+        inset 1px 1px 1px #333,
+        inset -1px -1px 1px #999;
+}
+
+.pagination-item button:focus {
+    outline: 2px solid var(--gooey-color-primary-3);
+    outline-offset: -3px;
+}
+
+/* Active page: dark sunken treatment */
+.pagination-item.active button {
+    background-color: #666666;
+    color: #ffffff;
+    box-shadow:
+        inset 1px 1px 1px #333,
+        inset -1px -1px 1px #999;
+    border-style: solid;
+}
+
+/* Size select */
+.pagination-size-select {
+    border: 1px solid #000000;
+    background-color: #FFFFFF;
+    color: #000000;
+    border-radius: 0;
+}
+
+.pagination-size-select:focus {
+    outline: none;
+    border-color: var(--gooey-color-primary-3);
+}
+
+/* Go input */
+.pagination-go-input {
+    border: 1px solid #000000;
+    background-color: #FFFFFF;
+    color: #000000;
+    border-radius: 0;
+}
+
+.pagination-go-input:focus {
+    outline: none;
+    border-color: var(--gooey-color-primary-3);
+}
+
+/* Go button: same as page buttons */
+.pagination-go .pagination-go-button {
+    border: 1px solid #000000;
+    background-color: #DDDDDD;
+    box-shadow:
+        inset 1px 1px 0 #DDDDDD,
+        inset 2px 2px 0 #fff,
+        inset -1px -1px 1px #555;
+    font-weight: bold;
+    border-radius: 3px;
+    color: #000000;
+}
+
+.pagination-go .pagination-go-button:active {
+    background-color: #666666;
+    color: #ffffff;
+    box-shadow:
+        inset 1px 1px 1px #333,
+        inset -1px -1px 1px #999;
+}
+
+.pagination-go .pagination-go-button:focus {
+    outline: 2px solid var(--gooey-color-primary-3);
+    outline-offset: -3px;
+}

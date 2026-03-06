@@ -1,0 +1,91 @@
+/* Pagination - Janus structural override */
+
+.pagination-item button {
+    border: 1px solid #000000;
+    border-radius: 2.5px;
+    box-shadow:
+        inset -1px -1px 0 #808080,
+        inset 1px 1px 0 #ffffff,
+        inset -2px -2px 0 #808080,
+        inset 2px 2px 0 #ffffff;
+    background-color: #c0c0c0;
+    color: #000000;
+}
+
+.pagination-item button:hover {
+    background-color: #c8c8c8;
+}
+
+.pagination-item button:active {
+    box-shadow:
+        inset 1px 1px 0 #000000,
+        inset -1px -1px 0 #000000,
+        inset 2px 2px 0 #808080;
+}
+
+.pagination-item button:focus-visible {
+    outline: 1px dotted #808080;
+    outline-offset: -3px;
+}
+
+/* Active page: sunken with highlight color */
+.pagination-item.active button {
+    background-color: #0000C0;
+    color: #ffffff;
+    box-shadow:
+        inset 1px 1px 0 #000000,
+        inset -1px -1px 0 #000000,
+        inset 2px 2px 0 #808080;
+    border-style: solid;
+}
+
+/* Size select */
+.pagination-size-select {
+    border: 1px solid #000000;
+    background-color: #ffffff;
+    color: #000000;
+    border-radius: 0;
+}
+
+.pagination-size-select:focus {
+    outline: 1px dotted #000000;
+    outline-offset: -1px;
+}
+
+/* Go input */
+.pagination-go-input {
+    border: 1px solid #000000;
+    background-color: #ffffff;
+    color: #000000;
+    border-radius: 0;
+}
+
+.pagination-go-input:focus {
+    outline: 1px dotted #000000;
+    outline-offset: -1px;
+}
+
+/* Go button: same as page buttons */
+.pagination-go .pagination-go-button {
+    border: 1px solid #000000;
+    border-radius: 2.5px;
+    box-shadow:
+        inset -1px -1px 0 #808080,
+        inset 1px 1px 0 #ffffff,
+        inset -2px -2px 0 #808080,
+        inset 2px 2px 0 #ffffff;
+    background-color: #c0c0c0;
+    color: #000000;
+}
+
+.pagination-go .pagination-go-button:active {
+    box-shadow:
+        inset 1px 1px 0 #000000,
+        inset -1px -1px 0 #000000,
+        inset 2px 2px 0 #808080;
+}
+
+.pagination-go .pagination-go-button:focus-visible {
+    outline: 1px dotted #808080;
+    outline-offset: -3px;
+}
