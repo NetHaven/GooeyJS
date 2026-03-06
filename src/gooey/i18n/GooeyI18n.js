@@ -446,6 +446,106 @@ export default class GooeyI18n {
         delete this._messages[locale];
     }
 
+    /**
+     * Set all messages for a specific namespace within a locale (replaces existing).
+     * Enables component-local message registration under a tag-name namespace.
+     *
+     * @param {string} locale - Locale identifier
+     * @param {string} namespace - Namespace key (e.g., component tag name)
+     * @param {Object} messages - Message object
+     */
+    static setNamespaceMessages(locale, namespace, messages) {
+        if (!this._messages[locale]) {
+            this._messages[locale] = {};
+        }
+        this._messages[locale][namespace] = messages;
+    }
+
+    /**
+     * Deep merge messages into an existing namespace for a locale.
+     * Creates the locale and namespace entries if they do not exist.
+     *
+     * @param {string} locale - Locale identifier
+     * @param {string} namespace - Namespace key
+     * @param {Object} messages - Message object to merge
+     */
+    static mergeNamespaceMessages(locale, namespace, messages) {
+        if (!this._messages[locale]) {
+            this._messages[locale] = {};
+        }
+        if (!this._messages[locale][namespace]) {
+            this._messages[locale][namespace] = {};
+        }
+        this._messages[locale][namespace] = this._deepMerge(
+            this._messages[locale][namespace],
+            messages
+        );
+    }
+
+    /**
+     * Scan a DOM root for elements with data-i18n and data-i18n-attr attributes
+     * and apply translations. Safe to call repeatedly (idempotent).
+     *
+     * @param {Element|ShadowRoot} root - DOM root to scan (typically a ShadowRoot)
+     * @param {Object} [options={}] - Options
+     * @param {string} [options.scope] - Namespace scope for scoped translation lookup
+     */
+    static translateRoot(root, options = {}) {
+        if (!root) return;
+
+        const scope = options.scope;
+
+        // Translate textContent via data-i18n
+        const textElements = root.querySelectorAll("[data-i18n]");
+        for (const el of textElements) {
+            const key = el.getAttribute("data-i18n");
+            if (!key) continue;
+
+            let translated;
+            if (scope) {
+                // Try scoped translation first
+                translated = this.t(key, { namespace: scope });
+                // If result equals the key, it was not found in scope -- fall back to global
+                if (translated === key) {
+                    translated = this.t(key);
+                }
+            } else {
+                translated = this.t(key);
+            }
+
+            el.textContent = translated;
+        }
+
+        // Translate attributes via data-i18n-attr (format: "attrName:key,attrName:key")
+        const attrElements = root.querySelectorAll("[data-i18n-attr]");
+        for (const el of attrElements) {
+            const attrValue = el.getAttribute("data-i18n-attr");
+            if (!attrValue) continue;
+
+            const pairs = attrValue.split(",");
+            for (const pair of pairs) {
+                const colonIdx = pair.indexOf(":");
+                if (colonIdx === -1) continue;
+
+                const attrName = pair.substring(0, colonIdx).trim();
+                const key = pair.substring(colonIdx + 1).trim();
+                if (!attrName || !key) continue;
+
+                let translated;
+                if (scope) {
+                    translated = this.t(key, { namespace: scope });
+                    if (translated === key) {
+                        translated = this.t(key);
+                    }
+                } else {
+                    translated = this.t(key);
+                }
+
+                el.setAttribute(attrName, translated);
+            }
+        }
+    }
+
     // ── Named Format Presets ────────────────────────────────────────────
 
     /**
