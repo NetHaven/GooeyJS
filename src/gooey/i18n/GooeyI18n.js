@@ -1,4 +1,5 @@
 import I18nEvent from "../events/i18n/I18nEvent.js";
+import MessageFormat from "./MessageFormat.js";
 
 /**
  * Set of primary language subtags that use right-to-left script direction.
@@ -533,10 +534,9 @@ export default class GooeyI18n {
 
     /**
      * Clear the MessageFormat AST cache.
-     * Stub for Phase 61 Plan 02 -- no-op until MessageFormat is implemented.
      */
     static clearMessageCache() {
-        // Phase 61 Plan 02 will implement this
+        MessageFormat.clearCache();
     }
 
     /**
@@ -791,18 +791,20 @@ export default class GooeyI18n {
      * @private
      */
     static _compileMessage(str, values, locale) {
-        if (!str || typeof str !== "string" || !values) return str;
+        if (!str || typeof str !== "string") return str;
 
-        return str.replace(/\{(\w+)\}/g, (match, name) => {
-            if (name in values) {
-                const val = values[name];
-                // Determine whether to escape
-                const shouldEscape = values.escapeValue !== false &&
-                    this._options.escapeParameterHtml !== false;
-                return shouldEscape ? this._escapeHtml(val) : String(val);
-            }
-            return match;
-        });
+        // Fast path: no values and no ICU syntax -- return as-is
+        if (!values || (typeof values === "object" && Object.keys(values).length === 0)) {
+            if (!/[{]/.test(str) && !/\$t\(/.test(str)) return str;
+        }
+
+        const options = {
+            escapeValue: (values && values.escapeValue !== false) && this._options.escapeParameterHtml !== false,
+            ignoreTag: values && values.ignoreTag === true,
+            defaultRichTextElements: this._defaultRichTextElements || {}
+        };
+
+        return MessageFormat.format(str, values, locale, options);
     }
 
     /**
