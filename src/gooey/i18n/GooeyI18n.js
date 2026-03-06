@@ -423,7 +423,9 @@ export default class GooeyI18n {
      * @param {number} [options.count] - Triggers pluralization
      * @param {string} [options.context] - Context suffix for key lookup
      * @param {boolean} [options.escapeValue] - Override HTML escaping per call
-     * @returns {string} Translated string, or the key itself if not found
+     * @param {boolean} [options.returnObjects] - Return nested object/array instead of string
+     * @param {string} [options.joinArrays] - Separator for joining array values into string
+     * @returns {string|Object} Translated string (or object if returnObjects), or the key itself if not found
      */
     static t(key, options = {}) {
         // Step 1: Fallback keys -- if key is an array, try each until one resolves
@@ -470,6 +472,44 @@ export default class GooeyI18n {
                 // Step 3: Context resolution -- try key_context first
                 if (options.context) {
                     const contextKeypath = keypath + "_" + options.context;
+
+                    // When both context and count are present, try flat key_context_plural first
+                    if (options.count !== undefined) {
+                        // Try exact match: key_context_=N
+                        const exactFlatKey = contextKeypath + "_=" + options.count;
+                        const exactFlatVal = this._resolveKey(loc, ns, exactFlatKey);
+                        if (exactFlatVal !== undefined && typeof exactFlatVal === "string") {
+                            const compiled = this._compileMessage(exactFlatVal, options, loc);
+                            return this._postProcess(compiled, options);
+                        }
+
+                        // Try plural category: key_context_one, key_context_other, etc.
+                        try {
+                            const rules = this._getOrCreateFormatter(
+                                this._formatterCache.plural,
+                                Intl.PluralRules,
+                                loc,
+                                {}
+                            );
+                            const category = rules.select(options.count);
+                            const catFlatKey = contextKeypath + "_" + category;
+                            const catFlatVal = this._resolveKey(loc, ns, catFlatKey);
+                            if (catFlatVal !== undefined && typeof catFlatVal === "string") {
+                                const compiled = this._compileMessage(catFlatVal, options, loc);
+                                return this._postProcess(compiled, options);
+                            }
+                        } catch (e) { /* Intl.PluralRules unavailable */ }
+
+                        // Try "other" fallback: key_context_other
+                        const otherFlatKey = contextKeypath + "_other";
+                        const otherFlatVal = this._resolveKey(loc, ns, otherFlatKey);
+                        if (otherFlatVal !== undefined && typeof otherFlatVal === "string") {
+                            const compiled = this._compileMessage(otherFlatVal, options, loc);
+                            return this._postProcess(compiled, options);
+                        }
+                    }
+
+                    // Try key_context as object with plural keys or plain string
                     const contextValue = this._resolveKey(loc, ns, contextKeypath);
                     const contextResult = this._processResolvedValue(contextValue, loc, options);
                     if (contextResult !== undefined) return contextResult;
