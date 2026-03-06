@@ -44,7 +44,7 @@
     }
   },
   "attributes": {
-    "position": { "type": "ENUM", "default": "bottom", "values": ["TOP", "BOTTOM"] },
+    "position": { "type": "ENUM", "default": "bottom", "values": ["top", "bottom"] },
     "height": { "type": "NUMBER", "default": 24 },
     "draggable": { "type": "BOOLEAN", "default": false },
     "droppable": { "type": "BOOLEAN", "default": false },
