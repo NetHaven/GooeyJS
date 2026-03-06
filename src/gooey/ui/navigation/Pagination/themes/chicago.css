@@ -1,0 +1,106 @@
+/* Pagination - Chicago structural override */
+
+.pagination-item button {
+    border: none;
+    border-top: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-left: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-right: 1px solid var(--chicago-border-shadow, #808080);
+    border-bottom: 1px solid var(--chicago-border-shadow, #808080);
+    box-shadow:
+        inset -1px -1px 0 var(--chicago-border-dark, #000000),
+        inset 1px 1px 0 var(--chicago-border-highlight, #DFDFDF);
+    background-color: var(--chicago-face, #C0C0C0);
+    color: var(--chicago-text, #000000);
+    border-radius: 0;
+}
+
+.pagination-item button:hover {
+    background-color: var(--chicago-face-hover, #D0D0D0);
+}
+
+.pagination-item button:active {
+    border-top: 1px solid var(--chicago-border-shadow, #808080);
+    border-left: 1px solid var(--chicago-border-shadow, #808080);
+    border-right: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-bottom: 1px solid var(--chicago-border-light, #FFFFFF);
+    box-shadow:
+        inset 1px 1px 0 var(--chicago-border-dark, #000000),
+        inset -1px -1px 0 var(--chicago-border-highlight, #DFDFDF);
+}
+
+.pagination-item button:focus {
+    outline: 1px dotted var(--chicago-text, #000000);
+    outline-offset: -3px;
+}
+
+/* Active page: sunken bevel with darker background */
+.pagination-item.active button {
+    border-top: 1px solid var(--chicago-border-shadow, #808080);
+    border-left: 1px solid var(--chicago-border-shadow, #808080);
+    border-right: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-bottom: 1px solid var(--chicago-border-light, #FFFFFF);
+    box-shadow:
+        inset 1px 1px 0 var(--chicago-border-dark, #000000),
+        inset -1px -1px 0 var(--chicago-border-highlight, #DFDFDF);
+    background-color: var(--chicago-highlight, #000080);
+    color: var(--chicago-highlight-text, #FFFFFF);
+    border-style: solid;
+}
+
+/* Size select: sunken bevel for input fields */
+.pagination-size-select {
+    border-top: 1px solid var(--chicago-border-shadow, #808080);
+    border-left: 1px solid var(--chicago-border-shadow, #808080);
+    border-right: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-bottom: 1px solid var(--chicago-border-light, #FFFFFF);
+    box-shadow: inset 1px 1px 0 var(--chicago-border-dark, #000000);
+    background: #FFFFFF;
+    color: var(--chicago-text, #000000);
+    border-radius: 0;
+}
+
+/* Go input: sunken bevel */
+.pagination-go-input {
+    border-top: 1px solid var(--chicago-border-shadow, #808080);
+    border-left: 1px solid var(--chicago-border-shadow, #808080);
+    border-right: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-bottom: 1px solid var(--chicago-border-light, #FFFFFF);
+    box-shadow: inset 1px 1px 0 var(--chicago-border-dark, #000000);
+    background: #FFFFFF;
+    color: var(--chicago-text, #000000);
+    border-radius: 0;
+}
+
+.pagination-go-input:focus {
+    outline: none;
+}
+
+/* Go button: raised bevel like page buttons */
+.pagination-go .pagination-go-button {
+    border: none;
+    border-top: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-left: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-right: 1px solid var(--chicago-border-shadow, #808080);
+    border-bottom: 1px solid var(--chicago-border-shadow, #808080);
+    box-shadow:
+        inset -1px -1px 0 var(--chicago-border-dark, #000000),
+        inset 1px 1px 0 var(--chicago-border-highlight, #DFDFDF);
+    background-color: var(--chicago-face, #C0C0C0);
+    color: var(--chicago-text, #000000);
+    border-radius: 0;
+}
+
+.pagination-go .pagination-go-button:active {
+    border-top: 1px solid var(--chicago-border-shadow, #808080);
+    border-left: 1px solid var(--chicago-border-shadow, #808080);
+    border-right: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-bottom: 1px solid var(--chicago-border-light, #FFFFFF);
+    box-shadow:
+        inset 1px 1px 0 var(--chicago-border-dark, #000000),
+        inset -1px -1px 0 var(--chicago-border-highlight, #DFDFDF);
+}
+
+.pagination-go .pagination-go-button:focus {
+    outline: 1px dotted var(--chicago-text, #000000);
+    outline-offset: -3px;
+}
