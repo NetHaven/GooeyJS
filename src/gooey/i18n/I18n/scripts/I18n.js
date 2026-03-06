@@ -229,7 +229,8 @@ export default class I18n extends GooeyElement {
             silentTranslationWarn: false,
             silentFallbackWarn: false,
             nsSeparator,
-            keySeparator
+            keySeparator,
+            debug
         };
 
         // Initialize GooeyI18n if not already initialized

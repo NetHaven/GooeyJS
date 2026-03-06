@@ -165,7 +165,7 @@ export default class Locale extends GooeyElement {
 
         try {
             const parsed = JSON.parse(text);
-            GooeyI18n.setLocaleMessages(this.lang, parsed);
+            GooeyI18n.setNamespaceMessages(this.lang, this.namespace, parsed);
         } catch (error) {
             const parent = this._getI18nParent();
             if (parent && typeof parent.fireEvent === 'function') {
@@ -185,9 +185,11 @@ export default class Locale extends GooeyElement {
      */
     async _loadExternal() {
         const parent = this._getI18nParent();
+        const ns = this.namespace;
 
         try {
-            await GooeyI18n.loadLocale(this.lang, this.src);
+            // Use loadNamespace to store under the correct namespace
+            await GooeyI18n.loadNamespace(this.lang, ns, this.src);
 
             // Fire LOCALE_LOADED on parent if it's an Observable
             if (parent && typeof parent.fireEvent === 'function') {
@@ -197,6 +199,7 @@ export default class Locale extends GooeyElement {
                 parent.fireEvent(I18nEvent.LOCALE_LOADED, {
                     locale: this.lang,
                     src: this.src,
+                    namespace: ns,
                     messageCount
                 });
             }
