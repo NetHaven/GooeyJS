@@ -1,0 +1,23 @@
+{
+  "MetaGooVersion": "1.0",
+  "name": "I18n",
+  "prefix": "gooey",
+  "tagName": "i18n",
+  "script": "I18n.js",
+  "templates": [
+    { "id": "i18n-I18n", "file": "I18n.html" }
+  ],
+  "themes": {
+    "default": "base",
+    "available": ["base"]
+  },
+  "attributes": {
+    "locale": { "type": "STRING" },
+    "fallback": { "type": "STRING", "default": "en" },
+    "detect": { "type": "STRING" },
+    "escape-html": { "type": "BOOLEAN", "default": "true" },
+    "debug": { "type": "BOOLEAN", "default": "false" },
+    "ns-separator": { "type": "STRING", "default": ":" },
+    "key-separator": { "type": "STRING", "default": "." }
+  }
+}
