@@ -51,6 +51,12 @@ export default class I18n extends GooeyElement {
         // Cleanup function for GooeyI18n locale change forwarding
         this._localeChangeCleanup = null;
 
+        // Cleanup functions for GooeyI18n event forwarding
+        this._missingKeyCleanup = null;
+        this._localeLoadingCleanup = null;
+        this._localeLoadedCleanup = null;
+        this._localeErrorCleanup = null;
+
         // Register valid events
         this.addValidEvent(I18nEvent.INITIALIZED);
         this.addValidEvent(I18nEvent.LOCALE_CHANGED);
@@ -268,6 +274,22 @@ export default class I18n extends GooeyElement {
             this.fireEvent(I18nEvent.LOCALE_CHANGED, payload);
         });
 
+        // Forward missing key events from GooeyI18n to Observable
+        this._missingKeyCleanup = GooeyI18n.onMissingKey((payload) => {
+            this.fireEvent(I18nEvent.MISSING_KEY, payload);
+        });
+
+        // Forward loading lifecycle events from GooeyI18n to Observable
+        this._localeLoadingCleanup = GooeyI18n.onLocaleLoading((payload) => {
+            this.fireEvent(I18nEvent.LOCALE_LOADING, payload);
+        });
+        this._localeLoadedCleanup = GooeyI18n.onLocaleLoaded((payload) => {
+            this.fireEvent(I18nEvent.LOCALE_LOADED, payload);
+        });
+        this._localeErrorCleanup = GooeyI18n.onLocaleError((payload) => {
+            this.fireEvent(I18nEvent.ERROR, payload);
+        });
+
         // Fire initialized event
         this.fireEvent(I18nEvent.INITIALIZED, {
             locale: GooeyI18n.locale,
@@ -286,6 +308,26 @@ export default class I18n extends GooeyElement {
         if (this._localeChangeCleanup) {
             this._localeChangeCleanup();
             this._localeChangeCleanup = null;
+        }
+
+        // Clean up missing key callback
+        if (this._missingKeyCleanup) {
+            this._missingKeyCleanup();
+            this._missingKeyCleanup = null;
+        }
+
+        // Clean up loading lifecycle callbacks
+        if (this._localeLoadingCleanup) {
+            this._localeLoadingCleanup();
+            this._localeLoadingCleanup = null;
+        }
+        if (this._localeLoadedCleanup) {
+            this._localeLoadedCleanup();
+            this._localeLoadedCleanup = null;
+        }
+        if (this._localeErrorCleanup) {
+            this._localeErrorCleanup();
+            this._localeErrorCleanup = null;
         }
     }
 
