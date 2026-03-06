@@ -17,14 +17,24 @@ export default class Dialog {
             let timeoutId = null;
             let isResolved = false;
 
+            let clickHandler, keyHandler;
+
             const cleanupAndResolve = (result) => {
                 if (isResolved) return;
                 isResolved = true;
-                
+
                 if (timeoutId) {
                     clearTimeout(timeoutId);
                 }
-                
+
+                // Remove listeners to prevent accumulation on reuse
+                if (okButton && clickHandler) {
+                    okButton.removeEventListener(MouseEvent.CLICK, clickHandler);
+                }
+                if (alertDialog && keyHandler) {
+                    alertDialog.removeEventListener(KeyboardEvent.KEY_DOWN, keyHandler);
+                }
+
                 if (callback) {
                     try {
                         callback();
@@ -32,7 +42,7 @@ export default class Dialog {
                         Logger.error({ code: "DIALOG_CALLBACK_ERROR", error: error.message }, "Dialog callback error");
                     }
                 }
-                
+
                 resolve(result);
             };
 
@@ -72,23 +82,21 @@ export default class Dialog {
                 // Setup OK button handler
                 okButton = alertDialog.querySelector('.WindowOKButton');
                 if (okButton) {
-                    const clickHandler = () => {
+                    clickHandler = () => {
                         cleanupAndResolve();
                     };
-                    
+
                     okButton.addEventListener(MouseEvent.CLICK, clickHandler);
-                    
+
                     // Add scoped Enter key handler for this specific dialog
-                    const keyHandler = (event) => {
+                    keyHandler = (event) => {
                         if (event.key === Key.ENTER && alertDialog.visible) {
                             event.preventDefault();
                             event.stopPropagation();
-                            clickHandler();
-                            // Clean up the event listener
-                            alertDialog.removeEventListener(KeyboardEvent.KEY_DOWN, keyHandler, true);
+                            cleanupAndResolve();
                         }
                     };
-                    
+
                     // Use capture phase to handle Enter before it can bubble
                     alertDialog.addEventListener(KeyboardEvent.KEY_DOWN, keyHandler, true);
                 } else {
@@ -115,9 +123,30 @@ export default class Dialog {
     static confirm(message, callback) {
         return new Promise((resolve) => {
             let confirmDialog, messageElement, okButton, cancelButton;
+            let isResolved = false;
+
+            const cleanupAndResolve = (result) => {
+                if (isResolved) return;
+                isResolved = true;
+
+                // Remove listeners to prevent accumulation on reuse
+                if (okButton && okClickHandler) {
+                    okButton.removeEventListener(MouseEvent.CLICK, okClickHandler);
+                }
+                if (cancelButton && cancelClickHandler) {
+                    cancelButton.removeEventListener(MouseEvent.CLICK, cancelClickHandler);
+                }
+
+                if (callback) {
+                    callback(result);
+                }
+                resolve(result);
+            };
+
+            let okClickHandler, cancelClickHandler;
 
             confirmDialog = Dialog.createDialog("confirmDialog", "confirmDialogTemplate");
-        
+
             // Set the message
             messageElement = confirmDialog.querySelector('.DialogConfirm-message');
             if (messageElement) {
@@ -125,16 +154,14 @@ export default class Dialog {
             } else {
                 Logger.error({ code: "DIALOG_MESSAGE_ELEMENT_NOT_FOUND" }, "Message element not found");
             }
-                        
+
             // Setup OK button handler (returns true)
             okButton = confirmDialog.querySelector('.WindowOKButton');
             if (okButton) {
-                okButton.addEventListener(MouseEvent.CLICK, () => {
-                    if (callback) {
-                        callback(true);
-                    }
-                    resolve(true);
-                });
+                okClickHandler = () => {
+                    cleanupAndResolve(true);
+                };
+                okButton.addEventListener(MouseEvent.CLICK, okClickHandler);
             } else {
                 Logger.error({ code: "DIALOG_OK_BUTTON_NOT_FOUND" }, "OK button not found");
             }
@@ -142,12 +169,10 @@ export default class Dialog {
             // Setup Cancel button handler (returns false)
             cancelButton = confirmDialog.querySelector('.WindowCancelButton');
             if (cancelButton) {
-                cancelButton.addEventListener(MouseEvent.CLICK, () => {
-                    if (callback) {
-                        callback(false);
-                    }
-                    resolve(false);
-                });
+                cancelClickHandler = () => {
+                    cleanupAndResolve(false);
+                };
+                cancelButton.addEventListener(MouseEvent.CLICK, cancelClickHandler);
             } else {
                 Logger.error({ code: "DIALOG_CANCEL_BUTTON_NOT_FOUND" }, "Cancel button not found");
             }
@@ -163,7 +188,17 @@ export default class Dialog {
             newDialog = document.getElementById(dialogId);
         }
 
-        newDialog.querySelector(".WindowOKButton").addEventListener(MouseEvent.CLICK, function() {
+        // Remove all previous listeners to prevent accumulation on reuse
+        const okBtn = newDialog.querySelector(".WindowOKButton");
+        if (okBtn) {
+            okBtn.removeAllEventListeners(MouseEvent.CLICK);
+        }
+        const cancelBtn = newDialog.querySelector(".WindowCancelButton");
+        if (cancelBtn) {
+            cancelBtn.removeAllEventListeners(MouseEvent.CLICK);
+        }
+
+        okBtn.addEventListener(MouseEvent.CLICK, function() {
             newDialog.close();
         });
 
@@ -175,9 +210,32 @@ export default class Dialog {
     static prompt(message, defaultValue = '', callback) {
         return new Promise((resolve) => {
             let promptDialog, messageElement, inputElement, okButton, cancelButton;
+            let isResolved = false;
+            let okClickHandler, cancelClickHandler, keyHandler;
+
+            const cleanupAndResolve = (result) => {
+                if (isResolved) return;
+                isResolved = true;
+
+                // Remove listeners to prevent accumulation on reuse
+                if (okButton && okClickHandler) {
+                    okButton.removeEventListener(MouseEvent.CLICK, okClickHandler);
+                }
+                if (cancelButton && cancelClickHandler) {
+                    cancelButton.removeEventListener(MouseEvent.CLICK, cancelClickHandler);
+                }
+                if (inputElement && keyHandler) {
+                    inputElement.removeEventListener(KeyboardEvent.KEY_DOWN, keyHandler);
+                }
+
+                if (callback) {
+                    callback(result);
+                }
+                resolve(result);
+            };
 
             promptDialog = Dialog.createDialog("promptDialog", "promptDialogTemplate");
-        
+
             // Set the message
             messageElement = promptDialog.querySelector('.DialogPrompt-message');
             if (messageElement) {
@@ -205,17 +263,15 @@ export default class Dialog {
                     }
                 }
             }, 100);
-                        
+
             // Setup OK button handler (returns input value)
             okButton = promptDialog.querySelector('.WindowOKButton');
             if (okButton) {
-                okButton.addEventListener(MouseEvent.CLICK, () => {
+                okClickHandler = () => {
                     const value = inputElement ? inputElement.value : '';
-                    if (callback) {
-                        callback(value);
-                    }
-                    resolve(value);
-                });
+                    cleanupAndResolve(value);
+                };
+                okButton.addEventListener(MouseEvent.CLICK, okClickHandler);
             } else {
                 Logger.error({ code: "DIALOG_OK_BUTTON_NOT_FOUND" }, "OK button not found");
             }
@@ -223,27 +279,27 @@ export default class Dialog {
             // Setup Cancel button handler (returns null)
             cancelButton = promptDialog.querySelector('.WindowCancelButton');
             if (cancelButton) {
-                cancelButton.addEventListener(MouseEvent.CLICK, () => {
-                    if (callback) {
-                        callback(null);
-                    }
-                    resolve(null);
-                });
+                cancelClickHandler = () => {
+                    cleanupAndResolve(null);
+                };
+                cancelButton.addEventListener(MouseEvent.CLICK, cancelClickHandler);
             } else {
                 Logger.error({ code: "DIALOG_CANCEL_BUTTON_NOT_FOUND" }, "Cancel button not found");
             }
 
             // Handle Enter key to submit
             if (inputElement) {
-                inputElement.addEventListener(KeyboardEvent.KEY_DOWN, (e) => {
+                keyHandler = (e) => {
                     if (e.key === Key.ENTER) {
                         e.preventDefault();
-                        okButton.click();
+                        const value = inputElement ? inputElement.value : '';
+                        cleanupAndResolve(value);
                     } else if (e.key === Key.ESCAPE) {
                         e.preventDefault();
-                        cancelButton.click();
+                        cleanupAndResolve(null);
                     }
-                });
+                };
+                inputElement.addEventListener(KeyboardEvent.KEY_DOWN, keyHandler);
             }
         });
     }
@@ -251,9 +307,26 @@ export default class Dialog {
     static info(message, callback) {
         return new Promise((resolve) => {
             let infoDialog, messageElement, okButton;
+            let isResolved = false;
+            let clickHandler;
+
+            const cleanupAndResolve = () => {
+                if (isResolved) return;
+                isResolved = true;
+
+                // Remove listeners to prevent accumulation on reuse
+                if (okButton && clickHandler) {
+                    okButton.removeEventListener(MouseEvent.CLICK, clickHandler);
+                }
+
+                if (callback) {
+                    callback();
+                }
+                resolve();
+            };
 
             infoDialog = Dialog.createDialog("infoDialog", "infoDialogTemplate");
-        
+
             // Set the message
             messageElement = infoDialog.querySelector('.DialogInfo-message');
             if (messageElement) {
@@ -261,16 +334,14 @@ export default class Dialog {
             } else {
                 Logger.error({ code: "DIALOG_MESSAGE_ELEMENT_NOT_FOUND" }, "Message element not found");
             }
-                        
+
             // Setup OK button handler
             okButton = infoDialog.querySelector('.WindowOKButton');
             if (okButton) {
-                okButton.addEventListener(MouseEvent.CLICK, () => {
-                    if (callback) {
-                        callback();
-                    }
-                    resolve();
-                });
+                clickHandler = () => {
+                    cleanupAndResolve();
+                };
+                okButton.addEventListener(MouseEvent.CLICK, clickHandler);
             } else {
                 Logger.error({ code: "DIALOG_OK_BUTTON_NOT_FOUND" }, "OK button not found");
             }
