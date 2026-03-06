@@ -5,6 +5,7 @@
   "tagName": "combobox",
   "script": "ComboBox.js",
   "templates": [
+    { "id": "ui-ListBox", "file": "../../ListBox/templates/ListBox.html" },
     { "id": "ui-ComboBox", "file": "ComboBox.html" }
   ],
   "themes": {
