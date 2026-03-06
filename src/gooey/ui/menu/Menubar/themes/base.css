@@ -10,10 +10,10 @@
 
 .menuHeader {
     cursor: default;
-    margin-left: var(--gooey-menubar-header-margin, var(--gooey-spacing-lg));
-    margin-right: var(--gooey-menubar-header-margin, var(--gooey-spacing-lg));
-    padding-left: var(--gooey-menubar-header-padding, var(--gooey-spacing-sm));
-    padding-right: var(--gooey-menubar-header-padding, var(--gooey-spacing-sm));
+    margin-inline-start: var(--gooey-menubar-header-margin, var(--gooey-spacing-lg));
+    margin-inline-end: var(--gooey-menubar-header-margin, var(--gooey-spacing-lg));
+    padding-inline-start: var(--gooey-menubar-header-padding, var(--gooey-spacing-sm));
+    padding-inline-end: var(--gooey-menubar-header-padding, var(--gooey-spacing-sm));
     user-select: none;
 }
 

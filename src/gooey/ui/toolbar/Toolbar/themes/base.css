@@ -1,6 +1,6 @@
 :host([visible='true']) {
     display: flex !important;
-    margin-left: var(--gooey-toolbar-margin, 11px);
+    margin-inline-start: var(--gooey-toolbar-margin, 11px);
     width: 100%;
 }
 

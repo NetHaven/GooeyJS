@@ -37,7 +37,7 @@
     align-items: center;
     justify-content: center;
     font-size: 12px;
-    margin-right: 4px;
+    margin-inline-end: 4px;
     cursor: pointer;
     transition: transform 0.2s ease;
     transform-origin: center;
@@ -50,7 +50,7 @@
 .ui-TreeItem-icon {
     width: 16px;
     height: 16px;
-    margin-right: 6px;
+    margin-inline-end: 6px;
     flex-shrink: 0;
 }
 
@@ -64,7 +64,7 @@
 .ui-TreeItem-children {
     list-style: none;
     margin: 0;
-    padding-left: var(--gooey-treeitem-children-indent, 20px);
+    padding-inline-start: var(--gooey-treeitem-children-indent, 20px);
     overflow: hidden;
     transition: max-height 0.3s ease, opacity 0.2s ease;
     order: 2;

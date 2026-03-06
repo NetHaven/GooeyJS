@@ -80,7 +80,7 @@
 .breadcrumb-collapsed-menu {
     position: absolute;
     top: 100%;
-    left: 0;
+    inset-inline-start: 0;
     z-index: var(--breadcrumb-menu-z-index);
     min-width: 150px;
     padding: 4px 0;
@@ -103,7 +103,7 @@
     text-decoration: none;
     background: transparent;
     border: none;
-    text-align: left;
+    text-align: start;
     cursor: pointer;
     transition: background-color 0.15s ease;
 }
