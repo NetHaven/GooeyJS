@@ -1,0 +1,153 @@
+:host {
+    display: block;
+    position: relative;
+    font-family: var(--gooey-pagination-font-family, var(--gooey-font-family));
+    font-size: var(--gooey-pagination-font-size, var(--gooey-font-size-sm));
+    user-select: none;
+}
+
+:host([visible="false"]) {
+    display: none;
+}
+
+.pagination-container {
+    display: flex;
+    align-items: center;
+    gap: var(--gooey-pagination-gap, var(--gooey-spacing-sm));
+    padding: var(--gooey-spacing-xs) 0;
+}
+
+:host([halign="CENTER"]) .pagination-container { justify-content: center; }
+:host([halign="RIGHT"]) .pagination-container { justify-content: flex-end; }
+
+.pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: var(--gooey-pagination-gap, var(--gooey-spacing-xs));
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.pagination-item button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: var(--gooey-pagination-button-size, 28px);
+    height: var(--gooey-pagination-button-size, 28px);
+    padding: 0 var(--gooey-spacing-xs);
+    border: var(--gooey-pagination-button-border, var(--gooey-border-width)) outset
+            var(--gooey-pagination-button-border-color, var(--gooey-color-border));
+    background: var(--gooey-pagination-button-bg, var(--gooey-color-surface));
+    color: var(--gooey-pagination-button-color, var(--gooey-color-text));
+    cursor: pointer;
+    font-family: inherit;
+    font-size: inherit;
+}
+
+.pagination-item button:hover {
+    background: var(--gooey-pagination-button-bg-hover, var(--gooey-color-surface-hover));
+}
+
+.pagination-item button:active {
+    border-style: inset;
+}
+
+/* Active page */
+.pagination-item.active button {
+    background: var(--gooey-pagination-button-bg-active, var(--gooey-color-primary));
+    color: var(--gooey-pagination-button-color-active, var(--gooey-color-text-inverse));
+    border-style: inset;
+    cursor: default;
+}
+
+/* Disabled state */
+:host([disabled]) .pagination-item button,
+.pagination-item.disabled button {
+    opacity: var(--gooey-opacity-disabled, 0.5);
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* Ellipsis */
+.pagination-ellipsis span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: var(--gooey-pagination-button-size, 28px);
+    height: var(--gooey-pagination-button-size, 28px);
+    color: var(--gooey-pagination-ellipsis-color, var(--gooey-color-text-secondary));
+}
+
+/* Navigator */
+.pagination-navigator {
+    color: var(--gooey-pagination-navigator-color, var(--gooey-color-text-secondary));
+    white-space: nowrap;
+}
+
+/* Size changer */
+.pagination-size-changer {
+    display: flex;
+    align-items: center;
+    gap: var(--gooey-spacing-xs);
+}
+
+.pagination-size-select {
+    background: var(--gooey-pagination-select-bg, var(--gooey-color-field));
+    border: var(--gooey-pagination-select-border, var(--gooey-border-width)) inset
+            var(--gooey-color-border);
+    font-family: inherit;
+    font-size: inherit;
+    padding: 2px 4px;
+}
+
+/* Go input */
+.pagination-go {
+    display: flex;
+    align-items: center;
+    gap: var(--gooey-spacing-xs);
+}
+
+.pagination-go-input {
+    width: 50px;
+    background: var(--gooey-pagination-input-bg, var(--gooey-color-field));
+    border: var(--gooey-pagination-input-border, var(--gooey-border-width)) inset
+            var(--gooey-color-border);
+    font-family: inherit;
+    font-size: inherit;
+    padding: 2px 4px;
+    text-align: center;
+}
+
+.pagination-go-input::-webkit-inner-spin-button,
+.pagination-go-input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+.pagination-go-input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+/* Size variants */
+:host([size="SMALL"]) .pagination-item button,
+:host([size="SMALL"]) .pagination-ellipsis span {
+    min-width: 22px;
+    height: 22px;
+    font-size: var(--gooey-font-size-xs, 11px);
+}
+
+:host([size="LARGE"]) .pagination-item button,
+:host([size="LARGE"]) .pagination-ellipsis span {
+    min-width: 36px;
+    height: 36px;
+    font-size: var(--gooey-font-size-md, 14px);
+}
+
+/* Focus styles */
+.pagination-item button:focus-visible,
+.pagination-go-input:focus-visible,
+.pagination-size-select:focus-visible,
+.pagination-go .pagination-go-button:focus-visible {
+    outline: 2px solid var(--gooey-color-focus);
+    outline-offset: 1px;
+}

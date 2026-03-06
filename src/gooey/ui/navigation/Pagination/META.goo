@@ -1,0 +1,160 @@
+{
+  "MetaGooVersion": "1.0",
+  "name": "Pagination",
+  "prefix": "gooeyui",
+  "tagName": "pagination",
+  "script": "Pagination.js",
+  "templates": [
+    { "id": "ui-Pagination", "file": "Pagination.html" }
+  ],
+  "themes": {
+    "default": "base",
+    "available": ["base", "chicago", "classic", "janus"]
+  },
+  "tokens": {
+    "gooey-pagination-bg": {
+      "description": "Background color of the pagination bar",
+      "fallback": "transparent",
+      "category": "color"
+    },
+    "gooey-pagination-button-bg": {
+      "description": "Background color of page buttons",
+      "fallback": "--gooey-color-surface",
+      "category": "color"
+    },
+    "gooey-pagination-button-bg-hover": {
+      "description": "Hover background of page buttons",
+      "fallback": "--gooey-color-surface-hover",
+      "category": "color"
+    },
+    "gooey-pagination-button-bg-active": {
+      "description": "Background of the active/current page button",
+      "fallback": "--gooey-color-primary",
+      "category": "color"
+    },
+    "gooey-pagination-button-color": {
+      "description": "Text color of page buttons",
+      "fallback": "--gooey-color-text",
+      "category": "color"
+    },
+    "gooey-pagination-button-color-active": {
+      "description": "Text color of the active page button",
+      "fallback": "--gooey-color-text-inverse",
+      "category": "color"
+    },
+    "gooey-pagination-button-color-disabled": {
+      "description": "Text color of disabled buttons",
+      "fallback": "--gooey-color-text-disabled",
+      "category": "color"
+    },
+    "gooey-pagination-button-border": {
+      "description": "Border of page buttons",
+      "fallback": "--gooey-border-width",
+      "category": "border"
+    },
+    "gooey-pagination-button-size": {
+      "description": "Height/width of page buttons",
+      "fallback": "28px",
+      "category": "sizing"
+    },
+    "gooey-pagination-gap": {
+      "description": "Gap between page buttons",
+      "fallback": "--gooey-spacing-xs",
+      "category": "spacing"
+    },
+    "gooey-pagination-font-family": {
+      "description": "Font family for page labels",
+      "fallback": "--gooey-font-family",
+      "category": "typography"
+    },
+    "gooey-pagination-font-size": {
+      "description": "Font size for page labels",
+      "fallback": "--gooey-font-size-sm",
+      "category": "typography"
+    },
+    "gooey-pagination-ellipsis-color": {
+      "description": "Color of the ellipsis indicator",
+      "fallback": "--gooey-color-text-secondary",
+      "category": "color"
+    },
+    "gooey-pagination-navigator-color": {
+      "description": "Text color of the navigator summary",
+      "fallback": "--gooey-color-text-secondary",
+      "category": "color"
+    },
+    "gooey-pagination-input-bg": {
+      "description": "Background of the go-to-page input",
+      "fallback": "--gooey-color-field",
+      "category": "color"
+    },
+    "gooey-pagination-input-border": {
+      "description": "Border of the go-to-page input",
+      "fallback": "--gooey-border-width",
+      "category": "border"
+    },
+    "gooey-pagination-select-bg": {
+      "description": "Background of the page-size selector",
+      "fallback": "--gooey-color-field",
+      "category": "color"
+    },
+    "gooey-pagination-select-border": {
+      "description": "Border of the page-size selector",
+      "fallback": "--gooey-border-width",
+      "category": "border"
+    }
+  },
+  "attributes": {
+    "height": { "type": "NUMBER", "default": null },
+    "width": { "type": "NUMBER", "default": null },
+    "tooltip": { "type": "STRING", "default": null },
+    "visible": { "type": "BOOLEAN", "default": true },
+    "disabled": { "type": "BOOLEAN", "default": false },
+    "draggable": { "type": "BOOLEAN", "default": false },
+    "droppable": { "type": "BOOLEAN", "default": false },
+    "dropzone": { "type": "STRING", "default": null },
+    "totalrecords": { "type": "NUMBER", "default": 0 },
+    "pagesize": { "type": "NUMBER", "default": 10 },
+    "currentpage": { "type": "NUMBER", "default": 1 },
+    "pagerange": { "type": "NUMBER", "default": 2 },
+    "marginpages": { "type": "NUMBER", "default": 1 },
+    "showprevious": { "type": "BOOLEAN", "default": true },
+    "shownext": { "type": "BOOLEAN", "default": true },
+    "showfirst": { "type": "BOOLEAN", "default": false },
+    "showlast": { "type": "BOOLEAN", "default": false },
+    "showpagenumbers": { "type": "BOOLEAN", "default": true },
+    "showsizechanger": { "type": "BOOLEAN", "default": false },
+    "shownavigator": { "type": "BOOLEAN", "default": false },
+    "showgoinput": { "type": "BOOLEAN", "default": false },
+    "showgobutton": { "type": "BOOLEAN", "default": false },
+    "hideonlyone": { "type": "BOOLEAN", "default": false },
+    "autohideprevious": { "type": "BOOLEAN", "default": false },
+    "autohidenext": { "type": "BOOLEAN", "default": false },
+    "hidefirstonellipsis": { "type": "BOOLEAN", "default": false },
+    "hidelastonellipsis": { "type": "BOOLEAN", "default": false },
+    "previoustext": { "type": "STRING", "default": "Prev" },
+    "nexttext": { "type": "STRING", "default": "Next" },
+    "firsttext": { "type": "STRING", "default": "First" },
+    "lasttext": { "type": "STRING", "default": "Last" },
+    "ellipsistext": { "type": "STRING", "default": "..." },
+    "gobuttontext": { "type": "STRING", "default": "Go" },
+    "navigatorformat": {
+      "type": "ENUM",
+      "default": "RANGE",
+      "values": ["RANGE", "PAGES", "ITEMS"]
+    },
+    "sizechangeroptions": { "type": "STRING", "default": "10,20,50,100" },
+    "pagelabelformat": { "type": "STRING", "default": null },
+    "store": { "type": "STRING", "default": null },
+    "datagrid": { "type": "STRING", "default": null },
+    "size": {
+      "type": "ENUM",
+      "default": "DEFAULT",
+      "values": ["SMALL", "DEFAULT", "LARGE"]
+    },
+    "halign": {
+      "type": "ENUM",
+      "default": "LEFT",
+      "values": ["LEFT", "CENTER", "RIGHT"]
+    }
+  }
+}

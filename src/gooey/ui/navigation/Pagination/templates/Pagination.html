@@ -1,0 +1,48 @@
+<!-- src/gooey/ui/navigation/Pagination/templates/Pagination.html -->
+<template id="ui-Pagination">
+  <div class="pagination-container" role="navigation" aria-label="Pagination">
+
+    <!-- Navigator summary (optional) -->
+    <span class="pagination-navigator" aria-live="polite"></span>
+
+    <!-- Main controls -->
+    <ul class="pagination-controls" role="list">
+      <!-- First button (optional) -->
+      <li class="pagination-item pagination-first">
+        <button type="button" aria-label="First page"></button>
+      </li>
+
+      <!-- Previous button -->
+      <li class="pagination-item pagination-previous">
+        <button type="button" aria-label="Previous page"></button>
+      </li>
+
+      <!-- Page numbers (generated dynamically) -->
+      <!-- Each page: <li class="pagination-item pagination-page"><button type="button" aria-label="Page N" aria-current="page">N</button></li> -->
+      <!-- Ellipsis: <li class="pagination-item pagination-ellipsis" aria-hidden="true"><span>...</span></li> -->
+
+      <!-- Next button -->
+      <li class="pagination-item pagination-next">
+        <button type="button" aria-label="Next page"></button>
+      </li>
+
+      <!-- Last button (optional) -->
+      <li class="pagination-item pagination-last">
+        <button type="button" aria-label="Last page"></button>
+      </li>
+    </ul>
+
+    <!-- Page size selector (optional) -->
+    <div class="pagination-size-changer">
+      <label class="pagination-size-label">Per page:</label>
+      <select class="pagination-size-select" aria-label="Items per page"></select>
+    </div>
+
+    <!-- Go-to-page input (optional) -->
+    <div class="pagination-go">
+      <input type="number" class="pagination-go-input" min="1" aria-label="Go to page" />
+      <button type="button" class="pagination-go-button"></button>
+    </div>
+
+  </div>
+</template>
