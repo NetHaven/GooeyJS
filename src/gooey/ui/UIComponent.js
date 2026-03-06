@@ -10,6 +10,7 @@ import DragEvent from '../events/DragEvent.js';
 import MetaLoader from '../util/MetaLoader.js';
 import ComponentRegistry from '../util/ComponentRegistry.js';
 import ThemeManager from '../util/ThemeManager.js';
+import GooeyI18n from '../i18n/GooeyI18n.js';
 
 export default class UIComponent extends GooeyElement {
     constructor () {
@@ -32,6 +33,10 @@ export default class UIComponent extends GooeyElement {
         if (ThemeManager.activeTheme !== 'base') {
             ThemeManager.applyThemeToInstance(this);
         }
+
+        // I18n integration
+        this._i18nScope = null;
+        this._localeCleanup = null;
 
         // MVC additions (optional - only if used)
         this._model = null;
@@ -276,10 +281,24 @@ export default class UIComponent extends GooeyElement {
         if (this._model && this._bindings.length > 0) {
             this.applyBindings();
         }
+
+        // I18n: subscribe to locale changes and run initial translation
+        if (!this._localeCleanup) {
+            this._localeCleanup = GooeyI18n.onLocaleChanged(() => {
+                this._updateTranslations();
+            });
+        }
+        this._updateTranslations();
     }
 
     // Web Component lifecycle - called when removed from DOM
     disconnectedCallback() {
+        // I18n: unsubscribe from locale changes to prevent memory leaks
+        if (this._localeCleanup) {
+            this._localeCleanup();
+            this._localeCleanup = null;
+        }
+
         // Clean up model binding to prevent memory leaks
         this.unbindModel();
 
@@ -570,6 +589,70 @@ export default class UIComponent extends GooeyElement {
         if (componentPath && this.shadowRoot) {
             await MetaLoader.switchTheme(this.shadowRoot, componentPath, themeName);
         }
+    }
+
+    // =========== I18n Integration ===========
+
+    /**
+     * Get the i18n namespace scope for this component.
+     * When set, t() checks this namespace first before falling back to global.
+     * @returns {string|null}
+     */
+    get i18nScope() {
+        return this._i18nScope || null;
+    }
+
+    /**
+     * Translate a key with component-local scope fallback.
+     * If i18nScope is set, tries scoped lookup first; if not found, falls back to global.
+     *
+     * @param {string} key - Translation key
+     * @param {Object} [options={}] - Options passed to GooeyI18n.t()
+     * @returns {string} Translated string
+     */
+    t(key, options = {}) {
+        if (this._i18nScope) {
+            const localResult = GooeyI18n.t(key, {
+                ...options,
+                namespace: this._i18nScope
+            });
+            if (localResult !== key) return localResult;
+        }
+        return GooeyI18n.t(key, options);
+    }
+
+    /**
+     * Format a date value. Delegates to GooeyI18n.d().
+     *
+     * @param {Date|number|string} value - Date to format
+     * @param {string|Object} [format] - Named format or Intl options
+     * @param {Object} [options={}] - Additional options
+     * @returns {string|Array} Formatted date
+     */
+    d(value, format, options = {}) {
+        return GooeyI18n.d(value, format, options);
+    }
+
+    /**
+     * Format a number value. Delegates to GooeyI18n.n().
+     *
+     * @param {number} value - Number to format
+     * @param {string|Object} [format] - Named format or Intl options
+     * @param {Object} [options={}] - Additional options
+     * @returns {string|Array} Formatted number
+     */
+    n(value, format, options = {}) {
+        return GooeyI18n.n(value, format, options);
+    }
+
+    /**
+     * Translate all data-i18n and data-i18n-attr elements in this component's shadow root.
+     * Called automatically on connect and on locale change.
+     * Subclasses can override for custom translation logic.
+     * @protected
+     */
+    _updateTranslations() {
+        GooeyI18n.translateRoot(this.shadowRoot, { scope: this._i18nScope });
     }
 
     // =========== Static Accessibility Utilities ===========
