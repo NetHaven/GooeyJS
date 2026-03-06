@@ -91,6 +91,9 @@ export default class GooeyI18n {
     /** @type {Map<string, Object>} URL to parsed JSON cache */
     static _resourceCache = new Map();
 
+    /** @type {boolean} Debug mode -- t() returns bracketed keys instead of translations */
+    static _debug = false;
+
     /** @type {Map<string, Promise>} Locale string to in-flight load Promise */
     static _loadingLocales = new Map();
 
@@ -172,6 +175,9 @@ export default class GooeyI18n {
             fallbackNamespace = [],
             debug = false
         } = options;
+
+        // Store debug flag
+        this._debug = !!debug;
 
         // Store namespace configuration
         this._defaultNamespace = defaultNamespace;
@@ -316,6 +322,51 @@ export default class GooeyI18n {
         return this._initialized;
     }
 
+    // ── Debug Mode ───────────────────────────────────────────────────────
+
+    /**
+     * Get the current debug mode state.
+     * @returns {boolean}
+     */
+    static get debug() {
+        return this._debug;
+    }
+
+    /**
+     * Set debug mode at runtime. When enabled, t() returns bracketed keys.
+     * @param {boolean} value
+     */
+    static set debug(value) {
+        this._debug = !!value;
+    }
+
+    // ── Fixed Translation Function ──────────────────────────────────────
+
+    /**
+     * Create a translation function locked to a specific locale, namespace, and/or key prefix.
+     * Returns a closure that delegates to t() with locked scope parameters.
+     *
+     * @param {string} [locale] - Locked locale (null to use current)
+     * @param {string} [namespace] - Locked namespace (null to use default)
+     * @param {string} [keyPrefix] - Key prefix prepended to every key
+     * @returns {function(string, Object=): string} Scoped translation function
+     *
+     * @example
+     * const t = GooeyI18n.getFixedT('fr', null, 'buttons');
+     * t('save'); // resolves 'buttons.save' in 'fr'
+     */
+    static getFixedT(locale, namespace, keyPrefix) {
+        return (key, options = {}) => {
+            // Prepend keyPrefix if provided
+            const fullKey = keyPrefix ? `${keyPrefix}${this._options.keySeparator || '.'}${key}` : key;
+            // Build options with locked locale and namespace
+            const fixedOptions = { ...options };
+            if (locale) fixedOptions.locale = locale;
+            if (namespace) fixedOptions.namespace = namespace;
+            return this.t(fullKey, fixedOptions);
+        };
+    }
+
     // ── Direction ───────────────────────────────────────────────────────
 
     /**
@@ -385,6 +436,19 @@ export default class GooeyI18n {
             // All keys failed; return last key as missing
             const lastKey = key[key.length - 1];
             return this._handleMissingKey(options.locale || this._locale, lastKey, options);
+        }
+
+        // CI mode: locale 'cimode' returns raw key without translation
+        const effectiveLocale = options.locale || this._locale;
+        if (effectiveLocale === 'cimode') {
+            return typeof key === 'string' ? key : key[key.length - 1];
+        }
+
+        // Debug mode: return bracketed key
+        if (this._debug) {
+            const displayKey = typeof key === 'string' ? key : key[key.length - 1];
+            const exists = this.te(displayKey, effectiveLocale);
+            return exists ? `[${displayKey}]` : `\u26a0[${displayKey}]`;
         }
 
         // Step 2: Namespace resolution
@@ -1170,10 +1234,22 @@ export default class GooeyI18n {
             if (value === undefined) return undefined;
         }
 
-        // If value is not a string at this point, convert it
+        // If value is not a string at this point, check returnObjects/joinArrays
         if (typeof value !== "string") {
-            // Objects/arrays without count -- return undefined to continue chain
-            if (typeof value === "object") return undefined;
+            if (typeof value === "object") {
+                if (options.returnObjects) {
+                    // Recursively process string values within the object/array
+                    return this._processObjectValues(value, locale, options);
+                }
+                if (Array.isArray(value) && options.joinArrays !== undefined) {
+                    // Process each string element then join
+                    const processed = value.map(item =>
+                        typeof item === "string" ? this._compileMessage(item, options, locale) : item
+                    );
+                    return processed.join(options.joinArrays);
+                }
+                return undefined; // Continue chain
+            }
             value = String(value);
         }
 
@@ -1405,6 +1481,36 @@ export default class GooeyI18n {
         });
 
         return promise;
+    }
+
+    /**
+     * Recursively process string values within an object or array,
+     * applying message compilation (interpolation) to each string leaf.
+     *
+     * @param {Object|Array} obj - Object or array to process
+     * @param {string} locale - Active locale
+     * @param {Object} options - Translation options
+     * @returns {Object|Array} Processed copy with interpolated string values
+     * @private
+     */
+    static _processObjectValues(obj, locale, options) {
+        if (Array.isArray(obj)) {
+            return obj.map(item => {
+                if (typeof item === "string") return this._compileMessage(item, options, locale);
+                if (item !== null && typeof item === "object") return this._processObjectValues(item, locale, options);
+                return item;
+            });
+        }
+        if (obj !== null && typeof obj === "object") {
+            const result = {};
+            for (const [k, v] of Object.entries(obj)) {
+                if (typeof v === "string") result[k] = this._compileMessage(v, options, locale);
+                else if (v !== null && typeof v === "object") result[k] = this._processObjectValues(v, locale, options);
+                else result[k] = v;
+            }
+            return result;
+        }
+        return obj;
     }
 
     /**
