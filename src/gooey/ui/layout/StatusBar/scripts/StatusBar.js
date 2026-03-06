@@ -1,39 +1,7 @@
 import Container from '../../../Container.js';
 import Template from '../../../../util/Template.js';
 import StatusBarEvent from '../../../../events/layout/StatusBarEvent.js';
-
-/**
- * Sanitize HTML to remove dangerous elements and attributes before injection.
- * Parses input as HTML directly (does not pre-escape), then removes script
- * tags, event handlers, and javascript: URLs.
- * @param {string} html - Raw HTML string
- * @returns {string} Sanitized HTML safe for innerHTML injection
- */
-function _sanitizeHTML(html) {
-    if (!html) return '';
-
-    const temp = document.createElement('div');
-    temp.innerHTML = html;
-
-    // Remove dangerous elements
-    temp.querySelectorAll('script, iframe, object, embed, link[rel="stylesheet"], meta')
-        .forEach(el => el.remove());
-
-    // Walk all remaining elements and remove dangerous attributes
-    temp.querySelectorAll('*').forEach(el => {
-        Array.from(el.attributes).forEach(attr => {
-            const name = attr.name.toLowerCase();
-            const value = attr.value;
-            if (name.startsWith('on')) {
-                el.removeAttribute(attr.name);
-            } else if (value && value.trim().toLowerCase().startsWith('javascript:')) {
-                el.removeAttribute(attr.name);
-            }
-        });
-    });
-
-    return temp.innerHTML;
-}
+import Sanitizer from '../../../../util/Sanitizer.js';
 
 export default class StatusBar extends Container {
     constructor() {
@@ -171,7 +139,7 @@ export default class StatusBar extends Container {
         }
 
         const span = document.createElement("span");
-        span.innerHTML = _sanitizeHTML(html);
+        span.innerHTML = Sanitizer.sanitize(html);
         span.setAttribute("slot", position);
 
         this._managedItems.add(span);

@@ -4,6 +4,7 @@ import TextElementEvent from '../../../../../events/form/text/TextElementEvent.j
 import FormElementEvent from '../../../../../events/form/FormElementEvent.js';
 import Template from '../../../../../util/Template.js';
 import Logger from '../../../../../logging/Logger.js';
+import Sanitizer from '../../../../../util/Sanitizer.js';
 
 import Schema from './model/Schema.js';
 import Node, { Mark } from './model/Node.js';
@@ -18,25 +19,6 @@ import PluginManager from './plugins/PluginManager.js';
 import { DEFAULT_PLUGINS } from './plugins/DefaultPlugins.js';
 import { insertTable as insertTableCmd, addRowBefore as addRowBeforeCmd, addRowAfter as addRowAfterCmd, addColumnBefore as addColumnBeforeCmd, addColumnAfter as addColumnAfterCmd, deleteRow as deleteRowCmd, deleteColumn as deleteColumnCmd, deleteTable as deleteTableCmd, mergeCells as mergeCellsCmd, splitCell as splitCellCmd, toggleHeaderRow as toggleHeaderRowCmd, toggleHeaderColumn as toggleHeaderColumnCmd } from './commands/TableCommands.js';
 import { insertImage as insertImageCmd, insertVideo as insertVideoCmd, insertEmbed as insertEmbedCmd, setMediaAlignment as setMediaAlignmentCmd, setImageAlt as setImageAltCmd, setImageCaption as setImageCaptionCmd, updateMediaAttrs as updateMediaAttrsCmd, deleteMedia as deleteMediaCmd, _findMediaNodeAtPos } from './commands/MediaCommands.js';
-
-/**
- * Elements that must be stripped entirely (with all descendants).
- * @type {Set<string>}
- */
-const FORBIDDEN_ELEMENTS = new Set([
-    'script', 'iframe', 'object', 'embed', 'form', 'input',
-    'button', 'select', 'textarea', 'link', 'meta', 'base', 'applet'
-]);
-
-/**
- * Allowed CSS properties in style attributes for input sanitization.
- * @type {Set<string>}
- */
-const ALLOWED_STYLE_PROPERTIES = new Set([
-    'color', 'background-color', 'font-size', 'font-family',
-    'text-align', 'line-height', 'text-decoration', 'font-weight',
-    'font-style', 'vertical-align', 'margin-left'
-]);
 
 /**
  * URL attributes that may contain dangerous schemes.
@@ -63,129 +45,6 @@ function _decodeHTMLEntities(str) {
     return str
         .replace(/&#x([0-9a-fA-F]+);/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)))
         .replace(/&#(\d+);/g, (_, dec) => String.fromCharCode(parseInt(dec, 10)));
-}
-
-/**
- * Sanitize HTML input to prevent XSS attacks.
- *
- * Parses HTML via DOMParser and walks the DOM tree, removing:
- * - Dangerous elements (script, iframe, object, embed, form, input, etc.)
- * - All on* event handler attributes
- * - javascript:, vbscript:, data:text/html URLs in URL-bearing attributes
- * - Inline styles not in the allow-list
- *
- * @param {string} html - Raw HTML string
- * @returns {string} Sanitized HTML
- */
-function _sanitizeInput(html) {
-    if (!html) return '';
-
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(html, 'text/html');
-    const body = doc.body;
-    if (!body) return '';
-
-    // Collect nodes to remove/unwrap (snapshot to avoid mutation during iteration)
-    const walker = document.createTreeWalker(body, NodeFilter.SHOW_ELEMENT, null);
-    const toRemove = [];
-
-    let node;
-    while ((node = walker.nextNode())) {
-        const tag = node.tagName.toLowerCase();
-
-        // Strip forbidden elements entirely
-        if (FORBIDDEN_ELEMENTS.has(tag)) {
-            toRemove.push(node);
-            continue;
-        }
-
-        // Clean attributes on allowed elements
-        _cleanInputAttributes(node);
-    }
-
-    // Remove forbidden elements (and all descendants)
-    for (const el of toRemove) {
-        if (el.parentNode) {
-            el.parentNode.removeChild(el);
-        }
-    }
-
-    return body.innerHTML;
-}
-
-/**
- * Clean attributes on an element for input sanitization.
- * Removes on* handlers, dangerous URLs, and filters style properties.
- *
- * @param {Element} el
- */
-function _cleanInputAttributes(el) {
-    const attrsToRemove = [];
-
-    for (const attr of Array.from(el.attributes)) {
-        const name = attr.name.toLowerCase();
-
-        // Strip on* event handler attributes
-        if (name.startsWith('on')) {
-            attrsToRemove.push(attr.name);
-            continue;
-        }
-
-        // Check URL attributes for dangerous schemes
-        if (URL_ATTRIBUTES.has(name)) {
-            const decoded = _decodeHTMLEntities(attr.value);
-            if (DANGEROUS_URL_RE.test(decoded)) {
-                // For images, allow data:image/* but strip data:text/html
-                if (name === 'src' && /^\s*data\s*:\s*image\//i.test(decoded)) {
-                    // Safe data URI for images — keep it
-                    continue;
-                }
-                attrsToRemove.push(attr.name);
-                continue;
-            }
-        }
-
-        // Filter style attribute
-        if (name === 'style') {
-            const filtered = _filterStyleProperties(attr.value);
-            if (filtered) {
-                el.setAttribute('style', filtered);
-            } else {
-                attrsToRemove.push(attr.name);
-            }
-        }
-    }
-
-    for (const name of attrsToRemove) {
-        el.removeAttribute(name);
-    }
-}
-
-/**
- * Filter a CSS style string to only allowed properties.
- *
- * @param {string} styleStr - Raw style attribute value
- * @returns {string} Filtered style string, or empty string
- */
-function _filterStyleProperties(styleStr) {
-    if (!styleStr) return '';
-
-    const parts = styleStr.split(';').filter(Boolean);
-    const allowed = [];
-
-    for (const part of parts) {
-        const colonIdx = part.indexOf(':');
-        if (colonIdx === -1) continue;
-
-        const prop = part.slice(0, colonIdx).trim().toLowerCase();
-        const value = part.slice(colonIdx + 1).trim();
-
-        if (ALLOWED_STYLE_PROPERTIES.has(prop) && value) {
-            allowed.push(`${prop}: ${value}`);
-        }
-    }
-
-    return allowed.length > 0 ? allowed.join('; ') : '';
 }
 
 /**
@@ -567,7 +426,7 @@ export default class RichTextEditor extends TextElement {
         if (!this._schema) return;
 
         const oldValue = this._state ? this._serializeToHTML(this._state.doc) : '';
-        const sanitized = _sanitizeInput(val);
+        const sanitized = Sanitizer.sanitize(val, { allowStyle: true });
         const doc = this._parseHTML(sanitized);
         const selection = Selection.cursor(1);
         this._state = new EditorState(doc, selection, [], [], this._schema);
@@ -796,7 +655,7 @@ export default class RichTextEditor extends TextElement {
      */
     insertHTML(html) {
         if (!html) return;
-        const sanitized = _sanitizeInput(html);
+        const sanitized = Sanitizer.sanitize(html, { allowStyle: true });
         if (this._clipboard) {
             const { from, to } = this._state.selection;
             this._clipboard._insertHTMLContent(sanitized, from, to);
