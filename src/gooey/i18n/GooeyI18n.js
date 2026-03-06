@@ -87,6 +87,41 @@ export default class GooeyI18n {
     /** @type {Map<string, Promise>} Locale string to in-flight load Promise */
     static _loadingLocales = new Map();
 
+    /**
+     * Named datetime format definitions keyed by locale.
+     * Structure: { locale: { formatName: IntlDateTimeFormatOptions } }
+     * @type {Object}
+     */
+    static _datetimeFormats = {};
+
+    /**
+     * Named number format definitions keyed by locale.
+     * Structure: { locale: { formatName: IntlNumberFormatOptions } }
+     * @type {Object}
+     */
+    static _numberFormats = {};
+
+    /**
+     * Cached Intl formatter instances keyed by constructor type.
+     * Each Map is keyed by a composite string of locale + JSON options.
+     * @type {Object<string, Map<string, Object>>}
+     */
+    static _formatterCache = {
+        dateTime: new Map(),
+        number: new Map(),
+        plural: new Map(),
+        relativeTime: new Map(),
+        list: new Map(),
+        displayNames: new Map()
+    };
+
+    /**
+     * Default rich text element factories for ICU MessageFormat.
+     * Phase 61 Plan 02 uses this for tag processing in compiled messages.
+     * @type {Object|null}
+     */
+    static _defaultRichTextElements = null;
+
     // ── Initialization ──────────────────────────────────────────────────
 
     /**
@@ -102,6 +137,9 @@ export default class GooeyI18n {
      * @param {boolean} [options.silentFallbackWarn=false] - Suppress fallback warnings
      * @param {string} [options.nsSeparator=":"] - Namespace separator character
      * @param {string} [options.keySeparator="."] - Nested key path separator character
+     * @param {Object} [options.datetimeFormats={}] - Named datetime format presets keyed by locale
+     * @param {Object} [options.numberFormats={}] - Named number format presets keyed by locale
+     * @param {Object} [options.defaultRichTextElements=null] - Default rich text element factories for MessageFormat
      */
     static init(options = {}) {
         const {
@@ -113,7 +151,10 @@ export default class GooeyI18n {
             silentTranslationWarn = false,
             silentFallbackWarn = false,
             nsSeparator = ":",
-            keySeparator = "."
+            keySeparator = ".",
+            datetimeFormats = {},
+            numberFormats = {},
+            defaultRichTextElements = null
         } = options;
 
         // Store options
@@ -130,6 +171,19 @@ export default class GooeyI18n {
         for (const loc of Object.keys(messages)) {
             this._messages[loc] = { translation: messages[loc] };
         }
+
+        // Process named datetime format presets
+        for (const loc of Object.keys(datetimeFormats)) {
+            this.setDatetimeFormats(loc, datetimeFormats[loc]);
+        }
+
+        // Process named number format presets
+        for (const loc of Object.keys(numberFormats)) {
+            this.setNumberFormats(loc, numberFormats[loc]);
+        }
+
+        // Store default rich text elements for Plan 02
+        this._defaultRichTextElements = defaultRichTextElements;
 
         this._locale = locale;
         this._fallbackLocale = fallbackLocale;
@@ -391,6 +445,108 @@ export default class GooeyI18n {
         delete this._messages[locale];
     }
 
+    // ── Named Format Presets ────────────────────────────────────────────
+
+    /**
+     * Replace all datetime format presets for a locale.
+     *
+     * @param {string} locale - Locale identifier
+     * @param {Object} formats - Named format definitions (e.g., { short: { year: 'numeric', month: 'short' } })
+     */
+    static setDatetimeFormats(locale, formats) {
+        this._datetimeFormats[locale] = formats;
+    }
+
+    /**
+     * Replace all number format presets for a locale.
+     *
+     * @param {string} locale - Locale identifier
+     * @param {Object} formats - Named format definitions (e.g., { currency: { style: 'currency', currency: 'USD' } })
+     */
+    static setNumberFormats(locale, formats) {
+        this._numberFormats[locale] = formats;
+    }
+
+    /**
+     * Deep merge additional datetime format presets into existing for a locale.
+     *
+     * @param {string} locale - Locale identifier
+     * @param {Object} formats - Named format definitions to merge
+     */
+    static mergeDatetimeFormats(locale, formats) {
+        if (!this._datetimeFormats[locale]) {
+            this._datetimeFormats[locale] = {};
+        }
+        this._datetimeFormats[locale] = this._deepMerge(
+            this._datetimeFormats[locale],
+            formats
+        );
+    }
+
+    /**
+     * Deep merge additional number format presets into existing for a locale.
+     *
+     * @param {string} locale - Locale identifier
+     * @param {Object} formats - Named format definitions to merge
+     */
+    static mergeNumberFormats(locale, formats) {
+        if (!this._numberFormats[locale]) {
+            this._numberFormats[locale] = {};
+        }
+        this._numberFormats[locale] = this._deepMerge(
+            this._numberFormats[locale],
+            formats
+        );
+    }
+
+    /**
+     * Get the datetime format presets for a locale.
+     *
+     * @param {string} locale - Locale identifier
+     * @returns {Object|undefined} Format definitions or undefined
+     */
+    static getDatetimeFormats(locale) {
+        return this._datetimeFormats[locale];
+    }
+
+    /**
+     * Get the number format presets for a locale.
+     *
+     * @param {string} locale - Locale identifier
+     * @returns {Object|undefined} Format definitions or undefined
+     */
+    static getNumberFormats(locale) {
+        return this._numberFormats[locale];
+    }
+
+    // ── Formatter Cache Management ───────────────────────────────────────
+
+    /**
+     * Clear all cached Intl formatter instances.
+     * Call after locale changes if cached formatters are no longer needed.
+     */
+    static clearFormatterCache() {
+        for (const cache of Object.values(this._formatterCache)) {
+            cache.clear();
+        }
+    }
+
+    /**
+     * Clear the MessageFormat AST cache.
+     * Stub for Phase 61 Plan 02 -- no-op until MessageFormat is implemented.
+     */
+    static clearMessageCache() {
+        // Phase 61 Plan 02 will implement this
+    }
+
+    /**
+     * Clear all caches (formatter instances and message ASTs).
+     */
+    static clearAllCaches() {
+        this.clearFormatterCache();
+        this.clearMessageCache();
+    }
+
     // ── Lazy Loading ────────────────────────────────────────────────────
 
     /**
@@ -492,6 +648,27 @@ export default class GooeyI18n {
     // ── Private Helpers ─────────────────────────────────────────────────
 
     /**
+     * Get or create a cached Intl formatter instance.
+     *
+     * @param {Map} cache - The specific cache Map (e.g., _formatterCache.dateTime)
+     * @param {function} Constructor - Intl constructor (e.g., Intl.DateTimeFormat)
+     * @param {string} locale - Locale for the formatter
+     * @param {Object} options - Intl constructor options
+     * @returns {Object} Cached or newly created formatter instance
+     * @private
+     */
+    static _getOrCreateFormatter(cache, Constructor, locale, options) {
+        const key = locale + JSON.stringify(options);
+
+        let formatter = cache.get(key);
+        if (formatter) return formatter;
+
+        formatter = new Constructor(locale, options);
+        cache.set(key, formatter);
+        return formatter;
+    }
+
+    /**
      * Parse a translation key into namespace and keypath.
      *
      * @param {string} key - Full key (may contain namespace prefix)
@@ -584,9 +761,14 @@ export default class GooeyI18n {
         const exactKey = "=" + count;
         if (exactKey in pluralObj) return pluralObj[exactKey];
 
-        // Use Intl.PluralRules to select category
+        // Use Intl.PluralRules to select category (cached for performance)
         try {
-            const rules = new Intl.PluralRules(locale);
+            const rules = this._getOrCreateFormatter(
+                this._formatterCache.plural,
+                Intl.PluralRules,
+                locale,
+                {}
+            );
             const category = rules.select(count);
             if (category in pluralObj) return pluralObj[category];
         } catch (e) {
