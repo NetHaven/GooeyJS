@@ -547,6 +547,180 @@ export default class GooeyI18n {
         this.clearMessageCache();
     }
 
+    // ── Formatting Methods ────────────────────────────────────────────
+
+    /**
+     * Format a date value using named presets or raw Intl.DateTimeFormat options.
+     *
+     * @param {Date|number|string} value - Date object, timestamp, or ISO date string
+     * @param {string|Object} [format] - Named format key or Intl.DateTimeFormat options
+     * @param {Object} [options={}] - Additional options
+     * @param {string} [options.locale] - Locale override
+     * @param {boolean} [options.parts] - If true, return formatToParts array
+     * @returns {string|Array} Formatted date string, or parts array if options.parts is true
+     */
+    static d(value, format, options = {}) {
+        const locale = options.locale || this._locale;
+
+        // Convert value to Date if needed
+        if (!(value instanceof Date)) {
+            value = new Date(value);
+        }
+
+        // Resolve format options
+        let formatOptions;
+        if (typeof format === "string") {
+            // Look up named format preset
+            const presets = this._datetimeFormats[locale];
+            formatOptions = presets?.[format];
+            if (!formatOptions) {
+                // Use format string as dateStyle shortcut
+                formatOptions = { dateStyle: format };
+            }
+        } else if (format && typeof format === "object") {
+            formatOptions = format;
+        } else {
+            formatOptions = {};
+        }
+
+        const formatter = this._getOrCreateFormatter(
+            this._formatterCache.dateTime,
+            Intl.DateTimeFormat,
+            locale,
+            formatOptions
+        );
+
+        return options.parts
+            ? formatter.formatToParts(value)
+            : formatter.format(value);
+    }
+
+    /**
+     * Format a number using named presets or raw Intl.NumberFormat options.
+     *
+     * @param {number} value - Number to format
+     * @param {string|Object} [format] - Named format key or Intl.NumberFormat options
+     * @param {Object} [options={}] - Additional options
+     * @param {string} [options.locale] - Locale override
+     * @param {boolean} [options.parts] - If true, return formatToParts array
+     * @returns {string|Array} Formatted number string, or parts array if options.parts is true
+     */
+    static n(value, format, options = {}) {
+        const locale = options.locale || this._locale;
+
+        // Resolve format options
+        let formatOptions;
+        if (typeof format === "string") {
+            // Look up named format preset
+            const presets = this._numberFormats[locale];
+            formatOptions = presets?.[format];
+            if (!formatOptions) {
+                // No preset found, return plain string
+                return String(value);
+            }
+        } else if (format && typeof format === "object") {
+            formatOptions = format;
+        } else {
+            formatOptions = {};
+        }
+
+        const formatter = this._getOrCreateFormatter(
+            this._formatterCache.number,
+            Intl.NumberFormat,
+            locale,
+            formatOptions
+        );
+
+        return options.parts
+            ? formatter.formatToParts(value)
+            : formatter.format(value);
+    }
+
+    /**
+     * Format a relative time value using Intl.RelativeTimeFormat.
+     *
+     * @param {number} value - Relative time value (negative = past, positive = future)
+     * @param {string} unit - Time unit ('second', 'minute', 'hour', 'day', 'week', 'month', 'year')
+     * @param {Object} [options={}] - Additional options
+     * @param {string} [options.locale] - Locale override
+     * @param {string} [options.style] - Format style ('long', 'short', 'narrow')
+     * @param {string} [options.numeric] - Numeric display ('always', 'auto')
+     * @returns {string} Formatted relative time string
+     */
+    static rt(value, unit, options = {}) {
+        const locale = options.locale || this._locale;
+
+        // Build Intl options, filtering out non-Intl properties
+        const intlOptions = {};
+        if (options.style !== undefined) intlOptions.style = options.style;
+        if (options.numeric !== undefined) intlOptions.numeric = options.numeric;
+
+        const formatter = this._getOrCreateFormatter(
+            this._formatterCache.relativeTime,
+            Intl.RelativeTimeFormat,
+            locale,
+            intlOptions
+        );
+
+        return formatter.format(value, unit);
+    }
+
+    /**
+     * Format a list of items using Intl.ListFormat.
+     *
+     * @param {string[]} items - Array of strings to format as a list
+     * @param {Object} [options={}] - Additional options
+     * @param {string} [options.locale] - Locale override
+     * @param {string} [options.type] - List type ('conjunction', 'disjunction', 'unit'), defaults to 'conjunction'
+     * @param {string} [options.style] - List style ('long', 'short', 'narrow')
+     * @returns {string} Formatted list string
+     */
+    static list(items, options = {}) {
+        const locale = options.locale || this._locale;
+
+        const intlOptions = {};
+        intlOptions.type = options.type || "conjunction";
+        if (options.style !== undefined) intlOptions.style = options.style;
+
+        const formatter = this._getOrCreateFormatter(
+            this._formatterCache.list,
+            Intl.ListFormat,
+            locale,
+            intlOptions
+        );
+
+        return formatter.format(items);
+    }
+
+    /**
+     * Format a display name for a language, region, currency, or script code.
+     *
+     * @param {string} code - Code to display (e.g., 'en', 'US', 'USD', 'Latn')
+     * @param {Object} [options={}] - Options (type is required)
+     * @param {string} [options.locale] - Locale override
+     * @param {string} options.type - Display name type ('language', 'region', 'currency', 'script')
+     * @param {string} [options.style] - Display style ('long', 'short', 'narrow')
+     * @param {string} [options.languageDisplay] - Language display mode ('dialect', 'standard')
+     * @returns {string|undefined} Display name string, or undefined if code is not recognized
+     */
+    static displayName(code, options = {}) {
+        const locale = options.locale || this._locale;
+
+        const intlOptions = {};
+        if (options.type !== undefined) intlOptions.type = options.type;
+        if (options.style !== undefined) intlOptions.style = options.style;
+        if (options.languageDisplay !== undefined) intlOptions.languageDisplay = options.languageDisplay;
+
+        const formatter = this._getOrCreateFormatter(
+            this._formatterCache.displayNames,
+            Intl.DisplayNames,
+            locale,
+            intlOptions
+        );
+
+        return formatter.of(code);
+    }
+
     // ── Lazy Loading ────────────────────────────────────────────────────
 
     /**
