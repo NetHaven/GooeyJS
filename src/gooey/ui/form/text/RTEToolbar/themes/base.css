@@ -22,11 +22,11 @@
 }
 
 :host([position="left"]) .rte-toolbar-container {
-    border-right: 1px solid var(--gooey-rte-toolbar-border-color, var(--gooey-color-border));
+    border-inline-end: 1px solid var(--gooey-rte-toolbar-border-color, var(--gooey-color-border));
 }
 
 :host([position="right"]) .rte-toolbar-container {
-    border-left: 1px solid var(--gooey-rte-toolbar-border-color, var(--gooey-color-border));
+    border-inline-start: 1px solid var(--gooey-rte-toolbar-border-color, var(--gooey-color-border));
 }
 
 :host([position="bottom"]) .rte-toolbar-container {
@@ -96,7 +96,9 @@
 .rte-tb-dropdown {
     appearance: none;
     -webkit-appearance: none;
-    padding: 2px 20px 2px 6px;
+    padding-block: 2px;
+    padding-inline-start: 6px;
+    padding-inline-end: 20px;
     border: 1px solid var(--gooey-rte-toolbar-border-color, var(--gooey-color-border));
     border-radius: 3px;
     font-family: inherit;
@@ -150,7 +152,7 @@
     position: absolute;
     z-index: 20;
     top: 100%;
-    left: 0;
+    inset-inline-start: 0;
     display: none;
     grid-template-columns: repeat(8, 1fr);
     gap: 2px;
@@ -204,7 +206,7 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    margin-left: auto;
+    margin-inline-start: auto;
     padding: 0 8px;
     font-size: 11px;
     color: var(--gooey-rte-toolbar-status-color, var(--gooey-color-text-secondary, #666));

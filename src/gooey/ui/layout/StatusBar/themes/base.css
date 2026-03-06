@@ -52,8 +52,8 @@
 
 /* Dividers between slotted items */
 ::slotted(*:not(:first-child)) {
-    border-left: 1px solid var(--gooey-statusbar-divider-color, var(--gooey-color-border));
-    padding-left: 6px;
+    border-inline-start: 1px solid var(--gooey-statusbar-divider-color, var(--gooey-color-border));
+    padding-inline-start: 6px;
 }
 
 /* Text overflow on slotted items */

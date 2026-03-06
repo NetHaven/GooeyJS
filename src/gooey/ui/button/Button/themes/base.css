@@ -62,7 +62,7 @@ button:focus-visible {
 
 /* Icon and text styling */
 button img {
-    margin-right: var(--gooey-button-icon-gap, var(--gooey-spacing-sm));
+    margin-inline-end: var(--gooey-button-icon-gap, var(--gooey-spacing-sm));
     display: block;
 }
 
@@ -72,5 +72,5 @@ button span {
 }
 
 button img:only-child {
-    margin-right: 0;
+    margin-inline-end: 0;
 }

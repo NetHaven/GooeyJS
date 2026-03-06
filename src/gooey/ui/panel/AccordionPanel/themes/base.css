@@ -41,7 +41,7 @@
 }
 
 .accordion-arrow {
-    margin-right: 6px;
+    margin-inline-end: 6px;
     font-size: 10px;
     color: var(--gooey-accordion-arrow-color, var(--gooey-color-text));
     font-family: monospace;

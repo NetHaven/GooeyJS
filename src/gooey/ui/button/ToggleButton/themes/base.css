@@ -85,7 +85,7 @@ button:focus {
 /* Icon and text styling */
 .toggle-button img,
 button img {
-    margin-right: 4px;
+    margin-inline-end: 4px;
     display: block;
 }
 
@@ -97,5 +97,5 @@ button span {
 
 .toggle-button img:only-child,
 button img:only-child {
-    margin-right: 0;
+    margin-inline-end: 0;
 }

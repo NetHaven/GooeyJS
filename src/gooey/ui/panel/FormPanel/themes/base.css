@@ -32,6 +32,6 @@
 .required-indicator {
     color: var(--gooey-formpanel-required-color, var(--gooey-color-error)) !important;
     font-weight: bold !important;
-    margin-left: 4px !important;
+    margin-inline-start: 4px !important;
     font-size: 14px !important;
 }

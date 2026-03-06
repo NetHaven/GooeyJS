@@ -23,7 +23,7 @@
 :host(.vertical) .tab-strip {
     flex-direction: column;
     border-bottom: none;
-    border-right: 1px solid var(--gooey-tabpanel-strip-border-color, var(--gooey-color-border));
+    border-inline-end: 1px solid var(--gooey-tabpanel-strip-border-color, var(--gooey-color-border));
     overflow-x: visible;
     overflow-y: auto;
     width: 150px;
@@ -51,7 +51,7 @@
     user-select: none;
     font-size: var(--gooey-tabpanel-header-font-size, 11px);
     font-family: var(--gooey-tabpanel-header-font-family, var(--gooey-font-family));
-    margin-right: -1px;
+    margin-inline-end: -1px;
     position: relative;
     min-width: 0;
     white-space: nowrap;
@@ -60,9 +60,9 @@
 }
 
 :host(.vertical) .tab-header {
-    border-right: none;
+    border-inline-end: none;
     border-bottom: 1px solid var(--gooey-tabpanel-header-border-color, var(--gooey-color-border));
-    margin-right: 0;
+    margin-inline-end: 0;
     margin-bottom: -1px;
     justify-content: flex-start;
     width: 100%;
@@ -87,7 +87,7 @@
 :host(.vertical) .tab-header.active {
     background-color: var(--gooey-tabpanel-header-active-bg, var(--gooey-color-surface-raised));
     border-bottom: 1px solid var(--gooey-tabpanel-header-border-color, var(--gooey-color-border));
-    border-right: 1px solid var(--gooey-tabpanel-header-active-bg, var(--gooey-color-surface-raised));
+    border-inline-end: 1px solid var(--gooey-tabpanel-header-active-bg, var(--gooey-color-surface-raised));
     border-color: var(--gooey-tabpanel-header-active-border-color, #4a90e2);
     border-width: 2px;
     color: var(--gooey-tabpanel-header-active-color, var(--gooey-color-text));
@@ -113,7 +113,7 @@
     cursor: pointer;
     font-size: 16px;
     line-height: 1;
-    margin-left: 8px;
+    margin-inline-start: 8px;
     padding: 0;
     width: 24px;
     height: 24px;
@@ -149,11 +149,11 @@
 }
 
 .tab-header.drag-over-left {
-    border-left: 3px solid var(--gooey-tabpanel-drag-indicator-color, var(--gooey-color-primary));
+    border-inline-start: 3px solid var(--gooey-tabpanel-drag-indicator-color, var(--gooey-color-primary));
 }
 
 .tab-header.drag-over-right {
-    border-right: 3px solid var(--gooey-tabpanel-drag-indicator-color, var(--gooey-color-primary));
+    border-inline-end: 3px solid var(--gooey-tabpanel-drag-indicator-color, var(--gooey-color-primary));
 }
 
 .tab-header.drag-over-top {

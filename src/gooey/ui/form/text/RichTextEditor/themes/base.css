@@ -114,7 +114,7 @@
     display: none;
     position: absolute;
     top: 0;
-    right: 0;
+    inset-inline-end: 0;
     z-index: 20;
     background: var(--gooey-color-surface, #ffffff);
     border: 1px solid var(--gooey-color-border, #cccccc);
@@ -248,7 +248,7 @@
 .rte-drag-handle {
     display: none;
     position: absolute;
-    left: -24px;
+    inset-inline-start: -24px;
     width: 20px;
     height: 20px;
     cursor: grab;
@@ -299,7 +299,7 @@
 .rte-content table th {
     background-color: var(--gooey-richtexteditor-toolbar-bg, var(--gooey-color-surface-hover));
     font-weight: bold;
-    text-align: left;
+    text-align: start;
 }
 
 .rte-content table tr:first-child td,
@@ -774,7 +774,7 @@
 .rte-placeholder {
     position: absolute;
     top: 8px;
-    left: 8px;
+    inset-inline-start: 8px;
     color: var(--gooey-richtexteditor-placeholder-color, var(--gooey-color-text-secondary, #999));
     opacity: 0.6;
     pointer-events: none;
