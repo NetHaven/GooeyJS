@@ -94,6 +94,9 @@ export default class GooeyI18n {
     /** @type {boolean} Debug mode -- t() returns bracketed keys instead of translations */
     static _debug = false;
 
+    /** @type {function|null} Custom message compiler replacing default ICU MessageFormat */
+    static _messageCompiler = null;
+
     /** @type {Map<string, Promise>} Locale string to in-flight load Promise */
     static _loadingLocales = new Map();
 
@@ -156,6 +159,7 @@ export default class GooeyI18n {
      * @param {string} [options.defaultNamespace="translation"] - Default namespace for messages
      * @param {string|string[]} [options.fallbackNamespace=[]] - Namespace(s) to try when key not found in target namespace
      * @param {boolean} [options.debug=false] - Enable debug mode (console logging)
+     * @param {function} [options.messageCompiler=null] - Custom message compiler replacing default ICU MessageFormat
      */
     static init(options = {}) {
         const {
@@ -173,11 +177,15 @@ export default class GooeyI18n {
             defaultRichTextElements = null,
             defaultNamespace = "translation",
             fallbackNamespace = [],
-            debug = false
+            debug = false,
+            messageCompiler = null
         } = options;
 
         // Store debug flag
         this._debug = !!debug;
+
+        // Store custom message compiler
+        this._messageCompiler = messageCompiler || null;
 
         // Store namespace configuration
         this._defaultNamespace = defaultNamespace;
@@ -1161,6 +1169,12 @@ export default class GooeyI18n {
     static _compileMessage(str, values, locale) {
         if (!str || typeof str !== "string") return str;
 
+        // Custom message compiler replaces default ICU parser when set
+        if (this._messageCompiler) {
+            const compiledFn = this._messageCompiler(str, locale);
+            return compiledFn(values);
+        }
+
         // Fast path: no values and no ICU syntax -- return as-is
         if (!values || (typeof values === "object" && Object.keys(values).length === 0)) {
             if (!/[{]/.test(str) && !/\$t\(/.test(str)) return str;
@@ -1272,6 +1286,33 @@ export default class GooeyI18n {
         if (options.count !== undefined && value !== null && typeof value === "object") {
             value = this._resolvePlural(value, options.count, locale);
             if (value === undefined) return undefined;
+        }
+
+        // Message function support: if value is a function, call it with context object
+        if (typeof value === "function") {
+            const ctx = {
+                named: (key) => options[key],
+                plural: (count) => {
+                    try {
+                        const rules = this._getOrCreateFormatter(
+                            this._formatterCache.plural,
+                            Intl.PluralRules,
+                            locale,
+                            {}
+                        );
+                        return rules.select(count);
+                    } catch (e) {
+                        return "other";
+                    }
+                },
+                linked: (key) => this.t(key),
+                locale: locale
+            };
+            value = value(ctx);
+            if (typeof value !== "string") value = String(value);
+            // Still apply post-processing to function results
+            value = this._postProcess(value, options);
+            return value;
         }
 
         // If value is not a string at this point, check returnObjects/joinArrays
