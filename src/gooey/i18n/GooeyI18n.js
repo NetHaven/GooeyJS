@@ -85,6 +85,21 @@ export default class GooeyI18n {
     /** @type {Set<function>} Missing key callbacks */
     static _missingKeyCallbacks = new Set();
 
+    /** @type {Set<function>} Locale loading callbacks (fired before async fetch) */
+    static _localeLoadingCallbacks = new Set();
+
+    /** @type {Set<function>} Locale loaded callbacks (fired after successful fetch) */
+    static _localeLoadedCallbacks = new Set();
+
+    /** @type {Set<function>} Locale error callbacks (fired on fetch failure) */
+    static _localeErrorCallbacks = new Set();
+
+    /** @type {boolean} Whether to collect missing keys for development workflows */
+    static _saveMissing = false;
+
+    /** @type {Array<{locale: string, key: string, namespace: string, defaultValue: *}>} Collected missing keys */
+    static _missingKeyLog = [];
+
     /** @type {Map<string, string>} Locale string to URL for deferred loading */
     static _lazyLocales = new Map();
 
@@ -188,7 +203,8 @@ export default class GooeyI18n {
             fallbackNamespace = [],
             debug = false,
             messageCompiler = null,
-            postProcessors = []
+            postProcessors = [],
+            saveMissing
         } = options;
 
         // Store debug flag
@@ -199,6 +215,12 @@ export default class GooeyI18n {
 
         // Store global post-processor names (does NOT clear user-registered post-processors)
         this._globalPostProcessors = postProcessors || [];
+
+        // Configure saveMissing mode only when explicitly set in options
+        if (saveMissing !== undefined) {
+            this._saveMissing = !!saveMissing;
+            this._missingKeyLog = [];
+        }
 
         // Store namespace configuration
         this._defaultNamespace = defaultNamespace;
@@ -1194,6 +1216,58 @@ export default class GooeyI18n {
         };
     }
 
+    /**
+     * Register a callback for locale loading start events.
+     * The callback receives { locale, src }.
+     *
+     * @param {function} callback - Listener function
+     * @returns {function} Cleanup function that removes the callback
+     */
+    static onLocaleLoading(callback) {
+        this._localeLoadingCallbacks.add(callback);
+        return () => {
+            this._localeLoadingCallbacks.delete(callback);
+        };
+    }
+
+    /**
+     * Register a callback for locale loaded events.
+     * The callback receives { locale, src, messageCount }.
+     *
+     * @param {function} callback - Listener function
+     * @returns {function} Cleanup function that removes the callback
+     */
+    static onLocaleLoaded(callback) {
+        this._localeLoadedCallbacks.add(callback);
+        return () => {
+            this._localeLoadedCallbacks.delete(callback);
+        };
+    }
+
+    /**
+     * Register a callback for locale load error events.
+     * The callback receives { error, locale, src, code }.
+     *
+     * @param {function} callback - Listener function
+     * @returns {function} Cleanup function that removes the callback
+     */
+    static onLocaleError(callback) {
+        this._localeErrorCallbacks.add(callback);
+        return () => {
+            this._localeErrorCallbacks.delete(callback);
+        };
+    }
+
+    /**
+     * Get all missing keys collected when saveMissing mode is enabled.
+     * Returns a shallow copy of the internal log.
+     *
+     * @returns {Array<{locale: string, key: string, namespace: string, defaultValue: *}>}
+     */
+    static getMissingKeys() {
+        return [...this._missingKeyLog];
+    }
+
     // ── Stub Hooks (Phase 61+) ──────────────────────────────────────────
 
     /**
@@ -1502,6 +1576,11 @@ export default class GooeyI18n {
             cb({ locale, key, namespace, defaultValue: options.defaultValue });
         }
 
+        // Collect missing key for saveMissing mode
+        if (this._saveMissing) {
+            this._missingKeyLog.push({ locale, key, namespace, defaultValue: options.defaultValue });
+        }
+
         // Return the key itself
         return key;
     }
@@ -1571,6 +1650,11 @@ export default class GooeyI18n {
         const promise = (async () => {
             let lastError;
 
+            // Fire locale loading callbacks before fetch begins
+            for (const cb of this._localeLoadingCallbacks) {
+                cb({ locale, src: url });
+            }
+
             for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
                 try {
                     const controller = new AbortController();
@@ -1599,6 +1683,11 @@ export default class GooeyI18n {
                     // Store messages
                     this.setLocaleMessages(locale, messages);
 
+                    // Fire locale loaded callbacks after successful load
+                    for (const cb of this._localeLoadedCallbacks) {
+                        cb({ locale, src: url, messageCount: Object.keys(messages).length });
+                    }
+
                     return;
                 } catch (err) {
                     lastError = err;
@@ -1615,6 +1704,11 @@ export default class GooeyI18n {
                         await new Promise(resolve => setTimeout(resolve, delay));
                     }
                 }
+            }
+
+            // Fire locale error callbacks before throwing
+            for (const cb of this._localeErrorCallbacks) {
+                cb({ error: lastError, locale, src: url, code: 'LOAD_ERROR' });
             }
 
             throw lastError;

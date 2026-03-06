@@ -187,6 +187,15 @@ export default class Locale extends GooeyElement {
         const parent = this._getI18nParent();
         const ns = this.namespace;
 
+        // Fire LOCALE_LOADING on parent before the async fetch begins
+        if (parent && typeof parent.fireEvent === 'function') {
+            parent.fireEvent(I18nEvent.LOCALE_LOADING, {
+                locale: this.lang,
+                src: this.src,
+                namespace: ns
+            });
+        }
+
         try {
             // Use loadNamespace to store under the correct namespace
             await GooeyI18n.loadNamespace(this.lang, ns, this.src);
