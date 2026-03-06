@@ -1,0 +1,13 @@
+:host {
+    display: block;
+}
+
+:host([type="dots"]) {
+    display: flex;
+    justify-content: center;
+}
+
+.carousel-nav {
+    display: flex;
+    align-items: center;
+}

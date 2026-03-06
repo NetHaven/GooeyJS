@@ -1,0 +1,12 @@
+:host {
+    display: block;
+    flex: 0 0 auto;
+    overflow: hidden;
+    background: var(--gooey-carousel-slide-bg, transparent);
+    padding: var(--gooey-carousel-slide-padding, 0);
+    border-radius: var(--gooey-carousel-slide-border-radius, 0);
+}
+
+:host([active]) {
+    /* Active state visual changes are theme-specific (Phase 69) */
+}

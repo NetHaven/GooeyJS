@@ -1,0 +1,20 @@
+{
+    "name": "CarouselNav",
+    "prefix": "gooeyui",
+    "tagName": "gooeyui-carousel-nav",
+    "script": "CarouselNav.js",
+    "templates": [
+        { "id": "ui-CarouselNav", "file": "CarouselNav.html" }
+    ],
+    "themes": {
+        "default": "base",
+        "available": ["base"]
+    },
+    "attributes": {
+        "type": {
+            "type": "ENUM",
+            "default": "arrows",
+            "values": ["ARROWS", "DOTS", "SCROLLBAR", "PROGRESS", "CUSTOM"]
+        }
+    }
+}

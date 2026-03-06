@@ -1,0 +1,90 @@
+{
+    "name": "Carousel",
+    "prefix": "gooeyui",
+    "tagName": "gooeyui-carousel",
+    "script": "Carousel.js",
+    "templates": [
+        { "id": "ui-Carousel", "file": "Carousel.html" }
+    ],
+    "themes": {
+        "default": "base",
+        "available": ["base"]
+    },
+    "attributes": {
+        "direction": {
+            "type": "ENUM",
+            "default": "horizontal",
+            "values": ["HORIZONTAL", "VERTICAL"]
+        },
+        "mode": {
+            "type": "ENUM",
+            "default": "snap",
+            "values": ["SNAP", "FREE", "FREE-SNAP"]
+        },
+        "perpage": {
+            "type": "NUMBER",
+            "default": "1"
+        },
+        "permove": {
+            "type": "NUMBER",
+            "default": "1"
+        },
+        "startindex": {
+            "type": "NUMBER",
+            "default": "0"
+        },
+        "gap": {
+            "type": "STRING",
+            "default": "0px"
+        },
+        "speed": {
+            "type": "NUMBER",
+            "default": "300"
+        },
+        "easing": {
+            "type": "STRING",
+            "default": "ease"
+        },
+        "loop": {
+            "type": "BOOLEAN",
+            "default": "false"
+        },
+        "rewind": {
+            "type": "BOOLEAN",
+            "default": "false"
+        },
+        "mousedrag": {
+            "type": "BOOLEAN",
+            "default": "true"
+        },
+        "touchdrag": {
+            "type": "BOOLEAN",
+            "default": "true"
+        },
+        "dragthreshold": {
+            "type": "NUMBER",
+            "default": "10"
+        },
+        "rubberband": {
+            "type": "BOOLEAN",
+            "default": "true"
+        },
+        "padding": {
+            "type": "STRING",
+            "default": "0px"
+        },
+        "arialabel": {
+            "type": "STRING",
+            "default": "Carousel"
+        },
+        "announcetemplate": {
+            "type": "STRING",
+            "default": "Slide ${index} of ${total}"
+        },
+        "liveregion": {
+            "type": "ENUM",
+            "default": "polite",
+            "values": ["POLITE", "ASSERTIVE"]
+        }
+    }
+}

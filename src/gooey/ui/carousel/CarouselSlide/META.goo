@@ -1,0 +1,19 @@
+{
+    "name": "CarouselSlide",
+    "prefix": "gooeyui",
+    "tagName": "gooeyui-carousel-slide",
+    "script": "CarouselSlide.js",
+    "templates": [
+        { "id": "ui-CarouselSlide", "file": "CarouselSlide.html" }
+    ],
+    "themes": {
+        "default": "base",
+        "available": ["base"]
+    },
+    "attributes": {
+        "active": {
+            "type": "BOOLEAN",
+            "default": "false"
+        }
+    }
+}

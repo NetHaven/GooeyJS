@@ -1,0 +1,104 @@
+:host {
+    display: block;
+    position: relative;
+    overflow: hidden;
+    background: var(--gooey-carousel-bg, var(--gooey-color-surface));
+    --_transition-duration: var(--gooey-carousel-transition-duration, 300ms);
+    --_transition-easing: var(--gooey-carousel-transition-easing, ease);
+}
+
+:host([disabled]) {
+    opacity: var(--gooey-carousel-disabled-opacity, var(--gooey-opacity-disabled, 0.5));
+    pointer-events: none;
+}
+
+.carousel-viewport {
+    overflow: hidden;
+    position: relative;
+}
+
+.carousel-track {
+    display: flex;
+    transition: transform var(--_transition-duration) var(--_transition-easing);
+    will-change: transform;
+    gap: var(--gooey-carousel-track-gap, 0px);
+}
+
+.carousel-live-region {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Navigation arrows */
+.carousel-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    width: var(--gooey-carousel-arrow-size, 40px);
+    height: var(--gooey-carousel-arrow-size, 40px);
+    background: var(--gooey-carousel-arrow-bg, var(--gooey-color-surface));
+    color: var(--gooey-carousel-arrow-fg, var(--gooey-color-on-surface));
+    border: 1px solid var(--gooey-color-border);
+    border-radius: var(--gooey-carousel-arrow-border-radius, var(--gooey-border-radius));
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.carousel-arrow:hover {
+    background: var(--gooey-carousel-arrow-bg-hover, var(--gooey-color-surface-hover));
+}
+
+.carousel-arrow:focus-visible {
+    outline: 2px solid var(--gooey-carousel-focus-ring, var(--gooey-color-focus));
+    outline-offset: 2px;
+}
+
+.carousel-arrow--prev { left: 8px; }
+.carousel-arrow--next { right: 8px; }
+
+/* Pagination dots */
+.carousel-dots {
+    display: flex;
+    justify-content: center;
+    gap: var(--gooey-carousel-dot-gap, 8px);
+    padding: 12px 0;
+}
+
+.carousel-dot {
+    width: var(--gooey-carousel-dot-size, 8px);
+    height: var(--gooey-carousel-dot-size, 8px);
+    border-radius: 50%;
+    background: var(--gooey-carousel-dot-bg, var(--gooey-color-border));
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: background 200ms ease;
+}
+
+.carousel-dot[aria-current="true"] {
+    background: var(--gooey-carousel-dot-bg-active, var(--gooey-color-primary));
+}
+
+.carousel-dot:focus-visible {
+    outline: 2px solid var(--gooey-carousel-focus-ring, var(--gooey-color-focus));
+    outline-offset: 2px;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .carousel-track {
+        transition: none;
+    }
+    .carousel-dot,
+    .carousel-scrollbar-thumb {
+        transition: none;
+    }
+}
