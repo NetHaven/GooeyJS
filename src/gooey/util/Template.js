@@ -11,6 +11,8 @@ export default class Template {
         if (template) {
             const clone = document.importNode(template.content, true);
             target.appendChild(clone);
+        } else {
+            throw new Error(`Template.activate: template ID "${id}" (DOM ID "gooey-${id}") not found. Ensure the component's template has been loaded before activation.`);
         }
     }
 
