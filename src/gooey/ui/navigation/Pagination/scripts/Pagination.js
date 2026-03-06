@@ -1,6 +1,7 @@
 import UIComponent from '../../../UIComponent.js';
 import Template from '../../../../util/Template.js';
 import PaginationEvent from '../../../../events/navigation/PaginationEvent.js';
+import DataStoreEvent from '../../../../events/data/DataStoreEvent.js';
 import NavigatorFormat from './NavigatorFormat.js';
 
 export default class Pagination extends UIComponent {
@@ -24,6 +25,9 @@ export default class Pagination extends UIComponent {
         this._datagrid = null;
         this._storeListeners = [];
         this._gridListeners = [];
+        this._storeWaitObserver = null;
+        this._gridWaitObserver = null;
+        this._gridFullData = null;
         this._navigatorFormatter = null;
         this._pageLabelFormatter = null;
     }
@@ -182,7 +186,7 @@ export default class Pagination extends UIComponent {
         return Math.min(this.currentpage * this.pagesize, this.totalrecords);
     }
 
-    get currentPageData() { return null; }
+    get currentPageData() { return this._getCurrentPageData(); }
 
     // =========================================================================
     // Formatter API
@@ -828,6 +832,10 @@ export default class Pagination extends UIComponent {
             this.fireEvent(PaginationEvent.LAST_PAGE, { pagination: this });
         }
 
+        // Sync store and datagrid bindings on page change
+        if (this._store) this._sliceStoreData();
+        if (this._datagrid) this._syncWithDataGrid();
+
         this._render();
     }
 
@@ -882,11 +890,154 @@ export default class Pagination extends UIComponent {
     }
 
     // =========================================================================
-    // Store/DataGrid Stubs (Phase 66)
+    // Store Binding
     // =========================================================================
 
-    bindStore(storeId) {}
-    unbindStore() {}
+    bindStore(storeIdOrElement) {
+        this.unbindStore();
+
+        let store;
+        if (typeof storeIdOrElement === 'string') {
+            store = document.getElementById(storeIdOrElement);
+        } else {
+            store = storeIdOrElement;
+        }
+
+        if (store && store.tagName && store.tagName.toLowerCase() === 'gooeydata-store') {
+            this._connectToStore(store);
+        } else if (typeof storeIdOrElement === 'string') {
+            this._waitForStore(storeIdOrElement);
+        }
+    }
+
+    _waitForStore(storeId) {
+        const TIMEOUT_MS = 10000;
+        const startTime = Date.now();
+
+        if (this._storeWaitObserver) {
+            this._storeWaitObserver.disconnect();
+            this._storeWaitObserver = null;
+        }
+
+        this._storeWaitObserver = new MutationObserver((mutations, observer) => {
+            if (Date.now() - startTime > TIMEOUT_MS) {
+                observer.disconnect();
+                this._storeWaitObserver = null;
+                return;
+            }
+
+            const store = document.getElementById(storeId);
+            if (store && store.tagName.toLowerCase() === 'gooeydata-store') {
+                observer.disconnect();
+                this._storeWaitObserver = null;
+                this._connectToStore(store);
+            }
+        });
+
+        this._storeWaitObserver.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+
+        setTimeout(() => {
+            if (this._storeWaitObserver) {
+                this._storeWaitObserver.disconnect();
+                this._storeWaitObserver = null;
+            }
+        }, TIMEOUT_MS);
+    }
+
+    _connectToStore(store) {
+        this._store = store;
+
+        const onStoreChanged = () => this._syncWithStore();
+        const onReset = () => {
+            this.currentpage = 1;
+            this.totalrecords = 0;
+            this._render();
+        };
+
+        this._storeListeners = [
+            [DataStoreEvent.DATA_CHANGED, onStoreChanged],
+            [DataStoreEvent.RECORD_ADDED, onStoreChanged],
+            [DataStoreEvent.RECORD_REMOVED, onStoreChanged],
+            [DataStoreEvent.RESET, onReset]
+        ];
+
+        for (const [eventName, handler] of this._storeListeners) {
+            this._store.addEventListener(eventName, handler);
+        }
+
+        // Read initial data
+        this.totalrecords = store.getData().length;
+
+        this.fireEvent(PaginationEvent.STORE_BOUND, {
+            pagination: this,
+            store
+        });
+
+        this._sliceStoreData();
+    }
+
+    _syncWithStore() {
+        this.totalrecords = this._store.getData().length;
+
+        if (this.currentpage > this.totalPages && this.totalPages > 0) {
+            this.currentpage = this.totalPages;
+        } else if (this.totalPages === 0) {
+            this.currentpage = 1;
+        }
+
+        this._sliceStoreData();
+    }
+
+    _getCurrentPageData() {
+        if (!this._store) return null;
+
+        const startIndex = (this.currentpage - 1) * this.pagesize;
+        const endIndex = startIndex + this.pagesize;
+        return this._store.getData().slice(startIndex, endIndex);
+    }
+
+    _sliceStoreData() {
+        if (!this._store) return null;
+
+        const pageData = this._getCurrentPageData();
+
+        this.fireEvent(PaginationEvent.PAGE_DATA_CHANGE, {
+            pagination: this,
+            currentPage: this.currentpage,
+            pageData,
+            totalRecords: this.totalrecords
+        });
+
+        return pageData;
+    }
+
+    unbindStore() {
+        if (this._storeWaitObserver) {
+            this._storeWaitObserver.disconnect();
+            this._storeWaitObserver = null;
+        }
+
+        if (this._store) {
+            for (const [eventName, handler] of this._storeListeners) {
+                this._store.removeEventListener(eventName, handler);
+            }
+
+            this.fireEvent(PaginationEvent.STORE_UNBOUND, {
+                pagination: this
+            });
+        }
+
+        this._storeListeners = [];
+        this._store = null;
+    }
+
+    // =========================================================================
+    // DataGrid Binding (stubs for Task 2)
+    // =========================================================================
+
     bindDataGrid(gridId) {}
     unbindDataGrid() {}
 }
