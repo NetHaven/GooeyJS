@@ -1,0 +1,20 @@
+{
+  "MetaGooVersion": "1.0",
+  "name": "Locale",
+  "prefix": "gooey",
+  "tagName": "locale",
+  "script": "Locale.js",
+  "templates": [
+    { "id": "i18n-Locale", "file": "Locale.html" }
+  ],
+  "themes": {
+    "default": "base",
+    "available": ["base"]
+  },
+  "attributes": {
+    "lang": { "type": "STRING" },
+    "src": { "type": "STRING" },
+    "lazy": { "type": "BOOLEAN", "default": "false" },
+    "namespace": { "type": "STRING", "default": "translation" }
+  }
+}
