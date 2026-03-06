@@ -16,7 +16,7 @@ export default class ObservableBase {
 
         this.eventSuspension = false;
         this.eventListenerList = [];
-        this.validEventList = [];
+        this.validEventList = new Set();
     }
 
     addEventListener(eventName, listener) {
@@ -35,7 +35,7 @@ export default class ObservableBase {
     }
 
     addValidEvent(eventName) {
-        this.validEventList.push(eventName);
+        this.validEventList.add(eventName);
     }
 
     /**
@@ -227,25 +227,15 @@ export default class ObservableBase {
     }
 
     getValidEvent(index) {
-        return (this.validEventList[index]);
+        return ([...this.validEventList][index]);
     }
 
     getValidEventCount() {
-        return (this.validEventList.length);
+        return (this.validEventList.size);
     }
 
     hasEvent(eventName) {
-        var found;
-
-        found = false;
-
-        this.validEventList.forEach(function(validEvent) {
-            if (validEvent === eventName) {
-                found = true;
-            }
-        });
-
-        return (found);
+        return this.validEventList.has(eventName);
     }
 
     removeAllEventListeners(eventName) {

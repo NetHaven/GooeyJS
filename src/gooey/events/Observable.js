@@ -18,7 +18,7 @@ export default class Observable extends HTMLElement {
 
         this.eventSuspension = false;
         this.eventListenerList = [];
-        this.validEventList = [];
+        this.validEventList = new Set();
     }
 
     addEventListener(eventName, listener) {
@@ -37,7 +37,7 @@ export default class Observable extends HTMLElement {
     }
 
     addValidEvent(eventName) {
-        this.validEventList.push(eventName);
+        this.validEventList.add(eventName);
     }
 
     /**
@@ -235,25 +235,15 @@ export default class Observable extends HTMLElement {
     }
 
     getValidEvent(index) {
-        return (this.validEventList[index]);
+        return ([...this.validEventList][index]);
     }
 
     getValidEventCount() {
-        return (this.validEventList.length);
+        return (this.validEventList.size);
     }
 
     hasEvent(eventName) {
-        var found;
-
-        found = false;
-
-        this.validEventList.forEach(function(validEvent) {
-            if (validEvent === eventName) {
-                found = true;
-            }		
-        });
-        
-        return (found);
+        return this.validEventList.has(eventName);
     }
 
     removeAllEventListeners(eventName) {
