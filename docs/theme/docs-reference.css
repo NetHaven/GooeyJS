@@ -1,0 +1,60 @@
+/**
+ * GooeyJS Docs Reference Theme
+ *
+ * Global token overrides and base styles for the Element Reference app.
+ * Loaded via <gooey-theme> to override default GooeyJS base theme tokens.
+ */
+
+/* CSS Reset */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* GooeyJS Token Overrides */
+:root {
+    --gooey-color-surface: #c1c0c1;
+    --gooey-color-surface-light: #dfdfdf;
+    --gooey-color-surface-dark: #808080;
+    --gooey-color-primary: #010082;
+    --gooey-color-text: #000;
+    --gooey-color-text-inverse: #fff;
+    --gooey-color-border-light: #fff;
+    --gooey-color-border-dark: #404040;
+    --gooey-color-highlight: #000080;
+    --gooey-font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    --gooey-font-size: 13px;
+}
+
+/* Base Document Styles */
+html, body {
+    height: 100%;
+    font-family: var(--gooey-font-family);
+    font-size: var(--gooey-font-size);
+    background-color: var(--gooey-color-surface);
+    color: var(--gooey-color-text);
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+    width: 16px;
+    height: 16px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--gooey-color-surface-light);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--gooey-color-surface);
+    border: 1px outset var(--gooey-color-surface);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #b0b0b0;
+}
+
+::-webkit-scrollbar-corner {
+    background: var(--gooey-color-surface);
+}
