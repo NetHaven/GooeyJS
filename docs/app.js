@@ -1,78 +1,86 @@
 /**
  * GooeyJS Element Reference Application
+ *
+ * Uses GooeyJS Tree/TreeItem components for navigation.
+ * All interaction is via DOM APIs and GooeyJS Observable events.
  */
 
-// Build the element tree with root node and subcategory support
+// Show welcome screen in the detail panel
+function showWelcomeScreen() {
+    const detailPanel = document.getElementById('detailPanel');
+    if (detailPanel) {
+        detailPanel.innerHTML = `
+            <div style="text-align:center;padding:48px;color:#666">
+                <h2 style="font-size:24px;color:#010082;margin-bottom:16px">GooeyJS Element Reference</h2>
+                <p style="font-size:14px;line-height:1.6">Select an element from the tree on the left to view its documentation.</p>
+                <p style="font-size:14px;line-height:1.6;margin-top:16px">This reference contains documentation for all GooeyJS custom elements,<br>including element-specific attributes and inherited attributes from base classes.</p>
+            </div>
+        `;
+    }
+}
+
+// Build gooeyui-treeitem elements from GooeyData and add to the tree
 function buildTree() {
-    const treeContainer = document.getElementById('elementTree');
-    const html = buildCategoryHtml(GooeyData.root, 'root');
+    const tree = document.getElementById('elementTree');
 
-    // Tree component uses shadow DOM with a <ul> element, no <slot>.
-    // Inject raw HTML into the shadow DOM tree element for now.
-    // Plan 03 will replace this with proper gooeyui-treeitem components.
-    const target = treeContainer.shadowRoot
-        ? treeContainer.shadowRoot.querySelector('.ui-Tree') || treeContainer
-        : treeContainer;
-    target.innerHTML = html;
+    // Wait for TreeItem custom element to be defined before building
+    customElements.whenDefined('gooeyui-treeitem').then(() => {
+        const rootItem = buildCategoryItem(GooeyData.root, 'root');
+        tree.addItem(rootItem);
+
+        // Auto-expand root node
+        rootItem.setAttribute('expanded', '');
+    });
 }
 
-// Build HTML for a category (recursive for subcategories)
-function buildCategoryHtml(category, path) {
-    let html = `
-        <div class="tree-category" data-category="${path}">
-            <div class="tree-category-header" onclick="toggleCategory('${path}')">
-                <span class="tree-toggle">+</span>
-                <span class="icon-folder"></span>
-                ${category.name}
-            </div>
-            <div class="tree-items">
-    `;
+// Recursively build a category tree item with subcategories and element leaves
+function buildCategoryItem(category, path) {
+    const item = document.createElement('gooeyui-treeitem');
+    item.setAttribute('text', category.name);
+    // Setting icon attribute triggers CSS-only folder icon via theme override
+    item.setAttribute('icon', 'folder');
+    item.dataset.path = path;
+    item.dataset.type = 'category';
 
-    // Add subcategories first (before direct elements)
+    // Add subcategories first
     if (category.subcategories) {
-        category.subcategories.forEach((subcat, subIndex) => {
-            html += buildCategoryHtml(subcat, `${path}-${subIndex}`);
+        category.subcategories.forEach((subcat, i) => {
+            const subItem = buildCategoryItem(subcat, `${path}-${i}`);
+            item.addChild(subItem);
         });
     }
 
-    // Add direct elements
+    // Add element entries (leaf nodes, no icon attribute => element icon via CSS)
     if (category.elements) {
-        category.elements.forEach((element, elemIndex) => {
-            html += `
-                <div class="tree-item" onclick="selectElement('${path}', ${elemIndex})" data-path="${path}" data-elem="${elemIndex}">
-                    <span class="icon-element"></span>
-                    ${element.name}
-                </div>
-            `;
+        category.elements.forEach((element, i) => {
+            const elemItem = document.createElement('gooeyui-treeitem');
+            elemItem.setAttribute('text', element.name);
+            elemItem.dataset.path = path;
+            elemItem.dataset.elemIndex = i;
+            elemItem.dataset.type = 'element';
+            item.addChild(elemItem);
         });
     }
 
-    html += `
-            </div>
-        </div>
-    `;
-
-    return html;
+    return item;
 }
 
-// Toggle category expand/collapse
-function toggleCategory(path) {
-    // Search in both light and shadow DOM of the tree
-    const treeContainer = document.getElementById('elementTree');
-    const searchRoot = treeContainer.shadowRoot
-        ? treeContainer.shadowRoot.querySelector('.ui-Tree') || treeContainer
-        : treeContainer;
+// Wire Tree selection-changed event to show element details
+function setupTreeEvents() {
+    const tree = document.getElementById('elementTree');
 
-    const category = searchRoot.querySelector(`.tree-category[data-category="${path}"]`);
-    if (!category) return;
+    // Observable listener signature: (eventName, eventObject)
+    tree.addEventListener('selection-changed', (eventName, data) => {
+        const selectedItem = data?.selectedItem;
+        if (!selectedItem || selectedItem.dataset.type !== 'element') return;
 
-    const toggle = category.querySelector(':scope > .tree-category-header > .tree-toggle');
-
-    category.classList.toggle('expanded');
-    toggle.textContent = category.classList.contains('expanded') ? '-' : '+';
+        const path = selectedItem.dataset.path;
+        const elemIndex = parseInt(selectedItem.dataset.elemIndex, 10);
+        showElementDetails(path, elemIndex);
+    });
 }
 
-// Get element by path (e.g., "root" for root, "root-0" for first subcategory)
+// Get element data by path (e.g., "root" for root, "root-0" for first subcategory)
 function getElementByPath(path, elemIndex) {
     const parts = path.split('-');
 
@@ -87,23 +95,8 @@ function getElementByPath(path, elemIndex) {
     return container.elements[elemIndex];
 }
 
-// Select an element and display its details
-function selectElement(path, elemIndex) {
-    // Update selection styling - search in tree shadow DOM
-    const treeContainer = document.getElementById('elementTree');
-    const searchRoot = treeContainer.shadowRoot
-        ? treeContainer.shadowRoot.querySelector('.ui-Tree') || treeContainer
-        : treeContainer;
-
-    searchRoot.querySelectorAll('.tree-item').forEach(item => {
-        item.classList.remove('selected');
-    });
-    const selectedItem = searchRoot.querySelector(`.tree-item[data-path="${path}"][data-elem="${elemIndex}"]`);
-    if (selectedItem) {
-        selectedItem.classList.add('selected');
-    }
-
-    // Get element data using path
+// Display element details in the detail panel
+function showElementDetails(path, elemIndex) {
     const element = getElementByPath(path, elemIndex);
 
     // Build details HTML
@@ -270,29 +263,9 @@ function formatCode(code) {
     return formatted;
 }
 
-// Expose functions on window for backward compatibility with onclick handlers.
-// Plan 03 will replace these with GooeyJS Tree component event listeners.
-window.buildTree = buildTree;
-window.toggleCategory = toggleCategory;
-window.selectElement = selectElement;
-window.getElementByPath = getElementByPath;
-
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
-    // Show welcome screen in detail panel
-    const detailPanel = document.getElementById('detailPanel');
-    if (detailPanel) {
-        detailPanel.innerHTML = `
-            <div style="text-align:center;padding:48px;color:#666">
-                <h2 style="font-size:24px;color:#010082;margin-bottom:16px">GooeyJS Element Reference</h2>
-                <p style="font-size:14px;line-height:1.6">Select an element from the tree on the left to view its documentation.</p>
-                <p style="font-size:14px;line-height:1.6;margin-top:16px">This reference contains documentation for all GooeyJS custom elements,<br>including element-specific attributes and inherited attributes from base classes.</p>
-            </div>
-        `;
-    }
-
+    showWelcomeScreen();
     buildTree();
-
-    // Expand root node by default
-    toggleCategory('root');
+    setupTreeEvents();
 });
