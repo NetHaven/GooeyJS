@@ -25,6 +25,7 @@ export default class HistoryPlugin extends Plugin {
      * @param {number} [options.maxDepth=100] - Maximum undo stack size
      */
     constructor(options = {}) {
+        super();
         /** @type {Array<{state: object, timestamp: number}>} */
         this._undoStack = [];
 
