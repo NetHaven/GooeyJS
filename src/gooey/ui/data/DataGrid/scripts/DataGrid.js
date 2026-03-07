@@ -8,6 +8,7 @@ import Key from '../../../../io/Key.js';
 import SelectionMode from './SelectionMode.js';
 import SortDirection from './SortDirection.js';
 import Logger from '../../../../logging/Logger.js';
+import GooeyElement from '../../../../GooeyElement.js';
 
 /**
  * DataGrid - A full-featured data grid component
@@ -1642,8 +1643,8 @@ export default class DataGrid extends UIComponent {
     _bindToStore(storeId) {
         if (!storeId) return;
 
-        // Try to find the store immediately
-        const store = document.getElementById(storeId);
+        // Try to find the store immediately via component registry
+        const store = GooeyElement.getComponent(storeId);
 
         if (store && store.tagName.toLowerCase() === 'gooeydata-store') {
             this._connectToStore(store);
@@ -1676,8 +1677,8 @@ export default class DataGrid extends UIComponent {
                 return;
             }
 
-            // Try to find the store
-            const store = document.getElementById(storeId);
+            // Try to find the store via component registry
+            const store = GooeyElement.getComponent(storeId);
             if (store && store.tagName.toLowerCase() === 'gooeydata-store') {
                 observer.disconnect();
                 this._storeWaitObserver = null;

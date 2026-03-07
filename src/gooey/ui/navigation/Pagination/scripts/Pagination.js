@@ -5,6 +5,7 @@ import PaginationEvent from '../../../../events/navigation/PaginationEvent.js';
 import DataStoreEvent from '../../../../events/data/DataStoreEvent.js';
 import DataGridEvent from '../../../../events/data/DataGridEvent.js';
 import NavigatorFormat from './NavigatorFormat.js';
+import GooeyElement from '../../../../GooeyElement.js';
 
 export default class Pagination extends UIComponent {
 
@@ -990,7 +991,7 @@ export default class Pagination extends UIComponent {
 
         let store;
         if (typeof storeIdOrElement === 'string') {
-            store = document.getElementById(storeIdOrElement);
+            store = GooeyElement.getComponent(storeIdOrElement);
         } else {
             store = storeIdOrElement;
         }
@@ -1018,7 +1019,7 @@ export default class Pagination extends UIComponent {
                 return;
             }
 
-            const store = document.getElementById(storeId);
+            const store = GooeyElement.getComponent(storeId);
             if (store && store.tagName.toLowerCase() === 'gooeydata-store') {
                 observer.disconnect();
                 this._storeWaitObserver = null;
@@ -1135,7 +1136,7 @@ export default class Pagination extends UIComponent {
 
         let grid;
         if (typeof gridIdOrElement === 'string') {
-            grid = document.getElementById(gridIdOrElement);
+            grid = GooeyElement.getComponent(gridIdOrElement);
         } else {
             grid = gridIdOrElement;
         }
@@ -1163,7 +1164,7 @@ export default class Pagination extends UIComponent {
                 return;
             }
 
-            const grid = document.getElementById(gridId);
+            const grid = GooeyElement.getComponent(gridId);
             if (grid && grid.tagName.toLowerCase() === 'gooeyui-datagrid') {
                 observer.disconnect();
                 this._gridWaitObserver = null;
