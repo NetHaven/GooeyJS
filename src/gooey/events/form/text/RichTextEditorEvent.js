@@ -24,6 +24,12 @@ export default class RichTextEditorEvent extends Event {
     static DESTROY = "destroy";
     static MODE_CHANGE = "modeChange";
 
+    // Collaboration events
+    static PEER_JOINED = "peer-joined";
+    static PEER_LEFT = "peer-left";
+    static PEER_CURSOR_MOVED = "peer-cursor-moved";
+    static REMOTE_CHANGE = "remote-change";
+
     constructor() {
         super();
     }

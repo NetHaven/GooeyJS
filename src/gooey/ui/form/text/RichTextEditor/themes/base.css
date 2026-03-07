@@ -868,3 +868,39 @@
     white-space: nowrap;
     border: 0;
 }
+
+/* =========================================================================
+ * Remote Collaboration Cursors
+ * ========================================================================= */
+
+.rte-collab-cursors {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.rte-remote-cursor {
+    transition: left 0.1s ease, top 0.1s ease;
+    animation: rte-cursor-blink 1.2s ease-in-out infinite;
+}
+
+@keyframes rte-cursor-blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+}
+
+.rte-remote-cursor-label {
+    user-select: none;
+    font-family: var(--gooey-font-family, sans-serif);
+    line-height: 1.2;
+    opacity: 0.9;
+}
+
+.rte-remote-selection {
+    transition: left 0.1s ease, width 0.1s ease, top 0.1s ease;
+    mix-blend-mode: multiply;
+}
