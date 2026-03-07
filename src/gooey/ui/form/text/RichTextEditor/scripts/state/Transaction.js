@@ -164,6 +164,41 @@ class Step {
         if (!StepClass) throw new Error(`Unknown step type: "${json.type}"`);
         return StepClass.fromJSON(schema, json);
     }
+
+    /**
+     * Transform a set of steps against another set of steps (OT rebase).
+     *
+     * Given two diverging branches of steps from the same base document:
+     *   base --localSteps--> localDoc
+     *   base --remoteSteps--> remoteDoc
+     *
+     * Returns the local steps rebased against the remote steps,
+     * so they can be applied after the remote steps:
+     *   base --remoteSteps--> remoteDoc --rebasedLocal--> mergedDoc
+     *
+     * @param {Step[]} localSteps - Steps to rebase
+     * @param {Step[]} remoteSteps - Steps to rebase against
+     * @returns {{ steps: Step[], mapping: Mapping }} Rebased steps and combined mapping
+     */
+    static transform(localSteps, remoteSteps) {
+        const remoteMapping = new Mapping();
+        for (const step of remoteSteps) {
+            remoteMapping.appendMap(step.getMap());
+        }
+
+        const rebasedSteps = [];
+        const combinedMapping = new Mapping();
+
+        for (const step of localSteps) {
+            const mapped = step.map(remoteMapping);
+            if (mapped) {
+                rebasedSteps.push(mapped);
+                combinedMapping.appendMap(mapped.getMap());
+            }
+        }
+
+        return { steps: rebasedSteps, mapping: combinedMapping };
+    }
 }
 
 
