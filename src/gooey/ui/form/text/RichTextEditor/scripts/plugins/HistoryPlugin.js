@@ -9,7 +9,7 @@
  * and a keymap builder.
  */
 import Plugin from './Plugin.js';
-import { Mapping } from '../state/Transaction.js';
+import Transaction, { Mapping } from '../state/Transaction.js';
 
 export default class HistoryPlugin extends Plugin {
 
@@ -106,15 +106,35 @@ export default class HistoryPlugin extends Plugin {
             return;
         }
 
+        // Compute inverse steps for step-based undo when collaboration is active.
+        // Each entry stores BOTH { state, inverseSteps, timestamp } so undo can
+        // use step-based rebase when _remoteMapping is present, or fall back to
+        // snapshot-based restore for single-user editing.
+        let inverseSteps = null;
+        if (tr && tr.steps && tr.steps.length > 0) {
+            try {
+                inverseSteps = tr.steps.map(s => s.invert(stateBefore.doc));
+                inverseSteps.reverse(); // Undo in reverse order
+            } catch (e) {
+                // Graceful degradation: if any step lacks invert(), fall back to snapshot only
+                console.warn('HistoryPlugin: could not compute inverse steps, falling back to snapshot', e);
+                inverseSteps = null;
+            }
+        }
+
         const now = Date.now();
 
         if (this._currentBatch === null) {
             // No active batch - start a new one
-            this._currentBatch = { state: stateBefore, timestamp: now };
+            this._currentBatch = { state: stateBefore, inverseSteps, timestamp: now };
         } else if (now - this._lastPushTime >= this._batchDelay) {
             // Batch delay expired - finalize current batch and start new one
             this._finalizeBatch();
-            this._currentBatch = { state: stateBefore, timestamp: now };
+            this._currentBatch = { state: stateBefore, inverseSteps, timestamp: now };
+        } else if (inverseSteps && this._currentBatch.inverseSteps) {
+            // Within batch delay: prepend new inverse steps to existing batch's inverses
+            // (new inverses go first since they undo the most recent edit)
+            this._currentBatch.inverseSteps = [...inverseSteps, ...this._currentBatch.inverseSteps];
         }
         // else: within batch delay, keep the existing batch's "before" state
 
@@ -146,11 +166,17 @@ export default class HistoryPlugin extends Plugin {
     }
 
     /**
-     * Undo the last edit. Returns the EditorState to restore, or null
+     * Undo the last edit. Returns the EditorState to restore (snapshot path)
+     * or a Transaction with rebased inverse steps (step-based path), or null
      * if there is nothing to undo.
      *
+     * When the entry has inverseSteps and _remoteMapping has accumulated maps,
+     * the inverse steps are rebased through the remote mapping before being
+     * applied as a transaction. This ensures undo only reverts local changes
+     * while preserving remote edits.
+     *
      * @param {object} currentState - Current EditorState (pushed to redo stack)
-     * @returns {object|null} EditorState to restore, or null
+     * @returns {object|Transaction|null} EditorState, Transaction, or null
      */
     undo(currentState) {
         // Flush any pending batch first
@@ -161,16 +187,57 @@ export default class HistoryPlugin extends Plugin {
         }
 
         const entry = this._undoStack.pop();
+
+        // Step-based path: rebase inverse steps through remote mapping
+        if (entry.inverseSteps && entry.inverseSteps.length > 0) {
+            let steps = entry.inverseSteps;
+
+            // Rebase through accumulated remote changes if any
+            if (this._remoteMapping && this._remoteMapping.maps.length > 0) {
+                steps = steps.map(s => s.map(this._remoteMapping)).filter(Boolean);
+            }
+
+            if (steps.length > 0) {
+                // Apply inverse steps as a transaction
+                const tr = new Transaction(currentState);
+                for (const step of steps) {
+                    tr._applyStep(step);
+                }
+
+                // Push forward steps to redo stack
+                try {
+                    const forwardSteps = steps.map(s => s.invert(currentState.doc));
+                    forwardSteps.reverse();
+                    this._redoStack.push({
+                        state: currentState,
+                        inverseSteps: forwardSteps,
+                        timestamp: Date.now()
+                    });
+                } catch (e) {
+                    // Fallback: store snapshot-only redo entry
+                    this._redoStack.push({ state: currentState, timestamp: Date.now() });
+                }
+
+                // Reset remote mapping -- the rebase has been consumed
+                this._remoteMapping = null;
+
+                return tr;
+            }
+            // All steps were eliminated by remote changes -- fall through to snapshot path
+        }
+
+        // Snapshot-based path (legacy/fallback for non-collaboration usage)
         this._redoStack.push({ state: currentState, timestamp: Date.now() });
         return entry.state;
     }
 
     /**
-     * Redo a previously undone edit. Returns the EditorState to restore,
+     * Redo a previously undone edit. Returns the EditorState to restore
+     * (snapshot path) or a Transaction with rebased steps (step-based path),
      * or null if there is nothing to redo.
      *
      * @param {object} currentState - Current EditorState (pushed to undo stack)
-     * @returns {object|null} EditorState to restore, or null
+     * @returns {object|Transaction|null} EditorState, Transaction, or null
      */
     redo(currentState) {
         if (this._redoStack.length === 0) {
@@ -178,6 +245,46 @@ export default class HistoryPlugin extends Plugin {
         }
 
         const entry = this._redoStack.pop();
+
+        // Step-based path
+        if (entry.inverseSteps && entry.inverseSteps.length > 0) {
+            let steps = entry.inverseSteps;
+
+            // Rebase through accumulated remote changes if any
+            if (this._remoteMapping && this._remoteMapping.maps.length > 0) {
+                steps = steps.map(s => s.map(this._remoteMapping)).filter(Boolean);
+            }
+
+            if (steps.length > 0) {
+                // Apply redo steps as a transaction
+                const tr = new Transaction(currentState);
+                for (const step of steps) {
+                    tr._applyStep(step);
+                }
+
+                // Push inverse steps to undo stack
+                try {
+                    const inverseSteps = steps.map(s => s.invert(currentState.doc));
+                    inverseSteps.reverse();
+                    this._undoStack.push({
+                        state: currentState,
+                        inverseSteps,
+                        timestamp: Date.now()
+                    });
+                } catch (e) {
+                    // Fallback: store snapshot-only undo entry
+                    this._undoStack.push({ state: currentState, timestamp: Date.now() });
+                }
+
+                // Reset remote mapping -- the rebase has been consumed
+                this._remoteMapping = null;
+
+                return tr;
+            }
+            // All steps were eliminated by remote changes -- fall through to snapshot path
+        }
+
+        // Snapshot-based path (legacy/fallback)
         this._undoStack.push({ state: currentState, timestamp: Date.now() });
         return entry.state;
     }
@@ -206,6 +313,7 @@ export default class HistoryPlugin extends Plugin {
         this._redoStack.length = 0;
         this._currentBatch = null;
         this._lastPushTime = 0;
+        this._remoteMapping = null;
     }
 
     /**
@@ -303,11 +411,18 @@ export function undoCommand(plugin) {
         if (!plugin.canUndo()) return false;
 
         if (dispatch) {
-            const restored = plugin.undo(state);
-            if (restored) {
-                const tr = state.transaction;
-                tr._forceState = restored;
-                dispatch(tr);
+            const result = plugin.undo(state);
+            if (result) {
+                if (result instanceof Transaction) {
+                    // Step-based path: dispatch the transaction directly
+                    result.setMeta('addToHistory', false);
+                    dispatch(result);
+                } else {
+                    // Snapshot-based path: force-restore the state
+                    const tr = state.transaction;
+                    tr._forceState = result;
+                    dispatch(tr);
+                }
             }
         }
         return true;
@@ -330,11 +445,18 @@ export function redoCommand(plugin) {
         if (!plugin.canRedo()) return false;
 
         if (dispatch) {
-            const restored = plugin.redo(state);
-            if (restored) {
-                const tr = state.transaction;
-                tr._forceState = restored;
-                dispatch(tr);
+            const result = plugin.redo(state);
+            if (result) {
+                if (result instanceof Transaction) {
+                    // Step-based path: dispatch the transaction directly
+                    result.setMeta('addToHistory', false);
+                    dispatch(result);
+                } else {
+                    // Snapshot-based path: force-restore the state
+                    const tr = state.transaction;
+                    tr._forceState = result;
+                    dispatch(tr);
+                }
             }
         }
         return true;
