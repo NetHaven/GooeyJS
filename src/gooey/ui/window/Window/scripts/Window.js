@@ -786,6 +786,16 @@ export default class Window extends UIComponent {
         this.setAttribute("wintitle", val);
     }
 
+    /**
+     * Returns the child elements from the window's content area.
+     * Window holds its content in a shadow DOM content area, so this
+     * method collects children from that internal element.
+     * @returns {Array<Element>}
+     */
+    getChildren() {
+        return Array.from(this.contentArea?.children || []);
+    }
+
     // Helper methods for common window components
     get okButton() {
         return this.shadowRoot.querySelector(".WindowOKButton");

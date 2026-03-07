@@ -327,6 +327,22 @@ export default class AccordionPanel extends Container {
     }
     
     /**
+     * Returns the child elements from all accordion content sections.
+     * AccordionPanel reparents panel children into accordion content divs,
+     * so this override collects children from each accordion's content area.
+     * @returns {Array<Element>}
+     */
+    getChildren() {
+        const children = [];
+        for (const accordion of this._accordions) {
+            if (accordion.content) {
+                children.push(...accordion.content.children);
+            }
+        }
+        return children;
+    }
+
+    /**
      * Get the currently active accordion index
      */
     get activeAccordion() {
