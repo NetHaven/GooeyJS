@@ -4,6 +4,7 @@ import ComponentRegistry from './gooey/util/ComponentRegistry.js';
 import ComponentEvent from './gooey/events/ComponentEvent.js';
 import Logger from './gooey/logging/Logger.js';
 import ThemeManager from './gooey/util/ThemeManager.js';
+import GooeyElement from './gooey/GooeyElement.js';
 
 const SCRIPT_PATH = new URL(import.meta.url, document.baseURI);
 const PATH = SCRIPT_PATH.href.substring(0, SCRIPT_PATH.href.lastIndexOf('/'));
@@ -129,6 +130,15 @@ export default class GooeyJS {
 
     static get basePath() {
         return PATH;
+    }
+
+    /**
+     * Get a registered component instance by id
+     * @param {string} id - The component's id attribute value
+     * @returns {GooeyElement|null} The component instance, or null if not found
+     */
+    static getComponent(id) {
+        return GooeyElement.getComponent(id);
     }
 
     /**
