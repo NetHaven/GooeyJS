@@ -4,19 +4,18 @@
  * Uses GooeyJS Tree/TreeItem components for navigation.
  * All interaction is via DOM APIs and GooeyJS Observable events.
  */
+import GooeyJS from '../src/GooeyJS.js';
 
-// SplitPanel moves children into shadow DOM, so document.getElementById won't find them.
-// Cache references after components are defined and SplitPanel has constructed its panes.
+// SplitPanel reparents children into shadow DOM -- use getChildren() to retrieve them.
 let detailPanel = null;
 let elementTree = null;
 let contentCSS = '';
 
 async function initRefs() {
     const splitPanel = document.querySelector('gooeyui-splitpanel#mainSplit');
-    const firstPane = splitPanel.getFirstPane();
-    const secondPane = splitPanel.getSecondPane();
-    elementTree = firstPane.querySelector('#elementTree');
-    detailPanel = secondPane.querySelector('#detailPanel');
+    const [leftPanel, rightPanel] = splitPanel.getChildren();
+    elementTree = leftPanel.querySelector('#elementTree');
+    detailPanel = rightPanel;
 
     // Fetch content styles once — needed because detail panel content lives
     // inside SplitPanel's shadow DOM where global CSS can't reach
@@ -157,11 +156,7 @@ function createAttributeGrid(data, cssClass) {
         datagrid.appendChild(column);
     });
 
-    // Set data directly — store binding uses document.getElementById which
-    // cannot reach elements inside SplitPanel's shadow DOM
-    requestAnimationFrame(() => {
-        datagrid.setData(data);
-    });
+    datagrid.setData(data);
 
     return datagrid;
 }
@@ -246,23 +241,10 @@ function showElementDetails(path, elemIndex) {
     }
 }
 
-// Initialize — wait for GooeyJS components to be defined before interacting
-document.addEventListener('DOMContentLoaded', () => {
-    // Wait for shell components to be defined before any DOM interaction.
-    // SplitPanel moves children into shadow DOM, so refs must be resolved
-    // via its API after construction, not via document.getElementById.
-    Promise.all([
-        customElements.whenDefined('gooeyui-splitpanel'),
-        customElements.whenDefined('gooeyui-panel'),
-        customElements.whenDefined('gooeyui-tree'),
-        customElements.whenDefined('gooeyui-treeitem'),
-        customElements.whenDefined('gooeyui-datagrid'),
-        customElements.whenDefined('gooeyui-codeblock'),
-        customElements.whenDefined('gooeydata-store')
-    ]).then(async () => {
-        await initRefs();
-        showWelcomeScreen();
-        buildTree();
-        setupTreeEvents();
-    });
+// Initialize — wait for all GooeyJS components (static + dynamic) to be ready
+GooeyJS.readyAll.then(async () => {
+    await initRefs();
+    showWelcomeScreen();
+    buildTree();
+    setupTreeEvents();
 });

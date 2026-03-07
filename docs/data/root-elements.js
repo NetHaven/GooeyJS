@@ -17,6 +17,11 @@ const rootElements = [
         "title": "Full Application Layout",
         "description": "A complete application with menubar, toolbar, and content area.",
         "code": "<gooey-application>\n  <gooeyui-apppanel>\n    <gooeyui-menubar>\n      <gooeyui-menu text=\"File\">...</gooeyui-menu>\n      <gooeyui-menu text=\"Edit\">...</gooeyui-menu>\n    </gooeyui-menubar>\n    <gooeyui-toolbar>...</gooeyui-toolbar>\n    <gooeyui-splitpanel orientation=\"horizontal\">\n      <gooeyui-tree>...</gooeyui-tree>\n      <gooeyui-panel>Main content</gooeyui-panel>\n    </gooeyui-splitpanel>\n  </gooeyui-apppanel>\n</gooey-application>"
+      },
+      {
+        "title": "Application Readiness",
+        "description": "GooeyJS provides two readiness promises. GooeyJS.ready resolves when the core framework (Theme, Application, Component loader) is initialized. GooeyJS.readyAll resolves when all dynamically-loaded gooey-component elements have also finished loading. Use readyAll when your application code needs to interact with dynamically-loaded components. A components-all-loaded event is also dispatched on document for event-based consumers.",
+        "code": "<script type=\"module\">\n  import GooeyJS from 'GooeyJS/GooeyJS.js';\n\n  // Wait for core framework only\n  await GooeyJS.ready;\n  console.log('Framework ready');\n\n  // Wait for ALL components (static + dynamic)\n  await GooeyJS.readyAll;\n  console.log('All components loaded');\n\n  // Or use event-based approach\n  document.addEventListener('components-all-loaded', () => {\n    console.log('All dynamic components loaded');\n  });\n</script>\n\n<gooey-component href=\"gooey/ui/button/Button\"></gooey-component>\n<gooey-component href=\"gooey/ui/panel/Panel\"></gooey-component>\n<gooey-component href=\"gooey/ui/data/DataGrid\"></gooey-component>"
       }
     ]
   },
@@ -134,6 +139,16 @@ const rootElements = [
         "title": "Theme Loading Events",
         "description": "Listen for theme lifecycle events to track loading progress.",
         "code": "<gooey-theme id=\"myTheme\" name=\"classic\" href=\"themes/classic.css\"></gooey-theme>\n\n<script>\n  const theme = document.getElementById('myTheme');\n  \n  theme.addEventListener('theme-loading', (e, data) => {\n    console.log('Loading theme:', data.name);\n  });\n  \n  theme.addEventListener('theme-loaded', (e, data) => {\n    console.log('Theme ready:', data.name);\n    theme.active = true;\n  });\n  \n  theme.addEventListener('theme-error', (e, data) => {\n    console.error('Theme failed:', data.error);\n  });\n</script>"
+      },
+      {
+        "title": "Styling Dynamic Light DOM Content",
+        "description": "Theme overrides inject CSS into component shadow roots, which styles component internals. However, HTML content injected into a component's light DOM (via innerHTML or appendChild) is not reached by shadow root CSS. To style dynamic light DOM content, include a <style> tag alongside the content so the CSS lives in the same DOM context.",
+        "code": "<!-- Theme override styles Panel's shadow root (host, scrollbar, etc.) -->\n<gooey-theme name=\"myTheme\" href=\"theme/mytheme.css\" active>\n  <gooey-theme-override target=\"gooeyui-panel\" href=\"theme/panel.css\"></gooey-theme-override>\n</gooey-theme>\n\n<gooeyui-panel id=\"contentPanel\"></gooeyui-panel>\n\n<script>\n  // For dynamic content, inject CSS alongside the HTML\n  const contentCSS = await fetch('theme/content.css').then(r => r.text());\n\n  function renderContent(html) {\n    const panel = document.getElementById('contentPanel');\n    panel.innerHTML = '<style>' + contentCSS + '</style>' + html;\n  }\n</script>"
+      },
+      {
+        "title": "Theme Loading Order and FOUC",
+        "description": "Components that render before a theme is active will briefly display with base styling. The theme system re-applies overrides to all live instances when a theme activates, so styles are not permanently lost. However, to avoid this flash of unstyled content (FOUC), declare the gooey-theme element before any gooey-component loaders in your HTML. This ensures the theme is active before components construct and render.",
+        "code": "<!-- RECOMMENDED: Theme declared BEFORE component loaders -->\n<gooey-theme name=\"classic\" href=\"themes/classic.css\" active>\n  <gooey-theme-override target=\"gooeyui-button\" href=\"themes/classic/button.css\"></gooey-theme-override>\n</gooey-theme>\n\n<!-- Components load after theme is already active — no FOUC -->\n<gooey-component href=\"gooey/ui/button/Button\"></gooey-component>\n<gooey-component href=\"gooey/ui/panel/Panel\"></gooey-component>\n\n<!-- AVOID: Component loaders before theme -->\n<!-- This works but causes a brief flash of unstyled content -->\n<!--\n<gooey-component href=\"gooey/ui/button/Button\"></gooey-component>\n<gooey-theme name=\"classic\" href=\"themes/classic.css\" active></gooey-theme>\n-->"
       }
     ]
   },
@@ -171,6 +186,11 @@ const rootElements = [
         "title": "Dynamic Override Addition",
         "description": "Add an override at runtime. The parent theme detects the change and re-applies automatically.",
         "code": "<gooey-theme id=\"myTheme\" name=\"custom\" href=\"themes/custom.css\" active></gooey-theme>\n\n<script>\n  const override = document.createElement('gooey-theme-override');\n  override.target = 'gooeyui-datagrid';\n  override.href = 'themes/custom/datagrid.css';\n  document.getElementById('myTheme').appendChild(override);\n</script>"
+      },
+      {
+        "title": "Override Scope: Shadow Root Only",
+        "description": "Theme overrides are injected into the target component's shadow root. They style internal template elements and the :host selector. They do not style light DOM children (content placed between the component's tags). For light DOM content styling, use an inline <style> tag alongside the content.",
+        "code": "<!-- This override styles Panel's shadow root internals -->\n<gooey-theme name=\"app\" href=\"theme/app.css\" active>\n  <gooey-theme-override target=\"gooeyui-panel\" href=\"theme/panel.css\"></gooey-theme-override>\n</gooey-theme>\n\n<!-- panel.css can use :host and internal selectors -->\n<!-- :host { background: #fff; overflow-y: auto; } -->\n<!-- But it CANNOT style .my-content or .my-header -->\n\n<gooeyui-panel>\n  <!-- These are light DOM children, projected via <slot> -->\n  <div class=\"my-header\">Title</div>\n  <div class=\"my-content\">Body text</div>\n</gooeyui-panel>"
       }
     ]
   }
