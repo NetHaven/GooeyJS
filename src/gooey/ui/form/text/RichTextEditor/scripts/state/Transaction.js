@@ -1637,6 +1637,47 @@ export default class Transaction {
     }
 
     /**
+     * Get a Mapping representing changes from step index `from` onward.
+     * Useful for collaboration bindings that have already processed some
+     * steps and need only the mapping for remaining ones.
+     *
+     * @param {number} [from=0] - Step index to start from
+     * @returns {Mapping}
+     */
+    getMappingFrom(from = 0) {
+        const maps = this._maps.slice(from);
+        return new Mapping(maps);
+    }
+
+    /**
+     * Create a new transaction with this transaction's steps rebased
+     * against a mapping from remote changes.
+     *
+     * Each step is mapped through the provided mapping. Steps that become
+     * invalid (map returns null) are silently dropped. The selection, if
+     * present, is also mapped through the remote mapping.
+     *
+     * Origin and metadata from the original transaction are NOT copied
+     * to the rebased transaction (the caller should set these as needed).
+     *
+     * @param {Mapping} mapping - Mapping representing remote changes
+     * @returns {Transaction} New transaction with mapped steps
+     */
+    rebase(mapping) {
+        const tr = new Transaction(this._state);
+        for (const step of this._steps) {
+            const mapped = step.map(mapping);
+            if (mapped) {
+                tr._applyStep(mapped);
+            }
+        }
+        if (this._selection) {
+            tr._selection = this._selection.map(mapping);
+        }
+        return tr;
+    }
+
+    /**
      * Apply a step, update the document and step maps.
      * @param {Step} step
      * @returns {Transaction} this
