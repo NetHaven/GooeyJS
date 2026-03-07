@@ -33,6 +33,7 @@ export default class Carousel extends Container {
         this._resizeRafId = null;
         this._destroyed = false;
         this._initialized = false;
+        this._currentTranslate = 0;
 
         // Reduced motion detection
         this._reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -619,6 +620,8 @@ export default class Carousel extends Container {
             offset -= cloneCount * (this._slideWidth + this._gapPx);
         }
 
+        this._currentTranslate = offset;
+
         if (!animated) {
             // Disable transition temporarily
             this._track.style.transition = 'none';
@@ -667,10 +670,17 @@ export default class Carousel extends Container {
         this._clones = [];
     }
 
+    _snapToCurrentSlide() {
+        this._positionTrack(true);
+    }
+
     _handleLoopRepositioning() {
-        // In loop mode, after a transition completes, silently reposition
-        // if the current index has scrolled into clone territory
-        // This is handled by the clone offset in _positionTrack
+        if (!this.loop || this._clones.length === 0) return;
+
+        // After the animated transition completes, the track is visually at the
+        // correct position. Re-apply the position without animation to ensure the
+        // track is at the canonical position for the real slide (not a clone).
+        this._positionTrack(false);
     }
 
     _updateActiveSlide(newIndex, previousIndex, fireSlideEvents) {
