@@ -8,12 +8,33 @@
     ],
     "themes": {
         "default": "base",
-        "available": ["base"]
+        "available": ["base", "classic", "janus", "chicago"]
+    },
+    "tokens": {
+        "--gooey-carousel-slide-bg": {
+            "description": "Slide background color",
+            "fallback": "transparent",
+            "category": "color"
+        },
+        "--gooey-carousel-slide-padding": {
+            "description": "Slide content padding",
+            "fallback": null,
+            "category": "spacing"
+        },
+        "--gooey-carousel-slide-border-radius": {
+            "description": "Slide border radius",
+            "fallback": null,
+            "category": "border"
+        }
     },
     "attributes": {
         "active": {
             "type": "BOOLEAN",
             "default": "false"
+        },
+        "data-autoplay": {
+            "type": "NUMBER",
+            "default": ""
         }
     }
 }

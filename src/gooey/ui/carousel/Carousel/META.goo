@@ -8,7 +8,109 @@
     ],
     "themes": {
         "default": "base",
-        "available": ["base"]
+        "available": ["base", "classic", "janus", "chicago"]
+    },
+    "tokens": {
+        "--gooey-carousel-bg": {
+            "description": "Carousel container background",
+            "fallback": "--gooey-color-surface",
+            "category": "color"
+        },
+        "--gooey-carousel-track-gap": {
+            "description": "Gap between slides",
+            "fallback": null,
+            "category": "spacing"
+        },
+        "--gooey-carousel-arrow-size": {
+            "description": "Navigation arrow button size",
+            "fallback": null,
+            "category": "sizing"
+        },
+        "--gooey-carousel-arrow-bg": {
+            "description": "Arrow button background color",
+            "fallback": "--gooey-color-surface",
+            "category": "color"
+        },
+        "--gooey-carousel-arrow-fg": {
+            "description": "Arrow button foreground/icon color",
+            "fallback": "--gooey-color-on-surface",
+            "category": "color"
+        },
+        "--gooey-carousel-arrow-bg-hover": {
+            "description": "Arrow button hover background",
+            "fallback": "--gooey-color-surface-hover",
+            "category": "color"
+        },
+        "--gooey-carousel-arrow-border-radius": {
+            "description": "Arrow button border radius",
+            "fallback": "--gooey-border-radius",
+            "category": "border"
+        },
+        "--gooey-carousel-dot-size": {
+            "description": "Pagination dot diameter",
+            "fallback": null,
+            "category": "sizing"
+        },
+        "--gooey-carousel-dot-bg": {
+            "description": "Inactive dot background",
+            "fallback": "--gooey-color-border",
+            "category": "color"
+        },
+        "--gooey-carousel-dot-bg-active": {
+            "description": "Active dot background",
+            "fallback": "--gooey-color-primary",
+            "category": "color"
+        },
+        "--gooey-carousel-dot-gap": {
+            "description": "Gap between pagination dots",
+            "fallback": null,
+            "category": "spacing"
+        },
+        "--gooey-carousel-scrollbar-track-bg": {
+            "description": "Scrollbar track background",
+            "fallback": "--gooey-color-border",
+            "category": "color"
+        },
+        "--gooey-carousel-scrollbar-thumb-bg": {
+            "description": "Scrollbar thumb background",
+            "fallback": "--gooey-color-primary",
+            "category": "color"
+        },
+        "--gooey-carousel-scrollbar-height": {
+            "description": "Scrollbar track height",
+            "fallback": null,
+            "category": "sizing"
+        },
+        "--gooey-carousel-transition-duration": {
+            "description": "Default transition duration",
+            "fallback": null,
+            "category": "sizing"
+        },
+        "--gooey-carousel-transition-easing": {
+            "description": "Default transition easing function",
+            "fallback": null,
+            "category": "sizing"
+        },
+        "--gooey-carousel-progress-bg": {
+            "description": "Progress bar background",
+            "fallback": "--gooey-color-border",
+            "category": "color"
+        },
+        "--gooey-carousel-progress-fill": {
+            "description": "Progress bar fill color",
+            "fallback": "--gooey-color-primary",
+            "category": "color"
+        },
+        "--gooey-carousel-focus-ring": {
+            "description": "Focus indicator color",
+            "fallback": "--gooey-color-focus",
+            "category": "color"
+        },
+        "--gooey-carousel-disabled-opacity": {
+            "description": "Opacity when carousel is disabled",
+            "fallback": "--gooey-opacity-disabled",
+            "category": "opacity"
+        }
     },
     "attributes": {
         "direction": {
@@ -76,6 +178,10 @@
         "arialabel": {
             "type": "STRING",
             "default": "Carousel"
+        },
+        "arialabelledby": {
+            "type": "STRING",
+            "default": ""
         },
         "announcetemplate": {
             "type": "STRING",

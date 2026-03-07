@@ -8,13 +8,20 @@
     ],
     "themes": {
         "default": "base",
-        "available": ["base"]
+        "available": ["base", "classic", "janus", "chicago"]
+    },
+    "tokens": {
+        "--gooey-carousel-nav-gap": {
+            "description": "Gap between nav and carousel content",
+            "fallback": null,
+            "category": "spacing"
+        }
     },
     "attributes": {
         "type": {
             "type": "ENUM",
             "default": "arrows",
-            "values": ["ARROWS", "DOTS", "SCROLLBAR", "PROGRESS", "CUSTOM"]
+            "values": ["ARROWS", "DOTS", "SCROLLBAR", "PROGRESS", "CUSTOM", "THUMBNAILS"]
         }
     }
 }
