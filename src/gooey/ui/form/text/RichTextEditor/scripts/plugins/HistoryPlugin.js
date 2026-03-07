@@ -44,13 +44,34 @@ export default class HistoryPlugin extends Plugin {
     }
 
     /**
+     * Filter transactions before state application.
+     * Marks remote-origin transactions with addToHistory=false as defense-in-depth.
+     *
+     * @param {object} tr - Transaction
+     * @param {object} state - Current EditorState
+     * @returns {object} The transaction (possibly modified)
+     */
+    filterTransaction(tr, state) {
+        if (tr._origin === 'remote') {
+            tr.setMeta('addToHistory', false);
+        }
+        return tr;
+    }
+
+    /**
      * Record the editor state before a transaction is applied.
      * Implements batching: rapid edits within batchDelay are grouped
      * into a single undo step.
      *
      * @param {object} stateBefore - EditorState before the transaction
+     * @param {object} [tr] - The transaction being applied (optional for backward compat)
      */
-    pushState(stateBefore) {
+    pushState(stateBefore, tr) {
+        // Check metadata flag -- skip if addToHistory is explicitly false
+        if (tr && tr.getMeta && tr.getMeta('addToHistory') === false) {
+            return;
+        }
+
         const now = Date.now();
 
         if (this._currentBatch === null) {
