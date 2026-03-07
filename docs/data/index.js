@@ -11,10 +11,12 @@ const GooeyData = {
         subcategories: [
             dataCategory,
             graphicsCategory,
+            i18nCategory,
             {
                 name: "ui",
                 subcategories: [
                     buttonCategory,
+                    carouselCategory,
                     uiDataCategory,
                     formCategory,
                     menuCategory,
