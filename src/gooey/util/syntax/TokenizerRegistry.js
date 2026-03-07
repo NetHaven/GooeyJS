@@ -146,3 +146,8 @@ TokenizerRegistry.register("py", "./tokenizers/PythonTokenizer.js");
 TokenizerRegistry.register("css", "./tokenizers/CSSTokenizer.js");
 TokenizerRegistry.register("scss", "./tokenizers/CSSTokenizer.js");
 TokenizerRegistry.register("less", "./tokenizers/CSSTokenizer.js");
+
+TokenizerRegistry.register("rust", "./tokenizers/RustTokenizer.js");
+TokenizerRegistry.register("rs", "./tokenizers/RustTokenizer.js");
+
+TokenizerRegistry.register("java", "./tokenizers/JavaTokenizer.js");
