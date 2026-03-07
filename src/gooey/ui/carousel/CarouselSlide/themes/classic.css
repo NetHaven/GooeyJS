@@ -1,0 +1,10 @@
+/* CarouselSlide - Classic structural override */
+
+:host {
+    --gooey-carousel-slide-border-radius: 0;
+}
+
+:host([active]) {
+    box-shadow: 0 0 0 2px #666666;
+    border: 1px solid #000000;
+}

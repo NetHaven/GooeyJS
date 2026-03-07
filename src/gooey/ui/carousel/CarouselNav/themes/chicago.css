@@ -1,0 +1,82 @@
+/* CarouselNav - Chicago structural override */
+
+:host {
+    --gooey-carousel-arrow-bg: var(--chicago-face, #C0C0C0);
+    --gooey-carousel-arrow-fg: var(--chicago-text, #000000);
+    --gooey-carousel-dot-bg: var(--chicago-border-shadow, #808080);
+    --gooey-carousel-dot-bg-active: var(--chicago-highlight, #000080);
+    --gooey-carousel-scrollbar-track-bg: var(--chicago-face, #C0C0C0);
+    --gooey-carousel-scrollbar-thumb-bg: var(--chicago-highlight, #000080);
+}
+
+/* Arrows: chicago raised bevel */
+.carousel-arrow {
+    border: none;
+    border-top: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-left: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-right: 1px solid var(--chicago-border-shadow, #808080);
+    border-bottom: 1px solid var(--chicago-border-shadow, #808080);
+    box-shadow:
+        inset -1px -1px 0 var(--chicago-border-dark, #000000),
+        inset 1px 1px 0 var(--chicago-border-highlight, #DFDFDF);
+    background: var(--chicago-face, #C0C0C0);
+    color: var(--chicago-text, #000000);
+    border-radius: 0;
+}
+
+.carousel-arrow:hover {
+    background-color: var(--chicago-face-hover, #D0D0D0);
+}
+
+.carousel-arrow:active {
+    border-top: 1px solid var(--chicago-border-shadow, #808080);
+    border-left: 1px solid var(--chicago-border-shadow, #808080);
+    border-right: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-bottom: 1px solid var(--chicago-border-light, #FFFFFF);
+    box-shadow:
+        inset 1px 1px 0 var(--chicago-border-dark, #000000),
+        inset -1px -1px 0 var(--chicago-border-highlight, #DFDFDF);
+}
+
+.carousel-arrow:focus {
+    outline: 1px dotted var(--chicago-text, #000000);
+    outline-offset: -3px;
+}
+
+/* Dots: pixel-style square-ish */
+.carousel-dot {
+    border-radius: 2px;
+    border: 1px solid var(--chicago-border-dark, #000000);
+}
+
+.carousel-dot[aria-current="true"] {
+    background: var(--chicago-highlight, #000080);
+    border-top: 1px solid var(--chicago-border-shadow, #808080);
+    border-left: 1px solid var(--chicago-border-shadow, #808080);
+    border-right: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-bottom: 1px solid var(--chicago-border-light, #FFFFFF);
+    box-shadow:
+        inset 1px 1px 0 var(--chicago-border-dark, #000000);
+}
+
+/* Scrollbar: chicago sunken input bevel */
+.carousel-scrollbar {
+    border-top: 1px solid var(--chicago-border-shadow, #808080);
+    border-left: 1px solid var(--chicago-border-shadow, #808080);
+    border-right: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-bottom: 1px solid var(--chicago-border-light, #FFFFFF);
+    box-shadow: inset 1px 1px 0 var(--chicago-border-dark, #000000);
+    border-radius: 0;
+}
+
+/* Scrollbar thumb: chicago raised bevel */
+.carousel-scrollbar-thumb {
+    border-top: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-left: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-right: 1px solid var(--chicago-border-shadow, #808080);
+    border-bottom: 1px solid var(--chicago-border-shadow, #808080);
+    box-shadow:
+        inset -1px -1px 0 var(--chicago-border-dark, #000000),
+        inset 1px 1px 0 var(--chicago-border-highlight, #DFDFDF);
+    border-radius: 0;
+}

@@ -1,0 +1,13 @@
+/* CarouselSlide - Chicago structural override */
+
+:host {
+    --gooey-carousel-slide-border-radius: 0;
+}
+
+:host([active]) {
+    border-top: 1px solid var(--chicago-border-shadow, #808080);
+    border-left: 1px solid var(--chicago-border-shadow, #808080);
+    border-right: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-bottom: 1px solid var(--chicago-border-light, #FFFFFF);
+    box-shadow: inset 1px 1px 0 var(--chicago-border-dark, #000000);
+}

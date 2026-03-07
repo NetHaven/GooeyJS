@@ -1,0 +1,56 @@
+/* CarouselNav - Janus structural override */
+
+:host {
+    --gooey-carousel-arrow-bg: rgba(192, 192, 192, 0.8);
+    --gooey-carousel-arrow-fg: #000000;
+    --gooey-carousel-dot-bg: #808080;
+    --gooey-carousel-dot-bg-active: #0000C0;
+    --gooey-carousel-scrollbar-track-bg: #808080;
+    --gooey-carousel-scrollbar-thumb-bg: #c0c0c0;
+}
+
+/* Arrows: double-inset bevel */
+.carousel-arrow {
+    border: 1px solid #000000;
+    border-radius: 2.5px;
+    box-shadow:
+        inset -1px -1px 0 #808080,
+        inset 1px 1px 0 #ffffff,
+        inset -2px -2px 0 #808080,
+        inset 2px 2px 0 #ffffff;
+    background-color: #c0c0c0;
+    color: #000000;
+}
+
+.carousel-arrow:hover {
+    background-color: #c8c8c8;
+}
+
+.carousel-arrow:active {
+    box-shadow:
+        inset 1px 1px 0 #000000,
+        inset -1px -1px 0 #000000,
+        inset 2px 2px 0 #808080;
+}
+
+.carousel-arrow:focus-visible {
+    outline: 1px dotted #808080;
+    outline-offset: -3px;
+}
+
+/* Dots: glow on active */
+.carousel-dot[aria-current="true"] {
+    background: #0000C0;
+    box-shadow: 0 0 3px rgba(0, 0, 192, 0.5);
+}
+
+/* Scrollbar: inset border */
+.carousel-scrollbar {
+    border: 1px solid #000;
+    box-shadow: inset 1px 1px 0 #555;
+    border-radius: 0;
+}
+
+.carousel-scrollbar-thumb {
+    border-radius: 0;
+}

@@ -11,3 +11,90 @@
     display: flex;
     align-items: center;
 }
+
+/* Navigation arrows (rendered in CarouselNav shadow root) */
+.carousel-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    width: var(--gooey-carousel-arrow-size, 40px);
+    height: var(--gooey-carousel-arrow-size, 40px);
+    background: var(--gooey-carousel-arrow-bg, var(--gooey-color-surface));
+    color: var(--gooey-carousel-arrow-fg, var(--gooey-color-on-surface));
+    border: 1px solid var(--gooey-color-border);
+    border-radius: var(--gooey-carousel-arrow-border-radius, var(--gooey-border-radius));
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.carousel-arrow:hover {
+    background: var(--gooey-carousel-arrow-bg-hover, var(--gooey-color-surface-hover));
+}
+
+.carousel-arrow:focus-visible {
+    outline: 2px solid var(--gooey-carousel-focus-ring, var(--gooey-color-focus));
+    outline-offset: 2px;
+}
+
+.carousel-arrow--prev { left: 8px; }
+.carousel-arrow--next { right: 8px; }
+
+/* Pagination dots (rendered in CarouselNav shadow root) */
+.carousel-dots {
+    display: flex;
+    justify-content: center;
+    gap: var(--gooey-carousel-dot-gap, 8px);
+    padding: 12px 0;
+}
+
+.carousel-dot {
+    width: var(--gooey-carousel-dot-size, 8px);
+    height: var(--gooey-carousel-dot-size, 8px);
+    border-radius: 50%;
+    background: var(--gooey-carousel-dot-bg, var(--gooey-color-border));
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: background 200ms ease;
+}
+
+.carousel-dot[aria-current="true"] {
+    background: var(--gooey-carousel-dot-bg-active, var(--gooey-color-primary));
+}
+
+.carousel-dot:focus-visible {
+    outline: 2px solid var(--gooey-carousel-focus-ring, var(--gooey-color-focus));
+    outline-offset: 2px;
+}
+
+/* Scrollbar (rendered in CarouselNav shadow root) */
+.carousel-scrollbar {
+    width: 100%;
+    height: var(--gooey-carousel-scrollbar-height, 4px);
+    background: var(--gooey-carousel-scrollbar-track-bg, var(--gooey-color-border));
+    border-radius: 2px;
+    margin-top: 8px;
+    position: relative;
+    cursor: pointer;
+}
+
+.carousel-scrollbar-thumb {
+    height: 100%;
+    background: var(--gooey-carousel-scrollbar-thumb-bg, var(--gooey-color-primary));
+    border-radius: 2px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: width 200ms ease;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .carousel-dot,
+    .carousel-scrollbar-thumb {
+        transition: none;
+    }
+}

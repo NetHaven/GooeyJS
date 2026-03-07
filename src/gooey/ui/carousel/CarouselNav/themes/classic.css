@@ -1,0 +1,74 @@
+/* CarouselNav - Classic structural override */
+
+:host {
+    --gooey-carousel-arrow-bg: #DDDDDD;
+    --gooey-carousel-arrow-fg: #000000;
+    --gooey-carousel-arrow-border-radius: 3px;
+    --gooey-carousel-dot-bg: #999999;
+    --gooey-carousel-dot-bg-active: #666666;
+    --gooey-carousel-scrollbar-track-bg: #CCCCCC;
+    --gooey-carousel-scrollbar-thumb-bg: #666666;
+}
+
+/* Arrows: beveled raised appearance */
+.carousel-arrow {
+    border: 1px solid #000000;
+    background-color: #DDDDDD;
+    box-shadow:
+        inset 1px 1px 0 #DDDDDD,
+        inset 2px 2px 0 #fff,
+        inset -1px -1px 1px #555;
+    font-weight: bold;
+    border-radius: 3px;
+    color: #000000;
+}
+
+.carousel-arrow:hover {
+    background-color: #E8E8E8;
+}
+
+.carousel-arrow:active {
+    background-color: #666666;
+    color: #ffffff;
+    box-shadow:
+        inset 1px 1px 1px #333,
+        inset -1px -1px 1px #999;
+}
+
+.carousel-arrow:focus {
+    outline: 2px solid var(--gooey-color-primary-3);
+    outline-offset: -3px;
+}
+
+/* Dots: raised with subtle border */
+.carousel-dot {
+    border: 1px solid #000;
+    box-shadow:
+        inset 1px 1px 0 #ccc,
+        inset -1px -1px 0 #666;
+}
+
+.carousel-dot[aria-current="true"] {
+    background: #666666;
+    box-shadow:
+        inset 1px 1px 1px #333,
+        inset -1px -1px 1px #999;
+}
+
+/* Scrollbar: inset track, raised thumb */
+.carousel-scrollbar {
+    background: #CCCCCC;
+    border: 1px solid #000;
+    box-shadow:
+        inset 1px 1px 1px #888,
+        inset -1px -1px 1px #eee;
+    border-radius: 0;
+}
+
+.carousel-scrollbar-thumb {
+    background: #666666;
+    border-radius: 0;
+    box-shadow:
+        inset 1px 1px 0 #999,
+        inset -1px -1px 0 #333;
+}
