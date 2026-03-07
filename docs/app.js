@@ -20,17 +20,14 @@ function showWelcomeScreen() {
 }
 
 // Build gooeyui-treeitem elements from GooeyData and add to the tree
+// Called after customElements.whenDefined resolves for tree/treeitem
 function buildTree() {
     const tree = document.getElementById('elementTree');
+    const rootItem = buildCategoryItem(GooeyData.root, 'root');
+    tree.addItem(rootItem);
 
-    // Wait for TreeItem custom element to be defined before building
-    customElements.whenDefined('gooeyui-treeitem').then(() => {
-        const rootItem = buildCategoryItem(GooeyData.root, 'root');
-        tree.addItem(rootItem);
-
-        // Auto-expand root node
-        rootItem.setAttribute('expanded', '');
-    });
+    // Auto-expand root node
+    rootItem.setAttribute('expanded', '');
 }
 
 // Recursively build a category tree item with subcategories and element leaves
@@ -263,9 +260,17 @@ function formatCode(code) {
     return formatted;
 }
 
-// Initialize
+// Initialize — wait for GooeyJS components to be defined before interacting
 document.addEventListener('DOMContentLoaded', () => {
     showWelcomeScreen();
-    buildTree();
-    setupTreeEvents();
+
+    // Wait for Tree and TreeItem to be defined before building tree and wiring events
+    // Without this, addEventListener calls hit native DOM instead of Observable
+    Promise.all([
+        customElements.whenDefined('gooeyui-tree'),
+        customElements.whenDefined('gooeyui-treeitem')
+    ]).then(() => {
+        buildTree();
+        setupTreeEvents();
+    });
 });
