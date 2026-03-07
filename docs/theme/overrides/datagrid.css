@@ -1,0 +1,33 @@
+/**
+ * Docs Reference Theme - DataGrid Override
+ *
+ * Styles DataGrid components used for attribute tables in the
+ * element reference detail panel. Includes an inherited variant
+ * with muted colors for inherited attribute sections.
+ */
+
+:host {
+    --gooey-datagrid-header-gradient-start: #f8f8f8;
+    --gooey-datagrid-header-gradient-end: #e8e8e8;
+    --gooey-datagrid-row-alt-bg: #f8f8f8;
+    --gooey-datagrid-row-hover-bg: #e8f4fc;
+    --gooey-datagrid-border-color: #999;
+    --gooey-datagrid-row-border-color: #ccc;
+    --gooey-datagrid-cell-border-color: #ccc;
+    --gooey-datagrid-font-size: 13px;
+    --gooey-datagrid-selection-bg: transparent;
+    --gooey-datagrid-selection-color: inherit;
+
+    width: 100%;
+    margin-bottom: 8px;
+}
+
+:host(.inherited) {
+    --gooey-datagrid-header-gradient-start: #f0f0f0;
+    --gooey-datagrid-header-gradient-end: #e0e0e0;
+    --gooey-datagrid-row-hover-bg: #f0f4f8;
+    --gooey-datagrid-border-color: #aaa;
+    --gooey-datagrid-row-alt-bg: #fafafa;
+
+    color: #555;
+}

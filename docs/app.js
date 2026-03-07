@@ -286,7 +286,9 @@ document.addEventListener('DOMContentLoaded', () => {
         customElements.whenDefined('gooeyui-splitpanel'),
         customElements.whenDefined('gooeyui-panel'),
         customElements.whenDefined('gooeyui-tree'),
-        customElements.whenDefined('gooeyui-treeitem')
+        customElements.whenDefined('gooeyui-treeitem'),
+        customElements.whenDefined('gooeyui-datagrid'),
+        customElements.whenDefined('gooeydata-store')
     ]).then(async () => {
         await initRefs();
         showWelcomeScreen();
