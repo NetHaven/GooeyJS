@@ -12,6 +12,9 @@ export default class ComponentEvent extends Event {
     /** Fired when a component fails to load */
     static ERROR = "component-error";
 
+    /** Fired when all dynamic component loaders have completed */
+    static ALL_LOADED = "components-all-loaded";
+
     /** Fired when an attribute value fails META.goo validation */
     static ATTRIBUTE_ERROR = "attribute-error";
 

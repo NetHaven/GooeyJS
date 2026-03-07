@@ -10,6 +10,47 @@ import Logger from '../../logging/Logger.js';
 const _ComponentEvent = ComponentEvent;
 
 export default class Component extends Observable {
+    // Track all loader instances for readyAll aggregation
+    static _pendingLoaders = new Set();
+    static _allLoadedResolve = null;
+    static _allLoadedPromise = null;
+    static _allLoadedFired = false;
+    static _initialCheckScheduled = false;
+
+    /**
+     * Promise that resolves when all gooey-component loaders have completed (loaded or errored).
+     * If no gooey-component elements exist, resolves on next animation frame.
+     * @type {Promise<void>}
+     */
+    static get readyAll() {
+        if (!Component._allLoadedPromise) {
+            Component._allLoadedPromise = new Promise(resolve => {
+                Component._allLoadedResolve = resolve;
+            });
+            // If no loaders registered yet, schedule a deferred check
+            if (!Component._initialCheckScheduled) {
+                Component._initialCheckScheduled = true;
+                requestAnimationFrame(() => { Component._checkAllLoaded(); });
+            }
+        }
+        return Component._allLoadedPromise;
+    }
+
+    /**
+     * Check if all pending loaders have completed and resolve readyAll if so.
+     * @private
+     */
+    static _checkAllLoaded() {
+        if (Component._pendingLoaders.size === 0 && !Component._allLoadedFired) {
+            Component._allLoadedFired = true;
+            if (Component._allLoadedResolve) {
+                Component._allLoadedResolve();
+                Component._allLoadedResolve = null;
+            }
+            document.dispatchEvent(new CustomEvent('components-all-loaded'));
+        }
+    }
+
     constructor() {
         super();
         this.attachShadow({ mode: 'open' });
@@ -40,6 +81,13 @@ export default class Component extends Observable {
             return;
         }
 
+        // Register as pending before loading starts
+        Component._pendingLoaders.add(this);
+        if (!Component._initialCheckScheduled) {
+            Component._initialCheckScheduled = true;
+            requestAnimationFrame(() => { Component._checkAllLoaded(); });
+        }
+
         // Load component when added to DOM
         this.loadComponent();
     }
@@ -52,6 +100,8 @@ export default class Component extends Observable {
                 error: 'Missing required attribute: href',
                 component: this
             });
+            Component._pendingLoaders.delete(this);
+            Component._checkAllLoaded();
             return;
         }
 
@@ -70,6 +120,8 @@ export default class Component extends Observable {
                 href: this._href,
                 component: this
             });
+            Component._pendingLoaders.delete(this);
+            Component._checkAllLoaded();
             return;
         }
 
@@ -86,6 +138,8 @@ export default class Component extends Observable {
                 meta: meta,
                 component: this
             });
+            Component._pendingLoaders.delete(this);
+            Component._checkAllLoaded();
             return;
         }
 
@@ -205,6 +259,9 @@ export default class Component extends Observable {
                 component: this
             });
 
+            Component._pendingLoaders.delete(this);
+            Component._checkAllLoaded();
+
         } catch (error) {
             Logger.error(error, { code: "COMPONENT_LOAD_FAILED", name: meta.name }, "Failed to load component %s", meta.name);
 
@@ -216,6 +273,9 @@ export default class Component extends Observable {
                 meta: meta,
                 component: this
             });
+
+            Component._pendingLoaders.delete(this);
+            Component._checkAllLoaded();
         }
     }
 

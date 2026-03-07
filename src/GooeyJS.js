@@ -5,6 +5,7 @@ import ComponentEvent from './gooey/events/ComponentEvent.js';
 import Logger from './gooey/logging/Logger.js';
 import ThemeManager from './gooey/util/ThemeManager.js';
 import GooeyElement from './gooey/GooeyElement.js';
+import Component from './gooey/Component/scripts/Component.js';
 
 const SCRIPT_PATH = new URL(import.meta.url, document.baseURI);
 const PATH = SCRIPT_PATH.href.substring(0, SCRIPT_PATH.href.lastIndexOf('/'));
@@ -130,6 +131,16 @@ export default class GooeyJS {
 
     static get basePath() {
         return PATH;
+    }
+
+    /**
+     * Promise that resolves when all dynamically-loaded gooey-component elements
+     * have completed loading (or errored). Chains on GooeyJS.ready first, then
+     * waits for dynamic loaders.
+     * @type {Promise<void>}
+     */
+    static get readyAll() {
+        return GooeyJS.ready.then(() => Component.readyAll);
     }
 
     /**
