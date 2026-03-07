@@ -1460,7 +1460,7 @@ export default class Transaction {
      * @returns {Step[]}
      */
     get steps() {
-        return this._steps;
+        return Object.freeze([...this._steps]);
     }
 
     /**
