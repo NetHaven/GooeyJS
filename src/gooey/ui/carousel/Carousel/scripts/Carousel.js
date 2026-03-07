@@ -99,11 +99,13 @@ export default class Carousel extends Container {
         this._calculateLayout();
         this._positionTrack(false);
 
-        // Set viewport aria-label
-        if (this._viewport && this.hasAttribute('arialabel')) {
-            this._viewport.setAttribute('aria-label', this.getAttribute('arialabel'));
-        } else if (this._viewport) {
-            this._viewport.setAttribute('aria-label', 'Carousel');
+        // Set viewport aria-label or aria-labelledby
+        if (this._viewport) {
+            if (this.hasAttribute('arialabelledby') && this.getAttribute('arialabelledby')) {
+                this._viewport.setAttribute('aria-labelledby', this.getAttribute('arialabelledby'));
+            } else {
+                this._viewport.setAttribute('aria-label', this.getAttribute('arialabel') || 'Carousel');
+            }
         }
 
         // Set live region aria-live
@@ -179,8 +181,19 @@ export default class Carousel extends Container {
                 this._applyTransitionProperties();
                 break;
             case 'arialabel':
-                if (this._viewport) {
+                if (this._viewport && !this.hasAttribute('arialabelledby')) {
                     this._viewport.setAttribute('aria-label', newValue || 'Carousel');
+                }
+                break;
+            case 'arialabelledby':
+                if (this._viewport) {
+                    if (newValue) {
+                        this._viewport.setAttribute('aria-labelledby', newValue);
+                        this._viewport.removeAttribute('aria-label');
+                    } else {
+                        this._viewport.removeAttribute('aria-labelledby');
+                        this._viewport.setAttribute('aria-label', this.getAttribute('arialabel') || 'Carousel');
+                    }
                 }
                 break;
             case 'liveregion':
@@ -920,9 +933,26 @@ export default class Carousel extends Container {
     }
 
     _updateActiveSlide(newIndex, previousIndex, fireSlideEvents) {
-        // Remove active from all slides
-        for (let i = 0; i < this._slides.length; i++) {
+        const total = this._slides.length;
+        const pp = this.perpage;
+
+        for (let i = 0; i < total; i++) {
             const slide = this._slides[i];
+
+            // Set ARIA role and roledescription once
+            if (!slide.hasAttribute('role')) {
+                slide.setAttribute('role', 'group');
+                slide.setAttribute('aria-roledescription', 'slide');
+            }
+
+            // Update positional aria-label
+            slide.setAttribute('aria-label', `${i + 1} of ${total}`);
+
+            // Determine if slide is in view
+            const inView = i >= newIndex && i < newIndex + pp;
+            slide.setAttribute('aria-hidden', String(!inView));
+
+            // Update active state
             if (i === newIndex) {
                 if (!slide.hasAttribute('active')) {
                     slide.setAttribute('active', '');
