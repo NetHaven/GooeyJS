@@ -221,58 +221,29 @@ function showElementDetails(path, elemIndex) {
     if (element.examples && element.examples.length > 0) {
         const examplesSection = document.createElement('div');
         examplesSection.className = 'examples-section';
+        examplesSection.innerHTML = '<div class="examples-header">Examples</div>';
 
-        let examplesHTML = '<div class="examples-header">Examples</div>';
         element.examples.forEach(example => {
-            examplesHTML += `
-                <div class="example-block">
-                    <div class="example-title">${example.title}</div>
-                    <div class="example-description">${example.description}</div>
-                    <div class="example-code">${formatCode(example.code)}</div>
-                </div>
+            const block = document.createElement('div');
+            block.className = 'example-block';
+            block.innerHTML = `
+                <div class="example-title">${example.title}</div>
+                <div class="example-description">${example.description}</div>
             `;
+
+            const codeblock = document.createElement('gooeyui-codeblock');
+            codeblock.setAttribute('language', 'html');
+            codeblock.setAttribute('syntaxhighlight', '');
+            codeblock.setAttribute('linenumbers', 'false');
+            codeblock.setAttribute('copybutton', 'false');
+            codeblock.textContent = example.code;
+
+            block.appendChild(codeblock);
+            examplesSection.appendChild(block);
         });
-        examplesSection.innerHTML = examplesHTML;
+
         detailPanel.appendChild(examplesSection);
     }
-}
-
-// Format code with syntax highlighting
-function formatCode(code) {
-    // Escape HTML entities first
-    let formatted = code
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;');
-
-    // Use placeholders to avoid regex conflicts when inserting span tags
-    const TAG_OPEN = '\u0000T\u0001';
-    const ATTR_OPEN = '\u0000A\u0001';
-    const VALUE_OPEN = '\u0000V\u0001';
-    const COMMENT_OPEN = '\u0000C\u0001';
-    const SPAN_CLOSE = '\u0000X\u0001';
-
-    // Match HTML comments
-    formatted = formatted.replace(/(&lt;!--[\s\S]*?--&gt;)/g, COMMENT_OPEN + '$1' + SPAN_CLOSE);
-
-    // Match attribute values (in quotes)
-    formatted = formatted.replace(/="([^"]*)"/g, '="' + VALUE_OPEN + '$1' + SPAN_CLOSE + '"');
-
-    // Match attribute names (word before =)
-    formatted = formatted.replace(/\s([a-zA-Z-]+)=/g, ' ' + ATTR_OPEN + '$1' + SPAN_CLOSE + '=');
-
-    // Match tag names
-    formatted = formatted.replace(/(&lt;\/?)([\w-]+)/g, '$1' + TAG_OPEN + '$2' + SPAN_CLOSE);
-
-    // Replace placeholders with actual span tags
-    formatted = formatted
-        .replace(/\u0000T\u0001/g, '<span class="tag">')
-        .replace(/\u0000A\u0001/g, '<span class="attr">')
-        .replace(/\u0000V\u0001/g, '<span class="value">')
-        .replace(/\u0000C\u0001/g, '<span class="comment">')
-        .replace(/\u0000X\u0001/g, '</span>');
-
-    return formatted;
 }
 
 // Initialize — wait for GooeyJS components to be defined before interacting
@@ -286,6 +257,7 @@ document.addEventListener('DOMContentLoaded', () => {
         customElements.whenDefined('gooeyui-tree'),
         customElements.whenDefined('gooeyui-treeitem'),
         customElements.whenDefined('gooeyui-datagrid'),
+        customElements.whenDefined('gooeyui-codeblock'),
         customElements.whenDefined('gooeydata-store')
     ]).then(async () => {
         await initRefs();
