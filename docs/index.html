@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GooeyJS Element Reference</title>
-    <link rel="stylesheet" href="styles.css">
+    <script type="module" src="../src/GooeyJS.js"></script>
     <script src="data/inherited.js"></script>
     <script src="data/root-elements.js"></script>
     <script src="data/data.js"></script>
@@ -21,34 +21,52 @@
     <script src="data/ui/notification.js"></script>
     <script src="data/ui/common.js"></script>
     <script src="data/index.js"></script>
-    <script src="app.js" defer></script>
+    <script type="module" src="app.js"></script>
 </head>
 <body>
-    <div class="app-container">
-        <div class="title-bar">
-            <svg class="title-bar-icon" viewBox="0 0 16 16" fill="currentColor">
-                <rect x="1" y="1" width="6" height="6" fill="#ff0"/>
-                <rect x="9" y="1" width="6" height="6" fill="#0f0"/>
-                <rect x="1" y="9" width="6" height="6" fill="#f00"/>
-                <rect x="9" y="9" width="6" height="6" fill="#00f"/>
-            </svg>
-            GooeyJS Element Reference
-        </div>
-        <div class="content-area">
-            <div class="left-panel">
-                <div class="panel-header">Elements</div>
-                <div class="tree-container" id="elementTree"></div>
-            </div>
-            <div class="main-panel">
-                <div class="element-details" id="elementDetails">
-                    <div class="welcome-screen">
-                        <h2>GooeyJS Element Reference</h2>
-                        <p>Select an element from the tree on the left to view its documentation.</p>
-                        <p style="margin-top: 16px;">This reference contains documentation for all GooeyJS custom elements,<br>including element-specific attributes and inherited attributes from base classes.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <gooey-component href="../src/gooey/ui/panel/SplitPanel"></gooey-component>
+    <gooey-component href="../src/gooey/ui/panel/Panel"></gooey-component>
+    <gooey-component href="../src/gooey/ui/navigation/Tree"></gooey-component>
+    <gooey-component href="../src/gooey/ui/navigation/TreeItem"></gooey-component>
+    <gooey-component href="../src/gooey/ui/data/DataGrid"></gooey-component>
+    <gooey-component href="../src/gooey/ui/common/Label"></gooey-component>
+    <gooey-component href="../src/gooey/ui/common/StatusBar"></gooey-component>
+    <gooey-component href="../src/gooey/ui/common/CodeBlock"></gooey-component>
+
+    <gooey-theme name="docs-reference" href="theme/docs-reference.css" active>
+        <gooey-theme-override target="gooeyui-tree" href="theme/overrides/tree.css"></gooey-theme-override>
+        <gooey-theme-override target="gooeyui-treeitem" href="theme/overrides/tree.css"></gooey-theme-override>
+        <gooey-theme-override target="gooeyui-splitpanel" href="theme/overrides/splitpanel.css"></gooey-theme-override>
+        <gooey-theme-override target="gooeyui-panel" href="theme/overrides/panel.css"></gooey-theme-override>
+        <gooey-theme-override target="gooeyui-statusbar" href="theme/overrides/statusbar.css"></gooey-theme-override>
+        <gooey-theme-override target="gooeyui-label" href="theme/overrides/label.css"></gooey-theme-override>
+    </gooey-theme>
+
+    <gooey-application>
+        <gooeyui-apppanel>
+            <gooeyui-statusbar id="titleBar" position="top" height="28">
+                <span slot="left">
+                    <svg viewBox="0 0 16 16" fill="currentColor" style="width:16px;height:16px;vertical-align:middle;margin-right:8px">
+                        <rect x="1" y="1" width="6" height="6" fill="#ff0"/>
+                        <rect x="9" y="1" width="6" height="6" fill="#0f0"/>
+                        <rect x="1" y="9" width="6" height="6" fill="#f00"/>
+                        <rect x="9" y="9" width="6" height="6" fill="#00f"/>
+                    </svg>
+                    GooeyJS Element Reference
+                </span>
+            </gooeyui-statusbar>
+
+            <gooeyui-splitpanel orientation="horizontal" id="mainSplit" dividerlocation="220px">
+                <gooeyui-panel id="leftPanel" width="220">
+                    <gooeyui-label text="Elements" id="panelHeader"></gooeyui-label>
+                    <gooeyui-tree id="elementTree"></gooeyui-tree>
+                </gooeyui-panel>
+
+                <gooeyui-panel id="detailPanel">
+                    <!-- Content populated dynamically by app.js -->
+                </gooeyui-panel>
+            </gooeyui-splitpanel>
+        </gooeyui-apppanel>
+    </gooey-application>
 </body>
 </html>
