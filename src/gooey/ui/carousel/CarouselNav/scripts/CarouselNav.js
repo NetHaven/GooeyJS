@@ -412,6 +412,11 @@ export default class CarouselNav extends UIComponent {
             : (isVertical ? e.touches[0].clientY : e.touches[0].clientX);
         this._dragDelta = 0;
 
+        // Initialize velocity tracking for FreeMode momentum
+        this._lastDragPos = this._dragStartPos;
+        this._lastDragTime = performance.now();
+        this._dragVelocity = 0;
+
         // Prevent text selection during mouse drag
         if (source === 'mouse') {
             e.preventDefault();
@@ -457,6 +462,15 @@ export default class CarouselNav extends UIComponent {
             ? (isVertical ? e.clientY : e.clientX)
             : (isVertical ? e.touches[0].clientY : e.touches[0].clientX);
         let delta = currentPos - this._dragStartPos;
+
+        // Track velocity for FreeMode momentum
+        const now = performance.now();
+        const dt = now - this._lastDragTime;
+        if (dt > 0) {
+            this._dragVelocity = (currentPos - this._lastDragPos) / dt;
+        }
+        this._lastDragPos = currentPos;
+        this._lastDragTime = now;
 
         const threshold = parseInt(this._carousel?.getAttribute('dragthreshold') || '10', 10);
 
@@ -545,7 +559,7 @@ export default class CarouselNav extends UIComponent {
             }
 
             // Fire drag-end event
-            this._carousel.fireEvent?.(CarouselEvent.DRAG_END, { delta: this._dragDelta });
+            this._carousel.fireEvent?.(CarouselEvent.DRAG_END, { delta: this._dragDelta, velocity: this._dragVelocity || 0 });
         }
 
         this._isDragging = false;
