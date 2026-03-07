@@ -685,6 +685,104 @@
         </div>
     </div>
 
+    <!-- ===== PAGINATION ===== -->
+    <div class="section">
+        <h2>Pagination</h2>
+        <div class="component-row">
+            <div class="component-box">
+                <div class="box-label">Basic Pagination</div>
+                <gooeyui-pagination totalrecords="100" pagesize="10"></gooeyui-pagination>
+            </div>
+        </div>
+        <div class="component-row">
+            <div class="component-box">
+                <div class="box-label">Full Featured</div>
+                <gooeyui-pagination totalrecords="195" pagesize="10" showfirst showlast shownavigator showsizechanger showgoinput showgobutton></gooeyui-pagination>
+            </div>
+        </div>
+        <div class="component-row">
+            <div class="component-box">
+                <div class="box-label">Disabled</div>
+                <gooeyui-pagination totalrecords="50" pagesize="10" disabled></gooeyui-pagination>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== CAROUSEL ===== -->
+    <div class="section">
+        <h2>Carousel</h2>
+        <div class="component-row">
+            <div class="component-box" style="min-width: 400px;">
+                <div class="box-label">Basic Carousel with Arrows</div>
+                <gooeyui-carousel style="width: 380px; height: 200px;">
+                    <gooeyui-carousel-slide><div style="background: #4a90d9; color: white; display: flex; align-items: center; justify-content: center; height: 100%;">Slide 1</div></gooeyui-carousel-slide>
+                    <gooeyui-carousel-slide><div style="background: #e74c3c; color: white; display: flex; align-items: center; justify-content: center; height: 100%;">Slide 2</div></gooeyui-carousel-slide>
+                    <gooeyui-carousel-slide><div style="background: #2ecc71; color: white; display: flex; align-items: center; justify-content: center; height: 100%;">Slide 3</div></gooeyui-carousel-slide>
+                    <gooeyui-carousel-nav type="arrows"></gooeyui-carousel-nav>
+                    <gooeyui-carousel-nav type="dots"></gooeyui-carousel-nav>
+                </gooeyui-carousel>
+            </div>
+        </div>
+        <div class="component-row">
+            <div class="component-box" style="min-width: 400px;">
+                <div class="box-label">Multi-slide with Loop</div>
+                <gooeyui-carousel style="width: 380px; height: 150px;" perpage="2" gap="10px" loop>
+                    <gooeyui-carousel-slide><div style="background: #9b59b6; color: white; display: flex; align-items: center; justify-content: center; height: 100%;">A</div></gooeyui-carousel-slide>
+                    <gooeyui-carousel-slide><div style="background: #f39c12; color: white; display: flex; align-items: center; justify-content: center; height: 100%;">B</div></gooeyui-carousel-slide>
+                    <gooeyui-carousel-slide><div style="background: #1abc9c; color: white; display: flex; align-items: center; justify-content: center; height: 100%;">C</div></gooeyui-carousel-slide>
+                    <gooeyui-carousel-slide><div style="background: #e67e22; color: white; display: flex; align-items: center; justify-content: center; height: 100%;">D</div></gooeyui-carousel-slide>
+                    <gooeyui-carousel-nav type="arrows"></gooeyui-carousel-nav>
+                </gooeyui-carousel>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== CODEBLOCK - ADDITIONAL LANGUAGES ===== -->
+    <div class="section">
+        <h2>CodeBlock - Additional Languages</h2>
+        <div class="component-row">
+            <div class="component-box" style="min-width: 300px;">
+                <div class="box-label">Rust</div>
+                <gooeyui-codeblock language="rust">fn main() {
+    let message = "Hello, world!";
+    println!("{}", message);
+}</gooeyui-codeblock>
+            </div>
+            <div class="component-box" style="min-width: 300px;">
+                <div class="box-label">Java</div>
+                <gooeyui-codeblock language="java">public class Hello {
+    public static void main(String[] args) {
+        System.out.println("Hello, world!");
+    }
+}</gooeyui-codeblock>
+            </div>
+            <div class="component-box" style="min-width: 300px;">
+                <div class="box-label">C#</div>
+                <gooeyui-codeblock language="csharp">using System;
+
+class Program {
+    static void Main() {
+        Console.WriteLine("Hello, world!");
+    }
+}</gooeyui-codeblock>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== I18N COMPONENTS ===== -->
+    <div class="section">
+        <h2>I18n Components (Non-Visual)</h2>
+        <div class="component-row">
+            <div class="component-box">
+                <div class="box-label">I18n + Locale (loaded, non-visual)</div>
+                <gooey-i18n locale="en" fallback="en">
+                    <gooey-locale lang="en">{"greeting": "Hello"}</gooey-locale>
+                </gooey-i18n>
+                <span style="font-size: 12px; color: #666;">gooey-i18n and gooey-locale loaded successfully if no errors above.</span>
+            </div>
+        </div>
+    </div>
+
     <!-- ===== DATA ===== -->
     <div class="section">
         <h2>Data Grid</h2>
