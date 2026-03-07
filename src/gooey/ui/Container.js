@@ -141,6 +141,18 @@ export default class Container extends UIComponent {
         }
     }
 
+    /**
+     * Returns an Array of direct child elements.
+     * The default implementation returns children from the light DOM.
+     * Subclasses that reparent children into Shadow DOM (e.g., SplitPanel,
+     * AccordionPanel) should override this method to return the actual
+     * child components from their internal structure.
+     * @returns {Array<Element>}
+     */
+    getChildren() {
+        return Array.from(this.children);
+    }
+
     set layout(val) {
         // Handle LayoutType constants directly
         switch (val) {

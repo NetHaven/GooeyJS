@@ -424,22 +424,16 @@ export default class SplitPanel extends Container {
         return this._maximumLocation.isPercent;
     }
 
-    // Method to add content to panes
-    setFirstPane(element) {
-        this._firstPane.innerHTML = '';
-        this._firstPane.appendChild(element);
-    }
-
-    setSecondPane(element) {
-        this._secondPane.innerHTML = '';
-        this._secondPane.appendChild(element);
-    }
-
-    getFirstPane() {
-        return this._firstPane;
-    }
-
-    getSecondPane() {
-        return this._secondPane;
+    /**
+     * Returns the child elements from both panes.
+     * SplitPanel reparents its two children into shadow DOM panes,
+     * so this override collects children from _firstPane and _secondPane.
+     * @returns {Array<Element>}
+     */
+    getChildren() {
+        const children = [];
+        if (this._firstPane) children.push(...this._firstPane.children);
+        if (this._secondPane) children.push(...this._secondPane.children);
+        return children;
     }
 }
