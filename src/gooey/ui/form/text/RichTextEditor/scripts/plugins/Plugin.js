@@ -73,8 +73,10 @@ export default class Plugin {
      * React after a new state is applied.
      * @param {object} newState - New EditorState
      * @param {object} oldState - Previous EditorState
+     * @param {Array} steps - The steps that produced the new state
+     * @param {object} transaction - The full transaction (includes origin, meta)
      */
-    stateDidUpdate(newState, oldState) {}
+    stateDidUpdate(newState, oldState, steps, transaction) {}
 
     /**
      * Return toolbar item descriptors.

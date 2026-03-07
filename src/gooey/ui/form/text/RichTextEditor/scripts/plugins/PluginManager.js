@@ -275,12 +275,14 @@ export default class PluginManager {
      *
      * @param {object} newState - New EditorState
      * @param {object} oldState - Previous EditorState
+     * @param {Array} steps - The steps that produced the new state
+     * @param {object} transaction - The full transaction (includes origin, meta)
      */
-    runStateDidUpdate(newState, oldState) {
+    runStateDidUpdate(newState, oldState, steps, transaction) {
         for (const plugin of this.activePlugins) {
             if (typeof plugin.stateDidUpdate !== 'function') continue;
             try {
-                plugin.stateDidUpdate(newState, oldState);
+                plugin.stateDidUpdate(newState, oldState, steps, transaction);
             } catch (err) {
                 this._warnPluginError('stateDidUpdate', plugin, err);
             }
