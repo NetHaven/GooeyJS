@@ -6,15 +6,16 @@ import Key from '../../../../io/Key.js';
 /**
  * CarouselNav - Provides navigation controls for a parent Carousel.
  *
- * Supports two display types via the `type` attribute:
+ * Supports three display types via the `type` attribute:
  * - "arrows" (default): Previous/Next buttons
  * - "dots": Per-slide dot indicators
+ * - "scrollbar": Container for the Scrollbar module's DOM
  *
  * Also manages touch/mouse drag interaction and keyboard navigation
  * on the parent carousel element.
  *
  * @element gooeyui-carousel-nav
- * @attr {string} type - Navigation type: "arrows" or "dots"
+ * @attr {string} type - Navigation type: "arrows", "dots", or "scrollbar"
  */
 export default class CarouselNav extends UIComponent {
 
@@ -181,6 +182,10 @@ export default class CarouselNav extends UIComponent {
             this._renderArrows();
         } else if (navType === 'dots') {
             this._renderDots();
+        } else if (navType === 'scrollbar') {
+            // Scrollbar type: the Scrollbar module handles all DOM rendering.
+            // This nav element acts as a container. Mark it for module discovery.
+            this._container.setAttribute('data-scrollbar', '');
         }
     }
 
