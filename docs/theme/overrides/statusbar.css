@@ -1,0 +1,30 @@
+/**
+ * Docs Reference Theme - StatusBar Override
+ *
+ * Targets the shadow DOM internals of gooeyui-statusbar
+ * for gradient title bar styling.
+ */
+
+:host {
+    --gooey-statusbar-bg: linear-gradient(to right, #010082, #1084d0);
+    --gooey-statusbar-text-color: #fff;
+    --gooey-statusbar-font-size: 14px;
+    --gooey-statusbar-height: auto;
+
+    background: linear-gradient(to right, #010082, #1084d0);
+    color: #fff;
+    font-weight: bold;
+    font-size: 14px;
+    height: auto;
+    min-height: auto;
+    border: none;
+}
+
+.statusbar {
+    padding: 4px 8px;
+    gap: 8px;
+}
+
+.statusbar-panel {
+    gap: 8px;
+}

@@ -1,0 +1,14 @@
+/**
+ * Docs Reference Theme - Panel Override
+ *
+ * Targets the shadow DOM internals of gooeyui-panel
+ * for white content area with inset border styling.
+ */
+
+:host {
+    --gooey-panel-bg: #fff;
+    background-color: #fff;
+    border: 2px inset var(--gooey-color-surface, #c1c0c1);
+    padding: 16px;
+    min-height: 100%;
+}

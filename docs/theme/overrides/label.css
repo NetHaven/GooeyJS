@@ -1,0 +1,15 @@
+/**
+ * Docs Reference Theme - Label Override
+ *
+ * Targets the shadow DOM internals of gooeyui-label
+ * for panel header styling matching the docs aesthetic.
+ */
+
+:host {
+    display: block;
+    background-color: var(--gooey-color-surface, #c1c0c1);
+    border-bottom: 1px solid var(--gooey-color-border-dark, #404040);
+    padding: 6px 8px;
+    font-weight: bold;
+    font-size: 12px;
+}

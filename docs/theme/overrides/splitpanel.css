@@ -1,0 +1,28 @@
+/**
+ * Docs Reference Theme - SplitPanel Override
+ *
+ * Targets the shadow DOM internals of gooeyui-splitpanel
+ * for the docs thin-border aesthetic between panes.
+ */
+
+:host {
+    --gooey-splitpanel-pane-border-color: var(--gooey-color-border-dark, #404040);
+    --gooey-splitpanel-divider-bg: var(--gooey-color-surface, #c1c0c1);
+    --gooey-splitpanel-divider-border-color: var(--gooey-color-border-dark, #404040);
+}
+
+.splitpanel-pane {
+    border: none;
+    border-right: 1px solid var(--gooey-splitpanel-pane-border-color);
+}
+
+.splitpanel-pane:last-of-type {
+    border-right: none;
+}
+
+.splitpanel-divider {
+    border: none;
+    width: 1px;
+    min-width: 1px;
+    background-color: var(--gooey-color-border-dark, #404040);
+}
