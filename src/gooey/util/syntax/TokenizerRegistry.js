@@ -151,3 +151,6 @@ TokenizerRegistry.register("rust", "./tokenizers/RustTokenizer.js");
 TokenizerRegistry.register("rs", "./tokenizers/RustTokenizer.js");
 
 TokenizerRegistry.register("java", "./tokenizers/JavaTokenizer.js");
+
+TokenizerRegistry.register("csharp", "./tokenizers/CSharpTokenizer.js");
+TokenizerRegistry.register("cs", "./tokenizers/CSharpTokenizer.js");
