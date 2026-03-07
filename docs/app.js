@@ -5,9 +5,21 @@
  * All interaction is via DOM APIs and GooeyJS Observable events.
  */
 
+// SplitPanel moves children into shadow DOM, so document.getElementById won't find them.
+// Cache references after components are defined and SplitPanel has constructed its panes.
+let detailPanel = null;
+let elementTree = null;
+
+function initRefs() {
+    const splitPanel = document.querySelector('gooeyui-splitpanel#mainSplit');
+    const firstPane = splitPanel.getFirstPane();
+    const secondPane = splitPanel.getSecondPane();
+    elementTree = firstPane.querySelector('#elementTree');
+    detailPanel = secondPane.querySelector('#detailPanel');
+}
+
 // Show welcome screen in the detail panel
 function showWelcomeScreen() {
-    const detailPanel = document.getElementById('detailPanel');
     if (detailPanel) {
         detailPanel.innerHTML = `
             <div style="text-align:center;padding:48px;color:#666">
@@ -22,9 +34,8 @@ function showWelcomeScreen() {
 // Build gooeyui-treeitem elements from GooeyData and add to the tree
 // Called after customElements.whenDefined resolves for tree/treeitem
 function buildTree() {
-    const tree = document.getElementById('elementTree');
     const rootItem = buildCategoryItem(GooeyData.root, 'root');
-    tree.addItem(rootItem);
+    elementTree.addItem(rootItem);
 
     // Auto-expand root node
     rootItem.setAttribute('expanded', '');
@@ -64,7 +75,7 @@ function buildCategoryItem(category, path) {
 
 // Wire Tree selection-changed event to show element details
 function setupTreeEvents() {
-    const tree = document.getElementById('elementTree');
+    const tree = elementTree;
 
     // Observable listener signature: (eventName, eventObject)
     tree.addEventListener('selection-changed', (_eventName, data) => {
@@ -217,8 +228,6 @@ function showElementDetails(path, elemIndex) {
         html += `</div>`;
     }
 
-    // Panel uses <slot>, so set innerHTML as light DOM content
-    const detailPanel = document.getElementById('detailPanel');
     detailPanel.innerHTML = html;
 }
 
@@ -262,13 +271,16 @@ function formatCode(code) {
 
 // Initialize — wait for GooeyJS components to be defined before interacting
 document.addEventListener('DOMContentLoaded', () => {
-    // Wait for all shell components to be defined before any DOM interaction
-    // Without this, getElementById may fail and Observable addEventListener is bypassed
+    // Wait for shell components to be defined before any DOM interaction.
+    // SplitPanel moves children into shadow DOM, so refs must be resolved
+    // via its API after construction, not via document.getElementById.
     Promise.all([
+        customElements.whenDefined('gooeyui-splitpanel'),
         customElements.whenDefined('gooeyui-panel'),
         customElements.whenDefined('gooeyui-tree'),
         customElements.whenDefined('gooeyui-treeitem')
     ]).then(() => {
+        initRefs();
         showWelcomeScreen();
         buildTree();
         setupTreeEvents();
