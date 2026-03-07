@@ -1,0 +1,228 @@
+/**
+ * Docs Reference Theme - Detail Panel Content Styles
+ *
+ * These styles apply to the dynamically generated element documentation
+ * injected into the detail panel. Loaded as a <style> block inside the
+ * panel content because Shadow DOM boundaries prevent global CSS from
+ * reaching slotted content inside SplitPanel's shadow panes.
+ */
+
+.element-name {
+    font-size: 20px;
+    font-weight: bold;
+    color: #010082;
+    margin-bottom: 4px;
+}
+
+.element-tagname {
+    font-family: "Consolas", "Courier New", monospace;
+    font-size: 14px;
+    color: #666;
+    background-color: #f0f0f0;
+    padding: 2px 8px;
+    border-radius: 3px;
+    display: inline-block;
+    margin-bottom: 16px;
+}
+
+.element-description {
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 24px;
+    padding: 12px;
+    background-color: #f8f8f8;
+    border-left: 3px solid #010082;
+}
+
+.attributes-header {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 12px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid #404040;
+}
+
+.attributes-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.attributes-table th {
+    background: linear-gradient(to bottom, #f8f8f8, #e8e8e8);
+    border: 1px solid #999;
+    padding: 8px 12px;
+    text-align: left;
+    font-weight: bold;
+}
+
+.attributes-table td {
+    border: 1px solid #ccc;
+    padding: 8px 12px;
+    vertical-align: top;
+}
+
+.attributes-table tr:nth-child(even) {
+    background-color: #f8f8f8;
+}
+
+.attributes-table tr:hover {
+    background-color: #e8f4fc;
+}
+
+.attr-name {
+    font-family: "Consolas", "Courier New", monospace;
+    font-weight: bold;
+    color: #333;
+}
+
+.attr-type {
+    font-family: "Consolas", "Courier New", monospace;
+    font-size: 12px;
+    color: #666;
+}
+
+.attr-type-enum {
+    color: #8b4513;
+}
+
+.attr-values {
+    font-size: 11px;
+    color: #666;
+    margin-top: 4px;
+}
+
+.attr-required {
+    color: #c00;
+    font-weight: bold;
+}
+
+.attr-optional {
+    color: #666;
+}
+
+.no-attributes {
+    color: #666;
+    font-style: italic;
+    padding: 16px;
+    background-color: #f8f8f8;
+    border: 1px dashed #ccc;
+}
+
+.inherited-section {
+    margin-top: 32px;
+}
+
+.inherited-header {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 12px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid #404040;
+    color: #555;
+}
+
+.inherited-source {
+    font-size: 14px;
+    font-weight: bold;
+    color: #666;
+    margin-top: 16px;
+    margin-bottom: 8px;
+    padding: 4px 8px;
+    background-color: #f0f0f0;
+    border-left: 3px solid #999;
+}
+
+.inherited-source:first-of-type {
+    margin-top: 0;
+}
+
+.inherited-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-bottom: 8px;
+}
+
+.inherited-table th {
+    background: linear-gradient(to bottom, #f0f0f0, #e0e0e0);
+    border: 1px solid #aaa;
+    padding: 6px 10px;
+    text-align: left;
+    font-weight: bold;
+    color: #555;
+}
+
+.inherited-table td {
+    border: 1px solid #ccc;
+    padding: 6px 10px;
+    vertical-align: top;
+    color: #555;
+}
+
+.inherited-table tr:nth-child(even) {
+    background-color: #fafafa;
+}
+
+.inherited-table tr:hover {
+    background-color: #f0f4f8;
+}
+
+.examples-section {
+    margin-top: 32px;
+}
+
+.examples-header {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 12px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid #404040;
+    color: #010082;
+}
+
+.example-block {
+    margin-bottom: 24px;
+}
+
+.example-title {
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.example-description {
+    font-size: 13px;
+    color: #555;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.example-code {
+    font-family: "Consolas", "Courier New", monospace;
+    font-size: 12px;
+    background-color: #1e1e1e;
+    color: #d4d4d4;
+    padding: 12px 16px;
+    border-radius: 4px;
+    overflow-x: auto;
+    white-space: pre;
+    line-height: 1.5;
+}
+
+.example-code .tag {
+    color: #569cd6;
+}
+
+.example-code .attr {
+    color: #9cdcfe;
+}
+
+.example-code .value {
+    color: #ce9178;
+}
+
+.example-code .comment {
+    color: #6a9955;
+}

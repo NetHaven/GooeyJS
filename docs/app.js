@@ -9,13 +9,21 @@
 // Cache references after components are defined and SplitPanel has constructed its panes.
 let detailPanel = null;
 let elementTree = null;
+let contentCSS = '';
 
-function initRefs() {
+async function initRefs() {
     const splitPanel = document.querySelector('gooeyui-splitpanel#mainSplit');
     const firstPane = splitPanel.getFirstPane();
     const secondPane = splitPanel.getSecondPane();
     elementTree = firstPane.querySelector('#elementTree');
     detailPanel = secondPane.querySelector('#detailPanel');
+
+    // Fetch content styles once — needed because detail panel content lives
+    // inside SplitPanel's shadow DOM where global CSS can't reach
+    const resp = await fetch('theme/content.css');
+    if (resp.ok) {
+        contentCSS = await resp.text();
+    }
 }
 
 // Show welcome screen in the detail panel
@@ -228,7 +236,7 @@ function showElementDetails(path, elemIndex) {
         html += `</div>`;
     }
 
-    detailPanel.innerHTML = html;
+    detailPanel.innerHTML = `<style>${contentCSS}</style>` + html;
 }
 
 // Format code with syntax highlighting
@@ -279,8 +287,8 @@ document.addEventListener('DOMContentLoaded', () => {
         customElements.whenDefined('gooeyui-panel'),
         customElements.whenDefined('gooeyui-tree'),
         customElements.whenDefined('gooeyui-treeitem')
-    ]).then(() => {
-        initRefs();
+    ]).then(async () => {
+        await initRefs();
         showWelcomeScreen();
         buildTree();
         setupTreeEvents();
