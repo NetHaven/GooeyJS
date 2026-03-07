@@ -9,6 +9,7 @@
  * and a keymap builder.
  */
 import Plugin from './Plugin.js';
+import { Mapping } from '../state/Transaction.js';
 
 export default class HistoryPlugin extends Plugin {
 
@@ -41,6 +42,14 @@ export default class HistoryPlugin extends Plugin {
 
         /** @type {{state: object, timestamp: number}|null} */
         this._currentBatch = null;
+
+        /**
+         * Accumulated mapping from remote steps received since last undo.
+         * Used to rebase inverse steps during undo so they account for
+         * remote changes that arrived after the local edit was recorded.
+         * @type {Mapping|null}
+         */
+        this._remoteMapping = null;
     }
 
     /**
@@ -56,6 +65,31 @@ export default class HistoryPlugin extends Plugin {
             tr.setMeta('addToHistory', false);
         }
         return tr;
+    }
+
+    /**
+     * Called after a transaction has been applied and the editor state updated.
+     * Accumulates remote step mappings into _remoteMapping so that undo can
+     * rebase inverse steps through any remote changes that arrived since the
+     * local edit was recorded.
+     *
+     * @param {object} newState - The new EditorState
+     * @param {object} oldState - The previous EditorState
+     * @param {Step[]} steps - The steps that produced the new state
+     * @param {object} transaction - The full transaction (includes origin, meta)
+     */
+    stateDidUpdate(newState, oldState, steps, transaction) {
+        if (transaction._origin !== 'remote') return;
+        if (steps.length === 0) return;
+
+        // Build mapping from remote steps
+        const mapping = new Mapping(steps.map(s => s.getMap()));
+
+        // Accumulate into _remoteMapping for later rebase during undo
+        this._remoteMapping = this._remoteMapping || new Mapping();
+        for (const map of mapping.maps) {
+            this._remoteMapping.appendMap(map);
+        }
     }
 
     /**
