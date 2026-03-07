@@ -262,14 +262,14 @@ function formatCode(code) {
 
 // Initialize — wait for GooeyJS components to be defined before interacting
 document.addEventListener('DOMContentLoaded', () => {
-    showWelcomeScreen();
-
-    // Wait for Tree and TreeItem to be defined before building tree and wiring events
-    // Without this, addEventListener calls hit native DOM instead of Observable
+    // Wait for all shell components to be defined before any DOM interaction
+    // Without this, getElementById may fail and Observable addEventListener is bypassed
     Promise.all([
+        customElements.whenDefined('gooeyui-panel'),
         customElements.whenDefined('gooeyui-tree'),
         customElements.whenDefined('gooeyui-treeitem')
     ]).then(() => {
+        showWelcomeScreen();
         buildTree();
         setupTreeEvents();
     });
