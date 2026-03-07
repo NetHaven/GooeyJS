@@ -12,7 +12,7 @@ import { Selection } from "../model/Position.js";
  * Stores an array of [from, oldSize, newSize] ranges describing
  * what was removed and inserted at each affected position.
  */
-export class StepMap {
+class StepMap {
 
     /**
      * @param {Array<[number, number, number]>} ranges - Array of [from, oldSize, newSize]
@@ -67,7 +67,7 @@ export class StepMap {
  * Mapping composes multiple StepMaps into a single mapping pipeline.
  * Positions are remapped through each constituent map in sequence.
  */
-export class Mapping {
+class Mapping {
 
     /**
      * @param {StepMap[]} [maps] - Initial step maps
@@ -151,6 +151,18 @@ class Step {
      */
     toJSON() {
         throw new Error("Not implemented");
+    }
+
+    /**
+     * Deserialize a step from JSON using the STEP_TYPES registry.
+     * @param {object} schema - Schema for node reconstruction
+     * @param {object} json - Serialized step with { type, ... }
+     * @returns {Step}
+     */
+    static fromJSON(schema, json) {
+        const StepClass = STEP_TYPES[json.type];
+        if (!StepClass) throw new Error(`Unknown step type: "${json.type}"`);
+        return StepClass.fromJSON(schema, json);
     }
 }
 
@@ -1397,6 +1409,12 @@ export default class Transaction {
 
         /** @type {object[]|null} Stored marks override (null = carry from state) */
         this._storedMarks = null;
+
+        /** @type {string|null} Origin identifier ('local' | 'remote' | custom string) */
+        this._origin = null;
+
+        /** @type {Map<string, *>} Arbitrary metadata */
+        this._meta = new Map();
     }
 
     /**
@@ -1551,6 +1569,36 @@ export default class Transaction {
     }
 
     /**
+     * Transaction origin identifier.
+     * @returns {string|null}
+     */
+    get origin() { return this._origin; }
+
+    /**
+     * Set transaction origin identifier.
+     * @param {string|null} value - 'local', 'remote', or custom string
+     */
+    set origin(value) { this._origin = value; }
+
+    /**
+     * Get a metadata value by key.
+     * @param {string} key
+     * @returns {*}
+     */
+    getMeta(key) { return this._meta.get(key); }
+
+    /**
+     * Set a metadata value by key.
+     * @param {string} key
+     * @param {*} value
+     * @returns {Transaction} this (for fluent chaining)
+     */
+    setMeta(key, value) {
+        this._meta.set(key, value);
+        return this;
+    }
+
+    /**
      * Apply a step, update the document and step maps.
      * @param {Step} step
      * @returns {Transaction} this
@@ -1583,4 +1631,4 @@ export default class Transaction {
 }
 
 // Export step classes for direct use
-export { Step, InsertTextStep, DeleteRangeStep, ReplaceRangeStep, AddMarkStep, RemoveMarkStep, SetNodeAttrsStep, WrapInStep, UnwrapStep, SetBlockTypeStep };
+export { Step, InsertTextStep, DeleteRangeStep, ReplaceRangeStep, AddMarkStep, RemoveMarkStep, SetNodeAttrsStep, WrapInStep, UnwrapStep, SetBlockTypeStep, StepMap, Mapping, STEP_TYPES };
