@@ -70,7 +70,7 @@ function setupTreeEvents() {
     const tree = document.getElementById('elementTree');
 
     // Observable listener signature: (eventName, eventObject)
-    tree.addEventListener('selection-changed', (eventName, data) => {
+    tree.addEventListener('selection-changed', (_eventName, data) => {
         const selectedItem = data?.selectedItem;
         if (!selectedItem || selectedItem.dataset.type !== 'element') return;
 
