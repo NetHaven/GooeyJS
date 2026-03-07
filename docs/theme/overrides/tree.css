@@ -71,12 +71,12 @@
     transform: none;
 }
 
-/* Icon slot: folder icon via ::before for items with icon attribute */
-:host([icon]) .ui-TreeItem-icon {
+/* Icon slot: folder icon via ::before for items with data-folder attribute */
+:host([data-folder]) .ui-TreeItem-icon {
     display: none;
 }
 
-:host([icon]) .ui-TreeItem-content::before {
+:host([data-folder]) .ui-TreeItem-content::before {
     content: "";
     display: inline-block;
     width: 16px;
@@ -88,12 +88,12 @@
     flex-shrink: 0;
 }
 
-/* Element icon via ::before for items without icon attribute */
-:host(:not([icon])) .ui-TreeItem-icon {
+/* Element icon via ::before for items without data-folder attribute */
+:host(:not([data-folder])) .ui-TreeItem-icon {
     display: none;
 }
 
-:host(:not([icon])) .ui-TreeItem-content::before {
+:host(:not([data-folder])) .ui-TreeItem-content::before {
     content: "";
     display: inline-block;
     width: 14px;

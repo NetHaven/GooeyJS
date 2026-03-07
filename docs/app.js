@@ -37,8 +37,8 @@ function buildTree() {
 function buildCategoryItem(category, path) {
     const item = document.createElement('gooeyui-treeitem');
     item.setAttribute('text', category.name);
-    // Setting icon attribute triggers CSS-only folder icon via theme override
-    item.setAttribute('icon', 'folder');
+    // data-folder attribute triggers CSS-only folder icon via theme override
+    item.dataset.folder = '';
     item.dataset.path = path;
     item.dataset.type = 'category';
 
