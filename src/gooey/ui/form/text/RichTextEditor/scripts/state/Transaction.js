@@ -507,6 +507,7 @@ class SetNodeAttrsStep extends Step {
 
     map(mapping) {
         const newPos = mapping.map(this.pos, 1);
+        if (newPos < 0) return null;
         return new SetNodeAttrsStep(newPos, this.attrs);
     }
 
@@ -630,6 +631,7 @@ class UnwrapStep extends Step {
 
     map(mapping) {
         const newPos = mapping.map(this.pos, 1);
+        if (newPos < 0) return null;
         return new UnwrapStep(newPos);
     }
 
@@ -689,6 +691,7 @@ class SetBlockTypeStep extends Step {
 
     map(mapping) {
         const newPos = mapping.map(this.pos, 1);
+        if (newPos < 0) return null;
         return new SetBlockTypeStep(newPos, this.newType, this.newAttrs);
     }
 
