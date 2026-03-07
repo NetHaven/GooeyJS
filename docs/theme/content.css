@@ -42,65 +42,6 @@
     border-bottom: 1px solid #404040;
 }
 
-.attributes-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13px;
-}
-
-.attributes-table th {
-    background: linear-gradient(to bottom, #f8f8f8, #e8e8e8);
-    border: 1px solid #999;
-    padding: 8px 12px;
-    text-align: left;
-    font-weight: bold;
-}
-
-.attributes-table td {
-    border: 1px solid #ccc;
-    padding: 8px 12px;
-    vertical-align: top;
-}
-
-.attributes-table tr:nth-child(even) {
-    background-color: #f8f8f8;
-}
-
-.attributes-table tr:hover {
-    background-color: #e8f4fc;
-}
-
-.attr-name {
-    font-family: "Consolas", "Courier New", monospace;
-    font-weight: bold;
-    color: #333;
-}
-
-.attr-type {
-    font-family: "Consolas", "Courier New", monospace;
-    font-size: 12px;
-    color: #666;
-}
-
-.attr-type-enum {
-    color: #8b4513;
-}
-
-.attr-values {
-    font-size: 11px;
-    color: #666;
-    margin-top: 4px;
-}
-
-.attr-required {
-    color: #c00;
-    font-weight: bold;
-}
-
-.attr-optional {
-    color: #666;
-}
-
 .no-attributes {
     color: #666;
     font-style: italic;
@@ -135,37 +76,6 @@
 
 .inherited-source:first-of-type {
     margin-top: 0;
-}
-
-.inherited-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13px;
-    margin-bottom: 8px;
-}
-
-.inherited-table th {
-    background: linear-gradient(to bottom, #f0f0f0, #e0e0e0);
-    border: 1px solid #aaa;
-    padding: 6px 10px;
-    text-align: left;
-    font-weight: bold;
-    color: #555;
-}
-
-.inherited-table td {
-    border: 1px solid #ccc;
-    padding: 6px 10px;
-    vertical-align: top;
-    color: #555;
-}
-
-.inherited-table tr:nth-child(even) {
-    background-color: #fafafa;
-}
-
-.inherited-table tr:hover {
-    background-color: #f0f4f8;
 }
 
 .examples-section {
