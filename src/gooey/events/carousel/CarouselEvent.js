@@ -67,6 +67,30 @@ export default class CarouselEvent extends Event {
     /** Fired when a module is unloaded. */
     static MODULE_UNLOADED = "module-unloaded";
 
+    // Autoplay
+    /** Fired when autoplay starts. */
+    static AUTOPLAY_START = "autoplay-start";
+
+    /** Fired when autoplay stops. */
+    static AUTOPLAY_STOP = "autoplay-stop";
+
+    /** Fired when autoplay pauses (e.g., on hover). */
+    static AUTOPLAY_PAUSE = "autoplay-pause";
+
+    /** Fired when autoplay resumes after pause. */
+    static AUTOPLAY_RESUME = "autoplay-resume";
+
+    /** Fired on each autoplay interval tick. */
+    static AUTOPLAY_TICK = "autoplay-tick";
+
+    // Store
+    /** Fired when the carousel binds to a data store. */
+    static STORE_BOUND = "store-bound";
+
+    // Breakpoint
+    /** Fired when a responsive breakpoint is matched. */
+    static BREAKPOINT = "breakpoint";
+
     constructor() {
         super();
     }

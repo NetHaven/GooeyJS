@@ -85,6 +85,27 @@
             "type": "ENUM",
             "default": "polite",
             "values": ["POLITE", "ASSERTIVE"]
+        },
+        "modules": {
+            "type": "STRING",
+            "default": ""
+        },
+        "mobilefirst": {
+            "type": "BOOLEAN",
+            "default": "false"
+        },
+        "effect": {
+            "type": "ENUM",
+            "default": "slide",
+            "values": ["SLIDE", "FADE"]
+        },
+        "syncwith": {
+            "type": "STRING",
+            "default": ""
+        },
+        "clicktoselect": {
+            "type": "BOOLEAN",
+            "default": "false"
         }
     }
 }

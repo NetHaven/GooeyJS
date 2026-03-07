@@ -29,11 +29,18 @@ export default class Carousel extends Container {
         this._modules = new Map();
         this._resizeObserver = null;
         this._slideWidth = 0;
+        this._slideHeight = 0;
         this._gapPx = 0;
         this._resizeRafId = null;
         this._destroyed = false;
         this._initialized = false;
         this._currentTranslate = 0;
+
+        // Breakpoint state
+        this._breakpoints = null;
+        this._activeBreakpoint = null;
+        this._breakpointQueries = [];
+        this._originalOptions = {};
 
         // Reduced motion detection
         this._reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -58,6 +65,13 @@ export default class Carousel extends Container {
         this.addValidEvent(CarouselEvent.REINIT);
         this.addValidEvent(CarouselEvent.MODULE_LOADED);
         this.addValidEvent(CarouselEvent.MODULE_UNLOADED);
+        this.addValidEvent(CarouselEvent.AUTOPLAY_START);
+        this.addValidEvent(CarouselEvent.AUTOPLAY_STOP);
+        this.addValidEvent(CarouselEvent.AUTOPLAY_PAUSE);
+        this.addValidEvent(CarouselEvent.AUTOPLAY_RESUME);
+        this.addValidEvent(CarouselEvent.AUTOPLAY_TICK);
+        this.addValidEvent(CarouselEvent.STORE_BOUND);
+        this.addValidEvent(CarouselEvent.BREAKPOINT);
     }
 
     // =========== Lifecycle ===========
@@ -112,6 +126,22 @@ export default class Carousel extends Container {
         // Apply speed/easing CSS custom properties
         this._applyTransitionProperties();
 
+        // Set up breakpoints if configured via JS
+        if (this._breakpoints) {
+            this._setupBreakpoints();
+        }
+
+        // Load modules from attribute
+        if (this.hasAttribute('modules')) {
+            const moduleNames = this.getAttribute('modules');
+            if (moduleNames) {
+                const names = moduleNames.split(',').map(n => n.trim()).filter(Boolean);
+                for (const name of names) {
+                    this._loadModuleByName(name);
+                }
+            }
+        }
+
         this.fireEvent(CarouselEvent.INIT, { carousel: this });
     }
 
@@ -156,6 +186,16 @@ export default class Carousel extends Container {
             case 'liveregion':
                 if (this._liveRegion) {
                     this._liveRegion.setAttribute('aria-live', (newValue || 'polite').toLowerCase());
+                }
+                break;
+            case 'modules':
+                if (newValue) {
+                    const names = newValue.split(',').map(n => n.trim()).filter(Boolean);
+                    for (const name of names) {
+                        if (!this._modules.has(name)) {
+                            this._loadModuleByName(name);
+                        }
+                    }
                 }
                 break;
         }
@@ -317,6 +357,35 @@ export default class Carousel extends Container {
 
     get isDragging() {
         return this._isDragging;
+    }
+
+    get loadedModules() {
+        return Array.from(this._modules.keys());
+    }
+
+    // =========== Public Properties (Breakpoints & Module Config) ===========
+
+    get breakpoints() {
+        return this._breakpoints;
+    }
+
+    set breakpoints(val) {
+        this._breakpoints = val;
+        if (this._initialized) {
+            this._setupBreakpoints();
+        }
+    }
+
+    get mobilefirst() {
+        return this._isBooleanTrue(this.getAttribute('mobilefirst'));
+    }
+
+    set mobilefirst(val) {
+        if (val) {
+            this.setAttribute('mobilefirst', '');
+        } else {
+            this.removeAttribute('mobilefirst');
+        }
     }
 
     // =========== Navigation Methods ===========
@@ -540,6 +609,9 @@ export default class Carousel extends Container {
             this._resizeRafId = null;
         }
 
+        // Remove breakpoint listeners
+        this._cleanupBreakpoints();
+
         // Remove clones
         this._removeClones();
 
@@ -576,6 +648,131 @@ export default class Carousel extends Container {
     }
 
     // =========== Private Methods ===========
+
+    // ---- Breakpoint Management ----
+
+    _setupBreakpoints() {
+        this._cleanupBreakpoints();
+
+        if (!this._breakpoints || Object.keys(this._breakpoints).length === 0) {
+            this._restoreOriginalOptions();
+            return;
+        }
+
+        // Store original options before first override
+        if (Object.keys(this._originalOptions).length === 0) {
+            this._originalOptions = {
+                perpage: this.perpage,
+                gap: this.gap
+            };
+        }
+
+        const keys = Object.keys(this._breakpoints).map(Number).sort((a, b) => a - b);
+
+        for (const key of keys) {
+            const mediaQuery = this.mobilefirst
+                ? `(min-width: ${key}px)`
+                : `(max-width: ${key}px)`;
+            const query = window.matchMedia(mediaQuery);
+            const handler = () => this._evaluateBreakpoints();
+            query.addEventListener('change', handler);
+            this._breakpointQueries.push({ query, breakpoint: key, handler });
+        }
+
+        this._evaluateBreakpoints();
+    }
+
+    _evaluateBreakpoints() {
+        if (!this._breakpoints) return;
+
+        const keys = Object.keys(this._breakpoints).map(Number);
+
+        let matchedKey = null;
+        let matchedOptions = null;
+
+        if (this.mobilefirst) {
+            // For mobile-first (min-width): last matching wins (largest matching breakpoint)
+            const sorted = keys.sort((a, b) => a - b);
+            for (const key of sorted) {
+                const entry = this._breakpointQueries.find(bq => bq.breakpoint === key);
+                if (entry && entry.query.matches) {
+                    matchedKey = key;
+                    matchedOptions = this._breakpoints[key];
+                }
+            }
+        } else {
+            // For desktop-first (max-width): first matching wins (largest matching breakpoint)
+            const sorted = keys.sort((a, b) => b - a);
+            for (const key of sorted) {
+                const entry = this._breakpointQueries.find(bq => bq.breakpoint === key);
+                if (entry && entry.query.matches) {
+                    matchedKey = key;
+                    matchedOptions = this._breakpoints[key];
+                }
+            }
+        }
+
+        if (matchedKey !== null && matchedKey !== this._activeBreakpoint) {
+            this._activeBreakpoint = matchedKey;
+            this._applyBreakpointOptions(matchedOptions);
+            this.update();
+            this.fireEvent(CarouselEvent.BREAKPOINT, {
+                breakpoint: matchedKey,
+                options: matchedOptions
+            });
+        } else if (matchedKey === null && this._activeBreakpoint !== null) {
+            this._activeBreakpoint = null;
+            this._restoreOriginalOptions();
+            this.update();
+        }
+    }
+
+    _applyBreakpointOptions(options) {
+        if (!options) return;
+        for (const [key, value] of Object.entries(options)) {
+            this.setAttribute(key, String(value));
+        }
+    }
+
+    _restoreOriginalOptions() {
+        if (Object.keys(this._originalOptions).length === 0) return;
+        for (const [key, value] of Object.entries(this._originalOptions)) {
+            this.setAttribute(key, String(value));
+        }
+    }
+
+    _cleanupBreakpoints() {
+        for (const { query, handler } of this._breakpointQueries) {
+            query.removeEventListener('change', handler);
+        }
+        this._breakpointQueries = [];
+    }
+
+    // ---- Dynamic Module Loading ----
+
+    async _loadModuleByName(name) {
+        const modulePath = this._resolveModulePath(name);
+        try {
+            const mod = await import(modulePath);
+            this.loadModule(name, mod.default);
+        } catch (err) {
+            console.warn(`Carousel: Failed to load module "${name}" from ${modulePath}`, err);
+        }
+    }
+
+    _resolveModulePath(name) {
+        // effect-* prefix maps to effects/Effect{PascalCase}.js
+        if (name.startsWith('effect-')) {
+            const effectName = name.slice(7); // remove "effect-"
+            const pascal = effectName.split('-').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join('');
+            return `../modules/effects/Effect${pascal}.js`;
+        }
+        // Standard module: kebab-case -> PascalCase
+        const pascal = name.split('-').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join('');
+        return `../modules/${pascal}.js`;
+    }
+
+    // ---- Slide Management ----
 
     _collectSlides() {
         this._slides = Array.from(this.querySelectorAll('gooeyui-carousel-slide'));
