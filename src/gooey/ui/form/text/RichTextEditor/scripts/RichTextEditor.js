@@ -19,6 +19,7 @@ import PluginManager from './plugins/PluginManager.js';
 import { DEFAULT_PLUGINS } from './plugins/DefaultPlugins.js';
 import { insertTable as insertTableCmd, addRowBefore as addRowBeforeCmd, addRowAfter as addRowAfterCmd, addColumnBefore as addColumnBeforeCmd, addColumnAfter as addColumnAfterCmd, deleteRow as deleteRowCmd, deleteColumn as deleteColumnCmd, deleteTable as deleteTableCmd, mergeCells as mergeCellsCmd, splitCell as splitCellCmd, toggleHeaderRow as toggleHeaderRowCmd, toggleHeaderColumn as toggleHeaderColumnCmd } from './commands/TableCommands.js';
 import { insertImage as insertImageCmd, insertVideo as insertVideoCmd, insertEmbed as insertEmbedCmd, setMediaAlignment as setMediaAlignmentCmd, setImageAlt as setImageAltCmd, setImageCaption as setImageCaptionCmd, updateMediaAttrs as updateMediaAttrsCmd, deleteMedia as deleteMediaCmd, _findMediaNodeAtPos } from './commands/MediaCommands.js';
+import Transaction from './state/Transaction.js';
 
 /**
  * URL attributes that may contain dangerous schemes.
@@ -473,6 +474,14 @@ export default class RichTextEditor extends TextElement {
     }
 
     /**
+     * The current immutable EditorState.
+     * @type {EditorState}
+     */
+    get state() {
+        return this._state;
+    }
+
+    /**
      * Get the EditorView (for programmatic access).
      * @returns {import('./view/EditorView.js').default}
      */
@@ -486,6 +495,40 @@ export default class RichTextEditor extends TextElement {
      */
     get schema() {
         return this._schema;
+    }
+
+    /**
+     * Create a new transaction against the current editor state.
+     * Useful for collaboration bindings that need to construct transactions externally.
+     * @returns {Transaction}
+     */
+    createTransaction() {
+        return new Transaction(this._state);
+    }
+
+    /**
+     * Apply a transaction originating from a remote collaborator.
+     *
+     * Differences from normal dispatch:
+     * - Sets tr._origin to 'remote' (or custom origin)
+     * - Skips history recording by default
+     * - Skips INPUT event firing
+     * - Still runs plugin filterTransaction() so plugins can react
+     * - Still fires MODEL_CHANGED so the UI stays in sync
+     *
+     * @param {Transaction} tr - Transaction to apply
+     * @param {Object} [options]
+     * @param {boolean} [options.recordInHistory=false] - Override to record in history
+     * @param {string} [options.origin='remote'] - Origin label
+     * @returns {EditorState} The new state after applying the transaction
+     */
+    applyRemoteTransaction(tr, options = {}) {
+        const { recordInHistory = false, origin = 'remote' } = options;
+        return this._applyTransaction(tr, {
+            skipHistory: !recordInHistory,
+            skipInputEvent: true,
+            origin
+        });
     }
 
     /**
@@ -1680,10 +1723,34 @@ export default class RichTextEditor extends TextElement {
      * - Force state: if `tr._forceState` is set (undo/redo), uses that
      *   state directly instead of applying the transaction.
      *
-     * @param {import('./state/Transaction.js').default} tr - Transaction to apply
+     * @param {Transaction} tr - Transaction to apply
      * @private
      */
     _dispatch(tr) {
+        this._applyTransaction(tr, { origin: 'local' });
+    }
+
+    /**
+     * Internal shared dispatch path with flag-based control.
+     * Both _dispatch (local) and applyRemoteTransaction (remote) delegate here.
+     *
+     * @param {Transaction} tr - Transaction to apply
+     * @param {Object} [flags]
+     * @param {boolean} [flags.skipHistory=false] - Skip history recording
+     * @param {boolean} [flags.skipInputEvent=false] - Skip INPUT event
+     * @param {string} [flags.origin='local'] - Origin label
+     * @returns {EditorState} The new state
+     * @private
+     */
+    _applyTransaction(tr, flags = {}) {
+        const {
+            skipHistory = false,
+            skipInputEvent = false,
+            origin = 'local'
+        } = flags;
+
+        tr._origin = origin;
+
         // Run plugin transaction filters (skip for forced states like undo/redo)
         if (!tr._forceState) {
             tr = this._pluginManager.runFilterTransaction(tr, this._state);
@@ -1697,13 +1764,12 @@ export default class RichTextEditor extends TextElement {
         } else {
             // Enforce maxLength constraint for content-changing steps
             if (tr.steps.length > 0 && !this._validateMaxLength(tr)) {
-                return; // Reject the transaction — content would exceed maxLength
+                return this._state; // Reject the transaction
             }
 
-            // Normal path: record state for undo before applying
-            // Only push to history if the transaction has content-changing steps
-            if (tr.steps.length > 0 && this._history) {
-                this._history.pushState(this._state);
+            // Record state for undo before applying (conditional)
+            if (!skipHistory && tr.steps.length > 0 && this._history) {
+                this._history.pushState(this._state, tr);
             }
             this._state = this._state.apply(tr);
         }
@@ -1726,17 +1792,19 @@ export default class RichTextEditor extends TextElement {
             }
         }
 
-        // Run plugin stateDidUpdate hooks (replaces direct search plugin notification)
-        this._pluginManager.runStateDidUpdate(this._state, oldState);
+        // Run plugin stateDidUpdate hooks with steps and transaction
+        this._pluginManager.runStateDidUpdate(this._state, oldState, tr.steps, tr);
 
-        // Fire events
+        // Fire MODEL_CHANGED with origin and steps
         this.fireEvent(RichTextEditorEvent.MODEL_CHANGED, {
             value: this.value,
-            state: this._state
+            state: this._state,
+            origin: origin,
+            steps: tr.steps
         });
 
-        // Fire INPUT event only for user-initiated transactions (not programmatic value set)
-        if (!this._settingValueProgrammatically) {
+        // Fire INPUT event only for local user-initiated transactions
+        if (!skipInputEvent && !this._settingValueProgrammatically) {
             this.fireEvent(TextElementEvent.INPUT, {
                 value: this.value,
                 state: this._state
@@ -1786,6 +1854,7 @@ export default class RichTextEditor extends TextElement {
 
         // Update character/word count display
         this._updateCounts();
+        return this._state;
     }
 
     // =========================================================================
