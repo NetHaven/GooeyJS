@@ -92,6 +92,64 @@
     outline-offset: 2px;
 }
 
+/* Vertical direction */
+:host([direction="vertical"]) .carousel-viewport {
+    overflow-y: hidden;
+}
+
+:host([direction="vertical"]) .carousel-track {
+    flex-direction: column;
+}
+
+:host([direction="vertical"]) .carousel-arrow {
+    left: 50%;
+    top: auto;
+    transform: translateX(-50%);
+}
+
+:host([direction="vertical"]) .carousel-arrow--prev {
+    top: 8px;
+    left: 50%;
+    right: auto;
+}
+
+:host([direction="vertical"]) .carousel-arrow--next {
+    bottom: 8px;
+    top: auto;
+    left: 50%;
+    right: auto;
+}
+
+:host([direction="vertical"]) .carousel-dots {
+    flex-direction: column;
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 0 12px;
+}
+
+/* Scrollbar */
+.carousel-scrollbar {
+    width: 100%;
+    height: var(--gooey-carousel-scrollbar-height, 4px);
+    background: var(--gooey-carousel-scrollbar-track-bg, var(--gooey-color-border));
+    border-radius: 2px;
+    margin-top: 8px;
+    position: relative;
+    cursor: pointer;
+}
+
+.carousel-scrollbar-thumb {
+    height: 100%;
+    background: var(--gooey-carousel-scrollbar-thumb-bg, var(--gooey-color-primary));
+    border-radius: 2px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: width 200ms ease;
+}
+
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
     .carousel-track {

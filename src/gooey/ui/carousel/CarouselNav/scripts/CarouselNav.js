@@ -35,8 +35,8 @@ export default class CarouselNav extends UIComponent {
         /** @type {boolean} Whether a drag is in progress */
         this._isDragging = false;
 
-        /** @type {number} Starting X position of a drag */
-        this._dragStartX = 0;
+        /** @type {number} Starting position of a drag (X for horizontal, Y for vertical) */
+        this._dragStartPos = 0;
 
         /** @type {number} Current drag delta */
         this._dragDelta = 0;
@@ -132,6 +132,14 @@ export default class CarouselNav extends UIComponent {
      */
     set type(val) {
         this.setAttribute('type', val);
+    }
+
+    /**
+     * Whether the parent carousel uses vertical direction.
+     * @returns {boolean}
+     */
+    get _isVertical() {
+        return this._carousel?.direction === 'vertical';
     }
 
     /**
@@ -393,7 +401,10 @@ export default class CarouselNav extends UIComponent {
         if (this.disabled) return;
 
         this._isDragging = false;
-        this._dragStartX = source === 'mouse' ? e.clientX : e.touches[0].clientX;
+        const isVertical = this._isVertical;
+        this._dragStartPos = source === 'mouse'
+            ? (isVertical ? e.clientY : e.clientX)
+            : (isVertical ? e.touches[0].clientY : e.touches[0].clientX);
         this._dragDelta = 0;
 
         // Prevent text selection during mouse drag
@@ -436,8 +447,11 @@ export default class CarouselNav extends UIComponent {
      * @param {string} source
      */
     _onDragMove(e, source) {
-        const currentX = source === 'mouse' ? e.clientX : e.touches[0].clientX;
-        let delta = currentX - this._dragStartX;
+        const isVertical = this._isVertical;
+        const currentPos = source === 'mouse'
+            ? (isVertical ? e.clientY : e.clientX)
+            : (isVertical ? e.touches[0].clientY : e.touches[0].clientX);
+        let delta = currentPos - this._dragStartPos;
 
         const threshold = parseInt(this._carousel?.getAttribute('dragthreshold') || '10', 10);
 
@@ -445,7 +459,7 @@ export default class CarouselNav extends UIComponent {
             this._isDragging = true;
         }
 
-        // Prevent page scroll during horizontal touch drag
+        // Prevent page scroll during touch drag
         if (source === 'touch' && this._isDragging) {
             e.preventDefault();
         }
@@ -471,7 +485,8 @@ export default class CarouselNav extends UIComponent {
             if (track) {
                 const currentTransform = this._carousel._currentTranslate || 0;
                 track.style.transition = 'none';
-                track.style.transform = `translateX(${currentTransform + delta}px)`;
+                const axis = isVertical ? 'translateY' : 'translateX';
+                track.style.transform = `${axis}(${currentTransform + delta}px)`;
             }
 
             // Fire drag-move event
@@ -554,15 +569,17 @@ export default class CarouselNav extends UIComponent {
     _onKeydown(e) {
         if (this.disabled || !this._carousel) return;
 
+        const isVertical = this._isVertical;
+        const nextKey = isVertical ? Key.ARROW_DOWN : Key.ARROW_RIGHT;
+        const prevKey = isVertical ? Key.ARROW_UP : Key.ARROW_LEFT;
+
         switch (e.key) {
-            case Key.ARROW_RIGHT:
-            case Key.ARROW_DOWN:
+            case nextKey:
                 e.preventDefault();
                 this._carousel.next();
                 break;
 
-            case Key.ARROW_LEFT:
-            case Key.ARROW_UP:
+            case prevKey:
                 e.preventDefault();
                 this._carousel.prev();
                 break;

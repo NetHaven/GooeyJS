@@ -781,23 +781,52 @@ export default class Carousel extends Container {
     _calculateLayout() {
         if (!this._viewport || this._slides.length === 0) return;
 
-        const viewportWidth = this._viewport.getBoundingClientRect().width;
-        if (viewportWidth === 0) return;
+        const rect = this._viewport.getBoundingClientRect();
+        const isVertical = this.direction === 'vertical';
+        const viewportSize = isVertical ? rect.height : rect.width;
+        if (viewportSize === 0) return;
 
         const pp = this.perpage;
         this._gapPx = this._parseGap(this.gap);
-        this._slideWidth = (viewportWidth - (pp - 1) * this._gapPx) / pp;
 
-        // Apply widths to all slides
-        for (const slide of this._slides) {
-            slide.style.width = `${this._slideWidth}px`;
-            slide.style.minWidth = `${this._slideWidth}px`;
+        const slideSize = (viewportSize - (pp - 1) * this._gapPx) / pp;
+
+        if (isVertical) {
+            this._slideHeight = slideSize;
+            this._slideWidth = 0;
+        } else {
+            this._slideWidth = slideSize;
+            this._slideHeight = 0;
         }
 
-        // Apply widths to clones
+        // Apply dimensions to all slides
+        const dimProp = isVertical ? 'height' : 'width';
+        const minProp = isVertical ? 'minHeight' : 'minWidth';
+
+        for (const slide of this._slides) {
+            slide.style[dimProp] = `${slideSize}px`;
+            slide.style[minProp] = `${slideSize}px`;
+            // Clear the other axis
+            if (isVertical) {
+                slide.style.width = '';
+                slide.style.minWidth = '';
+            } else {
+                slide.style.height = '';
+                slide.style.minHeight = '';
+            }
+        }
+
+        // Apply dimensions to clones
         for (const clone of this._clones) {
-            clone.style.width = `${this._slideWidth}px`;
-            clone.style.minWidth = `${this._slideWidth}px`;
+            clone.style[dimProp] = `${slideSize}px`;
+            clone.style[minProp] = `${slideSize}px`;
+            if (isVertical) {
+                clone.style.width = '';
+                clone.style.minWidth = '';
+            } else {
+                clone.style.height = '';
+                clone.style.minHeight = '';
+            }
         }
 
         // Set gap CSS custom property on track
@@ -806,29 +835,39 @@ export default class Carousel extends Container {
         }
     }
 
+    get _slideSize() {
+        return this.direction === 'vertical' ? this._slideHeight : this._slideWidth;
+    }
+
     _positionTrack(animated) {
         if (!this._track) return;
 
-        let offset = -(this._activeIndex * (this._slideWidth + this._gapPx));
+        const size = this._slideSize;
+        let offset = -(this._activeIndex * (size + this._gapPx));
 
         // Account for clone offset in loop mode
         if (this.loop && this._clones.length > 0) {
             const cloneCount = Math.floor(this._clones.length / 2);
-            offset -= cloneCount * (this._slideWidth + this._gapPx);
+            offset -= cloneCount * (size + this._gapPx);
         }
 
         this._currentTranslate = offset;
 
+        const isVertical = this.direction === 'vertical';
+        const transform = isVertical
+            ? `translateY(${offset}px)`
+            : `translateX(${offset}px)`;
+
         if (!animated) {
             // Disable transition temporarily
             this._track.style.transition = 'none';
-            this._track.style.transform = `translateX(${offset}px)`;
+            this._track.style.transform = transform;
             // Force reflow
             this._track.offsetHeight; // eslint-disable-line no-unused-expressions
             // Restore transition
             this._track.style.transition = '';
         } else {
-            this._track.style.transform = `translateX(${offset}px)`;
+            this._track.style.transform = transform;
         }
     }
 
