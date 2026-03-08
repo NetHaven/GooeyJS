@@ -48,9 +48,13 @@ export default class Template {
             return Promise.resolve();
         }
 
+        // Composite key prevents cross-path collision when different components
+        // share the same templateId but load from different paths
+        const loadKey = templateName + '::' + templateId;
+
         // Return existing promise if load in progress (deduplication)
-        if (Template._loading.has(templateId)) {
-            return Template._loading.get(templateId);
+        if (Template._loading.has(loadKey)) {
+            return Template._loading.get(loadKey);
         }
 
         const maxRetries = 3;
@@ -148,10 +152,10 @@ export default class Template {
             })
             .finally(() => {
                 // Clean up loading state to allow future re-fetches
-                Template._loading.delete(templateId);
+                Template._loading.delete(loadKey);
             });
 
-        Template._loading.set(templateId, loadPromise);
+        Template._loading.set(loadKey, loadPromise);
 
         return loadPromise;
     }

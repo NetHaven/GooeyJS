@@ -416,7 +416,11 @@ export default class Store extends GooeyElement {
     }
 
     /**
-     * Create a deep clone of a record to prevent external mutation
+     * Create a deep clone of a record to prevent external mutation.
+     * Uses structuredClone which preserves Date, Map, Set, ArrayBuffer, RegExp,
+     * and other structured types. Falls back to JSON parse/stringify for
+     * environments without structuredClone or records containing unsupported
+     * types (e.g., functions, DOM nodes, Symbol values).
      * @param {Object} record - The record to clone
      * @returns {Object} - A deep copy of the record
      */
@@ -424,7 +428,13 @@ export default class Store extends GooeyElement {
         if (record === null || record === undefined) {
             return record;
         }
-        return JSON.parse(JSON.stringify(record));
+        try {
+            return structuredClone(record);
+        } catch (e) {
+            // Fallback for environments without structuredClone or unsupported types
+            // (e.g., functions, DOM nodes, Symbol values)
+            return JSON.parse(JSON.stringify(record));
+        }
     }
 
     // =========== Public API ===========
