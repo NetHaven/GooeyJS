@@ -721,6 +721,24 @@ export default class VideoPlayer extends UIComponent {
         }
     }
 
+    /**
+     * Validate a media URL against the protocol allowlist.
+     * @param {string} url - The URL to validate
+     * @returns {{valid: boolean, url?: string, error?: string}}
+     */
+    #validateMediaUrl(url) {
+        const allowedProtocols = new Set(['https:', 'http:']);
+        try {
+            const parsed = new URL(url, document.baseURI);
+            if (!allowedProtocols.has(parsed.protocol)) {
+                return { valid: false, error: `Disallowed media URL protocol: ${parsed.protocol}` };
+            }
+            return { valid: true, url: parsed.href };
+        } catch {
+            return { valid: false, error: `Invalid media URL: ${url}` };
+        }
+    }
+
     #loadTrack(index) {
         if (index < 0 || index >= this.#tracks.length) return;
 
@@ -728,7 +746,16 @@ export default class VideoPlayer extends UIComponent {
         const track = this.#tracks[index];
         this.#currentTrackIndex = index;
 
-        this.#video.src = track.src;
+        const validation = this.#validateMediaUrl(track.src);
+        if (!validation.valid) {
+            this.fireEvent(VideoPlayerEvent.ERROR, {
+                error: validation.error,
+                trackIndex: index,
+                track
+            });
+            return;
+        }
+        this.#video.src = validation.url;
         this.#video.load();
 
         this.fireEvent(VideoPlayerEvent.TRACKCHANGE, {
