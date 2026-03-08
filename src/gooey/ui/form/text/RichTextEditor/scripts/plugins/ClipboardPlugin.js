@@ -77,6 +77,18 @@ const ALLOWED_PROTOCOLS = new Set(['http:', 'https:', 'mailto:', 'tel:']);
 const URL_CONTROL_CHARS_RE = /[\x00-\x1f\x7f]/g;
 
 /**
+ * Dangerous CSS value patterns that can execute scripts or load external resources.
+ * @type {RegExp}
+ */
+const DANGEROUS_CSS_VALUE_RE = /url\s*\(|expression\s*\(|@import|(?:^|[;\s])-moz-binding|behavior\s*:/i;
+
+/**
+ * Control characters in CSS values that may be used for obfuscation.
+ * @type {RegExp}
+ */
+const CSS_CONTROL_CHARS_RE = /[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/;
+
+/**
  * Check whether a URL value uses an allowed protocol.
  * Strips control characters, then parses with the URL constructor.
  * Only http:, https:, mailto:, and tel: protocols are permitted.
@@ -276,6 +288,9 @@ export class Sanitizer {
             const value = part.slice(colonIdx + 1).trim();
 
             if (ALLOWED_STYLE_PROPERTIES.has(prop) && value) {
+                // Reject dangerous CSS value patterns
+                if (DANGEROUS_CSS_VALUE_RE.test(value)) continue;
+                if (CSS_CONTROL_CHARS_RE.test(value)) continue;
                 allowed.push(`${prop}: ${value}`);
             }
         }
