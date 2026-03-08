@@ -165,22 +165,42 @@ function createAttributeGrid(data, cssClass) {
 function showElementDetails(path, elemIndex) {
     const element = getElementByPath(path, elemIndex);
 
-    // Build header HTML (static content rendered via innerHTML)
-    let headerHTML = `
-        <div class="element-name">${element.name}</div>
-        <div class="element-tagname">&lt;${element.tagName}&gt;</div>
-        <div class="element-description">${element.description}</div>
-    `;
+    // Build header using safe DOM construction (textContent for data fields)
+    const headerFrag = document.createDocumentFragment();
 
-    // Build attributes header
-    headerHTML += '<div class="attributes-header">Attributes</div>';
+    const nameDiv = document.createElement('div');
+    nameDiv.className = 'element-name';
+    nameDiv.textContent = element.name;
+    headerFrag.appendChild(nameDiv);
+
+    const tagDiv = document.createElement('div');
+    tagDiv.className = 'element-tagname';
+    tagDiv.textContent = '<' + element.tagName + '>';
+    headerFrag.appendChild(tagDiv);
+
+    const descDiv = document.createElement('div');
+    descDiv.className = 'element-description';
+    descDiv.textContent = element.description;
+    headerFrag.appendChild(descDiv);
+
+    const attrsHeader = document.createElement('div');
+    attrsHeader.className = 'attributes-header';
+    attrsHeader.textContent = 'Attributes';
+    headerFrag.appendChild(attrsHeader);
 
     if (!element.attributes || element.attributes.length === 0) {
-        headerHTML += '<div class="no-attributes">This element has no specific attributes beyond the inherited attributes shown below.</div>';
+        const noAttrs = document.createElement('div');
+        noAttrs.className = 'no-attributes';
+        noAttrs.textContent = 'This element has no specific attributes beyond the inherited attributes shown below.';
+        headerFrag.appendChild(noAttrs);
     }
 
-    // Set static HTML first
-    detailPanel.innerHTML = '<style>' + contentCSS + '</style>' + headerHTML;
+    // Clear panel and inject style + header
+    detailPanel.innerHTML = '';
+    const styleEl = document.createElement('style');
+    styleEl.textContent = contentCSS;
+    detailPanel.appendChild(styleEl);
+    detailPanel.appendChild(headerFrag);
 
     // Append own attributes DataGrid if present
     if (element.attributes && element.attributes.length > 0) {
@@ -221,10 +241,16 @@ function showElementDetails(path, elemIndex) {
         element.examples.forEach(example => {
             const block = document.createElement('div');
             block.className = 'example-block';
-            block.innerHTML = `
-                <div class="example-title">${example.title}</div>
-                <div class="example-description">${example.description}</div>
-            `;
+
+            const titleDiv = document.createElement('div');
+            titleDiv.className = 'example-title';
+            titleDiv.textContent = example.title;
+            block.appendChild(titleDiv);
+
+            const exDescDiv = document.createElement('div');
+            exDescDiv.className = 'example-description';
+            exDescDiv.textContent = example.description;
+            block.appendChild(exDescDiv);
 
             const codeblock = document.createElement('gooeyui-codeblock');
             codeblock.setAttribute('language', 'html');
