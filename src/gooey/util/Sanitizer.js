@@ -49,22 +49,17 @@ const URL_ATTRIBUTES = new Set([
 ]);
 
 /**
- * Regex matching dangerous URL schemes including HTML-entity-encoded variants.
- * @type {RegExp}
+ * Allowed URL protocols (allowlist approach).
+ * Only these protocols are permitted in URL attributes.
+ * @type {Set<string>}
  */
-const DANGEROUS_URL_RE = /^\s*(javascript|vbscript|data\s*:\s*text\/html)\s*:/i;
+const ALLOWED_PROTOCOLS = new Set(['http:', 'https:', 'mailto:', 'tel:']);
 
 /**
- * Decode HTML entities to detect obfuscated URL schemes.
- * @param {string} str
- * @returns {string}
+ * Control character regex for stripping from URLs before validation.
+ * @type {RegExp}
  */
-function _decodeHTMLEntities(str) {
-    if (!str) return '';
-    return str
-        .replace(/&#x([0-9a-fA-F]+);/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)))
-        .replace(/&#(\d+);/g, (_, dec) => String.fromCharCode(parseInt(dec, 10)));
-}
+const URL_CONTROL_CHARS_RE = /[\x00-\x1f\x7f]/g;
 
 export default class Sanitizer {
     /**
@@ -148,10 +143,9 @@ export default class Sanitizer {
                 continue;
             }
 
-            // Check URL attributes for dangerous schemes
+            // Check URL attributes against protocol allowlist
             if (URL_ATTRIBUTES.has(name)) {
-                const decoded = _decodeHTMLEntities(value);
-                if (DANGEROUS_URL_RE.test(decoded)) {
+                if (!Sanitizer._isAllowedURL(value)) {
                     attrsToRemove.push(attr.name);
                     continue;
                 }
@@ -193,5 +187,32 @@ export default class Sanitizer {
         }
 
         return allowed.length > 0 ? allowed.join('; ') : '';
+    }
+
+    /**
+     * Check whether a URL value uses an allowed protocol.
+     * Strips control characters, then parses with the URL constructor.
+     * Only http:, https:, mailto:, and tel: protocols are permitted.
+     * Relative URLs (no explicit protocol) are allowed.
+     *
+     * @param {string} value - URL attribute value to check
+     * @returns {boolean} true if URL is safe
+     * @private
+     */
+    static _isAllowedURL(value) {
+        if (!value) return true;
+
+        const normalized = value.replace(URL_CONTROL_CHARS_RE, '').trim();
+        if (!normalized) return true;
+
+        try {
+            const parsed = new URL(normalized, 'https://dummy.invalid/');
+            // If the host is dummy.invalid, the URL was relative (no scheme)
+            if (parsed.hostname === 'dummy.invalid') return true;
+            return ALLOWED_PROTOCOLS.has(parsed.protocol);
+        } catch {
+            // Malformed URL -- reject
+            return false;
+        }
     }
 }

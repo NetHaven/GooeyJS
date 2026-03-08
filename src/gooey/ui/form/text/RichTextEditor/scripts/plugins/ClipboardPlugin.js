@@ -65,10 +65,40 @@ const ALLOWED_STYLE_PROPERTIES = new Set([
 ]);
 
 /**
- * Dangerous URL scheme patterns.
+ * Allowed URL protocols (allowlist approach).
+ * @type {Set<string>}
+ */
+const ALLOWED_PROTOCOLS = new Set(['http:', 'https:', 'mailto:', 'tel:']);
+
+/**
+ * Control character regex for stripping from URLs before validation.
  * @type {RegExp}
  */
-const DANGEROUS_URL_RE = /^\s*(javascript|vbscript|data\s*:\s*text\/html)\s*:/i;
+const URL_CONTROL_CHARS_RE = /[\x00-\x1f\x7f]/g;
+
+/**
+ * Check whether a URL value uses an allowed protocol.
+ * Strips control characters, then parses with the URL constructor.
+ * Only http:, https:, mailto:, and tel: protocols are permitted.
+ * Relative URLs (no explicit protocol) are allowed.
+ *
+ * @param {string} value - URL attribute value to check
+ * @returns {boolean} true if URL is safe
+ */
+function _isAllowedURL(value) {
+    if (!value) return true;
+
+    const normalized = value.replace(URL_CONTROL_CHARS_RE, '').trim();
+    if (!normalized) return true;
+
+    try {
+        const parsed = new URL(normalized, 'https://dummy.invalid/');
+        if (parsed.hostname === 'dummy.invalid') return true;
+        return ALLOWED_PROTOCOLS.has(parsed.protocol);
+    } catch {
+        return false;
+    }
+}
 
 
 /**
@@ -194,9 +224,9 @@ export class Sanitizer {
                 continue;
             }
 
-            // Check for dangerous URL schemes in href/src
+            // Check URL attributes against protocol allowlist
             if (name === 'href' || name === 'src') {
-                if (DANGEROUS_URL_RE.test(attr.value)) {
+                if (!_isAllowedURL(attr.value)) {
                     attrsToRemove.push(attr.name);
                     continue;
                 }

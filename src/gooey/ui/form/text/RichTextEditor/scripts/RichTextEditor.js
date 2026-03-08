@@ -30,22 +30,39 @@ const URL_ATTRIBUTES = new Set([
 ]);
 
 /**
- * Regex matching dangerous URL schemes including HTML-entity-encoded variants.
- * @type {RegExp}
+ * Allowed URL protocols (allowlist approach).
+ * @type {Set<string>}
  */
-const DANGEROUS_URL_RE = /^\s*(javascript|vbscript|data\s*:\s*text\/html)\s*:/i;
+const ALLOWED_PROTOCOLS = new Set(['http:', 'https:', 'mailto:', 'tel:']);
 
 /**
- * Decode HTML entities to detect obfuscated URL schemes.
- * @param {string} str
- * @returns {string}
+ * Control character regex for stripping from URLs before validation.
+ * @type {RegExp}
  */
-function _decodeHTMLEntities(str) {
-    if (!str) return '';
-    // Handle numeric entities (&#106; &#x6A;) and named entities
-    return str
-        .replace(/&#x([0-9a-fA-F]+);/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)))
-        .replace(/&#(\d+);/g, (_, dec) => String.fromCharCode(parseInt(dec, 10)));
+const URL_CONTROL_CHARS_RE = /[\x00-\x1f\x7f]/g;
+
+/**
+ * Check whether a URL value uses an allowed protocol.
+ * Strips control characters, then parses with the URL constructor.
+ * Only http:, https:, mailto:, and tel: protocols are permitted.
+ * Relative URLs (no explicit protocol) are allowed.
+ *
+ * @param {string} value - URL attribute value to check
+ * @returns {boolean} true if URL is safe
+ */
+function _isAllowedURL(value) {
+    if (!value) return true;
+
+    const normalized = value.replace(URL_CONTROL_CHARS_RE, '').trim();
+    if (!normalized) return true;
+
+    try {
+        const parsed = new URL(normalized, 'https://dummy.invalid/');
+        if (parsed.hostname === 'dummy.invalid') return true;
+        return ALLOWED_PROTOCOLS.has(parsed.protocol);
+    } catch {
+        return false;
+    }
 }
 
 /**
@@ -79,12 +96,13 @@ function _sanitizeOutput(html) {
                 continue;
             }
 
-            // Strip dangerous URL schemes
+            // Check URL attributes against protocol allowlist
             if (URL_ATTRIBUTES.has(name)) {
-                const decoded = _decodeHTMLEntities(attr.value);
-                if (DANGEROUS_URL_RE.test(decoded)) {
-                    if (name === 'src' && /^\s*data\s*:\s*image\//i.test(decoded)) {
-                        continue; // Safe data URI for images
+                if (!_isAllowedURL(attr.value)) {
+                    // Allow data:image/ URIs for src attributes (embedded images)
+                    const normalized = attr.value.replace(URL_CONTROL_CHARS_RE, '').trim();
+                    if (name === 'src' && /^data:image\//i.test(normalized)) {
+                        continue;
                     }
                     attrsToRemove.push(attr.name);
                 }
@@ -2316,8 +2334,7 @@ export default class RichTextEditor extends TextElement {
             if (!href) return;
 
             // XSS prevention
-            const decoded = _decodeHTMLEntities(href);
-            if (DANGEROUS_URL_RE.test(decoded)) {
+            if (!_isAllowedURL(href)) {
                 urlInput.setCustomValidity('Invalid URL scheme');
                 urlInput.reportValidity();
                 return;
