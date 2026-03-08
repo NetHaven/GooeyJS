@@ -17,6 +17,9 @@ export default class Component extends Observable {
     static _allLoadedFired = false;
     static _initialCheckScheduled = false;
 
+    // Per-tag deduplication: maps tagName -> Promise to prevent concurrent duplicate loads
+    static _activeLoads = new Map();
+
     /**
      * Promise that resolves when all gooey-component loaders have completed (loaded or errored).
      * If no gooey-component elements exist, resolves on next animation frame.
@@ -83,6 +86,15 @@ export default class Component extends Observable {
 
         // Register as pending before loading starts
         Component._pendingLoaders.add(this);
+
+        // Re-arm readyAll if it already fired (new loader after prior completion)
+        if (Component._allLoadedFired) {
+            Component._allLoadedFired = false;
+            Component._allLoadedPromise = null;
+            Component._allLoadedResolve = null;
+            Component._initialCheckScheduled = false;
+        }
+
         if (!Component._initialCheckScheduled) {
             Component._initialCheckScheduled = true;
             requestAnimationFrame(() => { Component._checkAllLoaded(); });
@@ -143,6 +155,30 @@ export default class Component extends Observable {
             return;
         }
 
+        // Reuse active load if another loader is already loading this tag
+        if (Component._activeLoads.has(fullTagName)) {
+            try {
+                await Component._activeLoads.get(fullTagName);
+                // Loading completed by another instance
+                this._loaded = true;
+                this.fireEvent(ComponentEvent.LOADED, {
+                    tagName: fullTagName,
+                    componentClass: customElements.get(fullTagName),
+                    href: this._href,
+                    meta: meta,
+                    component: this
+                });
+            } catch (err) {
+                this.fireEvent(ComponentEvent.ERROR, {
+                    error: err.message, tagName: fullTagName,
+                    href: this._href, component: this
+                });
+            }
+            Component._pendingLoaders.delete(this);
+            Component._checkAllLoaded();
+            return;
+        }
+
         // Fire LOADING event
         this.fireEvent(ComponentEvent.LOADING, {
             tagName: fullTagName,
@@ -151,7 +187,7 @@ export default class Component extends Observable {
             component: this
         });
 
-        try {
+        const loadPromise = (async () => {
             // Register in ComponentRegistry
             ComponentRegistry.register(fullTagName, meta);
 
@@ -244,9 +280,26 @@ export default class Component extends Observable {
             this._wrapAttributeChangedCallback(ComponentClass, fullTagName);
 
             // Register the custom element (triggers constructor for existing DOM elements)
-            customElements.define(fullTagName, ComponentClass);
+            try {
+                customElements.define(fullTagName, ComponentClass);
+            } catch (defineError) {
+                // Treat "already defined" as idempotent success (race between dedup check and define)
+                if (defineError instanceof DOMException && customElements.get(fullTagName)) {
+                    Logger.debug({ code: "COMPONENT_DEFINE_RACE", tagName: fullTagName }, "Component %s was defined by another loader, treating as success", fullTagName);
+                } else {
+                    throw defineError;
+                }
+            }
 
             Logger.debug({ code: "COMPONENT_REGISTERED", tagName: fullTagName, module: modulePath }, "Successfully registered %s from %s", fullTagName, modulePath);
+
+            return ComponentClass;
+        })();
+
+        Component._activeLoads.set(fullTagName, loadPromise);
+
+        try {
+            const ComponentClass = await loadPromise;
 
             this._loaded = true;
 
@@ -259,9 +312,6 @@ export default class Component extends Observable {
                 component: this
             });
 
-            Component._pendingLoaders.delete(this);
-            Component._checkAllLoaded();
-
         } catch (error) {
             Logger.error(error, { code: "COMPONENT_LOAD_FAILED", name: meta.name }, "Failed to load component %s", meta.name);
 
@@ -273,10 +323,12 @@ export default class Component extends Observable {
                 meta: meta,
                 component: this
             });
-
-            Component._pendingLoaders.delete(this);
-            Component._checkAllLoaded();
+        } finally {
+            Component._activeLoads.delete(fullTagName);
         }
+
+        Component._pendingLoaders.delete(this);
+        Component._checkAllLoaded();
     }
 
     get href() {
