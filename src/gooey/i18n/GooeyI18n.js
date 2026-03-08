@@ -5,6 +5,12 @@ import MessageFormat from "./MessageFormat.js";
  * Set of primary language subtags that use right-to-left script direction.
  * @type {Set<string>}
  */
+/**
+ * Keys that must never be copied during object merging to prevent prototype pollution.
+ * @type {Set<string>}
+ */
+const FORBIDDEN_KEYS = new Set(['__proto__', 'prototype', 'constructor']);
+
 const RTL_LOCALES = new Set([
     "ar", "he", "fa", "ur", "ps", "sd", "ckb", "dv", "yi", "ku", "ug", "syr", "arc"
 ]);
@@ -1767,6 +1773,7 @@ export default class GooeyI18n {
         const result = { ...target };
 
         for (const key of Object.keys(source)) {
+            if (FORBIDDEN_KEYS.has(key)) continue;
             if (
                 source[key] !== null &&
                 typeof source[key] === "object" &&

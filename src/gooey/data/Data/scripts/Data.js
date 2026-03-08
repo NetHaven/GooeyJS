@@ -4,6 +4,12 @@ import MetaLoader from '../../../util/MetaLoader.js';
 import ComponentRegistry from '../../../util/ComponentRegistry.js';
 
 /**
+ * Keys that must never be copied during record conversion to prevent prototype pollution.
+ * @type {Set<string>}
+ */
+const FORBIDDEN_KEYS = new Set(['__proto__', 'prototype', 'constructor']);
+
+/**
  * Data Component
  *
  * A non-visual component that represents a single data record within a Store.
@@ -113,7 +119,8 @@ export default class Data extends GooeyElement {
     toRecord() {
         const record = {};
 
-        for (const key in this.dataset) {
+        for (const key of Object.keys(this.dataset)) {
+            if (FORBIDDEN_KEYS.has(key)) continue;
             record[key] = this._coerceValue(this.dataset[key]);
         }
 

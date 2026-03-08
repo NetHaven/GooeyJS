@@ -5,6 +5,12 @@ import ComponentRegistry from '../../../util/ComponentRegistry.js';
 import DataStoreEvent from '../../../events/data/DataStoreEvent.js';
 
 /**
+ * Keys that must never be copied during record materialization to prevent prototype pollution.
+ * @type {Set<string>}
+ */
+const FORBIDDEN_KEYS = new Set(['__proto__', 'prototype', 'constructor']);
+
+/**
  * Store Component
  *
  * A non-visual component that holds data records and provides a reactive data API.
@@ -305,7 +311,8 @@ export default class Store extends GooeyElement {
      */
     _datasetToRecord(dataset) {
         const record = {};
-        for (const key in dataset) {
+        for (const key of Object.keys(dataset)) {
+            if (FORBIDDEN_KEYS.has(key)) continue;
             record[key] = this._coerceValue(dataset[key]);
         }
         return record;
@@ -390,7 +397,8 @@ export default class Store extends GooeyElement {
         }
 
         // Then overlay the provided record values with proper type coercion
-        for (const key in record) {
+        for (const key of Object.keys(record)) {
+            if (FORBIDDEN_KEYS.has(key)) continue;
             result[key] = this._coerceValueWithModel(record[key], key);
         }
 
