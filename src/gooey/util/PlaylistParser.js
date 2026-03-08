@@ -3,12 +3,61 @@
  * Supports M3U, PLS, and XSPF playlist files.
  */
 export default class PlaylistParser {
+    /** Default allowed protocols for track URL validation */
+    static DEFAULT_ALLOWED_PROTOCOLS = new Set(['https:', 'http:']);
+
+    /**
+     * Validate a track URL against the protocol allowlist.
+     * @param {string} url - The URL to validate
+     * @param {Set<string>} [allowedProtocols] - Allowed protocols (default: https:, http:)
+     * @returns {{valid: boolean, url: string, error?: string}}
+     */
+    static validateTrackUrl(url, allowedProtocols = PlaylistParser.DEFAULT_ALLOWED_PROTOCOLS) {
+        try {
+            const parsed = new URL(url);
+            if (!allowedProtocols.has(parsed.protocol)) {
+                return { valid: false, url, error: `Disallowed protocol: ${parsed.protocol}` };
+            }
+            return { valid: true, url: parsed.href };
+        } catch {
+            return { valid: false, url, error: `Invalid URL: ${url}` };
+        }
+    }
+
+    /**
+     * Filter tracks against protocol and origin allowlists.
+     * @param {Array<{src: string, title?: string}>} tracks - Parsed tracks
+     * @param {Set<string>} allowedProtocols - Allowed URL protocols
+     * @param {Array<string>|null} originAllowlist - Allowed origins (null = any origin)
+     * @returns {Array<{src: string, title?: string}>}
+     */
+    static _filterTracks(tracks, allowedProtocols, originAllowlist) {
+        return tracks.filter(track => {
+            const result = PlaylistParser.validateTrackUrl(track.src, allowedProtocols);
+            if (!result.valid) return false;
+            track.src = result.url; // Use normalized URL
+            if (originAllowlist) {
+                try {
+                    const parsed = new URL(track.src);
+                    if (!originAllowlist.includes(parsed.origin)) return false;
+                } catch { return false; }
+            }
+            return true;
+        });
+    }
+
     /**
      * Parse playlist from URL
      * @param {string} url - Playlist URL
+     * @param {Object} [options] - Parse options
+     * @param {Set<string>} [options.allowedProtocols] - Allowed URL protocols (default: https:, http:)
+     * @param {Array<string>|null} [options.originAllowlist] - Allowed origins (null = any origin)
      * @returns {Promise<Array<{src: string, title?: string}>>}
      */
-    static async parse(url) {
+    static async parse(url, options = {}) {
+        const allowedProtocols = options.allowedProtocols || PlaylistParser.DEFAULT_ALLOWED_PROTOCOLS;
+        const originAllowlist = options.originAllowlist || null;
+
         const response = await fetch(url);
         if (!response.ok) {
             throw new Error(`Failed to load playlist: ${response.status} ${response.statusText}`);
@@ -16,16 +65,22 @@ export default class PlaylistParser {
         const content = await response.text();
         const extension = url.split('.').pop().toLowerCase();
 
+        let tracks;
         switch (extension) {
             case 'm3u':
-                return this.#parseM3U(content, url);
+                tracks = this.#parseM3U(content, url);
+                break;
             case 'pls':
-                return this.#parsePLS(content, url);
+                tracks = this.#parsePLS(content, url);
+                break;
             case 'xspf':
-                return this.#parseXSPF(content);
+                tracks = this.#parseXSPF(content);
+                break;
             default:
                 throw new Error(`Unsupported playlist format: ${extension}`);
         }
+
+        return this._filterTracks(tracks, allowedProtocols, originAllowlist);
     }
 
     /**
