@@ -56,11 +56,18 @@ export default class MetaLoader {
      * @returns {Promise<Object>} Parsed META.goo content
      * @throws {Error} If META.goo is not found or invalid
      */
-    static async load(componentPath) {
+    static async load(componentPath, retryCount = 0) {
         const metaPath = `${componentPath}/META.goo`;
+        const maxRetries = 3;
+        const retryDelay = 1000; // 1 second base
+        const timeoutMs = 10000; // 10 second timeout
+
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
         try {
-            const response = await fetch(metaPath);
+            const response = await fetch(metaPath, { signal: controller.signal });
+            clearTimeout(timeoutId);
 
             if (!response.ok) {
                 throw new Error(`META.goo required but not found: ${metaPath} (HTTP ${response.status})`);
@@ -80,6 +87,26 @@ export default class MetaLoader {
                 throw new Error(`META.goo contains invalid JSON: ${metaPath} - ${parseError.message}`);
             }
         } catch (fetchError) {
+            clearTimeout(timeoutId);
+
+            // Convert AbortError to descriptive timeout error
+            if (fetchError.name === 'AbortError') {
+                fetchError = new Error(`META.goo loading timeout for ${metaPath} (exceeded ${timeoutMs}ms)`);
+            }
+
+            // Check if error is retryable (network failures and timeouts)
+            const isRetryable = fetchError.name === 'TypeError' ||
+                fetchError.message.includes('Failed to fetch') ||
+                fetchError.name === 'AbortError' ||
+                fetchError.message.includes('timeout');
+
+            if (isRetryable && retryCount < maxRetries) {
+                Logger.warn({ code: "META_LOAD_RETRY", path: metaPath, attempt: retryCount + 1 },
+                    "Retrying META.goo load for %s (attempt %d/%d)", metaPath, retryCount + 1, maxRetries);
+                await new Promise(resolve => setTimeout(resolve, retryDelay * (retryCount + 1)));
+                return this.load(componentPath, retryCount + 1);
+            }
+
             if (fetchError.message.includes('META.goo')) {
                 throw fetchError;
             }
