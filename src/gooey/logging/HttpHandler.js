@@ -42,6 +42,8 @@
  * - `retries` (`number`, default `3`) -- Max retry attempts for fetch.
  * - `baseDelay` (`number`, default `1000`) -- Base delay for backoff in ms.
  * - `headers` (`object`, default `{}`) -- Additional fetch headers.
+ * - `requestTimeoutMs` (`number`, default `30000`) -- Abort fetch after
+ *   this many milliseconds. Uses `AbortController` signal.
  * - All options from {@link Handler}: `level`, `formatter`, `enabled`,
  *   `emitter`.
  *
@@ -88,6 +90,8 @@ export default class HttpHandler extends Handler {
      *        backoff in ms
      * @param {object} [options.headers={}] - Additional fetch headers (e.g.,
      *        auth tokens). Merged with the default Content-Type header.
+     * @param {number} [options.requestTimeoutMs=30000] - Abort fetch requests
+     *        after this many milliseconds. Uses AbortController signal.
      * @param {number|string|null} [options.level=null] - Per-handler level
      *        threshold (inherited from {@link Handler}).
      * @param {Formatter|null} [options.formatter=null] - Per-handler formatter
@@ -122,6 +126,9 @@ export default class HttpHandler extends Handler {
 
         /** @private */
         this._headers = options.headers || {};
+
+        /** @private */
+        this._requestTimeoutMs = options.requestTimeoutMs ?? 30000;
 
         /** @private */
         this._batch = [];
@@ -237,6 +244,9 @@ export default class HttpHandler extends Handler {
      * @private
      */
     async _sendWithRetry(payload, attempt = 0) {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), this._requestTimeoutMs);
+
         try {
             const response = await fetch(this._url, {
                 method: "POST",
@@ -244,20 +254,29 @@ export default class HttpHandler extends Handler {
                     "Content-Type": "application/x-ndjson",
                     ...this._headers
                 },
-                body: payload
+                body: payload,
+                signal: controller.signal
             });
+
+            clearTimeout(timeoutId);
 
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status} ${response.statusText}`);
             }
         } catch (err) {
+            clearTimeout(timeoutId);
+
+            const error = err.name === "AbortError"
+                ? new Error(`HttpHandler: request timed out after ${this._requestTimeoutMs}ms`)
+                : err;
+
             if (attempt < this._retries) {
                 const delay = this._baseDelay * Math.pow(2, attempt);
                 const jitter = delay * Math.random();
                 await new Promise(resolve => setTimeout(resolve, delay + jitter));
                 return this._sendWithRetry(payload, attempt + 1);
             }
-            throw err;
+            throw error;
         }
     }
 
