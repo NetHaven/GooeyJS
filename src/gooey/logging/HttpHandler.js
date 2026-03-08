@@ -20,6 +20,13 @@
  * {@link Serializers.safeStringify} for circular reference safety. Each
  * record is serialized on its own line, separated by `\n`.
  *
+ * **At-least-once delivery:**
+ * Records remain in the buffer until a fetch POST succeeds. Failed
+ * deliveries (after all retries) leave records in place for the next
+ * flush cycle. A backpressure limit (`maxBufferSize`, default 1000)
+ * trims the oldest records when the buffer grows too large, preventing
+ * unbounded memory growth on sustained failures.
+ *
  * **Retry with exponential backoff:**
  * Failed `fetch` requests are retried up to `retries` times (default 3)
  * with exponential backoff and full jitter to prevent thundering herd:
@@ -44,6 +51,9 @@
  * - `headers` (`object`, default `{}`) -- Additional fetch headers.
  * - `requestTimeoutMs` (`number`, default `30000`) -- Abort fetch after
  *   this many milliseconds. Uses `AbortController` signal.
+ * - `maxBufferSize` (`number`, default `1000`) -- Maximum records kept in
+ *   the internal buffer. When exceeded after a failed flush, oldest records
+ *   are trimmed (backpressure) to bound memory growth.
  * - All options from {@link Handler}: `level`, `formatter`, `enabled`,
  *   `emitter`.
  *
@@ -92,6 +102,9 @@ export default class HttpHandler extends Handler {
      *        auth tokens). Merged with the default Content-Type header.
      * @param {number} [options.requestTimeoutMs=30000] - Abort fetch requests
      *        after this many milliseconds. Uses AbortController signal.
+     * @param {number} [options.maxBufferSize=1000] - Maximum records in the
+     *        internal buffer. Oldest records are trimmed when exceeded after
+     *        a failed flush (backpressure).
      * @param {number|string|null} [options.level=null] - Per-handler level
      *        threshold (inherited from {@link Handler}).
      * @param {Formatter|null} [options.formatter=null] - Per-handler formatter
@@ -131,7 +144,13 @@ export default class HttpHandler extends Handler {
         this._requestTimeoutMs = options.requestTimeoutMs ?? 30000;
 
         /** @private */
+        this._maxBufferSize = options.maxBufferSize ?? 1000;
+
+        /** @private */
         this._batch = [];
+
+        /** @private -- count of records currently in-flight via fetch */
+        this._inFlightCount = 0;
 
         /** @private */
         this._timer = null;
@@ -196,23 +215,49 @@ export default class HttpHandler extends Handler {
     // ---- Internal flush mechanics ----
 
     /**
-     * Extract the current batch and send via fetch POST.
+     * Snapshot the current batch and send via fetch POST.
      *
-     * Uses `splice(0)` for atomic extract-and-clear to prevent double-flush
-     * if multiple triggers fire concurrently. The fetch request is
-     * fire-and-forget -- errors are caught and routed to {@link Handler#_onError}.
+     * Implements at-least-once delivery: records remain in `_batch` until
+     * the POST succeeds. On failure (after all retries exhausted), records
+     * stay in the buffer for the next flush attempt. If the buffer exceeds
+     * `_maxBufferSize` after a failure, the oldest records are trimmed
+     * (backpressure) to bound memory growth.
+     *
+     * Guards against concurrent flushes of the same records by checking
+     * `_inFlightCount` -- if a previous flush is still pending, this call
+     * is a no-op.
      *
      * @private
      */
     _flush() {
-        if (this._batch.length === 0) {
+        if (this._batch.length === 0 || this._inFlightCount > 0) {
             return;
         }
 
-        const records = this._batch.splice(0);
+        const count = this._batch.length;
+        const records = this._batch.slice(0);
         const payload = this._serializeNDJSON(records);
 
-        this._sendWithRetry(payload).catch(err => {
+        this._inFlightCount += count;
+
+        this._sendWithRetry(payload).then(() => {
+            // Success -- remove delivered records from front of batch
+            this._batch.splice(0, count);
+            this._inFlightCount -= count;
+        }).catch(err => {
+            // Failure -- records stay in _batch for next flush attempt
+            this._inFlightCount -= count;
+
+            // Backpressure: trim oldest records if buffer exceeds limit
+            if (this._batch.length > this._maxBufferSize) {
+                const excess = this._batch.length - this._maxBufferSize;
+                this._batch.splice(0, excess);
+                this._onError(
+                    new Error(`HttpHandler: backpressure trimmed ${excess} oldest records`),
+                    { msg: "Buffer exceeded maxBufferSize" }
+                );
+            }
+
             this._onError(err, { msg: "HttpHandler flush failed" });
         });
     }
