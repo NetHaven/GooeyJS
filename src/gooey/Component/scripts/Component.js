@@ -54,6 +54,47 @@ export default class Component extends Observable {
         }
     }
 
+    /**
+     * Validate component href path against traversal and protocol attacks.
+     * @param {string} href - The component href to validate
+     * @throws {Error} If href contains traversal segments or protocol URLs
+     * @private
+     */
+    static _validateComponentPath(href) {
+        // Reject empty/falsy
+        if (!href || typeof href !== 'string') {
+            throw new Error('Component href must be a non-empty string');
+        }
+        // Reject traversal segments
+        if (/(?:^|\/)\.\.(\/|$)/.test(href)) {
+            throw new Error(`Component href contains path traversal: ${href}`);
+        }
+        // Reject absolute protocol URLs (only relative paths allowed)
+        if (/^[a-zA-Z][a-zA-Z0-9+\-.]*:/.test(href)) {
+            throw new Error(`Component href must be a relative path, not a protocol URL: ${href}`);
+        }
+    }
+
+    /**
+     * Validate META.goo script path against traversal and absolute path attacks.
+     * @param {string} scriptName - The script filename from META.goo
+     * @throws {Error} If scriptName contains traversal, protocol URLs, or is absolute
+     * @private
+     */
+    static _validateScriptPath(scriptName) {
+        if (!scriptName || typeof scriptName !== 'string') {
+            throw new Error('META.goo script must be a non-empty string');
+        }
+        // Reject traversal
+        if (/(?:^|\/)\.\.(\/|$)/.test(scriptName)) {
+            throw new Error(`META.goo script contains path traversal: ${scriptName}`);
+        }
+        // Reject absolute/protocol URLs
+        if (/^[a-zA-Z][a-zA-Z0-9+\-.]*:/.test(scriptName) || scriptName.startsWith('/')) {
+            throw new Error(`META.goo script must be a relative filename: ${scriptName}`);
+        }
+    }
+
     constructor() {
         super();
         this.attachShadow({ mode: 'open' });
@@ -119,6 +160,21 @@ export default class Component extends Observable {
 
         // Normalize href by removing trailing slash to avoid double slashes in paths
         this._href = this.getAttribute('href').replace(/\/+$/, '');
+
+        // Validate href path against traversal and protocol attacks
+        try {
+            Component._validateComponentPath(this._href);
+        } catch (pathError) {
+            Logger.error({ code: "COMPONENT_PATH_INVALID", href: this._href }, pathError.message);
+            this.fireEvent(ComponentEvent.ERROR, {
+                error: pathError.message,
+                href: this._href,
+                component: this
+            });
+            Component._pendingLoaders.delete(this);
+            Component._checkAllLoaded();
+            return;
+        }
 
         // Load and validate META.goo to get component configuration
         let meta;
@@ -231,10 +287,19 @@ export default class Component extends Observable {
                 GooeyI18n.registerComponentLocale(fullTagName, this._href, meta.locales);
             }
 
+            // Validate script path from META.goo before building import URL
+            Component._validateScriptPath(meta.script);
+
             // Build paths for module and template using META.goo configuration
             // Resolve against document base URL to get absolute URL for dynamic import
             const basePath = `${this._href}/scripts/${meta.script}`;
             const modulePath = new URL(basePath, document.baseURI).href;
+
+            // Validate that the resolved module URL stays within same origin
+            const resolvedUrl = new URL(modulePath);
+            if (resolvedUrl.origin !== window.location.origin) {
+                throw new Error(`Component module resolves to foreign origin: ${resolvedUrl.origin}`);
+            }
 
             // Load templates BEFORE defining custom element
             // (constructors need templates available when triggered by define())
