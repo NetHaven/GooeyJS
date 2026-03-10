@@ -1,0 +1,20 @@
+{
+  "MetaGooVersion": "1.0",
+  "name": "FilterContrast",
+  "prefix": "gooeyui",
+  "tagName": "filtercontrast",
+  "script": "FilterContrast.js",
+  "templates": [
+    { "id": "ui-FilterContrast", "file": "FilterContrast.html" }
+  ],
+  "themes": {
+    "default": "base",
+    "available": ["base", "classic"]
+  },
+  "attributes": {
+    "amount": {
+      "type": "STRING",
+      "default": "1"
+    }
+  }
+}

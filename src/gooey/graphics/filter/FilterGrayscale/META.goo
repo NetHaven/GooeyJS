@@ -1,0 +1,20 @@
+{
+  "MetaGooVersion": "1.0",
+  "name": "FilterGrayscale",
+  "prefix": "gooeyui",
+  "tagName": "filtergrayscale",
+  "script": "FilterGrayscale.js",
+  "templates": [
+    { "id": "ui-FilterGrayscale", "file": "FilterGrayscale.html" }
+  ],
+  "themes": {
+    "default": "base",
+    "available": ["base", "classic"]
+  },
+  "attributes": {
+    "amount": {
+      "type": "STRING",
+      "default": "1"
+    }
+  }
+}

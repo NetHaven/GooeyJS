@@ -1,0 +1,20 @@
+{
+  "MetaGooVersion": "1.0",
+  "name": "FilterBrightness",
+  "prefix": "gooeyui",
+  "tagName": "filterbrightness",
+  "script": "FilterBrightness.js",
+  "templates": [
+    { "id": "ui-FilterBrightness", "file": "FilterBrightness.html" }
+  ],
+  "themes": {
+    "default": "base",
+    "available": ["base", "classic"]
+  },
+  "attributes": {
+    "amount": {
+      "type": "STRING",
+      "default": "1"
+    }
+  }
+}
