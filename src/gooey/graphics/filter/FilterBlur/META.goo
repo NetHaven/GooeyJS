@@ -1,0 +1,20 @@
+{
+  "MetaGooVersion": "1.0",
+  "name": "FilterBlur",
+  "prefix": "gooeyui",
+  "tagName": "filterblur",
+  "script": "FilterBlur.js",
+  "templates": [
+    { "id": "ui-FilterBlur", "file": "FilterBlur.html" }
+  ],
+  "themes": {
+    "default": "base",
+    "available": ["base", "classic"]
+  },
+  "attributes": {
+    "radius": {
+      "type": "STRING",
+      "default": "0px"
+    }
+  }
+}

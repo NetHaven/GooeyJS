@@ -1,0 +1,20 @@
+{
+  "MetaGooVersion": "1.0",
+  "name": "FilterHueRotate",
+  "prefix": "gooeyui",
+  "tagName": "filterhuerotate",
+  "script": "FilterHueRotate.js",
+  "templates": [
+    { "id": "ui-FilterHueRotate", "file": "FilterHueRotate.html" }
+  ],
+  "themes": {
+    "default": "base",
+    "available": ["base", "classic"]
+  },
+  "attributes": {
+    "angle": {
+      "type": "STRING",
+      "default": "0deg"
+    }
+  }
+}
