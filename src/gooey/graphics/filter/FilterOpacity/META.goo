@@ -1,0 +1,20 @@
+{
+  "MetaGooVersion": "1.0",
+  "name": "FilterOpacity",
+  "prefix": "gooeyui",
+  "tagName": "filteropacity",
+  "script": "FilterOpacity.js",
+  "templates": [
+    { "id": "ui-FilterOpacity", "file": "FilterOpacity.html" }
+  ],
+  "themes": {
+    "default": "base",
+    "available": ["base", "classic"]
+  },
+  "attributes": {
+    "amount": {
+      "type": "STRING",
+      "default": "1"
+    }
+  }
+}

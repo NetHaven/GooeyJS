@@ -1,0 +1,20 @@
+{
+  "MetaGooVersion": "1.0",
+  "name": "FilterSepia",
+  "prefix": "gooeyui",
+  "tagName": "filtersepia",
+  "script": "FilterSepia.js",
+  "templates": [
+    { "id": "ui-FilterSepia", "file": "FilterSepia.html" }
+  ],
+  "themes": {
+    "default": "base",
+    "available": ["base", "classic"]
+  },
+  "attributes": {
+    "amount": {
+      "type": "STRING",
+      "default": "1"
+    }
+  }
+}
