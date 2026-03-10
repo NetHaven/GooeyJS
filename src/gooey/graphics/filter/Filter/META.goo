@@ -1,0 +1,25 @@
+{
+  "MetaGooVersion": "1.0",
+  "name": "Filter",
+  "prefix": "gooeyui",
+  "tagName": "filter",
+  "script": "Filter.js",
+  "templates": [
+    { "id": "ui-Filter", "file": "Filter.html" }
+  ],
+  "themes": {
+    "default": "base",
+    "available": ["base", "classic"]
+  },
+  "attributes": {
+    "target": {
+      "type": "ENUM",
+      "default": "filter",
+      "values": ["filter", "backdrop-filter"]
+    },
+    "value": {
+      "type": "STRING",
+      "default": null
+    }
+  }
+}
