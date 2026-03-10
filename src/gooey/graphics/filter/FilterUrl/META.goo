@@ -1,0 +1,20 @@
+{
+  "MetaGooVersion": "1.0",
+  "name": "FilterUrl",
+  "prefix": "gooeyui",
+  "tagName": "filterurl",
+  "script": "FilterUrl.js",
+  "templates": [
+    { "id": "ui-FilterUrl", "file": "FilterUrl.html" }
+  ],
+  "themes": {
+    "default": "base",
+    "available": ["base", "classic"]
+  },
+  "attributes": {
+    "href": {
+      "type": "STRING",
+      "required": true
+    }
+  }
+}

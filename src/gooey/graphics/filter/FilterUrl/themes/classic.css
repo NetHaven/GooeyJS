@@ -1,0 +1,5 @@
+/* Classic theme now provided via <gooey-theme> theme architecture.
+   See: src/themes/classic.css (global theme overrides)
+   See: each component's themes/classic.css file (structural overrides)
+   Usage: <gooey-theme name="classic" href="themes/classic.css" active>
+   This file is intentionally empty for backward compatibility with switchTheme('classic'). */

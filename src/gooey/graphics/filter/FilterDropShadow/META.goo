@@ -1,0 +1,32 @@
+{
+  "MetaGooVersion": "1.0",
+  "name": "FilterDropShadow",
+  "prefix": "gooeyui",
+  "tagName": "filterdropshadow",
+  "script": "FilterDropShadow.js",
+  "templates": [
+    { "id": "ui-FilterDropShadow", "file": "FilterDropShadow.html" }
+  ],
+  "themes": {
+    "default": "base",
+    "available": ["base", "classic"]
+  },
+  "attributes": {
+    "x": {
+      "type": "STRING",
+      "default": "0px"
+    },
+    "y": {
+      "type": "STRING",
+      "default": "0px"
+    },
+    "blur": {
+      "type": "STRING",
+      "default": "0px"
+    },
+    "color": {
+      "type": "STRING",
+      "default": null
+    }
+  }
+}
