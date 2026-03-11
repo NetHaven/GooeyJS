@@ -1,12 +1,15 @@
 /* GroupBox - Chicago structural override */
 
 .ui-GroupBox-content {
-    border: 1px solid var(--chicago-border-dark, #000000);
+    border: 1px solid var(--chicago-border-shadow, #808080);
+    border-right-color: var(--chicago-border-light, #FFFFFF);
+    border-bottom-color: var(--chicago-border-light, #FFFFFF);
     background: var(--chicago-face, #C0C0C0);
     padding: 6px 4px 4px 4px;
     border-radius: 0;
-    /* Optional inner highlight */
-    box-shadow: inset 0 0 0 1px var(--chicago-border-light, #FFFFFF);
+    box-shadow:
+        inset 1px 1px 0 var(--chicago-border-light, #FFFFFF),
+        inset -1px -1px 0 var(--chicago-border-shadow, #808080);
 }
 
 .ui-GroupBox-text {
@@ -16,6 +19,7 @@
     font-family: var(--chicago-font-family, "MS Sans Serif", "Microsoft Sans Serif", Tahoma, Arial, sans-serif);
     padding: 0 4px;
     display: inline-block;
+    text-align: left;
 }
 
 /* Show text when title attribute is set */

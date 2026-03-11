@@ -9,17 +9,38 @@
     box-shadow: inset 1px 1px 0 var(--chicago-border-dark, #000000);
     background: #FFFFFF;
     border-radius: 0;
-    height: 16px;
+    height: 13px;
+    overflow: hidden;
 }
 
 .progress-fill {
-    background: var(--chicago-highlight, #000080);
+    background: repeating-linear-gradient(
+        90deg,
+        var(--chicago-highlight, #000080),
+        var(--chicago-highlight, #000080) 6px,
+        transparent 6px,
+        transparent 8px
+    );
+    border: 1px solid var(--chicago-face, #C0C0C0);
+    height: 100%;
     transition: width 0.1s linear;
 }
 
 .progress-bar.indeterminate .progress-fill {
-    animation: progress-indeterminate 1.5s infinite linear;
-    background: var(--chicago-highlight, #000080);
+    width: 32px !important;
+    background: repeating-linear-gradient(
+        90deg,
+        var(--chicago-highlight, #000080),
+        var(--chicago-highlight, #000080) 6px,
+        transparent 6px,
+        transparent 8px
+    );
+    animation: chicago-progress-indeterminate 2s infinite linear;
+}
+
+@keyframes chicago-progress-indeterminate {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(calc(100% + 32px)); }
 }
 
 .progress-text {
@@ -33,5 +54,11 @@
 }
 
 :host([disabled]) .progress-fill {
-    background: var(--chicago-text-disabled, #808080);
+    background: repeating-linear-gradient(
+        90deg,
+        var(--chicago-text-disabled, #808080),
+        var(--chicago-text-disabled, #808080) 6px,
+        transparent 6px,
+        transparent 8px
+    );
 }
