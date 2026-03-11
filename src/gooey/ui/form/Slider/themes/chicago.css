@@ -1,7 +1,7 @@
 /* Slider - Chicago structural override */
 
 .slider-track {
-    height: 4px;
+    height: 2px;
     /* Sunken bevel: top/left shadow, bottom/right highlight */
     border-top: 1px solid var(--chicago-border-shadow, #808080);
     border-left: 1px solid var(--chicago-border-shadow, #808080);
@@ -20,8 +20,8 @@
 
 /* Raised bevel thumb */
 .slider-thumb {
-    width: 10px;
-    height: 20px;
+    width: 11px;
+    height: 21px;
     border-top: 1px solid var(--chicago-border-light, #FFFFFF);
     border-left: 1px solid var(--chicago-border-light, #FFFFFF);
     border-right: 1px solid var(--chicago-border-shadow, #808080);
@@ -38,7 +38,7 @@
     transform: translate(-50%, -50%);
 }
 
-/* Sunken bevel on active (inverted borders) */
+/* Sunken bevel on active (inverted borders) with dither pattern */
 .slider-thumb:active,
 .slider-thumb.active {
     border-top: 1px solid var(--chicago-border-shadow, #808080);
@@ -48,11 +48,18 @@
     box-shadow:
         inset 1px 1px 0 var(--chicago-border-dark, #000000),
         inset -1px -1px 0 var(--chicago-border-highlight, #DFDFDF);
+    background-color: var(--chicago-face, #C0C0C0);
+    background-image:
+        linear-gradient(45deg, var(--chicago-border-light, #FFFFFF) 25%, transparent 25%),
+        linear-gradient(-45deg, var(--chicago-border-light, #FFFFFF) 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, var(--chicago-border-light, #FFFFFF) 75%),
+        linear-gradient(-45deg, transparent 75%, var(--chicago-border-light, #FFFFFF) 75%);
+    background-size: 2px 2px;
     transform: translate(-50%, -50%);
 }
 
 .slider-thumb:focus-visible {
-    outline: 1px dotted var(--chicago-text, #000000);
+    outline: 1px dotted var(--chicago-border-dark, #000000);
     outline-offset: 2px;
 }
 
@@ -98,13 +105,13 @@
 /* =========== Vertical Orientation =========== */
 
 :host([orientation="vertical"]) .slider-track {
-    width: 4px;
+    width: 2px;
     height: 100%;
 }
 
 :host([orientation="vertical"]) .slider-thumb {
-    width: 20px;
-    height: 10px;
+    width: 21px;
+    height: 11px;
 }
 
 :host([orientation="vertical"]) .slider-thumb:hover {
