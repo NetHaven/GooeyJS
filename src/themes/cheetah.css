@@ -1,0 +1,130 @@
+/* GooeyJS Cheetah Theme Overrides */
+/* Applied via: <gooey-theme name="cheetah" href="themes/cheetah.css" active> */
+/* This file redefines :root custom properties from styles.css for the Cheetah Aqua aesthetic. */
+/* For structural overrides (rounded buttons, gradients), see each component's themes/cheetah.css file. */
+
+:root {
+    /* ===== Surface Colors (Aqua Grays) ===== */
+    --gooey-color-surface: #EFEFEF;
+    --gooey-color-surface-hover: #F5F5F5;
+    --gooey-color-surface-active: #E0E0E0;
+    --gooey-color-surface-raised: #FFFFFF;
+    --gooey-color-surface-sunken: #FFFFFF;
+    --gooey-color-surface-disabled: #F0F0F0;
+
+    /* ===== Accent / Primary (Aqua Blue) ===== */
+    --gooey-color-primary: #4B7BFF;
+    --gooey-color-primary-text: #FFFFFF;
+
+    /* ===== Text Colors ===== */
+    --gooey-color-text: #000000;
+    --gooey-color-text-muted: #7F7F7F;
+    --gooey-color-text-disabled: #7F7F7F;
+    --gooey-color-text-link: #0066CC;
+
+    /* ===== Border Colors ===== */
+    --gooey-color-border: #8A8A8A;
+    --gooey-color-border-light: #FFFFFF;
+
+    /* ===== Focus (Outer Glow Ring) ===== */
+    --gooey-color-focus: rgba(66,133,244,0.4);
+    --gooey-focus-width: 2px;
+    --gooey-focus-style: solid;
+    --gooey-focus-offset: 0px;
+
+    /* ===== Status Colors ===== */
+    --gooey-color-info: #3B82F6;
+    --gooey-color-success: #22C55E;
+    --gooey-color-warning: #F59E0B;
+    --gooey-color-error: #EF4444;
+
+    /* ===== Typography (Lucida Grande) ===== */
+    --gooey-font-family: "Lucida Grande", Geneva, Verdana, Arial, sans-serif;
+    --gooey-font-family-mono: Monaco, Courier, "Courier New", monospace;
+    --gooey-font-size-xs: 10px;
+    --gooey-font-size-sm: 11px;
+    --gooey-font-size-md: 12px;
+    --gooey-font-size-lg: 13px;
+    --gooey-line-height: 1.25;
+
+    /* ===== Spacing (4px Base Unit) ===== */
+    --gooey-spacing-xs: 4px;
+    --gooey-spacing-sm: 8px;
+    --gooey-spacing-md: 12px;
+    --gooey-spacing-lg: 16px;
+    --gooey-spacing-xl: 20px;
+
+    /* ===== Borders (Rounded, 6px Default) ===== */
+    --gooey-border-width: 1px;
+    --gooey-border-style: solid;
+    --gooey-border-radius: 6px;
+
+    /* ===== Sizing ===== */
+    --gooey-control-min-height: 22px;
+    --gooey-control-min-width: 22px;
+    --gooey-icon-size: 16px;
+
+    /* ===== Shadows (Soft Aqua Shadows) ===== */
+    --gooey-shadow-sm: 0 1px 3px rgba(0,0,0,0.15);
+    --gooey-shadow-md: 0 2px 6px rgba(0,0,0,0.2);
+    --gooey-shadow-lg: 0 4px 12px rgba(0,0,0,0.35);
+
+    /* ===== Opacity ===== */
+    --gooey-opacity-disabled: 0.7;
+    --gooey-opacity-modal-backdrop: 0.4;
+
+    /* ===== Cheetah-Specific: Core Aqua Palette ===== */
+    --cheetah-face: #EFEFEF;
+    --cheetah-text: #000000;
+    --cheetah-text-disabled: #7F7F7F;
+    --cheetah-highlight: #4B7BFF;
+    --cheetah-highlight-text: #FFFFFF;
+    --cheetah-highlight-inactive: #BFC7D6;
+    --cheetah-highlight-inactive-text: #000000;
+
+    /* ===== Cheetah-Specific: Blues and Accents ===== */
+    --cheetah-aqua-light: #A6C8FF;
+    --cheetah-aqua-medium: #5C8FFF;
+    --cheetah-aqua-dark: #2E5BEA;
+
+    /* ===== Cheetah-Specific: Borders ===== */
+    --cheetah-border-dark: #5A5A5A;
+    --cheetah-border-mid: #9A9A9A;
+    --cheetah-border-light: #FFFFFF;
+
+    /* ===== Cheetah-Specific: Window Chrome ===== */
+    --cheetah-window-bg: #E9E9EA;
+    --cheetah-window-surface: #EFEFEF;
+    --cheetah-dialog-surface: #F2F2F2;
+    --cheetah-titlebar-active-top: #BFD7FF;
+    --cheetah-titlebar-active-bottom: #7FA7FF;
+    --cheetah-titlebar-inactive-top: #E2E2E2;
+    --cheetah-titlebar-inactive-bottom: #C7C7C7;
+
+    /* ===== Cheetah-Specific: Button Gradients ===== */
+    --cheetah-button-gradient-top: #F6FBFF;
+    --cheetah-button-gradient-mid: #CFE2FF;
+    --cheetah-button-gradient-bottom: #8FB5FF;
+
+    /* ===== Cheetah-Specific: Pressed/Active ===== */
+    --cheetah-pressed-border: #5A5A5A;
+    --cheetah-pressed-inner: #C0C0C0;
+
+    /* ===== Cheetah-Specific: Focus ===== */
+    --cheetah-focus-glow: 0 0 0 2px rgba(66,133,244,0.4);
+
+    /* ===== Cheetah-Specific: Shadows ===== */
+    --cheetah-shadow: rgba(0,0,0,0.25);
+    --cheetah-inner-shadow: rgba(0,0,0,0.15);
+    --cheetah-window-shadow: 0 4px 12px rgba(0,0,0,0.35);
+
+    /* ===== Cheetah-Specific: Layout Metrics ===== */
+    --cheetah-control-height: 22px;
+    --cheetah-titlebar-height: 22px;
+    --cheetah-menubar-height: 22px;
+    --cheetah-scrollbar-size: 15px;
+
+    /* ===== Cheetah-Specific: Desktop ===== */
+    --cheetah-desktop-top: #2C6BA1;
+    --cheetah-desktop-bottom: #0F4C7A;
+}
