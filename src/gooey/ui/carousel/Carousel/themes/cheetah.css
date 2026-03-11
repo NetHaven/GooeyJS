@@ -1,0 +1,65 @@
+/* Carousel - Cheetah Aqua structural override */
+
+:host {
+    --gooey-carousel-arrow-bg: linear-gradient(to bottom, #F6FBFF, #CFE2FF, #8FB5FF);
+    --gooey-carousel-arrow-fg: var(--cheetah-text, #000000);
+    --gooey-carousel-dot-bg: #B0B0B0;
+    --gooey-carousel-dot-bg-active: var(--cheetah-highlight, #4B7BFF);
+    --gooey-carousel-scrollbar-track-bg: #E8E8E8;
+    --gooey-carousel-scrollbar-thumb-bg: #9A9A9A;
+    --gooey-carousel-focus-ring: var(--gooey-color-focus, rgba(66,133,244,0.4));
+}
+
+/* Arrows: Aqua button gradient with rounded corners */
+.carousel-arrow {
+    background: linear-gradient(to bottom, #F6FBFF, #CFE2FF, #8FB5FF);
+    border: 1px solid var(--gooey-color-border, #8A8A8A);
+    border-radius: 6px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.5);
+    color: var(--cheetah-text, #000000);
+}
+
+.carousel-arrow:hover {
+    background: linear-gradient(to bottom, #FFFFFF, #DEEAFF, #A0C2FF);
+}
+
+.carousel-arrow:active {
+    background: linear-gradient(to bottom, #CFE2FF, #A8C8FF, #7BA3F0);
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.2);
+}
+
+.carousel-arrow:focus {
+    box-shadow: 0 0 0 2px rgba(66,133,244,0.4);
+    outline: none;
+}
+
+/* Dots: round with Aqua active glow */
+.carousel-dot {
+    border-radius: 50%;
+    border: none;
+}
+
+.carousel-dot[aria-current="true"] {
+    background: var(--cheetah-highlight, #4B7BFF);
+    box-shadow: 0 0 4px rgba(75,123,255,0.5);
+}
+
+/* Scrollbar: Aqua track and glossy thumb */
+.carousel-scrollbar {
+    background: #E8E8E8;
+    border-radius: 4px;
+    border: none;
+    box-shadow: none;
+}
+
+.carousel-scrollbar-thumb {
+    background: linear-gradient(to bottom, #D0D0D0, #A8A8A8);
+    border-radius: 4px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
+    border: none;
+}
+
+/* Disabled state */
+:host([disabled]) {
+    opacity: var(--gooey-opacity-disabled, 0.7);
+}

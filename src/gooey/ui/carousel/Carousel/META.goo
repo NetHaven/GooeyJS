@@ -8,7 +8,7 @@
     ],
     "themes": {
         "default": "base",
-        "available": ["base", "classic", "janus", "chicago"]
+        "available": ["base", "classic", "janus", "chicago", "cheetah"]
     },
     "tokens": {
         "--gooey-carousel-bg": {
