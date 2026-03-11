@@ -1,0 +1,41 @@
+{
+  "MetaGooVersion": "1.0",
+  "name": "Transition",
+  "prefix": "gooeyui",
+  "tagName": "transition",
+  "script": "Transition.js",
+  "templates": [
+    { "id": "ui-Transition", "file": "Transition.html" }
+  ],
+  "themes": {
+    "default": "base",
+    "available": ["base", "classic"]
+  },
+  "attributes": {
+    "property": {
+      "type": "STRING",
+      "default": null
+    },
+    "duration": {
+      "type": "STRING",
+      "default": null
+    },
+    "easing": {
+      "type": "STRING",
+      "default": null
+    },
+    "delay": {
+      "type": "STRING",
+      "default": null
+    },
+    "behavior": {
+      "type": "ENUM",
+      "default": "normal",
+      "values": ["normal", "allow-discrete"]
+    },
+    "value": {
+      "type": "STRING",
+      "default": null
+    }
+  }
+}
