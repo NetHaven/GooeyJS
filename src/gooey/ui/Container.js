@@ -30,6 +30,14 @@ export default class Container extends UIComponent {
             if (this.hasAttribute("background")) {
                 this.background = this.getAttribute("background");
             }
+
+            if (this.hasAttribute("filter")) {
+                this.filter = this.getAttribute("filter");
+            }
+
+            if (this.hasAttribute("transition")) {
+                this.transition = this.getAttribute("transition");
+            }
         }
     }
 
@@ -45,6 +53,10 @@ export default class Container extends UIComponent {
         return this.getAttribute("border");
     }
 
+    get filter() {
+        return this.getAttribute("filter");
+    }
+
     get font() {
         return this.getAttribute("font");
     }
@@ -52,6 +64,10 @@ export default class Container extends UIComponent {
     get layout() {
 		return this.getAttribute("layout");
 	}
+
+    get transition() {
+        return this.getAttribute("transition");
+    }
 
     set active(val) {
         this.setAttribute("active", val);
@@ -116,6 +132,20 @@ export default class Container extends UIComponent {
         }
 
         this.setAttribute("border", val);
+    }
+
+    set filter(val) {
+        const filterElement = document.querySelector(val);
+        if (filterElement) {
+            if (typeof filterElement.applyTo === 'function') {
+                filterElement.applyTo(this);
+            } else if (typeof filterElement.toCSSValue === 'function') {
+                this.style.filter = filterElement.toCSSValue();
+            }
+            this.setAttribute("filter", val);
+        } else {
+            Logger.warn({ code: "CONTAINER_FILTER_NOT_FOUND", value: val }, "Filter %s not found", val);
+        }
     }
 
     set font(val) {
@@ -207,6 +237,20 @@ export default class Container extends UIComponent {
             }
 
             this.setAttribute("layout", layoutElement.type || val);
+        }
+    }
+
+    set transition(val) {
+        const transitionElement = document.querySelector(val);
+        if (transitionElement) {
+            if (typeof transitionElement.applyTo === 'function') {
+                transitionElement.applyTo(this);
+            } else if (typeof transitionElement.toCSSValue === 'function') {
+                this.style.transition = transitionElement.toCSSValue();
+            }
+            this.setAttribute("transition", val);
+        } else {
+            Logger.warn({ code: "CONTAINER_TRANSITION_NOT_FOUND", value: val }, "Transition %s not found", val);
         }
     }
 }
