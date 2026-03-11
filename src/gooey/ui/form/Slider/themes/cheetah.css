@@ -1,0 +1,98 @@
+/* Slider - Cheetah Aqua theme */
+
+.slider-track {
+    height: 5px;
+    background: linear-gradient(to bottom, #D8D8D8, #E8E8E8);
+    border: 1px solid var(--gooey-color-border, #8A8A8A);
+    border-radius: 3px;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.15);
+    overflow: visible;
+}
+
+.slider-fill {
+    background: linear-gradient(to bottom, #A8C8FF, #6A9FFF);
+    border-radius: 2px;
+    height: 100%;
+}
+
+.slider-thumb {
+    width: 14px;
+    height: 14px;
+    background: linear-gradient(to bottom, #FAFAFA, #E0E0E0);
+    border: 1px solid var(--gooey-color-border, #8A8A8A);
+    border-radius: 50%;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.6);
+    cursor: pointer;
+}
+
+.slider-thumb:hover {
+    background: linear-gradient(to bottom, #FFFFFF, #E8E8E8);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.7);
+    transform: translate(-50%, -50%);
+}
+
+.slider-thumb:active,
+.slider-thumb.active {
+    background: linear-gradient(to bottom, #CFE2FF, #8FB5FF);
+    box-shadow: 0 0 3px rgba(75,123,255,0.4), inset 0 1px 0 rgba(255,255,255,0.5);
+    transform: translate(-50%, -50%);
+}
+
+.slider-thumb:focus-visible {
+    box-shadow: var(--cheetah-focus-glow, 0 0 0 2px rgba(66,133,244,0.4)), 0 1px 2px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.6);
+    outline: none;
+}
+
+/* Tick marks */
+.slider-tick {
+    width: 1px;
+    height: 5px;
+    background: var(--gooey-color-border, #8A8A8A);
+}
+
+.slider-tick-label {
+    font-size: 11px;
+    color: var(--cheetah-text, #000000);
+}
+
+/* Tooltip */
+.slider-tooltip {
+    background: #FFFFE1;
+    color: var(--cheetah-text, #000000);
+    border: 1px solid var(--gooey-color-border, #8A8A8A);
+    border-radius: 4px;
+    font-size: 11px;
+    padding: 2px 6px;
+    box-shadow: var(--gooey-shadow-sm, 0 1px 3px rgba(0,0,0,0.15));
+}
+
+/* Disabled state */
+:host([disabled]) {
+    opacity: var(--gooey-opacity-disabled, 0.7);
+    pointer-events: none;
+}
+
+:host([disabled]) .slider-thumb {
+    cursor: not-allowed;
+    filter: saturate(0.5);
+}
+
+:host([disabled]) .slider-tick-label {
+    color: var(--cheetah-text-disabled, #7F7F7F);
+}
+
+/* =========== Vertical Orientation =========== */
+
+:host([orientation="vertical"]) .slider-track {
+    width: 5px;
+    height: 100%;
+}
+
+:host([orientation="vertical"]) .slider-thumb:hover {
+    transform: translate(-50%, 50%);
+}
+
+:host([orientation="vertical"]) .slider-thumb:active,
+:host([orientation="vertical"]) .slider-thumb.active {
+    transform: translate(-50%, 50%);
+}
