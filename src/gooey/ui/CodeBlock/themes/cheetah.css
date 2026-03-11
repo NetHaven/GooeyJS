@@ -1,0 +1,99 @@
+/* CodeBlock - Cheetah Aqua theme */
+
+:host {
+    --gooey-codeblock-font-family: Monaco, Courier, "Courier New", monospace;
+    --gooey-codeblock-font-size: 12px;
+    --gooey-codeblock-bg: #FFFFFF;
+    --gooey-codeblock-border-radius: 6px;
+    --gooey-codeblock-header-bg: #F2F5FA;
+    --gooey-codeblock-label-color: #7F7F7F;
+    --gooey-codeblock-copy-bg: #F2F5FA;
+    --gooey-codeblock-copy-color: #333333;
+    --gooey-codeblock-copy-bg-hover: #E8EDFA;
+    --gooey-codeblock-linenumber-bg: #F2F5FA;
+    --gooey-codeblock-linenumber-color: #9A9A9A;
+    --gooey-codeblock-code-color: #000000;
+}
+
+.codeblock-container {
+    background: #FFFFFF;
+    border: 1px solid var(--cheetah-border-mid, #9A9A9A);
+    border-radius: 6px;
+    font-family: Monaco, Courier, "Courier New", monospace;
+    font-size: 12px;
+    color: #000000;
+    overflow: hidden;
+}
+
+.codeblock-header {
+    background: #F2F5FA;
+    border-bottom: 1px solid #D0D8E8;
+    padding: 4px 8px;
+    min-height: 20px;
+}
+
+.language-label {
+    color: #7F7F7F;
+}
+
+.copy-button {
+    border: 1px solid var(--cheetah-border-mid, #9A9A9A);
+    border-radius: 4px;
+    background: #F2F5FA;
+    color: #333333;
+    padding: 2px 8px;
+    min-height: 20px;
+    cursor: pointer;
+}
+
+.copy-button:hover {
+    background: #E8EDFA;
+}
+
+.copy-button:active {
+    background: #D8E0F0;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.15);
+}
+
+.copy-button:focus {
+    box-shadow: var(--cheetah-focus-glow, 0 0 0 2px rgba(66,133,244,0.4));
+}
+
+.copy-button:disabled {
+    color: #7F7F7F;
+    cursor: not-allowed;
+}
+
+.line-numbers {
+    background: #F2F5FA;
+    color: #9A9A9A;
+    border-right: 1px solid #D0D8E8;
+    padding: 4px 8px 4px 4px;
+}
+
+/* Disabled state */
+:host([disabled]) .codeblock-container {
+    background-color: #F0F0F0;
+}
+
+:host([disabled]) .code-content {
+    background-color: #F0F0F0;
+    color: #7F7F7F;
+}
+
+:host([disabled]) .copy-button {
+    pointer-events: none;
+}
+
+/* Syntax highlighting - Aqua-derived palette */
+.code-highlighted .syntax-keyword     { color: #0033B3; font-weight: bold; }
+.code-highlighted .syntax-string      { color: #067D17; }
+.code-highlighted .syntax-number      { color: #1750EB; }
+.code-highlighted .syntax-comment     { color: #8C8C8C; font-style: italic; }
+.code-highlighted .syntax-tag-name    { color: #0033B3; font-weight: bold; }
+.code-highlighted .syntax-attr-name   { color: #871094; }
+.code-highlighted .syntax-attr-value  { color: #067D17; }
+.code-highlighted .syntax-punctuation { color: #000000; }
+.code-highlighted .syntax-entity      { color: #6C3FC2; }
+.code-highlighted .syntax-doctype     { color: #8C8C8C; }
+.code-highlighted .syntax-operator    { color: #000000; font-weight: bold; }
