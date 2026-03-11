@@ -1,0 +1,6 @@
+/* Tab - Cheetah Aqua structural override */
+
+:host {
+    background-color: var(--cheetah-face, #EFEFEF);
+    padding: 4px;
+}

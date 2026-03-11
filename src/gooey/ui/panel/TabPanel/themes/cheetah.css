@@ -1,0 +1,137 @@
+/* TabPanel - Cheetah Aqua structural override */
+
+.tab-strip {
+    background: var(--cheetah-face, #EFEFEF);
+    border-bottom: none;
+}
+
+.tab-header {
+    background: #E8E8E8;
+    border: 1px solid #B0B0B0;
+    border-bottom: 0;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    padding: 2px 12px;
+    height: 20px;
+    line-height: 20px;
+    font-size: 12px;
+    color: var(--cheetah-text, #000000);
+    cursor: pointer;
+    margin-right: -1px;
+    font-family: var(--gooey-font-family);
+    font-weight: normal;
+    transition: none;
+}
+
+.tab-header:hover {
+    background: #F0F0F0;
+    color: var(--cheetah-text, #000000);
+}
+
+.tab-header.active {
+    background: linear-gradient(to bottom, #FFFFFF, #E8E8E8);
+    border: 1px solid var(--cheetah-border-mid, #9A9A9A);
+    border-bottom: 1px solid var(--cheetah-face, #EFEFEF);
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    z-index: 1;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.8);
+    font-weight: normal;
+    color: var(--cheetah-text, #000000);
+}
+
+:host(.vertical) .tab-header.active {
+    border-top: 1px solid var(--cheetah-border-mid, #9A9A9A);
+    border-left: 1px solid var(--cheetah-highlight, #4B7BFF);
+    border-bottom: 1px solid var(--cheetah-border-mid, #9A9A9A);
+    border-right: 1px solid var(--cheetah-face, #EFEFEF);
+}
+
+.tab-header:focus-visible {
+    box-shadow: var(--cheetah-focus-glow, 0 0 0 2px rgba(66,133,244,0.4));
+    outline: none;
+}
+
+.tab-content {
+    background: var(--cheetah-face, #EFEFEF);
+    border: 1px solid var(--cheetah-border-mid, #9A9A9A);
+    border-radius: 0 0 6px 6px;
+}
+
+.tab-close-button {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--cheetah-face, #EFEFEF);
+    border: 1px solid #B0B0B0;
+    font-size: 10px;
+    color: var(--cheetah-text, #000000);
+    margin-left: 6px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    background-image: none;
+}
+
+.tab-close-button:hover {
+    background: #FF5F57;
+    color: #FFFFFF;
+    border-color: #FF5F57;
+}
+
+.tab-close-button:active {
+    background: #E0443E;
+    color: #FFFFFF;
+    border-color: #E0443E;
+}
+
+/* Scrollbar pseudo-elements for scrollable tab strip */
+.tab-strip::-webkit-scrollbar {
+    width: var(--cheetah-scrollbar-size, 15px);
+    height: var(--cheetah-scrollbar-size, 15px);
+}
+
+.tab-strip::-webkit-scrollbar-track {
+    background: #F0F0F0;
+    border-radius: 8px;
+}
+
+.tab-strip::-webkit-scrollbar-thumb {
+    background: linear-gradient(to bottom, #C8C8C8, #A0A0A0);
+    border-radius: 8px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+}
+
+.tab-strip::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(to bottom, #B8B8B8, #909090);
+    border-radius: 8px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+}
+
+/* Disabled state */
+:host([disabled]) .tab-header {
+    filter: saturate(0.5);
+    color: var(--cheetah-text-disabled, #7F7F7F);
+    cursor: not-allowed;
+}
+
+/* Drag indicator styling */
+.tab-header.drag-over-left {
+    border-left: 3px solid var(--cheetah-highlight, #4B7BFF);
+}
+
+.tab-header.drag-over-right {
+    border-right: 3px solid var(--cheetah-highlight, #4B7BFF);
+}
+
+.tab-header.drag-over-top {
+    border-top: 3px solid var(--cheetah-highlight, #4B7BFF);
+}
+
+.tab-header.drag-over-bottom {
+    border-bottom: 3px solid var(--cheetah-highlight, #4B7BFF);
+}
