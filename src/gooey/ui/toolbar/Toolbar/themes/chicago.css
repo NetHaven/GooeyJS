@@ -13,6 +13,9 @@
         inset 1px 1px 0 var(--chicago-border-light, #FFFFFF),
         inset -1px -1px 0 var(--chicago-border-shadow, #808080);
 
+    /* Flat toolbar mode flag for child button components */
+    --chicago-toolbar-flat-mode: 1;
+
     /* Button sizing variables -- default medium */
     --button-height: 32px;
     --button-width: 32px;
@@ -69,6 +72,17 @@
 ::slotted(ui-dropdownlist) {
     height: var(--button-height);
     line-height: var(--button-line-height);
+}
+
+/* Flat toolbar button mode: no border until hover */
+/* Note: ::slotted(:hover) has limited browser support; hover bevel on
+   individual buttons requires button-side CSS support reading
+   --chicago-toolbar-flat-mode or JS-based approach */
+::slotted(gooeyui-button),
+::slotted(gooeyui-togglebutton) {
+    border-color: transparent !important;
+    box-shadow: none !important;
+    background: transparent !important;
 }
 
 /* Button elements inside toolbar */

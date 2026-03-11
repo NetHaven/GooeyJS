@@ -22,6 +22,7 @@
     box-shadow: inset 0 -1px 0 var(--chicago-border-shadow, #808080);
 }
 
+/* Verified: panel sunken bevel matches 95 skin spec */
 /* Section panels with sunken bevel inset */
 .statusbar-panel {
     padding: 0 2px;
