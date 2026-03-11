@@ -1,15 +1,13 @@
 /* Window - Chicago structural override */
 
 :host {
-    /* outer black frame with inner raised bevel */
-    border: 1px solid #000000;
+    /* outer split border with inner raised bevel */
+    border: 1px solid;
+    border-color: var(--chicago-border-highlight, #DFDFDF) var(--chicago-border-dark, #000000) var(--chicago-border-dark, #000000) var(--chicago-border-highlight, #DFDFDF);
     box-shadow:
-        inset 1px 1px 0 #FFFFFF,
-        inset 2px 2px 0 #DFDFDF,
-        inset -1px -1px 0 #808080,
-        inset -2px -2px 0 #000000,
-        2px 2px 0 #000000;
-    background: #C0C0C0;
+        inset 1px 1px 0 var(--chicago-border-light, #FFFFFF),
+        inset -1px -1px 0 var(--chicago-border-shadow, #808080);
+    background: var(--chicago-face, #C0C0C0);
     padding: 3px;
 }
 
@@ -27,12 +25,12 @@
 
 :host(:not([active])) .WindowTitlebar {
     background: var(--chicago-window-inactive, #808080);
-    color: var(--chicago-window-inactive-text, #000000);
+    color: var(--chicago-window-inactive-text, #C0C0C0);
 }
 
 :host(:not(:focus-within)) .WindowTitlebar {
     background: var(--chicago-window-inactive, #808080);
-    color: var(--chicago-window-inactive-text, #000000);
+    color: var(--chicago-window-inactive-text, #C0C0C0);
 }
 
 :host([active]) .WindowTitlebar {
@@ -61,32 +59,59 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 16px;
-    height: 14px;
+    width: 20px;
+    height: 18px;
+    min-width: 0;
     padding: 0;
     margin: 0;
-    background: #C0C0C0;
-    color: #000000;
-    font-size: 9px;
+    background: var(--chicago-face, #C0C0C0);
     line-height: 1;
     cursor: pointer;
-    border-top: 1px solid #FFFFFF;
-    border-left: 1px solid #FFFFFF;
-    border-right: 1px solid #808080;
-    border-bottom: 1px solid #808080;
+    border-top: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-left: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-right: 1px solid var(--chicago-border-shadow, #808080);
+    border-bottom: 1px solid var(--chicago-border-shadow, #808080);
     box-shadow:
-        inset -1px -1px 0 #000000,
-        inset 1px 1px 0 #DFDFDF;
+        inset -1px -1px 0 var(--chicago-border-dark, #000000),
+        inset 1px 1px 0 var(--chicago-border-highlight, #DFDFDF);
+}
+
+.WindowControlButtons button::after {
+    content: "";
+    display: block;
+    width: 8px;
+    height: 7px;
+    background-color: var(--chicago-text, #000000);
+    mask-repeat: no-repeat;
+    mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-size: contain;
+}
+
+.WindowCloseBtn::after {
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 7'%3E%3Cpath d='M0,0 L2,0 L4,2 L6,0 L8,0 L5,3 L8,6 L6,6 L4,4 L2,6 L0,6 L3,3 Z' fill='black'/%3E%3C/svg%3E");
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 7'%3E%3Cpath d='M0,0 L2,0 L4,2 L6,0 L8,0 L5,3 L8,6 L6,6 L4,4 L2,6 L0,6 L3,3 Z' fill='black'/%3E%3C/svg%3E");
+}
+
+.WindowMinimizeBtn::after {
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 7'%3E%3Crect x='0' y='5' width='6' height='2' fill='black'/%3E%3C/svg%3E");
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 7'%3E%3Crect x='0' y='5' width='6' height='2' fill='black'/%3E%3C/svg%3E");
+}
+
+.WindowMaximizeBtn::after {
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 7'%3E%3Crect x='0' y='0' width='8' height='7' fill='black'/%3E%3Crect x='1' y='2' width='6' height='4' fill='white'/%3E%3C/svg%3E");
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 7'%3E%3Crect x='0' y='0' width='8' height='7' fill='black'/%3E%3Crect x='1' y='2' width='6' height='4' fill='white'/%3E%3C/svg%3E");
 }
 
 .WindowControlButtons button:active {
-    border-top: 1px solid #808080;
-    border-left: 1px solid #808080;
-    border-right: 1px solid #FFFFFF;
-    border-bottom: 1px solid #FFFFFF;
+    border-top: 1px solid var(--chicago-border-shadow, #808080);
+    border-left: 1px solid var(--chicago-border-shadow, #808080);
+    border-right: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-bottom: 1px solid var(--chicago-border-light, #FFFFFF);
     box-shadow:
-        inset 1px 1px 0 #000000,
-        inset -1px -1px 0 #DFDFDF;
+        inset 1px 1px 0 var(--chicago-border-dark, #000000),
+        inset -1px -1px 0 var(--chicago-border-highlight, #DFDFDF);
+    padding: 1px 0 0 1px;
 }
 
 /* Resize Handles */
@@ -124,9 +149,9 @@
     background:
         linear-gradient(135deg,
             transparent 0%, transparent 40%,
-            #808080 40%, #808080 50%,
+            var(--chicago-border-shadow, #808080) 40%, var(--chicago-border-shadow, #808080) 50%,
             transparent 50%, transparent 70%,
-            #808080 70%, #808080 80%,
+            var(--chicago-border-shadow, #808080) 70%, var(--chicago-border-shadow, #808080) 80%,
             transparent 80%);
 }
 
@@ -147,23 +172,23 @@
     width: 75px;
     min-height: 23px;
     cursor: pointer;
-    border-top: 1px solid #FFFFFF;
-    border-left: 1px solid #FFFFFF;
-    border-right: 1px solid #808080;
-    border-bottom: 1px solid #808080;
+    border-top: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-left: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-right: 1px solid var(--chicago-border-shadow, #808080);
+    border-bottom: 1px solid var(--chicago-border-shadow, #808080);
     box-shadow:
-        inset -1px -1px 0 #000000,
-        inset 1px 1px 0 #DFDFDF;
+        inset -1px -1px 0 var(--chicago-border-dark, #000000),
+        inset 1px 1px 0 var(--chicago-border-highlight, #DFDFDF);
 }
 
 .WindowButtonbar button:active {
-    border-top: 1px solid #808080;
-    border-left: 1px solid #808080;
-    border-right: 1px solid #FFFFFF;
-    border-bottom: 1px solid #FFFFFF;
+    border-top: 1px solid var(--chicago-border-shadow, #808080);
+    border-left: 1px solid var(--chicago-border-shadow, #808080);
+    border-right: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-bottom: 1px solid var(--chicago-border-light, #FFFFFF);
     box-shadow:
-        inset 1px 1px 0 #000000,
-        inset -1px -1px 0 #DFDFDF;
+        inset 1px 1px 0 var(--chicago-border-dark, #000000),
+        inset -1px -1px 0 var(--chicago-border-highlight, #DFDFDF);
 }
 
 .uiWindowModal {
@@ -263,14 +288,16 @@
 .DialogPrompt-input {
     width: 100%;
     padding: 2px 4px;
-    background-color: #FFFFFF;
-    color: #000000;
+    background-color: var(--chicago-border-light, #FFFFFF);
+    color: var(--chicago-text, #000000);
     /* sunken input */
-    border-top: 1px solid #808080;
-    border-left: 1px solid #808080;
-    border-right: 1px solid #FFFFFF;
-    border-bottom: 1px solid #FFFFFF;
-    box-shadow: inset 1px 1px 0 #000000;
+    border-top: 1px solid var(--chicago-border-shadow, #808080);
+    border-left: 1px solid var(--chicago-border-shadow, #808080);
+    border-right: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-bottom: 1px solid var(--chicago-border-light, #FFFFFF);
+    box-shadow:
+        inset 1px 1px 0 var(--chicago-border-dark, #000000),
+        inset -1px -1px 0 var(--chicago-border-highlight, #DFDFDF);
 }
 
 /* Alert Dialog specific - buttonbar centered, no cancel button */
