@@ -1,0 +1,371 @@
+/* Window - Cheetah theme structural override */
+
+:host {
+    border: 1px solid var(--cheetah-border-dark, #5A5A5A);
+    box-shadow:
+        inset 1px 1px 0 var(--cheetah-border-light, #FFFFFF),
+        var(--cheetah-window-shadow, 0 4px 12px rgba(0,0,0,0.35));
+    background: var(--cheetah-window-bg, #E9E9EA);
+    border-radius: 8px;
+    overflow: hidden;
+    padding: 0;
+}
+
+:host([visible=true]) {
+    display: flex !important;
+    flex-direction: column;
+    border-radius: 8px;
+}
+
+/* ===== Titlebar ===== */
+
+.WindowTitlebar {
+    background: linear-gradient(to bottom, var(--cheetah-titlebar-active-top, #BFD7FF), var(--cheetah-titlebar-active-bottom, #7FA7FF));
+    color: #000000;
+    font-family: "Lucida Grande", Geneva, Verdana, Arial, sans-serif;
+    font-weight: bold;
+    font-size: 12px;
+    height: 22px;
+    padding: 0 6px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    user-select: none;
+    border-radius: 8px 8px 0 0;
+}
+
+/* Gloss overlay */
+.WindowTitlebar::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.35), rgba(255,255,255,0));
+    pointer-events: none;
+    border-radius: 8px 8px 0 0;
+}
+
+/* Inactive titlebar */
+:host(:not([active])) .WindowTitlebar {
+    background: linear-gradient(to bottom, var(--cheetah-titlebar-inactive-top, #E2E2E2), var(--cheetah-titlebar-inactive-bottom, #C7C7C7));
+    color: #666666;
+}
+
+:host(:not(:focus-within)) .WindowTitlebar {
+    background: linear-gradient(to bottom, var(--cheetah-titlebar-inactive-top, #E2E2E2), var(--cheetah-titlebar-inactive-bottom, #C7C7C7));
+    color: #666666;
+}
+
+/* Active titlebar (higher specificity to win over :not(:focus-within)) */
+:host([active]) .WindowTitlebar {
+    background: linear-gradient(to bottom, var(--cheetah-titlebar-active-top, #BFD7FF), var(--cheetah-titlebar-active-bottom, #7FA7FF));
+    color: #000000;
+}
+
+/* ===== Title Text ===== */
+
+.WindowTitleText {
+    flex: 1;
+    text-align: center;
+    padding: 0 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 12px;
+    position: relative;
+    z-index: 1;
+}
+
+/* ===== Traffic Light Control Buttons ===== */
+
+.WindowControlButtons {
+    order: -1;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding-inline-start: 6px;
+    padding-inline-end: 0;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+}
+
+.WindowControlButtons button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 1px solid rgba(0,0,0,0.25);
+    padding: 0;
+    margin: 0;
+    min-width: 0;
+    cursor: pointer;
+    position: relative;
+    box-shadow: none;
+}
+
+.WindowControlButtons button::after {
+    content: "";
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 6px;
+    height: 6px;
+    mask-repeat: no-repeat;
+    -webkit-mask-repeat: no-repeat;
+    mask-size: contain;
+    -webkit-mask-size: contain;
+}
+
+/* Close button (red) */
+.WindowCloseBtn {
+    background: radial-gradient(circle at 35% 35%, #FF7F7F, #FF5F5F 40%, #E04040);
+}
+
+.WindowCloseBtn::after {
+    background-color: rgba(80, 0, 0, 0.7);
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 6 6'%3E%3Cpath d='M0,0L2,0L3,1L4,0L6,0L4,2L6,4L6,6L4,6L3,5L2,6L0,6L2,4L0,2Z' fill='black'/%3E%3C/svg%3E");
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 6 6'%3E%3Cpath d='M0,0L2,0L3,1L4,0L6,0L4,2L6,4L6,6L4,6L3,5L2,6L0,6L2,4L0,2Z' fill='black'/%3E%3C/svg%3E");
+}
+
+.WindowCloseBtn:hover::after {
+    display: block;
+}
+
+/* Minimize button (yellow) */
+.WindowMinimizeBtn {
+    background: radial-gradient(circle at 35% 35%, #FFD97F, #FFCC33 40%, #E0A800);
+}
+
+.WindowMinimizeBtn::after {
+    background-color: rgba(80, 50, 0, 0.7);
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 6 6'%3E%3Crect x='0' y='2.5' width='6' height='1.5' fill='black'/%3E%3C/svg%3E");
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 6 6'%3E%3Crect x='0' y='2.5' width='6' height='1.5' fill='black'/%3E%3C/svg%3E");
+}
+
+.WindowMinimizeBtn:hover::after {
+    display: block;
+}
+
+/* Maximize/Zoom button (green) */
+.WindowMaximizeBtn {
+    background: radial-gradient(circle at 35% 35%, #7FE07F, #4CD34C 40%, #2EA82E);
+}
+
+.WindowMaximizeBtn::after {
+    background-color: rgba(0, 50, 0, 0.7);
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 6 6'%3E%3Cpath d='M2.25,0L3.75,0L3.75,2.25L6,2.25L6,3.75L3.75,3.75L3.75,6L2.25,6L2.25,3.75L0,3.75L0,2.25L2.25,2.25Z' fill='black'/%3E%3C/svg%3E");
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 6 6'%3E%3Cpath d='M2.25,0L3.75,0L3.75,2.25L6,2.25L6,3.75L3.75,3.75L3.75,6L2.25,6L2.25,3.75L0,3.75L0,2.25L2.25,2.25Z' fill='black'/%3E%3C/svg%3E");
+}
+
+.WindowMaximizeBtn:hover::after {
+    display: block;
+}
+
+/* Inactive window buttons become uniform gray */
+:host(:not([active])) .WindowControlButtons button {
+    background: #C0C0C0;
+    border-color: rgba(0,0,0,0.15);
+}
+
+:host(:not([active])) .WindowControlButtons button:hover::after {
+    display: none;
+}
+
+:host(:not(:focus-within)) .WindowControlButtons button {
+    background: #C0C0C0;
+    border-color: rgba(0,0,0,0.15);
+}
+
+:host(:not(:focus-within)) .WindowControlButtons button:hover::after {
+    display: none;
+}
+
+/* Active window re-asserts colored buttons */
+:host([active]) .WindowCloseBtn {
+    background: radial-gradient(circle at 35% 35%, #FF7F7F, #FF5F5F 40%, #E04040);
+}
+
+:host([active]) .WindowMinimizeBtn {
+    background: radial-gradient(circle at 35% 35%, #FFD97F, #FFCC33 40%, #E0A800);
+}
+
+:host([active]) .WindowMaximizeBtn {
+    background: radial-gradient(circle at 35% 35%, #7FE07F, #4CD34C 40%, #2EA82E);
+}
+
+:host([active]) .WindowControlButtons button:hover::after {
+    display: block;
+}
+
+/* ===== Content Area ===== */
+
+.WindowContent {
+    margin: 0;
+    padding: 8px 12px;
+}
+
+/* ===== Button Bar ===== */
+
+.WindowButtonbar {
+    display: flex;
+    padding: 12px 12px 14px 12px;
+    margin: 0;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.WindowButtonbar button {
+    background: linear-gradient(to bottom, var(--cheetah-button-gradient-top, #F6FBFF), var(--cheetah-button-gradient-mid, #CFE2FF), var(--cheetah-button-gradient-bottom, #8FB5FF));
+    border: 1px solid var(--cheetah-border-mid, #9A9A9A);
+    border-radius: 6px;
+    padding: 2px 16px;
+    min-height: 20px;
+    margin: 0;
+    width: auto;
+    cursor: pointer;
+    font-family: "Lucida Grande", Geneva, Verdana, Arial, sans-serif;
+    font-size: 12px;
+}
+
+.WindowButtonbar button:active {
+    background: linear-gradient(to bottom, #8FB5FF, #CFE2FF, #F6FBFF);
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+    border-color: var(--cheetah-pressed-border, #5A5A5A);
+}
+
+/* ===== Resize Handles ===== */
+
+.WindowResizeHandles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+}
+
+.WindowResizeHandle {
+    position: absolute;
+    pointer-events: auto;
+}
+
+.WindowResizeHandle-nw { top: -3px; left: -3px; width: 8px; height: 8px; }
+.WindowResizeHandle-ne { top: -3px; right: -3px; width: 8px; height: 8px; }
+.WindowResizeHandle-sw { bottom: -3px; left: -3px; width: 8px; height: 8px; }
+.WindowResizeHandle-se { bottom: -3px; right: -3px; width: 8px; height: 8px; }
+.WindowResizeHandle-n { top: -3px; left: 5px; right: 5px; height: 6px; }
+.WindowResizeHandle-s { bottom: -3px; left: 5px; right: 5px; height: 6px; }
+.WindowResizeHandle-w { left: -3px; top: 5px; bottom: 5px; width: 6px; }
+.WindowResizeHandle-e { right: -3px; top: 5px; bottom: 5px; width: 6px; }
+
+/* ===== Disabled State ===== */
+
+:host([disabled]) {
+    filter: saturate(0.5);
+    pointer-events: none;
+}
+
+:host([disabled]) .WindowTitleText {
+    color: var(--cheetah-text-disabled, #7F7F7F);
+}
+
+:host([disabled]) .WindowContent {
+    color: var(--cheetah-text-disabled, #7F7F7F);
+}
+
+:host([disabled]) .WindowButtonbar button {
+    color: var(--cheetah-text-disabled, #7F7F7F);
+}
+
+/* ===== Focus State ===== */
+
+:host(:focus-visible) {
+    box-shadow:
+        var(--cheetah-focus-glow, 0 0 0 2px rgba(66,133,244,0.4)),
+        var(--cheetah-window-shadow, 0 4px 12px rgba(0,0,0,0.35));
+}
+
+/* ===== Modal Overlay ===== */
+
+.uiWindowModal {
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+:host([modal]) {
+    z-index: 1600;
+}
+
+/* ===== Dialog Styles ===== */
+
+.DialogAlert-container,
+.DialogInfo-container,
+.DialogConfirm-container,
+.DialogPrompt-container {
+    display: flex;
+    align-items: flex-start;
+    padding: 12px;
+    gap: 10px;
+}
+
+.DialogAlert-icon,
+.DialogInfo-icon,
+.DialogConfirm-icon,
+.DialogPrompt-icon {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+}
+
+.DialogAlert-message,
+.DialogInfo-message,
+.DialogConfirm-message {
+    flex: 1;
+    line-height: 1.3;
+    word-wrap: break-word;
+}
+
+.DialogPrompt-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.DialogPrompt-message {
+    line-height: 1.3;
+    word-wrap: break-word;
+}
+
+.DialogPrompt-input {
+    width: 100%;
+    padding: 2px 4px;
+    background-color: #FFFFFF;
+    color: var(--cheetah-text, #000000);
+    border: 1px solid var(--cheetah-border-mid, #8A8A8A);
+    border-radius: 6px;
+}
+
+/* Alert Dialog specific */
+:host([dialogtype="alert"]) .WindowButtonbar {
+    justify-content: center;
+}
+
+:host([dialogtype="alert"]) .WindowCancelButton {
+    display: none;
+}
+
+/* Info Dialog specific */
+:host([dialogtype="info"]) .WindowButtonbar {
+    justify-content: center;
+}
+
+:host([dialogtype="info"]) .WindowCancelButton {
+    display: none;
+}
