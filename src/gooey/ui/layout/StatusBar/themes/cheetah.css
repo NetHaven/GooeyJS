@@ -1,0 +1,31 @@
+/* StatusBar - Cheetah Aqua structural override */
+
+:host {
+    background-color: var(--cheetah-face, #EFEFEF);
+    color: var(--cheetah-text, #000000);
+    font-family: var(--gooey-font-family);
+    font-size: 12px;
+    height: 22px;
+    min-height: 22px;
+    border-radius: 0;
+}
+
+:host([position="bottom"]) {
+    border-top: 1px solid var(--cheetah-border-mid, #9A9A9A);
+    box-shadow: inset 0 1px 0 var(--cheetah-border-light, #FFFFFF);
+}
+
+:host([position="top"]) {
+    border-bottom: 1px solid var(--cheetah-border-mid, #9A9A9A);
+    box-shadow: inset 0 -1px 0 var(--cheetah-border-light, #FFFFFF);
+}
+
+::slotted(*:not(:first-child)) {
+    border-left: 1px solid #D0D0D0;
+    padding-left: 6px;
+}
+
+:host([disabled]) {
+    color: var(--cheetah-text-disabled, #7F7F7F);
+    filter: saturate(0.5);
+}

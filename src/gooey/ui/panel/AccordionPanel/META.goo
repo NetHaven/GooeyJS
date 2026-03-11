@@ -9,7 +9,7 @@
   ],
   "themes": {
     "default": "base",
-    "available": ["base", "chicago", "classic", "janus"]
+    "available": ["base", "chicago", "classic", "janus", "cheetah"]
   },
   "tokens": {
     "gooey-accordion-bg": {

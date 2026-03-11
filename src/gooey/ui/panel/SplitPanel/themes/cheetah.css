@@ -1,0 +1,68 @@
+/* SplitPanel - Cheetah Aqua structural override */
+
+:host {
+    background: var(--cheetah-face, #EFEFEF);
+}
+
+.splitpanel-pane {
+    background: var(--cheetah-face, #EFEFEF);
+    border: none;
+}
+
+.splitpanel-divider {
+    background: var(--cheetah-face, #EFEFEF);
+    border: 1px solid var(--cheetah-border-mid, #9A9A9A);
+    position: relative;
+}
+
+.splitpanel-divider:hover {
+    background: #E0E0E0;
+}
+
+.splitpanel-divider:active,
+:host(.splitpanel-dragging) .splitpanel-divider {
+    background: #D0D0D0;
+    border-color: var(--cheetah-border-dark, #5A5A5A);
+}
+
+/* Horizontal: grip indicator (dots vertical) */
+:host([orientation="horizontal"]) .splitpanel-divider {
+    width: 5px;
+    min-width: 5px;
+    cursor: col-resize;
+}
+
+:host([orientation="horizontal"]) .splitpanel-divider::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: block;
+    width: 3px;
+    height: 16px;
+    background-image: radial-gradient(circle, #9A9A9A 1px, transparent 1px);
+    background-size: 3px 4px;
+    background-repeat: repeat-y;
+}
+
+/* Vertical: grip indicator (dots horizontal) */
+:host([orientation="vertical"]) .splitpanel-divider {
+    height: 5px;
+    min-height: 5px;
+    cursor: row-resize;
+}
+
+:host([orientation="vertical"]) .splitpanel-divider::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: block;
+    width: 16px;
+    height: 3px;
+    background-image: radial-gradient(circle, #9A9A9A 1px, transparent 1px);
+    background-size: 4px 3px;
+    background-repeat: repeat-x;
+}

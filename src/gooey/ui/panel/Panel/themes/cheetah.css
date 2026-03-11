@@ -1,0 +1,11 @@
+/* Panel - Cheetah Aqua structural override */
+
+:host {
+    background: var(--cheetah-face, #EFEFEF);
+    border: none;
+    border-radius: 6px;
+}
+
+:host([border]) {
+    border: 1px solid var(--cheetah-border-mid, #9A9A9A);
+}
