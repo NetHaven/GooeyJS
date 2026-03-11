@@ -9,7 +9,7 @@
   ],
   "themes": {
     "default": "base",
-    "available": ["base", "classic", "janus", "chicago"]
+    "available": ["base", "classic", "janus", "chicago", "cheetah"]
   },
   "attributes": {
     "draggable": { "type": "BOOLEAN", "default": false },
