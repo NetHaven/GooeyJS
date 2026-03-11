@@ -1,0 +1,37 @@
+/* GroupBox - Cheetah Aqua theme */
+
+:host {
+    --gooey-groupbox-bg: transparent;
+    --gooey-groupbox-border-color: #B0B0B0;
+    --gooey-groupbox-text-bg: var(--cheetah-face, #EFEFEF);
+    --gooey-groupbox-text-font-size: 12px;
+}
+
+.ui-GroupBox-content {
+    border: 1px solid #B0B0B0;
+    border-radius: 6px;
+    padding: 10px 8px 8px 8px;
+    margin: 0;
+    background: transparent;
+    box-shadow: none;
+}
+
+.ui-GroupBox-text {
+    padding: 0 4px;
+    background: var(--cheetah-face, #EFEFEF);
+    color: var(--cheetah-text, #000000);
+    font-size: 12px;
+    font-family: var(--gooey-font-family);
+    display: inline-block;
+    text-align: left;
+}
+
+/* Show text when title attribute is set */
+:host([title]) .ui-GroupBox-text {
+    display: inline-block;
+}
+
+/* Disabled state */
+:host([disabled]) .ui-GroupBox-text {
+    color: var(--cheetah-text-disabled, #7F7F7F);
+}

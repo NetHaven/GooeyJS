@@ -1,0 +1,62 @@
+/* ProgressBar - Cheetah Aqua theme */
+
+:host {
+    --gooey-progressbar-track-bg: #E0E0E0;
+    --gooey-progressbar-track-border-color: var(--cheetah-border-mid, #9A9A9A);
+    --gooey-progressbar-fill-bg: #4B8BFF;
+    --gooey-progressbar-text-color: var(--cheetah-text, #000000);
+    --gooey-progressbar-border-radius: 6px;
+}
+
+.progress-bar {
+    background: #E0E0E0;
+    border: 1px solid var(--cheetah-border-mid, #9A9A9A);
+    border-radius: 6px;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.15);
+    overflow: hidden;
+}
+
+.progress-fill {
+    background:
+        repeating-linear-gradient(
+            45deg,
+            transparent,
+            transparent 4px,
+            rgba(255,255,255,0.1) 4px,
+            rgba(255,255,255,0.1) 8px
+        ),
+        linear-gradient(to bottom, #6AA3FF, #2E5BEA);
+    border-radius: 5px;
+    position: relative;
+    transition: width 0.1s linear;
+}
+
+.progress-bar.indeterminate .progress-fill {
+    width: 32px !important;
+    background:
+        repeating-linear-gradient(
+            45deg,
+            transparent,
+            transparent 4px,
+            rgba(255,255,255,0.1) 4px,
+            rgba(255,255,255,0.1) 8px
+        ),
+        linear-gradient(to bottom, #6AA3FF, #2E5BEA);
+    animation: cheetah-progress-indeterminate 2s infinite linear;
+}
+
+@keyframes cheetah-progress-indeterminate {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(calc(100% + 32px)); }
+}
+
+.progress-text {
+    color: var(--cheetah-text, #000000);
+    font-size: 12px;
+    font-family: var(--gooey-font-family);
+}
+
+/* Disabled state */
+:host([disabled]) {
+    opacity: var(--gooey-opacity-disabled, 0.7);
+}
