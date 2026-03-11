@@ -5,22 +5,22 @@ input[type="radio"] {
     -webkit-appearance: none;
     width: 12px;
     height: 12px;
-    background-color: var(--chicago-face, #C0C0C0);
+    background-color: #FFFFFF;
     cursor: pointer;
     margin: 0;
     margin-right: 4px;
     position: relative;
     border-radius: 50%;
-    /* Ring border with sunken bevel effect */
-    border: 1px solid var(--chicago-border-dark, #000000);
+    /* Ring border with sunken bevel: shadow top-left, light bottom-right */
+    border: 1px solid;
+    border-color: var(--chicago-border-shadow, #808080) var(--chicago-border-light, #FFFFFF) var(--chicago-border-light, #FFFFFF) var(--chicago-border-shadow, #808080);
     box-shadow:
-        inset 1px 1px 0 var(--chicago-border-shadow, #808080),
-        inset -1px -1px 0 var(--chicago-border-highlight, #DFDFDF),
-        1px 1px 0 var(--chicago-border-light, #FFFFFF);
+        inset 1px 1px 0 var(--chicago-border-dark, #000000),
+        inset -1px -1px 0 var(--chicago-border-highlight, #DFDFDF);
 }
 
 input[type="radio"]:checked {
-    background-color: var(--chicago-face, #C0C0C0);
+    background-color: #FFFFFF;
 }
 
 /* Selected dot: 4x4 centered black dot */
@@ -33,6 +33,10 @@ input[type="radio"]:checked::after {
     height: 4px;
     background-color: var(--chicago-text, #000000);
     border-radius: 50%;
+}
+
+input[type="radio"]:active {
+    background-color: var(--chicago-face, #C0C0C0);
 }
 
 input[type="radio"]:focus {

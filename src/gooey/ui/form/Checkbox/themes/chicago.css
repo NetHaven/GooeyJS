@@ -11,11 +11,12 @@ input[type="checkbox"] {
     margin-right: 4px;
     position: relative;
     border-radius: 0;
-    /* Sunken bevel: dark outer, shadow inner top-left, highlight inner bottom-right */
-    border: 1px solid var(--chicago-border-dark, #000000);
+    /* Sunken bevel: shadow top-left, light bottom-right */
+    border: 1px solid;
+    border-color: var(--chicago-border-shadow, #808080) var(--chicago-border-light, #FFFFFF) var(--chicago-border-light, #FFFFFF) var(--chicago-border-shadow, #808080);
     box-shadow:
-        inset 1px 1px 0 var(--chicago-border-shadow, #808080),
-        inset -1px -1px 0 var(--chicago-border-light, #FFFFFF);
+        inset 1px 1px 0 var(--chicago-border-dark, #000000),
+        inset -1px -1px 0 var(--chicago-border-highlight, #DFDFDF);
 }
 
 input[type="checkbox"]:checked {
@@ -39,6 +40,10 @@ input[type="checkbox"]:checked::after {
 input[type="checkbox"]:indeterminate {
     background-image: var(--chicago-dither-50);
     background-size: 2px 2px;
+}
+
+input[type="checkbox"]:active {
+    background-color: var(--chicago-face, #C0C0C0);
 }
 
 input[type="checkbox"]:focus {
