@@ -1,6 +1,5 @@
 import GooeyElement from '../../../../GooeyElement.js';
 import Template from '../../../../util/Template.js';
-import TransitionTimingFunction from '../../TransitionTimingFunction.js';
 import TransitionBehavior from '../../TransitionBehavior.js';
 
 export default class TransitionProperty extends GooeyElement {
