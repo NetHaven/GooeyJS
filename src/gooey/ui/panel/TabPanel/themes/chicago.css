@@ -8,9 +8,13 @@
 .tab-header {
     background: var(--chicago-face, #C0C0C0);
     border: 1px solid var(--chicago-border-shadow, #808080);
-    border-bottom: 1px solid var(--chicago-border-shadow, #808080);
-    border-radius: 0;
-    padding: 2px 8px;
+    border-bottom: 0;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    box-shadow:
+        inset 1px 1px 0 var(--chicago-border-highlight, #DFDFDF),
+        inset -1px 0 0 var(--chicago-border-shadow, #808080);
+    padding: 2px 10px;
     height: 16px;
     line-height: 16px;
     font-size: 11px;
@@ -31,15 +35,16 @@
     border-left: 1px solid var(--chicago-border-light, #FFFFFF);
     border-right: 1px solid var(--chicago-border-shadow, #808080);
     border-bottom: 1px solid var(--chicago-face, #C0C0C0);
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
     background: var(--chicago-face, #C0C0C0);
     z-index: 1;
-    margin-bottom: -1px;
-    padding-bottom: 3px;
+    margin: -2px;
+    padding: 0px 12px 4px 12px;
     font-weight: normal;
     box-shadow:
         inset 1px 1px 0 var(--chicago-border-highlight, #DFDFDF),
-        -1px 0 0 var(--chicago-border-dark, #000000);
-    border-width: 1px;
+        inset -1px 0 0 var(--chicago-border-dark, #000000);
     color: var(--chicago-text, #000000);
 }
 
@@ -48,9 +53,8 @@
     border-left: 1px solid var(--chicago-border-light, #FFFFFF);
     border-bottom: 1px solid var(--chicago-border-shadow, #808080);
     border-right: 1px solid var(--chicago-face, #C0C0C0);
-    margin-bottom: 0;
-    margin-right: -1px;
-    padding-right: 3px;
+    margin: -2px;
+    padding: 4px 3px 4px 12px;
 }
 
 .tab-header:focus {
@@ -62,11 +66,11 @@
     background: var(--chicago-face, #C0C0C0);
     border-top: 1px solid var(--chicago-border-light, #FFFFFF);
     border-left: 1px solid var(--chicago-border-light, #FFFFFF);
-    border-right: 1px solid var(--chicago-border-shadow, #808080);
-    border-bottom: 1px solid var(--chicago-border-shadow, #808080);
+    border-right: 1px solid var(--chicago-border-dark, #000000);
+    border-bottom: 1px solid var(--chicago-border-dark, #000000);
     box-shadow:
-        inset -1px -1px 0 var(--chicago-border-dark, #000000),
-        inset 1px 1px 0 var(--chicago-border-highlight, #DFDFDF);
+        inset 1px 1px 0 var(--chicago-border-highlight, #DFDFDF),
+        inset -1px -1px 0 var(--chicago-border-shadow, #808080);
 }
 
 .tab-close-button {
