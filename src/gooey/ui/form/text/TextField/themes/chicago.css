@@ -2,13 +2,16 @@
 
 input[type='text'] {
     background-color: #FFFFFF;
-    color: #000000;
+    color: var(--chicago-text, #000000);
+    padding: 2px 6px;
     /* sunken bevel border */
-    border-top: 1px solid #808080;
-    border-left: 1px solid #808080;
-    border-right: 1px solid #FFFFFF;
-    border-bottom: 1px solid #FFFFFF;
-    box-shadow: inset 1px 1px 0 #000000;
+    border-top: 1px solid var(--chicago-border-shadow, #808080);
+    border-left: 1px solid var(--chicago-border-shadow, #808080);
+    border-right: 1px solid var(--chicago-border-light, #FFFFFF);
+    border-bottom: 1px solid var(--chicago-border-light, #FFFFFF);
+    box-shadow:
+        inset 1px 1px 0 var(--chicago-border-dark, #000000),
+        inset -1px -1px 0 var(--chicago-border-highlight, #DFDFDF);
 }
 
 input[type='text']:focus {
@@ -16,20 +19,21 @@ input[type='text']:focus {
 }
 
 input[type='text']::selection {
-    background-color: #000080;
-    color: #FFFFFF;
+    background-color: var(--chicago-highlight, #000080);
+    color: var(--chicago-highlight-text, #FFFFFF);
 }
 
 input[type='text']:disabled {
-    background-color: #C0C0C0;
-    color: #808080;
+    background-color: var(--chicago-face, #C0C0C0);
+    color: var(--chicago-text-disabled, #808080);
+    text-shadow: 1px 1px 0 var(--chicago-text-disabled-highlight, #FFFFFF);
     cursor: not-allowed;
 }
 
 input[type='text']::placeholder {
-    color: #808080;
+    color: var(--chicago-text-disabled, #808080);
 }
 
 input[type='text']:read-only {
-    background-color: #C0C0C0;
+    background-color: var(--chicago-face, #C0C0C0);
 }
