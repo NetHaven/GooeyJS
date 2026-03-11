@@ -9,7 +9,7 @@
   ],
   "themes": {
     "default": "base",
-    "available": ["base", "classic", "dark", "janus", "chicago"]
+    "available": ["base", "classic", "dark", "janus", "chicago", "cheetah"]
   },
   "tokens": {
     "gooey-richtexteditor-font-family": {
