@@ -2,8 +2,9 @@
 
 :host {
     display: block;
-    height: 2px;
-    margin: 2px 2px;
+    height: 0;
+    margin: 2px 0;
+    padding: 0;
     border-top: 1px solid var(--chicago-border-shadow, #808080);
     border-bottom: 1px solid var(--chicago-border-light, #FFFFFF);
     background: none;

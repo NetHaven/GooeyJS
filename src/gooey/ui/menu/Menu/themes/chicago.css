@@ -10,10 +10,9 @@
     box-shadow:
         inset -1px -1px 0 var(--chicago-border-dark, #000000),
         inset 1px 1px 0 var(--chicago-border-highlight, #DFDFDF);
-    outline: 1px solid var(--chicago-border-dark, #000000);
     cursor: default;
     display: flex;
-    padding: 2px 0;
+    padding: 2px;
     position: absolute;
     z-index: var(--gooey-menu-z-index, var(--gooey-z-dropdown));
     font-family: var(--chicago-font-family, "MS Sans Serif", "Microsoft Sans Serif", Tahoma, Arial, sans-serif);

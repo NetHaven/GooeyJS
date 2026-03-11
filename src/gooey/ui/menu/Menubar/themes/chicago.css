@@ -16,15 +16,25 @@
 
 .menuHeader {
     cursor: default;
-    padding: 4px 6px;
+    padding: 1px 8px;
+    border: 1px solid transparent;
     color: var(--chicago-text, #000000);
     font-size: 11px;
     line-height: 1.2;
     user-select: none;
 }
 
-.menuHeader[active], .menuHeader:hover {
-    background-color: var(--chicago-highlight, #000080);
-    color: var(--chicago-highlight-text, #FFFFFF);
+.menuHeader:hover {
+    background-color: var(--chicago-face, #C0C0C0);
+    color: var(--chicago-text, #000000);
+    border-color: var(--chicago-border-light, #FFFFFF) var(--chicago-border-shadow, #808080) var(--chicago-border-shadow, #808080) var(--chicago-border-light, #FFFFFF);
+    user-select: none;
+}
+
+.menuHeader[active] {
+    background-color: var(--chicago-face, #C0C0C0);
+    color: var(--chicago-text, #000000);
+    border-color: var(--chicago-border-shadow, #808080) var(--chicago-border-light, #FFFFFF) var(--chicago-border-light, #FFFFFF) var(--chicago-border-shadow, #808080);
+    padding: 2px 7px 0 9px;
     user-select: none;
 }
