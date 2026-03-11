@@ -1,0 +1,15 @@
+/* Menu - Cheetah Aqua theme */
+
+:host {
+    background: var(--cheetah-dialog-surface, #F2F2F2);
+    border: 1px solid var(--cheetah-border-mid, #9A9A9A);
+    border-radius: 6px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.25);
+    cursor: default;
+    display: flex;
+    padding: 4px 0;
+    position: absolute;
+    z-index: var(--gooey-menu-z-index, var(--gooey-z-dropdown));
+    font-family: var(--gooey-font-family);
+    font-size: 12px;
+}

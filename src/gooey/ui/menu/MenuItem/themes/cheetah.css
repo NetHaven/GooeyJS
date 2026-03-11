@@ -1,0 +1,92 @@
+/* MenuItem - Cheetah Aqua theme */
+
+:host {
+    color: var(--cheetah-text, #000000);
+    display: flex !important;
+    justify-content: space-around;
+    width: 100%;
+    padding: 4px 16px 4px 24px;
+    position: relative;
+    font-family: var(--gooey-font-family);
+    font-size: 12px;
+    line-height: 1.25;
+    border-radius: 4px;
+    margin: 0 4px;
+    box-sizing: border-box;
+}
+
+.MenuItemIcon {
+    position: absolute;
+    left: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 16px;
+    width: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+/* Submenu arrow indicator */
+:host([hasSubmenu])::after {
+    content: '';
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 7px;
+    background-color: #666666;
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='7'%3E%3Cpath d='M0 0l4 3.5L0 7z' fill='%23000'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='7'%3E%3Cpath d='M0 0l4 3.5L0 7z' fill='%23000'/%3E%3C/svg%3E");
+    -webkit-mask-size: 4px 7px;
+    mask-size: 4px 7px;
+}
+
+.MenuItemIconImage {
+    height: 16px;
+    width: 16px;
+    display: none;
+}
+
+.MenuItemText {
+    flex: 1;
+    margin-left: 0;
+    margin-right: 60px;
+    text-align: left;
+    user-select: none;
+}
+
+.MenuItemShortcut {
+    text-align: right;
+    margin-right: 4px;
+    color: #7F7F7F;
+}
+
+:host([active]) {
+    background-color: var(--cheetah-highlight, #4B7BFF) !important;
+    color: var(--cheetah-highlight-text, #FFFFFF);
+}
+
+:host([active]) .MenuItemShortcut {
+    color: var(--cheetah-highlight-text, #FFFFFF);
+}
+
+/* Active submenu arrow turns white */
+:host([active][hasSubmenu])::after {
+    background-color: var(--cheetah-highlight-text, #FFFFFF);
+}
+
+/* Keyboard-only focus indicator */
+:host(:focus-visible) {
+    box-shadow: var(--cheetah-focus-glow, 0 0 0 2px rgba(66,133,244,0.4));
+    outline: none;
+}
+
+/* Disabled state */
+:host([disabled]) {
+    color: var(--cheetah-text-disabled, #7F7F7F);
+    filter: saturate(0.5);
+    cursor: default;
+}
