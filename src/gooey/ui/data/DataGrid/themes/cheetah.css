@@ -1,0 +1,252 @@
+/* DataGrid - Cheetah Aqua structural override */
+
+:host {
+    border: 1px solid var(--cheetah-border-mid, #9A9A9A);
+    border-radius: 6px;
+    font-size: 12px;
+    overflow: hidden;
+
+    /* Token overrides */
+    --gooey-datagrid-bg: #FFFFFF;
+    --gooey-datagrid-border-color: var(--cheetah-border-mid, #9A9A9A);
+    --gooey-datagrid-header-gradient-start: #F6FBFF;
+    --gooey-datagrid-header-gradient-end: #CFE2FF;
+    --gooey-datagrid-header-hover-gradient-start: #EBF2FF;
+    --gooey-datagrid-header-hover-gradient-end: #B8D0FF;
+    --gooey-datagrid-header-sorted-gradient-start: #E0ECFF;
+    --gooey-datagrid-header-sorted-gradient-end: #A8C4FF;
+    --gooey-datagrid-row-bg: #FFFFFF;
+    --gooey-datagrid-row-alt-bg: #F8F9FC;
+    --gooey-datagrid-row-hover-bg: #EDF2FF;
+    --gooey-datagrid-row-border-color: #E8E8E8;
+    --gooey-datagrid-selection-bg: var(--cheetah-highlight, #4B7BFF);
+    --gooey-datagrid-selection-color: var(--cheetah-highlight-text, #FFFFFF);
+    --gooey-datagrid-selection-hover-bg: #5A87FF;
+    --gooey-datagrid-cell-border-color: #E8E8E8;
+    --gooey-datagrid-focus-color: var(--cheetah-highlight, #4B7BFF);
+}
+
+.datagrid-container {
+    background: #FFFFFF;
+    color: var(--cheetah-text, #000000);
+}
+
+/* Header Viewport */
+.datagrid-header-viewport {
+    background: #F2F5FA;
+    border-bottom: 1px solid var(--cheetah-border-mid, #9A9A9A);
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+/* Column Headers: Aqua gradient */
+.datagrid-column-header {
+    background: linear-gradient(to bottom, var(--gooey-datagrid-header-gradient-start), var(--gooey-datagrid-header-gradient-end));
+    border-right: 1px solid #D0D8E8;
+    border-bottom: none;
+    font-weight: normal;
+    font-size: 12px;
+    padding: 3px 8px;
+    min-height: 20px;
+    color: var(--cheetah-text, #000000);
+}
+
+.datagrid-column-header:hover {
+    background: linear-gradient(to bottom, var(--gooey-datagrid-header-hover-gradient-start), var(--gooey-datagrid-header-hover-gradient-end));
+}
+
+.datagrid-column-header:active {
+    background: linear-gradient(to bottom, #D8E4FF, #A0BAFF);
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.15);
+}
+
+.datagrid-column-header.sorted {
+    background: linear-gradient(to bottom, var(--gooey-datagrid-header-sorted-gradient-start), var(--gooey-datagrid-header-sorted-gradient-end));
+}
+
+/* Sort direction indicators */
+.datagrid-column-header.sorted::after {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 7px;
+    margin-left: 4px;
+    vertical-align: middle;
+    background-color: var(--cheetah-text, #000000);
+    -webkit-mask-size: 8px 7px;
+    mask-size: 8px 7px;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+}
+
+.datagrid-column-header.sorted.asc::after {
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='7'%3E%3Cpath d='M4 0L8 7H0z' fill='%23000'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='7'%3E%3Cpath d='M4 0L8 7H0z' fill='%23000'/%3E%3C/svg%3E");
+}
+
+.datagrid-column-header.sorted.desc::after {
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='7'%3E%3Cpath d='M0 0h8L4 7z' fill='%23000'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='7'%3E%3Cpath d='M0 0h8L4 7z' fill='%23000'/%3E%3C/svg%3E");
+}
+
+/* Row Styles */
+.datagrid-row {
+    border-bottom: 1px solid #E8E8E8;
+    background: #FFFFFF;
+    transition: none;
+}
+
+.datagrid-row:hover {
+    background: var(--gooey-datagrid-row-hover-bg);
+}
+
+.datagrid-row:nth-child(even) {
+    background: var(--gooey-datagrid-row-alt-bg);
+}
+
+.datagrid-row:nth-child(even):hover {
+    background: var(--gooey-datagrid-row-hover-bg);
+}
+
+.datagrid-row.selected {
+    background: var(--gooey-datagrid-selection-bg);
+    color: var(--gooey-datagrid-selection-color);
+}
+
+.datagrid-row.selected:hover {
+    background: var(--gooey-datagrid-selection-hover-bg);
+    color: var(--gooey-datagrid-selection-color);
+}
+
+.datagrid-row.selected:nth-child(even) {
+    background: var(--gooey-datagrid-selection-bg);
+}
+
+/* Cell Styles */
+.datagrid-cell {
+    padding: 0 6px;
+    border-right: 1px solid #E8E8E8;
+}
+
+.datagrid-cell.selected {
+    outline: 1px dotted var(--cheetah-text, #000000);
+    outline-offset: -1px;
+    background: transparent;
+}
+
+.datagrid-row.selected .datagrid-cell.selected {
+    outline-color: var(--gooey-datagrid-selection-color);
+    background: transparent;
+}
+
+/* Cell Editor */
+.datagrid-cell-editor {
+    border: 1px solid var(--cheetah-highlight, #4B7BFF);
+    border-radius: 3px;
+    background: #FFFFFF;
+    color: var(--cheetah-text, #000000);
+}
+
+/* Filter Input */
+.datagrid-filter-input {
+    border: 1px solid var(--cheetah-border-mid, #9A9A9A);
+    border-radius: 4px;
+    background: #FFFFFF;
+    font-size: 12px;
+}
+
+.datagrid-filter-input:focus {
+    outline: none;
+    border-color: var(--cheetah-highlight, #4B7BFF);
+    box-shadow: var(--cheetah-focus-glow, 0 0 0 2px rgba(66,133,244,0.4));
+}
+
+/* Focus styling */
+:host(:focus) {
+    box-shadow: var(--cheetah-focus-glow, 0 0 0 2px rgba(66,133,244,0.4));
+}
+
+/* Scrollbar styling - Aqua rounded glossy */
+.datagrid-body-viewport::-webkit-scrollbar {
+    width: var(--cheetah-scrollbar-size, 15px);
+    height: var(--cheetah-scrollbar-size, 15px);
+}
+
+.datagrid-body-viewport::-webkit-scrollbar-track {
+    background: #F0F0F0;
+    border-radius: 8px;
+}
+
+.datagrid-body-viewport::-webkit-scrollbar-thumb {
+    background: linear-gradient(to right, #C8C8C8, #A8A8A8, #C8C8C8);
+    border-radius: 8px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+}
+
+.datagrid-body-viewport::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(to right, #B8B8B8, #989898, #B8B8B8);
+    border-radius: 8px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+}
+
+/* Scroll buttons with triangle arrow glyphs */
+.datagrid-body-viewport::-webkit-scrollbar-button {
+    background: #F0F0F0;
+    display: block;
+    width: 15px;
+    height: 15px;
+}
+
+.datagrid-body-viewport::-webkit-scrollbar-button:decrement {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='4'%3E%3Cpath d='M0 4h7L3.5 0z' fill='%23808080'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 7px 4px;
+}
+
+.datagrid-body-viewport::-webkit-scrollbar-button:increment {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='4'%3E%3Cpath d='M0 0h7L3.5 4z' fill='%23808080'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 7px 4px;
+}
+
+.datagrid-body-viewport::-webkit-scrollbar-button:horizontal:decrement {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='7'%3E%3Cpath d='M4 0v7L0 3.5z' fill='%23808080'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 4px 7px;
+}
+
+.datagrid-body-viewport::-webkit-scrollbar-button:horizontal:increment {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='7'%3E%3Cpath d='M0 0v7l4-3.5z' fill='%23808080'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 4px 7px;
+}
+
+.datagrid-body-viewport::-webkit-scrollbar-button:active {
+    background-color: #E0E0E0;
+}
+
+.datagrid-body-viewport::-webkit-scrollbar-corner {
+    background: #F0F0F0;
+}
+
+/* Disabled state */
+:host([disabled]) {
+    opacity: 1;
+    pointer-events: none;
+}
+
+:host([disabled]) .datagrid-container {
+    color: var(--cheetah-text-disabled, #7F7F7F);
+}
+
+/* Column resize handle */
+.column-resize-handle:hover {
+    background-color: rgba(75, 123, 255, 0.2);
+}
