@@ -8,44 +8,53 @@ button {
     border-right: 1px solid var(--chicago-border-shadow, #808080);
     border-bottom: 1px solid var(--chicago-border-shadow, #808080);
     box-shadow:
-        inset -1px -1px 0 var(--chicago-border-dark, #000000),
+        inset -1px -1px 0 var(--chicago-border-shadow, #808080),
         inset 1px 1px 0 var(--chicago-border-highlight, #DFDFDF);
     background-color: var(--chicago-face, #C0C0C0);
     color: var(--chicago-text, #000000);
-    padding: 4px 12px;
+    padding: 3px 10px 6px 10px;
+    min-width: 75px;
+    line-height: 1;
+    cursor: default;
+    user-select: none;
     border-radius: 0;
 }
 
 button:active {
-    /* Sunken bevel: inverted borders */
+    /* Sunken bevel: flat inset shadow */
     border-top: 1px solid var(--chicago-border-shadow, #808080);
     border-left: 1px solid var(--chicago-border-shadow, #808080);
     border-right: 1px solid var(--chicago-border-light, #FFFFFF);
     border-bottom: 1px solid var(--chicago-border-light, #FFFFFF);
     box-shadow:
-        inset 1px 1px 0 var(--chicago-border-dark, #000000),
-        inset -1px -1px 0 var(--chicago-border-highlight, #DFDFDF);
-    padding: 5px 11px 3px 13px;
+        inset 1px 1px 0 var(--chicago-border-shadow, #808080),
+        inset -1px -1px 0 var(--chicago-border-shadow, #808080);
+    padding: 4px 9px 5px 11px;
 }
 
 button:focus {
     outline: 1px dotted var(--chicago-text, #000000);
-    outline-offset: -3px;
+    outline-offset: -4px;
+    box-shadow:
+        inset -1px -1px 0 var(--chicago-border-dark, #000000),
+        inset 1px 1px 0 var(--chicago-border-light, #FFFFFF),
+        inset -2px -2px 0 var(--chicago-border-shadow, #808080),
+        inset 2px 2px 0 var(--chicago-border-highlight, #DFDFDF);
 }
 
-/* Default button emphasis: 1px black inner outline */
+/* Default button emphasis: 4-layer 95 skin box-shadow */
 :host([default]) button {
     box-shadow:
         inset -1px -1px 0 var(--chicago-border-dark, #000000),
-        inset 1px 1px 0 var(--chicago-border-highlight, #DFDFDF),
-        inset -2px -2px 0 var(--chicago-border-dark, #000000),
-        inset 2px 2px 0 var(--chicago-border-dark, #000000);
+        inset 1px 1px 0 var(--chicago-border-light, #FFFFFF),
+        inset -2px -2px 0 var(--chicago-border-shadow, #808080),
+        inset 2px 2px 0 var(--chicago-border-highlight, #DFDFDF);
 }
 
 :host([default]) button:active {
     box-shadow:
-        inset 1px 1px 0 var(--chicago-border-dark, #000000),
-        inset -1px -1px 0 var(--chicago-border-highlight, #DFDFDF);
+        inset 1px 1px 0 var(--chicago-border-shadow, #808080),
+        inset -1px -1px 0 var(--chicago-border-shadow, #808080);
 }
 
 /* Disabled state: embossed text */
@@ -63,9 +72,9 @@ button:focus {
     border-right: 1px solid var(--chicago-border-shadow, #808080);
     border-bottom: 1px solid var(--chicago-border-shadow, #808080);
     box-shadow:
-        inset -1px -1px 0 var(--chicago-border-dark, #000000),
+        inset -1px -1px 0 var(--chicago-border-shadow, #808080),
         inset 1px 1px 0 var(--chicago-border-highlight, #DFDFDF);
-    padding: 4px 12px;
+    padding: 3px 10px 6px 10px;
 }
 
 /* Icon and text styling */
