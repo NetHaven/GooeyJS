@@ -1,0 +1,157 @@
+/* Toast - Cheetah Aqua theme */
+/* Rounded corners, soft shadows, type-specific accent colors */
+
+:host {
+    font-family: 'Lucida Grande', Geneva, Verdana, Arial, sans-serif;
+}
+
+/* ======== Container ======== */
+
+.toast-container {
+    background: var(--cheetah-face, #EFEFEF);
+    border: 1px solid var(--gooey-color-border, #8A8A8A);
+    border-left: 4px solid var(--gooey-color-info, #3B82F6);
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.6);
+}
+
+/* ======== Typography ======== */
+
+.toast-message {
+    color: var(--cheetah-text, #000000);
+}
+
+/* ======== Close Button ======== */
+
+.toast-close-btn {
+    background: transparent;
+    border-radius: 4px;
+}
+
+.toast-close-btn:hover {
+    background: rgba(0,0,0,0.08);
+}
+
+.toast-close-btn:focus-visible {
+    outline: none;
+    box-shadow: var(--cheetah-focus-glow, 0 0 0 2px rgba(66,133,244,0.4));
+}
+
+/* ======== Action Button (Aqua style) ======== */
+
+.toast-action-btn {
+    background: linear-gradient(to bottom, #F6FBFF, #8FB5FF);
+    border: 1px solid #8A8A8A;
+    border-radius: 6px;
+    color: var(--cheetah-text, #000000);
+    padding: 4px 10px;
+    font-weight: 600;
+}
+
+.toast-action-btn:hover {
+    background: linear-gradient(to bottom, #FFFFFF, #A8C8FF);
+    text-decoration: none;
+}
+
+.toast-action-btn:active {
+    background: linear-gradient(to bottom, #8FB5FF, #6A9FFF);
+}
+
+.toast-action-btn:focus-visible {
+    outline: none;
+    box-shadow: var(--cheetah-focus-glow, 0 0 0 2px rgba(66,133,244,0.4));
+}
+
+/* ======== Progress Bar ======== */
+
+.toast-progress {
+    border-radius: 0 0 6px 2px;
+}
+
+.toast-progress-bar {
+    border-radius: 0 0 2px 2px;
+}
+
+:host(:not([type])) .toast-progress,
+:host([type="info"]) .toast-progress {
+    background: #E0E0E0;
+}
+
+/* ======== Type-Specific Accent Colors ======== */
+
+/* INFO (default) */
+:host(:not([type])) .toast-container,
+:host([type="info"]) .toast-container {
+    border-left-color: var(--gooey-color-info, #3B82F6);
+}
+
+:host(:not([type])) .toast-icon,
+:host([type="info"]) .toast-icon {
+    color: var(--gooey-color-info, #3B82F6);
+}
+
+:host(:not([type])) .toast-progress-bar,
+:host([type="info"]) .toast-progress-bar {
+    background-color: var(--gooey-color-info, #3B82F6);
+}
+
+/* SUCCESS */
+:host([type="success"]) .toast-container {
+    border-left-color: var(--gooey-color-success, #22C55E);
+}
+
+:host([type="success"]) .toast-icon {
+    color: var(--gooey-color-success, #22C55E);
+}
+
+:host([type="success"]) .toast-progress-bar {
+    background-color: var(--gooey-color-success, #22C55E);
+}
+
+:host([type="success"]) .toast-progress {
+    background: #E0E0E0;
+}
+
+/* WARNING */
+:host([type="warning"]) .toast-container {
+    border-left-color: var(--gooey-color-warning, #F59E0B);
+}
+
+:host([type="warning"]) .toast-icon {
+    color: var(--gooey-color-warning, #F59E0B);
+}
+
+:host([type="warning"]) .toast-progress-bar {
+    background-color: var(--gooey-color-warning, #F59E0B);
+}
+
+:host([type="warning"]) .toast-progress {
+    background: #E0E0E0;
+}
+
+/* ERROR */
+:host([type="error"]) .toast-container {
+    border-left-color: var(--gooey-color-error, #EF4444);
+}
+
+:host([type="error"]) .toast-icon {
+    color: var(--gooey-color-error, #EF4444);
+}
+
+:host([type="error"]) .toast-progress-bar {
+    background-color: var(--gooey-color-error, #EF4444);
+}
+
+:host([type="error"]) .toast-progress {
+    background: #E0E0E0;
+}
+
+/* ======== Disabled State ======== */
+
+:host([disabled]) {
+    opacity: var(--gooey-opacity-disabled, 0.7);
+}
+
+:host([disabled]) .toast-message {
+    color: var(--cheetah-text-disabled, #7F7F7F);
+}
