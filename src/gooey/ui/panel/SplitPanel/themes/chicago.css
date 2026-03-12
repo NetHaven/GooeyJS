@@ -25,7 +25,7 @@
 }
 
 .splitpanel-divider:active,
-:host(.splitpanel-dragging) .splitpanel-divider {
+:host([dragging]) .splitpanel-divider {
     /* Sunken bevel: inverted */
     border-top: 1px solid var(--chicago-border-shadow, #808080);
     border-left: 1px solid var(--chicago-border-shadow, #808080);

@@ -29,7 +29,7 @@
 }
 
 .splitpanel-divider:active,
-:host(.splitpanel-dragging) .splitpanel-divider {
+:host([dragging]) .splitpanel-divider {
     background-color: var(--gooey-splitpanel-divider-bg-active, #b4b0a8);
     border: 1px inset var(--gooey-splitpanel-divider-border-color, var(--gooey-color-surface));
 }
@@ -57,14 +57,14 @@
 }
 
 /* Dragging state */
-:host(.splitpanel-dragging) {
+:host([dragging]) {
     user-select: none;
 }
 
-:host(.splitpanel-dragging) * {
+:host([dragging]) * {
     pointer-events: none;
 }
 
-:host(.splitpanel-dragging) .splitpanel-divider {
+:host([dragging]) .splitpanel-divider {
     pointer-events: auto;
 }

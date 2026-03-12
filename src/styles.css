@@ -21,19 +21,19 @@ html, body, gooeyui-apppanel {
 }
 
 /* Global Component Visibility and State */
-.ui-Component[visible='false'] {
+[visible='false'] {
     display: none;
 }
 
 /* Note: visible='true' intentionally has no rule - components define their own
    display mode in :host styles. Forcing display:block would break inline components. */
 
-.ui-Component[disabled] {
+[disabled] {
     opacity: 0.5;
 }
 
 /* Global Layout Classes */
-.ui-Container[layout="BORDER"] {
+[layout="BORDER"] {
     display: grid !important;
     grid-template-columns: fit-content(20%) 1fr fit-content(20%);
     grid-template-rows: fit-content(20%) 1fr fit-content(20%);
@@ -43,31 +43,31 @@ html, body, gooeyui-apppanel {
         "south south south";
 }
 
-.ui-Container[layout="BORDER"] .ui-Container[region="north"] {
+[layout="BORDER"] [region="north"] {
     grid-area: north;
 }
 
-.ui-Container[layout="BORDER"] .ui-Container[region="west"] {
+[layout="BORDER"] [region="west"] {
     grid-area: west;
 }
 
-.ui-Container[layout="BORDER"] .ui-Container[region="center"] {
+[layout="BORDER"] [region="center"] {
     grid-area: center;
 }
 
-.ui-Container[layout="BORDER"] .ui-Container[region="east"] {
+[layout="BORDER"] [region="east"] {
     grid-area: east;
 }
 
-.ui-Container[layout="BORDER"] .ui-Container[region="south"] {
+[layout="BORDER"] [region="south"] {
     grid-area: south;
 }
 
-.ui-Container[layout="GRID"] {
+[layout="GRID"] {
     display: grid;
 }
 
-.ui-Container[layout="BOX"] {
+[layout="BOX"] {
     display: flex;
 }
 

@@ -15,10 +15,6 @@ export default class Container extends UIComponent {
         if (!this._containerInit) {
             this._containerInit = true;
 
-            if (!this.classList.contains("ui-Container")) {
-                this.classList.add("ui-Container");
-            }
-
             if (this.hasAttribute("font")) {
                 this.font = this.getAttribute("font");
             }

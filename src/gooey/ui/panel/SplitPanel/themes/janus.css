@@ -19,7 +19,7 @@
 }
 
 .splitpanel-divider:active,
-:host(.splitpanel-dragging) .splitpanel-divider {
+:host([dragging]) .splitpanel-divider {
     background-color: #a0a0a0;
     /* Pressed/dragging state - sunken bevel */
     border: 1px solid #000000;

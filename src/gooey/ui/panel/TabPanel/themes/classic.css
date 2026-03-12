@@ -11,7 +11,7 @@
     border-bottom: 1px solid #000000;
 }
 
-:host(.vertical) .tab-strip {
+:host([orientation="vertical"]) .tab-strip {
     border-bottom: none;
     border-right: 1px solid #000000;
 }
@@ -43,7 +43,7 @@
     cursor: pointer;
 }
 
-:host(.vertical) .tab-header {
+:host([orientation="vertical"]) .tab-header {
     border-right: none;
     border-bottom: 1px solid #000000;
     border-radius: 0;
@@ -69,7 +69,7 @@
     box-shadow: none;
 }
 
-:host(.vertical) .tab-header.active {
+:host([orientation="vertical"]) .tab-header.active {
     background-color: #eee;
     border-right: 1px solid #eee;
     border-color: #000000;

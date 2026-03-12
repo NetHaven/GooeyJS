@@ -117,8 +117,6 @@ export default class SplitPanel extends Container {
         super.connectedCallback?.();
         if (!this._splitPanelInit) {
             this._splitPanelInit = true;
-            this.classList.add("ui-SplitPanel");
-
             // Initialize from attributes
             if (this.hasAttribute("dividerSize")) {
                 this._dividerSize = parseInt(this.getAttribute("dividerSize"));
@@ -168,8 +166,8 @@ export default class SplitPanel extends Container {
         document.addEventListener(MouseEvent.MOUSE_MOVE, this._boundMouseMoveHandler);
         document.addEventListener(MouseEvent.MOUSE_UP, this._boundMouseUpHandler);
 
-        // Add dragging class for styling
-        this.classList.add('splitpanel-dragging');
+        // Add dragging attribute for styling
+        this.setAttribute("dragging", "");
         document.body.style.cursor = this._orientation === 'horizontal' ? 'col-resize' : 'row-resize';
         document.body.style.userSelect = 'none';
     }
@@ -222,8 +220,8 @@ export default class SplitPanel extends Container {
         document.removeEventListener(MouseEvent.MOUSE_MOVE, this._boundMouseMoveHandler);
         document.removeEventListener(MouseEvent.MOUSE_UP, this._boundMouseUpHandler);
 
-        // Remove dragging styles
-        this.classList.remove('splitpanel-dragging');
+        // Remove dragging attribute
+        this.removeAttribute("dragging");
         document.body.style.cursor = '';
         document.body.style.userSelect = '';
 

@@ -40,7 +40,7 @@
     color: var(--cheetah-text, #000000);
 }
 
-:host(.vertical) .tab-header.active {
+:host([orientation="vertical"]) .tab-header.active {
     border-top: 1px solid var(--cheetah-border-mid, #9A9A9A);
     border-left: 1px solid var(--cheetah-highlight, #4B7BFF);
     border-bottom: 1px solid var(--cheetah-border-mid, #9A9A9A);

@@ -28,7 +28,6 @@ export default class AccordionPanel extends Container {
 
         if (!this._accordionPanelInit) {
             this._accordionPanelInit = true;
-            this.classList.add("ui-AccordionPanel");
             if (!this.hasAttribute("layout")) {
                 this.layout = LayoutType.VBOX;
             }

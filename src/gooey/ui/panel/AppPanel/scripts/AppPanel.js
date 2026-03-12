@@ -41,14 +41,8 @@ export default class AppPanel extends Container {
             // Store normalized value (uppercase)
             const normalizedValue = value.toUpperCase();
             this.setAttribute("formfactor", normalizedValue);
-            // Add CSS class for styling hooks
-            this.classList.add(`formfactor-${normalizedValue.toLowerCase()}`);
         } else {
             this.removeAttribute("formfactor");
-            // Remove all formfactor classes
-            validFormFactors.forEach(ff => {
-                this.classList.remove(`formfactor-${ff.toLowerCase()}`);
-            });
         }
     }
 }

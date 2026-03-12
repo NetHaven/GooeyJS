@@ -16,7 +16,6 @@ export default class GroupBox extends Panel {
 
         if (!this._groupBoxInit) {
             this._groupBoxInit = true;
-            this.classList.add("ui-GroupBox");
             if (this.hasAttribute("text")) {
                 this.text = this.getAttribute("text");
             }

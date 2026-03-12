@@ -105,8 +105,7 @@ export default class TabPanel extends Container {
     _updateOrientation() {
         if (this._tabStrip) {
             this._tabStrip.setAttribute('aria-orientation', this.orientation);
-            this.classList.toggle('vertical', this.orientation === 'vertical');
-            this.classList.toggle('horizontal', this.orientation === 'horizontal');
+            this.setAttribute('orientation', this.orientation);
         }
     }
 

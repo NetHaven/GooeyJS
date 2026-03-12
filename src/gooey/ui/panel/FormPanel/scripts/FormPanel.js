@@ -20,7 +20,6 @@ export default class FormPanel extends Panel {
 
         if (!this._formPanelInit) {
             this._formPanelInit = true;
-            this.classList.add("ui-FormPanel");
             if (!this.hasAttribute("layout")) {
                 this.layout = LayoutType.GRID;
             }

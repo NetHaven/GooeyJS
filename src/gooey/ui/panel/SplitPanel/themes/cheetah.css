@@ -20,7 +20,7 @@
 }
 
 .splitpanel-divider:active,
-:host(.splitpanel-dragging) .splitpanel-divider {
+:host([dragging]) .splitpanel-divider {
     background: #D0D0D0;
     border-color: var(--cheetah-border-dark, #5A5A5A);
 }

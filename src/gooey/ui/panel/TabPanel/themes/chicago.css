@@ -48,7 +48,7 @@
     color: var(--chicago-text, #000000);
 }
 
-:host(.vertical) .tab-header.active {
+:host([orientation="vertical"]) .tab-header.active {
     border-top: 1px solid var(--chicago-border-light, #FFFFFF);
     border-left: 1px solid var(--chicago-border-light, #FFFFFF);
     border-bottom: 1px solid var(--chicago-border-shadow, #808080);

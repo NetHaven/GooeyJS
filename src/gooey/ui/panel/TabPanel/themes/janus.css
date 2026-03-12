@@ -1,6 +1,6 @@
 /* TabPanel - Janus structural override */
 
-:host(.vertical) .tab-strip {
+:host([orientation="vertical"]) .tab-strip {
     border-bottom: none;
     border-right: 1px solid #000000;
     width: 120px;
@@ -32,7 +32,7 @@
         inset 2px 2px 0 #ffffff;
 }
 
-:host(.vertical) .tab-header {
+:host([orientation="vertical"]) .tab-header {
     border: 1px solid #000000;
     border-right: 0;
     border-bottom: 0;
@@ -54,7 +54,7 @@
     z-index: 1;
 }
 
-:host(.vertical) .tab-header.active {
+:host([orientation="vertical"]) .tab-header.active {
     margin: 0 -1px 0 0;
     border: 1px solid #000000;
     border-right: 0;

@@ -125,12 +125,6 @@ export default class UIComponent extends GooeyElement {
             super.connectedCallback();
         }
 
-        // Apply base host class in connectedCallback (mutating class in constructor
-        // can throw "Operation is not supported" for programmatic createElement()).
-        if (!this.classList.contains("ui-Component")) {
-            this.classList.add("ui-Component");
-        }
-
         // Apply initial attribute values (moved from constructor per Custom Elements spec)
         if (this.hasAttribute("height"))  {
             const val = this.getAttribute("height");
