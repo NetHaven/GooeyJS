@@ -50,8 +50,6 @@ export default class ToggleButton extends UIComponent {
 
         if (!this._toggleButtonInit) {
             this._toggleButtonInit = true;
-            this.classList.add("ui-ToggleButton");
-
             // Initialize attributes inherited from Button (icon, text, action)
             if (this.hasAttribute("icon")) {
                 const val = this.getAttribute("icon");
@@ -83,7 +81,6 @@ export default class ToggleButton extends UIComponent {
             // Initialize pressed state (BOOLEAN: presence = true)
             if (this.hasAttribute("pressed")) {
                 this._pressed = true;
-                this.button.classList.add("pressed");
                 this.button.setAttribute("aria-pressed", "true");
             }
         }
@@ -174,11 +171,9 @@ export default class ToggleButton extends UIComponent {
         this._pressed = !!val;
 
         if (this._pressed) {
-            this.setAttribute("pressed", "true");
-            this.classList.add("pressed");
+            this.setAttribute("pressed", "");
         } else {
             this.removeAttribute("pressed");
-            this.classList.remove("pressed");
         }
         this._updatingAttribute = false;
     }

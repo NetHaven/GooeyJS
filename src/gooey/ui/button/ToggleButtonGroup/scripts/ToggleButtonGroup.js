@@ -30,7 +30,7 @@ export default class ToggleButtonGroup extends Container {
         super.connectedCallback?.();
         if (!this._toggleButtonGroupInit) {
             this._toggleButtonGroupInit = true;
-            this.classList.add("ui-ToggleButtonGroup");
+            // No-op: identifier class removed in Shadow DOM migration
         }
     }
 

@@ -13,7 +13,6 @@ export default class Application extends UIComponent {
         super.connectedCallback?.();
         if (!this._applicationInit) {
             this._applicationInit = true;
-            this.classList.add("ui-Application");
             if (!this.hasAttribute("width")) {
                 this.style.width = "100vw";
             }

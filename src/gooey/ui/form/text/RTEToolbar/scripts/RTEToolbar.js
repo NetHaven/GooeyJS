@@ -163,7 +163,7 @@ export default class RTEToolbar extends UIComponent {
 
         if (!this._rteToolbarInit) {
             this._rteToolbarInit = true;
-            this.classList.add('ui-RTEToolbar');
+            // No-op: identifier class removed in Shadow DOM migration
         }
 
         // Resolve binding after DOM is connected

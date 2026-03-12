@@ -648,7 +648,6 @@ export default class TreeItem extends UIComponent {
         if (this._expanded) {
             if (this._expanderElement) this._expanderElement.classList.add('expanded');
             if (this._childrenElement) this._childrenElement.classList.add('expanded');
-            this.classList.add('expanded');
 
             // Dispatch expand event if state changed
             if (!wasExpanded) {
@@ -657,7 +656,6 @@ export default class TreeItem extends UIComponent {
         } else {
             if (this._expanderElement) this._expanderElement.classList.remove('expanded');
             if (this._childrenElement) this._childrenElement.classList.remove('expanded');
-            this.classList.remove('expanded');
 
             // Dispatch collapse event if state changed
             if (wasExpanded) {

@@ -34,21 +34,21 @@ button:focus {
 }
 
 /* Pressed/toggled state: inverted bevel, slightly darker background */
-:host(.pressed) .toggle-button,
-:host(.pressed) button {
+:host([pressed]) .toggle-button,
+:host([pressed]) button {
     background-color: #CCCCCC;
     box-shadow:
         inset 1px 1px 0 #999999,
         inset -1px -1px 0 #FFFFFF;
 }
 
-:host(.pressed) .toggle-button:hover,
-:host(.pressed) button:hover {
+:host([pressed]) .toggle-button:hover,
+:host([pressed]) button:hover {
     background-color: #BBBBBB;
 }
 
-:host(.pressed) .toggle-button:active,
-:host(.pressed) button:active {
+:host([pressed]) .toggle-button:active,
+:host([pressed]) button:active {
     background-color: #AAAAAA;
 }
 

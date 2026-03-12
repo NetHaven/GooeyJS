@@ -30,7 +30,7 @@
 }
 
 .colorpicker-button:active,
-:host(.colorpicker-open) .colorpicker-button {
+:host([open]) .colorpicker-button {
     border: 2px inset var(--gooey-colorpicker-button-border-color, var(--gooey-color-surface));
     background-color: var(--gooey-colorpicker-button-bg, var(--gooey-color-surface));
 }

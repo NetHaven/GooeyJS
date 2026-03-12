@@ -75,7 +75,7 @@
 
 /* Pressed / dropdown open: sunken bevel */
 .combobox-button:active,
-:host(.dropdown-open) .combobox-button {
+:host([open]) .combobox-button {
     border-top: 1px solid var(--chicago-border-shadow, #808080);
     border-left: 1px solid var(--chicago-border-shadow, #808080);
     border-right: 1px solid var(--chicago-border-light, #FFFFFF);
@@ -137,7 +137,7 @@
 }
 
 /* Focused state override */
-:host(.focused) .combobox-input {
+:host([focused]) .combobox-input {
     border-top: 1px solid var(--chicago-border-shadow, #808080);
     border-left: 1px solid var(--chicago-border-shadow, #808080);
     border-right: none;

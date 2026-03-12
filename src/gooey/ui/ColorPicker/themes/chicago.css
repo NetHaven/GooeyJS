@@ -27,7 +27,7 @@
 }
 
 .colorpicker-button:active,
-:host(.colorpicker-open) .colorpicker-button {
+:host([open]) .colorpicker-button {
     /* Sunken bevel: inverted */
     border-top: 1px solid var(--chicago-border-shadow, #808080);
     border-left: 1px solid var(--chicago-border-shadow, #808080);

@@ -37,8 +37,8 @@ button:active {
 }
 
 /* Pressed/toggled state - pure blue */
-:host(.pressed) .toggle-button,
-:host(.pressed) button {
+:host([pressed]) .toggle-button,
+:host([pressed]) button {
     background-color: #0000C0;
     color: #ffffff;
     border: 1px solid #000000;
@@ -47,13 +47,13 @@ button:active {
         inset 2px 2px 0 #808080;
 }
 
-:host(.pressed) .toggle-button:hover,
-:host(.pressed) button:hover {
+:host([pressed]) .toggle-button:hover,
+:host([pressed]) button:hover {
     background-color: #0000A0;
 }
 
-:host(.pressed) .toggle-button:active,
-:host(.pressed) button:active {
+:host([pressed]) .toggle-button:active,
+:host([pressed]) button:active {
     background-color: #0000C0;
 }
 

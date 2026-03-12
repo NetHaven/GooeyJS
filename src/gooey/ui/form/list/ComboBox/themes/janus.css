@@ -33,7 +33,7 @@
 }
 
 .combobox-button:active,
-:host(.dropdown-open) .combobox-button {
+:host([open]) .combobox-button {
     background-color: #c0c0c0;
     border: 1px solid #000000;
     box-shadow: inset 1px 1px 0 #808080;

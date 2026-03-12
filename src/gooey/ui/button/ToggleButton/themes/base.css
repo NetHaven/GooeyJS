@@ -40,21 +40,21 @@ button:focus {
 }
 
 /* Pressed state */
-:host(.pressed) .toggle-button,
-:host(.pressed) button {
+:host([pressed]) .toggle-button,
+:host([pressed]) button {
     background-color: var(--gooey-togglebutton-pressed-bg, var(--gooey-color-primary));
     color: var(--gooey-togglebutton-pressed-color, var(--gooey-color-primary-text));
     border: 2px inset var(--gooey-togglebutton-border-color, var(--gooey-color-surface));
     box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
 
-:host(.pressed) .toggle-button:hover,
-:host(.pressed) button:hover {
+:host([pressed]) .toggle-button:hover,
+:host([pressed]) button:hover {
     background-color: var(--gooey-togglebutton-pressed-bg-hover, var(--gooey-color-primary));
 }
 
-:host(.pressed) .toggle-button:active,
-:host(.pressed) button:active {
+:host([pressed]) .toggle-button:active,
+:host([pressed]) button:active {
     background-color: var(--gooey-togglebutton-pressed-bg-active, var(--gooey-color-primary));
 }
 

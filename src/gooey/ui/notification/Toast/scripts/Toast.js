@@ -60,7 +60,7 @@ export default class Toast extends UIComponent {
 
         // Escape key (INT-07): dismiss focused, visible toast
         HTMLElement.prototype.addEventListener.call(this, 'keydown', (e) => {
-            if (e.key === Key.ESCAPE && !this.disabled && this.classList.contains('toast-showing')) {
+            if (e.key === Key.ESCAPE && !this.disabled && this.hasAttribute('showing')) {
                 this.fireEvent(ToastEvent.DISMISS, { source: 'keyboard' });
                 this.hide();
             }
@@ -632,8 +632,8 @@ export default class Toast extends UIComponent {
             const priority = this.type === ToastType.ERROR ? 'assertive' : 'polite';
             UIComponent.announce(this.message, priority);
 
-            this.classList.remove('toast-hiding');
-            this.classList.add('toast-showing');
+            this.removeAttribute('hiding');
+            this.setAttribute('showing', '');
 
             // API-08: Fire SHOW event when toast is positioned and visible
             this.fireEvent(ToastEvent.SHOW, { toast: this });
@@ -703,12 +703,12 @@ export default class Toast extends UIComponent {
     hide() {
         return new Promise((resolve) => {
             this._clearTimer();
-            this.classList.remove('toast-showing');
-            this.classList.add('toast-hiding');
+            this.removeAttribute('showing');
+            this.setAttribute('hiding', '');
 
             const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
             if (reducedMotion) {
-                this.classList.remove('toast-hiding');
+                this.removeAttribute('hiding');
                 this.fireEvent(ToastEvent.HIDE, { toast: this });
                 // Notify container for queue dequeue, then remove from DOM
                 ToastContainer._notifyHide(this);
@@ -720,7 +720,7 @@ export default class Toast extends UIComponent {
             }
 
             this.addEventListener('animationend', () => {
-                this.classList.remove('toast-hiding');
+                this.removeAttribute('hiding');
                 this.fireEvent(ToastEvent.HIDE, { toast: this });
                 // Notify container for queue dequeue, then remove from DOM
                 ToastContainer._notifyHide(this);

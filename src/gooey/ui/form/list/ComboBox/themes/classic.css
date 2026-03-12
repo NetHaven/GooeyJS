@@ -40,7 +40,7 @@
 /* No hover highlight */
 
 .combobox-button:active,
-:host(.dropdown-open) .combobox-button {
+:host([open]) .combobox-button {
     background-color: #DDDDDD;
     /* Pressed: inverted bevel */
     box-shadow:
@@ -75,7 +75,7 @@
 }
 
 /* Focus state */
-:host(.focused) .combobox-input {
+:host([focused]) .combobox-input {
     outline: 2px solid var(--gooey-color-primary-3);
     outline-offset: -2px;
 }

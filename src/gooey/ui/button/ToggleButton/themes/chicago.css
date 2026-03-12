@@ -37,8 +37,8 @@ button:focus {
 }
 
 /* Pressed/toggled state: sunken bevel, gray face with dither indicator */
-:host(.pressed) .toggle-button,
-:host(.pressed) button {
+:host([pressed]) .toggle-button,
+:host([pressed]) button {
     background-color: var(--chicago-face, #C0C0C0);
     background-image: var(--chicago-dither-50);
     background-size: 2px 2px;
@@ -52,8 +52,8 @@ button:focus {
         inset -1px -1px 0 var(--chicago-border-highlight, #DFDFDF);
 }
 
-:host(.pressed) .toggle-button:active,
-:host(.pressed) button:active {
+:host([pressed]) .toggle-button:active,
+:host([pressed]) button:active {
     background-image: none;
 }
 

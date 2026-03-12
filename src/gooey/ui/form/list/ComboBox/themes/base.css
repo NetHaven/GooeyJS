@@ -51,7 +51,7 @@
 }
 
 .combobox-button:active,
-:host(.dropdown-open) .combobox-button {
+:host([open]) .combobox-button {
     border: 2px inset var(--gooey-combobox-button-border-color, var(--gooey-color-border));
     background-color: var(--gooey-combobox-button-bg, var(--gooey-color-surface));
 }
@@ -115,6 +115,6 @@
 }
 
 /* Focus states */
-:host(.focused) .combobox-input {
+:host([focused]) .combobox-input {
     border: 2px inset var(--gooey-combobox-input-focus-color, var(--gooey-color-primary));
 }

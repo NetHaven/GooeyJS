@@ -267,30 +267,30 @@
     }
 }
 
-:host(.toast-showing) {
+:host([showing]) {
     animation: toast-show 0.3s ease-out forwards;
 }
 
-:host(.toast-hiding) {
+:host([hiding]) {
     animation: toast-hide 0.3s ease-in forwards;
 }
 
-:host([position^="bottom"].toast-showing) {
+:host([position^="bottom"][showing]) {
     animation-name: toast-show-bottom;
 }
 
-:host([position^="bottom"].toast-hiding) {
+:host([position^="bottom"][hiding]) {
     animation-name: toast-hide-bottom;
 }
 
 @media (prefers-reduced-motion: reduce) {
-    :host(.toast-showing) {
+    :host([showing]) {
         animation: none;
         opacity: 1;
         transform: none;
     }
 
-    :host(.toast-hiding) {
+    :host([hiding]) {
         animation: none;
         opacity: 0;
         transform: none;

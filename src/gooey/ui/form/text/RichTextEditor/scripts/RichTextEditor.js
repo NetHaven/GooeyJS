@@ -295,7 +295,7 @@ export default class RichTextEditor extends TextElement {
 
         if (!this._richTextEditorInit) {
             this._richTextEditorInit = true;
-            this.classList.add('ui-RichTextEditor');
+            // No-op: identifier class removed in Shadow DOM migration
         }
 
         this._syncDisabledState();

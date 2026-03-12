@@ -14,7 +14,7 @@
 }
 
 .colorpicker-button:active,
-:host(.colorpicker-open) .colorpicker-button {
+:host([open]) .colorpicker-button {
     border: 1px solid #000000;
     box-shadow: -1px -1px 0 #FFFFFF inset, 1px 1px 0 #A0A0A0 inset;
 }

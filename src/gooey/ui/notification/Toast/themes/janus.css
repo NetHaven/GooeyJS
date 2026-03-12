@@ -3,10 +3,10 @@
 
 /* Kill all animations and transitions globally */
 :host,
-:host(.toast-showing),
-:host(.toast-hiding),
-:host([position^="bottom"].toast-showing),
-:host([position^="bottom"].toast-hiding),
+:host([showing]),
+:host([hiding]),
+:host([position^="bottom"][showing]),
+:host([position^="bottom"][hiding]),
 .toast-container,
 .toast-progress-bar {
     animation: none !important;
@@ -14,13 +14,13 @@
 }
 
 /* Ensure showing state is immediately visible */
-:host(.toast-showing) {
+:host([showing]) {
     opacity: 1;
     transform: none;
 }
 
 /* Ensure hiding state is immediately hidden */
-:host(.toast-hiding) {
+:host([hiding]) {
     opacity: 0;
     transform: none;
 }

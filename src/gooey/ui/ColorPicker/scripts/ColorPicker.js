@@ -33,7 +33,6 @@ export default class ColorPicker extends UIComponent {
         super.connectedCallback?.();
         if (!this._colorPickerInit) {
             this._colorPickerInit = true;
-            this.classList.add("ui-ColorPicker");
             if (this.hasAttribute('value')) {
                 this.value = this.getAttribute('value');
             }
@@ -194,7 +193,7 @@ export default class ColorPicker extends UIComponent {
         this._isOpen = true;
         this._dropdownPanel.style.display = 'block';
         this._arrow.textContent = '▲';
-        this.classList.add('colorpicker-open');
+        this.setAttribute('open', '');
         
         // Position the dropdown properly
         this._positionDropdown();
@@ -221,7 +220,7 @@ export default class ColorPicker extends UIComponent {
         this._isOpen = false;
         this._dropdownPanel.style.display = 'none';
         this._arrow.textContent = '▼';
-        this.classList.remove('colorpicker-open');
+        this.removeAttribute('open');
         
         // Reset positioning styles
         this._dropdownPanel.style.position = '';
