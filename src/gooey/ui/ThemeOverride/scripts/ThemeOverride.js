@@ -1,4 +1,5 @@
 import GooeyElement from '../../../GooeyElement.js';
+import Template from '../../../util/Template.js';
 import Logger from '../../../logging/Logger.js';
 
 /**
@@ -27,6 +28,7 @@ export default class ThemeOverride extends GooeyElement {
     constructor() {
         super();
         this.attachShadow({ mode: 'open' });
+        Template.activate("ui-ThemeOverride", this.shadowRoot);
 
         /** @type {string|null} Loaded CSS text */
         this._cssText = null;

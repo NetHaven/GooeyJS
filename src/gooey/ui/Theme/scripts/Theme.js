@@ -1,6 +1,7 @@
 import GooeyElement from '../../../GooeyElement.js';
 import ThemeManager from '../../../util/ThemeManager.js';
 import ThemeEvent from '../../../events/ThemeEvent.js';
+import Template from '../../../util/Template.js';
 import Logger from '../../../logging/Logger.js';
 
 /**
@@ -46,6 +47,7 @@ export default class Theme extends GooeyElement {
     constructor() {
         super();
         this.attachShadow({ mode: 'open' });
+        Template.activate("ui-Theme", this.shadowRoot);
 
         /** @type {boolean} Whether theme has finished loading */
         this._loaded = false;

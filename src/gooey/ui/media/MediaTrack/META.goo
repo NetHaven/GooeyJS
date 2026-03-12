@@ -4,7 +4,9 @@
   "prefix": "gooeyui",
   "tagName": "mediatrack",
   "script": "MediaTrack.js",
-  "templates": [],
+  "templates": [
+    { "id": "ui-MediaTrack", "file": "MediaTrack.html" }
+  ],
   "themes": {
     "default": "base",
     "available": ["base"]

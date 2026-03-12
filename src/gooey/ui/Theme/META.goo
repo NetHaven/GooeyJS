@@ -4,7 +4,9 @@
     "prefix": "gooey",
     "tagName": "theme",
     "script": "Theme.js",
-    "templates": [],
+    "templates": [
+        { "id": "ui-Theme", "file": "Theme.html" }
+    ],
     "themes": {
         "default": "base",
         "available": ["base"]

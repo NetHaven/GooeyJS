@@ -4,7 +4,9 @@
     "prefix": "gooey",
     "tagName": "theme-override",
     "script": "ThemeOverride.js",
-    "templates": [],
+    "templates": [
+        { "id": "ui-ThemeOverride", "file": "ThemeOverride.html" }
+    ],
     "themes": {
         "default": "base",
         "available": ["base"]

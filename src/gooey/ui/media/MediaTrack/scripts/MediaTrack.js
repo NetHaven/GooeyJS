@@ -1,4 +1,5 @@
 import GooeyElement from '../../../../GooeyElement.js';
+import Template from '../../../../util/Template.js';
 
 /**
  * MediaTrack component represents a single video track within a VideoPlayer.
@@ -15,6 +16,7 @@ export default class MediaTrack extends GooeyElement {
     constructor() {
         super();
         this.attachShadow({ mode: 'open' });
+        Template.activate("ui-MediaTrack", this.shadowRoot);
     }
 
     /**
