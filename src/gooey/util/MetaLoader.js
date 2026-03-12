@@ -292,15 +292,9 @@ export default class MetaLoader {
 
             let result;
 
-            // Use Constructable Stylesheets if available (modern browsers)
-            if ('adoptedStyleSheets' in Document.prototype) {
-                const sheet = new CSSStyleSheet();
-                sheet.replaceSync(cssText);
-                result = { type: 'stylesheet', sheet, cssText };
-            } else {
-                // Fallback for older browsers
-                result = { type: 'text', cssText };
-            }
+            const sheet = new CSSStyleSheet();
+            sheet.replaceSync(cssText);
+            result = { type: 'stylesheet', sheet, cssText };
 
             // Cache the result for sharing across component instances
             this._cssCache.set(cacheKey, result);
@@ -319,23 +313,14 @@ export default class MetaLoader {
      * @param {Object} cssResult - Result from loadThemeCSS
      */
     static injectCSS(shadowRoot, cssResult) {
-        if (!shadowRoot || !cssResult) {
+        if (!shadowRoot || !cssResult || !cssResult.sheet) {
             return;
         }
 
-        if (cssResult.type === 'stylesheet' && cssResult.sheet) {
-            // Use adoptedStyleSheets for efficient sharing
-            shadowRoot.adoptedStyleSheets = [
-                ...shadowRoot.adoptedStyleSheets,
-                cssResult.sheet
-            ];
-        } else if (cssResult.cssText) {
-            // Fallback: inject <style> element
-            const style = document.createElement('style');
-            style.setAttribute('data-theme', 'true');
-            style.textContent = cssResult.cssText;
-            shadowRoot.prepend(style);
-        }
+        shadowRoot.adoptedStyleSheets = [
+            ...shadowRoot.adoptedStyleSheets,
+            cssResult.sheet
+        ];
     }
 
     /**
@@ -347,25 +332,16 @@ export default class MetaLoader {
     static async switchTheme(shadowRoot, componentPath, newTheme) {
         const cssResult = await this.loadThemeCSS(componentPath, newTheme);
 
-        if (cssResult.type === 'stylesheet' && cssResult.sheet) {
-            const sheets = [...shadowRoot.adoptedStyleSheets];
-            if (sheets.length > 1) {
-                // Replace theme sheet at index 1, keep base component sheet at index 0
-                sheets[1] = cssResult.sheet;
-                // Remove any extra theme sheets beyond index 1 (clean slate for new theme)
-                shadowRoot.adoptedStyleSheets = sheets.slice(0, 2);
-            } else {
-                // Only base sheet exists (index 0) -- append new theme sheet
-                sheets.push(cssResult.sheet);
-                shadowRoot.adoptedStyleSheets = sheets;
-            }
+        const sheets = [...shadowRoot.adoptedStyleSheets];
+        if (sheets.length > 1) {
+            // Replace theme sheet at index 1, keep base component sheet at index 0
+            sheets[1] = cssResult.sheet;
+            // Remove any extra theme sheets beyond index 1 (clean slate for new theme)
+            shadowRoot.adoptedStyleSheets = sheets.slice(0, 2);
         } else {
-            // Fallback path: replace only data-theme style elements, preserve base styles
-            shadowRoot.querySelectorAll('style[data-theme]').forEach(el => el.remove());
-            const style = document.createElement('style');
-            style.setAttribute('data-theme', 'true');
-            style.textContent = cssResult.cssText;
-            shadowRoot.appendChild(style);
+            // Only base sheet exists (index 0) -- append new theme sheet
+            sheets.push(cssResult.sheet);
+            shadowRoot.adoptedStyleSheets = sheets;
         }
     }
 

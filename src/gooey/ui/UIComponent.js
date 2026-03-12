@@ -17,7 +17,7 @@ export default class UIComponent extends GooeyElement {
         super();
 
         // Create Shadow DOM for CSS encapsulation
-        this.attachShadow({ mode: 'open' });
+        this.attachShadow({ mode: 'open', delegatesFocus: true });
 
         // Inject theme CSS if available
         const tagName = this.tagName.toLowerCase();
@@ -188,8 +188,8 @@ export default class UIComponent extends GooeyElement {
                 }
             });
 
-            /* Translate Native Keyboard Events */
-            HTMLElement.prototype.addEventListener.call(this, KeyboardEvent.KEY_DOWN, (ev) => {
+            /* Translate Native Keyboard Events (on shadowRoot for correct event.target) */
+            this.shadowRoot.addEventListener(KeyboardEvent.KEY_DOWN, (ev) => {
                 if (!this.disabled) {
                     this.fireEvent(KeyboardEvent.KEY_DOWN, {
                         key: ev.key,
@@ -206,7 +206,7 @@ export default class UIComponent extends GooeyElement {
                 }
             });
 
-            HTMLElement.prototype.addEventListener.call(this, KeyboardEvent.KEY_UP, (ev) => {
+            this.shadowRoot.addEventListener(KeyboardEvent.KEY_UP, (ev) => {
                 if (!this.disabled) {
                     this.fireEvent(KeyboardEvent.KEY_UP, {
                         key: ev.key,
@@ -222,7 +222,7 @@ export default class UIComponent extends GooeyElement {
                 }
             });
 
-            HTMLElement.prototype.addEventListener.call(this, KeyboardEvent.KEY_PRESS, (ev) => {
+            this.shadowRoot.addEventListener(KeyboardEvent.KEY_PRESS, (ev) => {
                 if (!this.disabled) {
                     this.fireEvent(KeyboardEvent.KEY_PRESS, {
                         key: ev.key,
