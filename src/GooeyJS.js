@@ -62,10 +62,14 @@ export default class GooeyJS {
         // Core components loaded by default - only the minimum required for GooeyJS to function
         // All other components should be loaded dynamically using <gooey-component href="...">
         this.components = [{
-            pkg: "gooey",
+            pkg: "gooey.ui",
             elements: [
                 { name: "Theme" },
-                { name: "ThemeOverride" },
+                { name: "ThemeOverride" }
+            ]
+        }, {
+            pkg: "gooey",
+            elements: [
                 { name: "Application" },
                 { name: "Component" }
             ]
