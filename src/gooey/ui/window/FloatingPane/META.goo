@@ -4,7 +4,9 @@
   "prefix": "gooeyui",
   "tagName": "floatingpane",
   "script": "FloatingPane.js",
-  "templates": [],
+  "templates": [
+    { "id": "ui-FloatingPane", "file": "FloatingPane.html" }
+  ],
   "themes": {
     "default": "base",
     "available": ["base", "classic", "janus", "chicago"]

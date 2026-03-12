@@ -98,6 +98,7 @@ export default class Component extends Observable {
     constructor() {
         super();
         this.attachShadow({ mode: 'open' });
+        Template.activate("gooey-Component", this.shadowRoot);
 
         // Add valid events
         this.addValidEvent(ComponentEvent.LOADING);

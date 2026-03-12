@@ -4,7 +4,9 @@
   "prefix": "gooey",
   "tagName": "component",
   "script": "Component.js",
-  "templates": [],
+  "templates": [
+    { "id": "gooey-Component", "file": "Component.html" }
+  ],
   "themes": {
     "default": "base",
     "available": ["base", "dark", "janus", "classic", "chicago"]
