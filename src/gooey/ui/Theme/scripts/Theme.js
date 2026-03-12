@@ -1,7 +1,7 @@
-import GooeyElement from '../../GooeyElement.js';
-import ThemeManager from '../../util/ThemeManager.js';
-import ThemeEvent from '../../events/ThemeEvent.js';
-import Logger from '../../logging/Logger.js';
+import GooeyElement from '../../../GooeyElement.js';
+import ThemeManager from '../../../util/ThemeManager.js';
+import ThemeEvent from '../../../events/ThemeEvent.js';
+import Logger from '../../../logging/Logger.js';
 
 /**
  * Declarative theme registration and activation component.

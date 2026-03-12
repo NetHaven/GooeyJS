@@ -1,5 +1,5 @@
-import GooeyElement from '../../GooeyElement.js';
-import Logger from '../../logging/Logger.js';
+import GooeyElement from '../../../GooeyElement.js';
+import Logger from '../../../logging/Logger.js';
 
 /**
  * ThemeOverride component for per-component structural CSS overrides.
