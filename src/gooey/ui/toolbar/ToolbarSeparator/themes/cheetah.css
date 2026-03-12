@@ -1,0 +1,12 @@
+/* ToolbarSeparator - Cheetah Aqua structural override */
+
+:host {
+    margin: 2px 6px;
+    width: 1px;
+    height: auto;
+    align-self: stretch;
+    background: none;
+    border-radius: 0;
+    border-left: 1px solid var(--cheetah-border-mid, #9A9A9A);
+    border-right: none;
+}
