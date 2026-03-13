@@ -107,7 +107,7 @@ const TooltipManager = {
                     this._attachFocus(reference, tooltip, binding);
                     break;
                 case TooltipTrigger.CLICK:
-                    // Click trigger deferred to Plan 02
+                    this._attachClick(reference, tooltip, binding);
                     break;
                 case TooltipTrigger.MANUAL:
                     // Manual attaches no listeners -- API-only control
@@ -153,6 +153,110 @@ const TooltipManager = {
     },
 
     /**
+     * Attach click trigger listeners to a reference element.
+     * Click toggles tooltip visibility. Enter and Space keys also toggle.
+     *
+     * @param {Element} reference - The reference element
+     * @param {Element} tooltip - The tooltip element
+     * @param {Object} binding - The binding object
+     * @private
+     */
+    _attachClick(reference, tooltip, binding) {
+        const clickHandler = (e) => {
+            if (binding.state === 'visible') {
+                this._scheduleHide(reference, tooltip);
+            } else {
+                this._scheduleShow(reference, tooltip);
+            }
+        };
+
+        const keydownHandler = (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                if (binding.state === 'visible') {
+                    this._scheduleHide(reference, tooltip);
+                } else {
+                    this._scheduleShow(reference, tooltip);
+                }
+            }
+        };
+
+        reference.addEventListener('click', clickHandler);
+        reference.addEventListener('keydown', keydownHandler);
+
+        binding.listeners.set('click', { clickHandler, keydownHandler });
+    },
+
+    /**
+     * Attach document-level dismissal listeners for a click-triggered tooltip.
+     * Called when tooltip becomes visible and trigger includes 'click'.
+     * Adds pointerdown (click-outside) and keydown (Escape) on document.
+     *
+     * @param {Element} reference - The reference element
+     * @param {Element} tooltip - The tooltip element
+     * @param {Object} binding - The binding object
+     * @private
+     */
+    _attachClickDismissal(reference, tooltip, binding) {
+        if (!binding._dismissalListeners) {
+            binding._dismissalListeners = new Map();
+        }
+
+        // Remove any existing dismissal listeners first
+        this._detachClickDismissal(binding);
+
+        const pointerdownHandler = (e) => {
+            // Skip if click is on the reference (the reference click handler handles toggling)
+            if (reference.contains(e.target)) return;
+            // Skip if click is on the tooltip itself
+            if (tooltip.contains(e.target)) return;
+            // Click is outside both -- hide immediately
+            this._doHide(reference, tooltip);
+        };
+
+        const escapeHandler = (e) => {
+            if (e.key === 'Escape') {
+                this._doHide(reference, tooltip);
+            }
+        };
+
+        // Delay adding pointerdown listener by one tick to avoid the opening click
+        // from immediately triggering click-outside dismissal
+        setTimeout(() => {
+            // Guard: tooltip may have been hidden before the timeout fires
+            if (binding.state !== 'visible') return;
+            document.addEventListener('pointerdown', pointerdownHandler);
+            binding._dismissalListeners.set('pointerdown', pointerdownHandler);
+        }, 0);
+
+        document.addEventListener('keydown', escapeHandler);
+        binding._dismissalListeners.set('keydown', escapeHandler);
+    },
+
+    /**
+     * Remove document-level dismissal listeners for a click-triggered tooltip.
+     * Called when tooltip hides.
+     *
+     * @param {Object} binding - The binding object
+     * @private
+     */
+    _detachClickDismissal(binding) {
+        if (!binding._dismissalListeners) return;
+
+        const pointerdownHandler = binding._dismissalListeners.get('pointerdown');
+        if (pointerdownHandler) {
+            document.removeEventListener('pointerdown', pointerdownHandler);
+            binding._dismissalListeners.delete('pointerdown');
+        }
+
+        const escapeHandler = binding._dismissalListeners.get('keydown');
+        if (escapeHandler) {
+            document.removeEventListener('keydown', escapeHandler);
+            binding._dismissalListeners.delete('keydown');
+        }
+    },
+
+    /**
      * Detach all trigger listeners from a reference element.
      *
      * @param {Element} reference - The reference element
@@ -175,6 +279,11 @@ const TooltipManager = {
                 case TooltipTrigger.FOCUS:
                     reference.removeEventListener('focusin', handlers.focusInHandler);
                     reference.removeEventListener('focusout', handlers.focusOutHandler);
+                    break;
+                case TooltipTrigger.CLICK:
+                    reference.removeEventListener('click', handlers.clickHandler);
+                    reference.removeEventListener('keydown', handlers.keydownHandler);
+                    this._detachClickDismissal(binding);
                     break;
             }
 
@@ -302,7 +411,14 @@ const TooltipManager = {
         // Fire SHOWN immediately (animation deferred to Phase 97)
         tooltip.fireEvent(TooltipEvent.SHOWN, {});
 
-        if (binding) binding.state = 'visible';
+        if (binding) {
+            binding.state = 'visible';
+
+            // Attach click-outside and Escape dismissal for click-triggered tooltips
+            if (binding.triggers.includes(TooltipTrigger.CLICK)) {
+                this._attachClickDismissal(binding.reference, tooltip, binding);
+            }
+        }
     },
 
     /**
@@ -333,7 +449,11 @@ const TooltipManager = {
         tooltip.fireEvent(TooltipEvent.HIDE, {});
         tooltip.fireEvent(TooltipEvent.HIDDEN, {});
 
-        if (binding) binding.state = 'hidden';
+        if (binding) {
+            // Detach click dismissal listeners if present
+            this._detachClickDismissal(binding);
+            binding.state = 'hidden';
+        }
     },
 
     /**
