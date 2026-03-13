@@ -398,7 +398,8 @@ const TooltipManager = {
 
     /**
      * Start auto-updating tooltip position.
-     * Stub for Plan 02 -- returns a no-op cleanup function.
+     * Attaches scroll, resize, and ResizeObserver listeners to keep the tooltip
+     * aligned with its reference element. Optionally uses a RAF loop for sticky mode.
      *
      * @param {Element} reference - Reference element
      * @param {Element} tooltip - Tooltip element
@@ -407,20 +408,172 @@ const TooltipManager = {
      * @returns {Function} Cleanup function to stop auto-updating
      */
     startAutoUpdate(reference, tooltip, options, callback) {
-        const cleanup = () => {};
+        // Stop any existing auto-update for this tooltip
+        if (this._activeCleanups.has(tooltip)) {
+            const existingCleanup = this._activeCleanups.get(tooltip);
+            existingCleanup();
+        }
+
+        const update = () => {
+            const result = this.computePosition(reference, tooltip, options);
+            callback(result);
+        };
+
+        // --- Scroll listeners on all scrollable ancestors ---
+        const scrollableAncestors = this._getScrollableAncestors(reference);
+        const scrollHandler = () => update();
+
+        for (const ancestor of scrollableAncestors) {
+            ancestor.addEventListener('scroll', scrollHandler, { passive: true });
+        }
+
+        // --- Window resize listener ---
+        const resizeHandler = () => update();
+        window.addEventListener('resize', resizeHandler, { passive: true });
+
+        // --- ResizeObserver on reference element ---
+        let resizeObserver = null;
+        if (typeof ResizeObserver !== 'undefined') {
+            resizeObserver = new ResizeObserver(() => update());
+            resizeObserver.observe(reference);
+        }
+
+        // --- Sticky RAF loop ---
+        let rafId = null;
+        let lastRect = null;
+
+        if (options && options.sticky) {
+            const stickyLoop = () => {
+                const currentRect = reference.getBoundingClientRect();
+
+                if (lastRect === null ||
+                    currentRect.x !== lastRect.x ||
+                    currentRect.y !== lastRect.y ||
+                    currentRect.width !== lastRect.width ||
+                    currentRect.height !== lastRect.height) {
+                    lastRect = currentRect;
+                    update();
+                }
+
+                rafId = requestAnimationFrame(stickyLoop);
+            };
+
+            rafId = requestAnimationFrame(stickyLoop);
+        }
+
+        // --- Cleanup function ---
+        const cleanup = () => {
+            // Remove scroll listeners
+            for (const ancestor of scrollableAncestors) {
+                ancestor.removeEventListener('scroll', scrollHandler);
+            }
+
+            // Remove window resize listener
+            window.removeEventListener('resize', resizeHandler);
+
+            // Disconnect ResizeObserver
+            if (resizeObserver) {
+                resizeObserver.disconnect();
+                resizeObserver = null;
+            }
+
+            // Cancel RAF loop
+            if (rafId !== null) {
+                cancelAnimationFrame(rafId);
+                rafId = null;
+            }
+
+            // Remove from active cleanups
+            this._activeCleanups.delete(tooltip);
+        };
+
         this._activeCleanups.set(tooltip, cleanup);
         return cleanup;
     },
 
     /**
-     * Stop auto-updating by calling the cleanup function.
+     * Stop auto-updating a tooltip by looking up its cleanup function.
      *
-     * @param {Function} cleanupFn - Cleanup function returned by startAutoUpdate
+     * @param {Element} tooltip - The tooltip element to stop auto-updating
      */
-    stopAutoUpdate(cleanupFn) {
-        if (typeof cleanupFn === 'function') {
-            cleanupFn();
+    stopAutoUpdate(tooltip) {
+        const cleanup = this._activeCleanups.get(tooltip);
+        if (typeof cleanup === 'function') {
+            cleanup();
         }
+    },
+
+    /**
+     * Apply a computePosition result to a tooltip element's DOM.
+     * Sets position styles, data-placement attribute, and arrow offsets.
+     *
+     * @param {Element} tooltip - The tooltip element
+     * @param {{ x: number, y: number, placement: string, arrowX: number|null, arrowY: number|null }} result - Position result from computePosition
+     */
+    applyPosition(tooltip, result) {
+        tooltip.style.left = result.x + 'px';
+        tooltip.style.top = result.y + 'px';
+
+        // Set data-placement on the wrapper element for CSS arrow positioning
+        const wrapper = tooltip.shadowRoot
+            ? tooltip.shadowRoot.querySelector('.tooltip-wrapper')
+            : tooltip.querySelector('.tooltip-wrapper');
+
+        if (wrapper) {
+            wrapper.dataset.placement = result.placement;
+        }
+
+        // Position the arrow element
+        const arrowEl = tooltip.shadowRoot
+            ? tooltip.shadowRoot.querySelector('.tooltip-arrow')
+            : tooltip.querySelector('.tooltip-arrow');
+
+        if (arrowEl) {
+            if (result.arrowX !== null) {
+                arrowEl.style.left = result.arrowX + 'px';
+            } else {
+                arrowEl.style.left = '';
+            }
+
+            if (result.arrowY !== null) {
+                arrowEl.style.top = result.arrowY + 'px';
+            } else {
+                arrowEl.style.top = '';
+            }
+        }
+    },
+
+    /**
+     * Get all scrollable ancestor elements of a given element.
+     * An element is scrollable if its computed overflow is auto, scroll, or overlay,
+     * and its scroll dimensions exceed client dimensions.
+     *
+     * @param {Element} element - The element to walk up from
+     * @returns {Element[]} Array of scrollable ancestor elements (does not include window)
+     * @private
+     */
+    _getScrollableAncestors(element) {
+        const ancestors = [];
+        let current = element.parentElement;
+
+        while (current) {
+            const style = getComputedStyle(current);
+            const overflowY = style.overflowY;
+            const overflowX = style.overflowX;
+
+            const isScrollableY = (overflowY === 'auto' || overflowY === 'scroll' || overflowY === 'overlay') &&
+                current.scrollHeight > current.clientHeight;
+            const isScrollableX = (overflowX === 'auto' || overflowX === 'scroll' || overflowX === 'overlay') &&
+                current.scrollWidth > current.clientWidth;
+
+            if (isScrollableY || isScrollableX) {
+                ancestors.push(current);
+            }
+
+            current = current.parentElement;
+        }
+
+        return ancestors;
     }
 };
 
