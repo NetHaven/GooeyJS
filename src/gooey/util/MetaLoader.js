@@ -51,6 +51,36 @@ export default class MetaLoader {
         }
     }
     /**
+     * Confine a relative path to the component root directory.
+     * Prevents META.goo entries like "../../secret.js" from escaping the component directory.
+     * @param {string} componentPath - Base path of the component directory
+     * @param {string} relativePath - Relative path from META.goo (script, template, or theme)
+     * @param {string} pathType - Descriptive label for error messages (e.g., "script", "template", "theme")
+     * @returns {string} The confined resolved path
+     * @throws {Error} If the resolved path escapes the component root
+     */
+    static _confineToComponentRoot(componentPath, relativePath, pathType) {
+        if (!relativePath || typeof relativePath !== 'string') {
+            throw new Error(`META.goo ${pathType} path must be a non-empty string`);
+        }
+
+        // Use URL resolution to canonicalize the path (handles ../, %2e%2e, etc.)
+        // Append a dummy filename so componentPath is treated as a directory base
+        const base = new URL(componentPath + '/dummy', document.baseURI);
+        const resolved = new URL(relativePath, base);
+
+        // Compute the canonical component root path
+        const rootUrl = new URL(componentPath + '/', document.baseURI);
+
+        // The resolved path must start with the component root
+        if (!resolved.pathname.startsWith(rootUrl.pathname)) {
+            throw new Error(`META.goo ${pathType} path escapes component root: ${relativePath}`);
+        }
+
+        return resolved.pathname;
+    }
+
+    /**
      * Load a META.goo file from a component directory
      * @param {string} componentPath - Full path to the component directory
      * @returns {Promise<Object>} Parsed META.goo content

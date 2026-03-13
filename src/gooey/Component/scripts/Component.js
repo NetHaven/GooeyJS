@@ -56,8 +56,9 @@ export default class Component extends Observable {
 
     /**
      * Validate component href path against traversal and protocol attacks.
+     * Uses URL-based canonicalization to catch encoded traversal (e.g., %2e%2e/).
      * @param {string} href - The component href to validate
-     * @throws {Error} If href contains traversal segments or protocol URLs
+     * @throws {Error} If href contains traversal segments, protocol URLs, or root-absolute paths
      * @private
      */
     static _validateComponentPath(href) {
@@ -65,13 +66,37 @@ export default class Component extends Observable {
         if (!href || typeof href !== 'string') {
             throw new Error('Component href must be a non-empty string');
         }
-        // Reject traversal segments
-        if (/(?:^|\/)\.\.(\/|$)/.test(href)) {
-            throw new Error(`Component href contains path traversal: ${href}`);
+
+        // Reject root-absolute paths (component paths must be relative)
+        if (href.startsWith('/')) {
+            throw new Error(`Component href must be a relative path, not root-absolute: ${href}`);
         }
+
         // Reject absolute protocol URLs (only relative paths allowed)
         if (/^[a-zA-Z][a-zA-Z0-9+\-.]*:/.test(href)) {
             throw new Error(`Component href must be a relative path, not a protocol URL: ${href}`);
+        }
+
+        // Canonicalize via URL constructor to normalize percent-encoded traversal
+        // e.g., "%2e%2e/%2e%2e/evil" becomes "../../evil" after URL resolution
+        const canonical = new URL(href, document.baseURI);
+
+        // Reject if canonical origin differs from current origin (prevents cross-origin loading)
+        if (canonical.origin !== location.origin) {
+            throw new Error(`Component href resolves to foreign origin: ${canonical.origin}`);
+        }
+
+        // Compute the base path from document.baseURI
+        const basePath = new URL('.', document.baseURI).pathname;
+
+        // After URL canonicalization, verify the resolved path stays within (or at) the base path
+        if (!canonical.pathname.startsWith(basePath)) {
+            throw new Error(`Component href contains path traversal: ${href}`);
+        }
+
+        // Final safety: reject if canonicalized pathname still contains '..' segments
+        if (/(?:^|\/)\.\.(\/|$)/.test(canonical.pathname)) {
+            throw new Error(`Component href contains path traversal: ${href}`);
         }
     }
 
@@ -255,6 +280,9 @@ export default class Component extends Observable {
             // (constructors need theme CSS available when triggered by define())
             if (meta.themes && meta.themes.default) {
                 try {
+                    // Confine theme path to component root
+                    MetaLoader._confineToComponentRoot(this._href, `themes/${meta.themes.default}.css`, 'theme');
+
                     const cssResult = await MetaLoader.loadThemeCSS(this._href, meta.themes.default);
                     ComponentRegistry.setThemeCSS(fullTagName, cssResult);
                     Logger.debug({ code: "THEME_LOADED", tagName: fullTagName, theme: meta.themes.default }, "Loaded theme CSS for %s: %s", fullTagName, meta.themes.default);
@@ -265,6 +293,10 @@ export default class Component extends Observable {
 
             // Load component locales if META.goo declares a locales field
             if (meta.locales) {
+                // Confine locale directory to component root
+                const localeDir = meta.locales.directory || 'locales/';
+                MetaLoader._confineToComponentRoot(this._href, localeDir, 'locale');
+
                 ComponentRegistry.setLocaleConfig(fullTagName, meta.locales);
 
                 const currentLocale = GooeyI18n.locale || meta.locales.default || 'en';
@@ -291,6 +323,9 @@ export default class Component extends Observable {
             // Validate script path from META.goo before building import URL
             Component._validateScriptPath(meta.script);
 
+            // Confine script path to component root directory
+            MetaLoader._confineToComponentRoot(this._href, `scripts/${meta.script}`, 'script');
+
             // Build paths for module and template using META.goo configuration
             // Resolve against document base URL to get absolute URL for dynamic import
             const basePath = `${this._href}/scripts/${meta.script}`;
@@ -308,6 +343,9 @@ export default class Component extends Observable {
             // Future enhancement: support "optional": true flag in META.goo template definitions for non-critical templates
             if (meta.templates && meta.templates.length > 0) {
                 for (const template of meta.templates) {
+                    // Confine template path to component root
+                    MetaLoader._confineToComponentRoot(this._href, `templates/${template.file}`, 'template');
+
                     const templatePath = `${this._href}/templates/${template.file}`;
                     try {
                         await Template.load(templatePath, template.id);
