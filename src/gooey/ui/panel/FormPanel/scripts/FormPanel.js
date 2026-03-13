@@ -3,6 +3,12 @@ import LayoutType from '../../../layout/Layout/scripts/LayoutType.js';
 import FormPanelEvent from '../../../../events/panel/FormPanelEvent.js';
 import Template from '../../../../util/Template.js';
 
+const RESERVED_KEYS = new Set(['__proto__', 'prototype', 'constructor']);
+
+function isSafeKey(key) {
+    return typeof key === 'string' && !RESERVED_KEYS.has(key);
+}
+
 export default class FormPanel extends Panel {
     constructor () {
         super();
@@ -188,12 +194,12 @@ export default class FormPanel extends Panel {
     
     getFormData() {
         // Collect all form data into an object
-        const formData = {};
+        const formData = Object.create(null);
         const formElements = this.querySelectorAll('gooeyui-textfield, gooeyui-textarea, gooeyui-dropdown, gooeyui-dropdownlist, gooeyui-listbox, gooeyui-combobox, gooeyui-checkbox, gooeyui-radiobutton, gooeyui-radiobuttongroup');
-        
+
         formElements.forEach(element => {
             const name = element.getAttribute('name') || element.getAttribute('id');
-            if (name) {
+            if (name && isSafeKey(name)) {
                 if (element.tagName.toLowerCase() === 'gooeyui-checkbox') {
                     const input = this._getInputFromElement(element);
                     formData[name] = input ? input.checked : false;

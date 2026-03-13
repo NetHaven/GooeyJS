@@ -3,6 +3,12 @@ import Template from '../../../util/Template.js';
 import MetaLoader from '../../../util/MetaLoader.js';
 import ComponentRegistry from '../../../util/ComponentRegistry.js';
 
+const RESERVED_KEYS = new Set(['__proto__', 'prototype', 'constructor']);
+
+function isSafeKey(key) {
+    return typeof key === 'string' && !RESERVED_KEYS.has(key);
+}
+
 /**
  * Model Component
  *
@@ -103,11 +109,11 @@ export default class Model extends GooeyElement {
      * @returns {Object} - Object with field names as keys and coerced default values
      */
     getDefaultRecord() {
-        const record = {};
+        const record = Object.create(null);
         const fields = this.getFields();
 
         for (const field of fields) {
-            if (field.name) {
+            if (field.name && isSafeKey(field.name)) {
                 record[field.name] = field.defaultValue;
             }
         }

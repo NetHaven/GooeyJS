@@ -2,6 +2,12 @@ import EntityState from "./EntityState.js";
 import ModelEvent from "../events/mvc/ModelEvent.js";
 import ObservableBase from "../events/ObservableBase.js";
 
+const RESERVED_KEYS = new Set(['__proto__', 'prototype', 'constructor']);
+
+function isSafeKey(key) {
+    return typeof key === 'string' && !RESERVED_KEYS.has(key);
+}
+
 export default class Model extends ObservableBase {
   // Subclasses must define their own adapter for save() operations
   static get adapter() {
@@ -13,8 +19,8 @@ export default class Model extends ObservableBase {
 
     // Model metadata
     this._metadata = this.constructor.metadata || {};
-    this._attributes = {};
-    this._originalValues = {};
+    this._attributes = Object.create(null);
+    this._originalValues = Object.create(null);
     this._errors = new Map();
     this._entityState = EntityState.DETACHED;
 
@@ -40,7 +46,7 @@ export default class Model extends ObservableBase {
   // Enable change tracking by transitioning to UNCHANGED state
   // Called after initial attributes are set to establish the "clean" baseline
   _enableChangeTracking() {
-    this._originalValues = {};
+    this._originalValues = Object.create(null);
     this._entityState = EntityState.UNCHANGED;
   }
 
@@ -76,6 +82,9 @@ export default class Model extends ObservableBase {
 
     // Validate and set each attribute
     Object.entries(attrs).forEach(([k, v]) => {
+      // Reject prototype pollution keys
+      if (!isSafeKey(k)) return;
+
       const metadata = this._metadata[k];
 
       if (metadata) {
@@ -188,7 +197,7 @@ export default class Model extends ObservableBase {
 
   // Accept changes (Breeze.js pattern)
   acceptChanges() {
-    this._originalValues = {};
+    this._originalValues = Object.create(null);
     this._entityState = EntityState.UNCHANGED;
     this._errors.clear();
   }
@@ -198,7 +207,7 @@ export default class Model extends ObservableBase {
     Object.entries(this._originalValues).forEach(([key, value]) => {
       this._attributes[key] = value;
     });
-    this._originalValues = {};
+    this._originalValues = Object.create(null);
     this._entityState = EntityState.UNCHANGED;
     this._errors.clear();
     this.fireEvent(ModelEvent.CHANGE, { changes: this._attributes });
