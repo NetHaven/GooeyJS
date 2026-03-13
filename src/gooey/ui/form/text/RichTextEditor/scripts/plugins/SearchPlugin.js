@@ -16,6 +16,107 @@ import { Selection } from '../model/Position.js';
 import Plugin from './Plugin.js';
 
 
+// ---------------------------------------------------------------------------
+// Regex Safety Guards
+// ---------------------------------------------------------------------------
+
+/**
+ * Known catastrophic backtracking signatures.
+ * Each pattern detects a class of regex that can cause exponential matching time.
+ * @type {RegExp[]}
+ */
+const UNSAFE_REGEX_PATTERNS = [
+    /\(.+\+\)\+/,          // (a+)+  nested quantifier
+    /\(.+\*\)\*/,          // (a*)*  nested quantifier
+    /\(.+\+\)\*/,          // (a+)*  nested quantifier
+    /\(.+\*\)\+/,          // (a*)+  nested quantifier
+    /\(\.\*.*\|.*\.\*\)/,  // (.*|.*) overlapping alternation
+];
+
+/** Maximum allowed regex pattern length (defense-in-depth). */
+const MAX_PATTERN_LENGTH = 500;
+
+/** Maximum searchable text length in characters (~500 KB of UTF-16). */
+const MAX_SEARCH_TEXT_LENGTH = 500_000;
+
+/** Time budget (ms) for a single regex search operation. */
+const SEARCH_TIME_BUDGET_MS = 100;
+
+/**
+ * Test whether a regex pattern string contains known catastrophic backtracking
+ * signatures or exceeds the safe length limit.
+ *
+ * @param {string} pattern - The raw regex source string
+ * @returns {boolean} true if the pattern is unsafe
+ */
+function isUnsafePattern(pattern) {
+    if (pattern.length > MAX_PATTERN_LENGTH) return true;
+    return UNSAFE_REGEX_PATTERNS.some(test => test.test(pattern));
+}
+
+/**
+ * Execute a global regex against text with a time budget.
+ * Returns matches found within the budget and a flag indicating timeout.
+ *
+ * @param {RegExp} regex - A global regex
+ * @param {string} text - Text to search
+ * @param {number} [maxTime=SEARCH_TIME_BUDGET_MS] - Max milliseconds
+ * @returns {{ results: Array<{index: number, length: number, text: string}>, timedOut: boolean }}
+ */
+function timeBudgetedSearch(regex, text, maxTime = SEARCH_TIME_BUDGET_MS) {
+    const start = performance.now();
+    const results = [];
+    let match;
+
+    regex.lastIndex = 0;
+
+    while ((match = regex.exec(text)) !== null) {
+        if (match[0].length === 0) {
+            regex.lastIndex++;
+            continue;
+        }
+
+        results.push({
+            index: match.index,
+            length: match[0].length,
+            text: match[0]
+        });
+
+        if (performance.now() - start > maxTime) {
+            return { results, timedOut: true };
+        }
+    }
+
+    return { results, timedOut: false };
+}
+
+/**
+ * Perform a literal (indexOf-based) search, returning match positions.
+ *
+ * @param {string} text - Haystack
+ * @param {string} term - Needle
+ * @param {boolean} caseSensitive - Whether comparison is case-sensitive
+ * @returns {Array<{index: number, length: number, text: string}>}
+ */
+function literalSearch(text, term, caseSensitive) {
+    const results = [];
+    if (!term) return results;
+
+    const haystack = caseSensitive ? text : text.toLowerCase();
+    const needle = caseSensitive ? term : term.toLowerCase();
+    let pos = 0;
+
+    while (pos < haystack.length) {
+        const idx = haystack.indexOf(needle, pos);
+        if (idx === -1) break;
+        results.push({ index: idx, length: term.length, text: text.slice(idx, idx + term.length) });
+        pos = idx + 1;
+    }
+
+    return results;
+}
+
+
 /**
  * SearchPlugin manages search state, match highlighting, and panel UI.
  */
@@ -58,6 +159,12 @@ export default class SearchPlugin extends Plugin {
 
         /** @type {string|null} Regex error message */
         this._regexError = null;
+
+        /** @type {boolean} True when regex mode has been degraded to literal search */
+        this._usingLiteralFallback = false;
+
+        /** @type {string|null} Status message for fallback/timeout indicators */
+        this._searchStatus = null;
 
         // Panel state
         /** @type {HTMLElement|null} Panel DOM element */
@@ -179,6 +286,8 @@ export default class SearchPlugin extends Plugin {
      */
     _findMatches() {
         this._regexError = null;
+        this._usingLiteralFallback = false;
+        this._searchStatus = null;
 
         if (!this._searchTerm) return [];
 
@@ -190,49 +299,108 @@ export default class SearchPlugin extends Plugin {
 
         if (!text) return [];
 
-        // Build search pattern
-        let pattern;
-        try {
-            if (this._useRegex) {
-                pattern = this._searchTerm;
-            } else {
-                // Escape regex special characters for literal search
-                pattern = this._searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-            }
+        // ----- Text length cap -----
+        const textTooLong = text.length > MAX_SEARCH_TEXT_LENGTH;
+        if (textTooLong && this._useRegex) {
+            this._usingLiteralFallback = true;
+            this._searchStatus = 'Using literal search (document too large for regex)';
+        }
+
+        // ----- Pattern safety check -----
+        const forceUnsafe = this._useRegex && isUnsafePattern(this._searchTerm);
+        if (forceUnsafe) {
+            this._usingLiteralFallback = true;
+            this._searchStatus = 'Using literal search (pattern too complex)';
+        }
+
+        // Determine effective search mode
+        const effectiveRegex = this._useRegex && !this._usingLiteralFallback;
+
+        let rawResults;
+        let timedOut = false;
+
+        if (effectiveRegex) {
+            // Regex path with time-budgeted execution
+            let pattern = this._searchTerm;
 
             if (this._wholeWord) {
                 pattern = `\\b${pattern}\\b`;
             }
 
             const flags = this._caseSensitive ? 'g' : 'gi';
-            const regex = new RegExp(pattern, flags);
+            let regex;
 
-            // Find all matches in the flat text
-            const matches = [];
-            let match;
-            while ((match = regex.exec(text)) !== null) {
-                if (match[0].length === 0) {
-                    regex.lastIndex++;
-                    continue;
-                }
-
-                const textFrom = match.index;
-                const textTo = match.index + match[0].length;
-
-                // Map text offsets to model positions
-                const modelFrom = this._textOffsetToPos(posMap, textFrom);
-                const modelTo = this._textOffsetToPos(posMap, textTo);
-
-                if (modelFrom !== null && modelTo !== null) {
-                    matches.push({ from: modelFrom, to: modelTo });
-                }
+            try {
+                regex = new RegExp(pattern, flags);
+            } catch (e) {
+                // Invalid regex syntax -- fall back to literal search
+                this._usingLiteralFallback = true;
+                this._searchStatus = 'Using literal search (invalid regex syntax)';
+                this._regexError = e.message || 'Invalid regular expression';
+                rawResults = literalSearch(text, this._searchTerm, this._caseSensitive);
+                return this._mapRawResults(rawResults, posMap);
             }
 
-            return matches;
-        } catch (e) {
-            this._regexError = e.message || 'Invalid regular expression';
-            return [];
+            const budget = timeBudgetedSearch(regex, text);
+            rawResults = budget.results;
+            timedOut = budget.timedOut;
+
+            if (timedOut) {
+                this._searchStatus = 'Search timed out -- showing partial results. Try a simpler pattern.';
+            }
+        } else {
+            // Literal search path (includes non-regex mode and fallback)
+            let term = this._searchTerm;
+
+            if (!this._useRegex) {
+                // Normal literal mode -- may still use regex for wholeWord
+                if (this._wholeWord) {
+                    const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                    const pattern = `\\b${escaped}\\b`;
+                    const flags = this._caseSensitive ? 'g' : 'gi';
+
+                    try {
+                        const regex = new RegExp(pattern, flags);
+                        const budget = timeBudgetedSearch(regex, text);
+                        rawResults = budget.results;
+                        timedOut = budget.timedOut;
+
+                        if (timedOut) {
+                            this._searchStatus = 'Search timed out -- showing partial results. Try a simpler pattern.';
+                        }
+                    } catch (e) {
+                        rawResults = literalSearch(text, term, this._caseSensitive);
+                    }
+                } else {
+                    rawResults = literalSearch(text, term, this._caseSensitive);
+                }
+            } else {
+                // Regex mode forced into literal fallback
+                rawResults = literalSearch(text, term, this._caseSensitive);
+            }
         }
+
+        return this._mapRawResults(rawResults, posMap);
+    }
+
+    /**
+     * Map raw text-offset results to model-position match ranges.
+     *
+     * @param {Array<{index: number, length: number}>} rawResults
+     * @param {Array<{textOffset: number, modelPos: number}>} posMap
+     * @returns {Array<{from: number, to: number}>}
+     * @private
+     */
+    _mapRawResults(rawResults, posMap) {
+        const matches = [];
+        for (const r of rawResults) {
+            const modelFrom = this._textOffsetToPos(posMap, r.index);
+            const modelTo = this._textOffsetToPos(posMap, r.index + r.length);
+            if (modelFrom !== null && modelTo !== null) {
+                matches.push({ from: modelFrom, to: modelTo });
+            }
+        }
+        return matches;
     }
 
     /**
@@ -439,21 +607,23 @@ export default class SearchPlugin extends Plugin {
         let replacement = this._replaceTerm;
 
         // For regex mode with capture groups, resolve $1, $2 etc.
-        if (this._useRegex && this._searchTerm) {
+        // Skip if pattern was forced into literal fallback
+        if (this._useRegex && this._searchTerm && !this._usingLiteralFallback) {
             try {
+                if (isUnsafePattern(this._searchTerm)) throw new Error('Unsafe pattern');
+
                 const { text, posMap } = this._buildTextMap(state.doc);
                 const flags = this._caseSensitive ? 'g' : 'gi';
                 const regex = new RegExp(this._searchTerm, flags);
 
                 // Find the specific match text
-                let m;
-                while ((m = regex.exec(text)) !== null) {
-                    const modelFrom = this._textOffsetToPos(posMap, m.index);
+                const budget = timeBudgetedSearch(regex, text);
+                for (const r of budget.results) {
+                    const modelFrom = this._textOffsetToPos(posMap, r.index);
                     if (modelFrom === match.from) {
-                        replacement = m[0].replace(new RegExp(this._searchTerm, this._caseSensitive ? '' : 'i'), this._replaceTerm);
+                        replacement = r.text.replace(new RegExp(this._searchTerm, this._caseSensitive ? '' : 'i'), this._replaceTerm);
                         break;
                     }
-                    if (m[0].length === 0) { regex.lastIndex++; }
                 }
             } catch (e) {
                 // Use literal replacement on regex error
@@ -500,23 +670,25 @@ export default class SearchPlugin extends Plugin {
             let matchReplacement = replacement;
 
             // For regex mode, resolve capture groups for each match
-            if (this._useRegex && this._searchTerm) {
+            // Skip if pattern was forced into literal fallback
+            if (this._useRegex && this._searchTerm && !this._usingLiteralFallback) {
                 try {
+                    if (isUnsafePattern(this._searchTerm)) throw new Error('Unsafe pattern');
+
                     const { text, posMap } = this._buildTextMap(tr.doc);
                     const flags = this._caseSensitive ? 'g' : 'gi';
                     const regex = new RegExp(this._searchTerm, flags);
 
-                    let m;
-                    while ((m = regex.exec(text)) !== null) {
-                        const modelFrom = this._textOffsetToPos(posMap, m.index);
+                    const budget = timeBudgetedSearch(regex, text);
+                    for (const r of budget.results) {
+                        const modelFrom = this._textOffsetToPos(posMap, r.index);
                         if (modelFrom === match.from) {
-                            matchReplacement = m[0].replace(
+                            matchReplacement = r.text.replace(
                                 new RegExp(this._searchTerm, this._caseSensitive ? '' : 'i'),
                                 replacement
                             );
                             break;
                         }
-                        if (m[0].length === 0) { regex.lastIndex++; }
                     }
                 } catch (e) {
                     // Use literal replacement
@@ -608,8 +780,9 @@ export default class SearchPlugin extends Plugin {
     _updateErrorDisplay() {
         if (!this._errorEl) return;
 
-        if (this._regexError) {
-            this._errorEl.textContent = this._regexError;
+        const message = this._regexError || this._searchStatus;
+        if (message) {
+            this._errorEl.textContent = message;
             this._errorEl.classList.add('rte-find-error-visible');
         } else {
             this._errorEl.textContent = '';
