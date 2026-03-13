@@ -721,9 +721,22 @@ const TooltipManager = {
     // ========================================
 
     /**
+     * Get the wrapper element from a tooltip's shadow DOM.
+     *
+     * @param {Element} tooltip - The tooltip element
+     * @returns {Element|null} The wrapper element
+     * @private
+     */
+    _getWrapper(tooltip) {
+        return tooltip.shadowRoot
+            ? tooltip.shadowRoot.querySelector('.tooltip-wrapper')
+            : tooltip.querySelector('.tooltip-wrapper');
+    },
+
+    /**
      * Perform the actual show operation.
      * Fires BEFORE_SHOW (cancelable), makes tooltip visible, positions it,
-     * starts auto-update, and fires SHOW then SHOWN.
+     * starts auto-update, triggers CSS transition, and fires SHOWN after transitionend.
      *
      * @param {Element} reference - The reference element
      * @param {Element} tooltip - The tooltip element
@@ -754,40 +767,106 @@ const TooltipManager = {
             this.applyPosition(tooltip, updateResult);
         });
 
+        const wrapper = this._getWrapper(tooltip);
+        const animation = tooltip.getAttribute('animation') || TooltipAnimation.FADE;
+        const duration = parseInt(tooltip.getAttribute('duration')) || 150;
+
+        if (wrapper) {
+            // Clean up any existing show/hide transition handlers
+            if (binding && binding._showTransitionHandler) {
+                wrapper.removeEventListener('transitionend', binding._showTransitionHandler);
+                binding._showTransitionHandler = null;
+            }
+            if (binding && binding._hideTransitionHandler) {
+                wrapper.removeEventListener('transitionend', binding._hideTransitionHandler);
+                binding._hideTransitionHandler = null;
+            }
+            if (binding && binding._showSafetyTimeout) {
+                clearTimeout(binding._showSafetyTimeout);
+                binding._showSafetyTimeout = null;
+            }
+
+            // Set animation attributes
+            wrapper.dataset.animation = animation;
+            wrapper.dataset.placement = result.placement;
+            wrapper.style.transitionDuration = duration + 'ms';
+
+            // Set data-state to "showing" to trigger CSS transition
+            wrapper.dataset.state = 'showing';
+        }
+
         // Fire SHOW with placement info
         tooltip.fireEvent(TooltipEvent.SHOW, { placement: result.placement });
 
-        // Fire SHOWN immediately (animation deferred to Phase 97)
-        tooltip.fireEvent(TooltipEvent.SHOWN, {});
+        // Helper to complete show (attach interactive, auto-close, click-dismiss)
+        const completeShow = () => {
+            if (binding) {
+                binding.state = 'visible';
 
-        if (binding) {
-            binding.state = 'visible';
+                // Attach click-outside and Escape dismissal for click-triggered tooltips
+                if (binding.triggers.includes(TooltipTrigger.CLICK)) {
+                    this._attachClickDismissal(binding.reference, tooltip, binding);
+                }
 
-            // Attach click-outside and Escape dismissal for click-triggered tooltips
-            if (binding.triggers.includes(TooltipTrigger.CLICK)) {
-                this._attachClickDismissal(binding.reference, tooltip, binding);
-            }
+                // Interactive tooltip: attach hover listeners and click-outside/Escape dismissal
+                if (tooltip.hasAttribute('interactive')) {
+                    this._attachInteractiveHover(reference, tooltip, binding);
+                    if (!binding.triggers.includes(TooltipTrigger.CLICK)) {
+                        this._attachClickDismissal(reference, tooltip, binding);
+                    }
+                }
 
-            // Interactive tooltip: attach hover listeners and click-outside/Escape dismissal
-            if (tooltip.hasAttribute('interactive')) {
-                this._attachInteractiveHover(reference, tooltip, binding);
-                // Also attach click dismissal for interactive tooltips (unless already attached by click trigger)
-                if (!binding.triggers.includes(TooltipTrigger.CLICK)) {
-                    this._attachClickDismissal(reference, tooltip, binding);
+                // Auto-close timer
+                if (tooltip.getAttribute('autoClose')) {
+                    this._startAutoClose(reference, tooltip, binding);
                 }
             }
+        };
 
-            // Auto-close timer
-            if (tooltip.getAttribute('autoClose')) {
-                this._startAutoClose(reference, tooltip, binding);
+        if (animation === TooltipAnimation.NONE || !wrapper) {
+            // No animation: fire SHOWN immediately, set visible state
+            if (wrapper) {
+                wrapper.dataset.state = 'visible';
             }
+            tooltip.fireEvent(TooltipEvent.SHOWN, {});
+            completeShow();
+        } else {
+            // Animation: wait for transitionend then fire SHOWN
+            const onShown = (e) => {
+                if (e.target !== wrapper) return;
+                wrapper.removeEventListener('transitionend', onShown);
+                if (binding) {
+                    binding._showTransitionHandler = null;
+                    if (binding._showSafetyTimeout) {
+                        clearTimeout(binding._showSafetyTimeout);
+                        binding._showSafetyTimeout = null;
+                    }
+                }
+                wrapper.dataset.state = 'visible';
+                tooltip.fireEvent(TooltipEvent.SHOWN, {});
+            };
+
+            wrapper.addEventListener('transitionend', onShown);
+            if (binding) {
+                binding._showTransitionHandler = onShown;
+
+                // Safety fallback: fire SHOWN if transitionend never fires
+                binding._showSafetyTimeout = setTimeout(() => {
+                    wrapper.removeEventListener('transitionend', onShown);
+                    binding._showTransitionHandler = null;
+                    binding._showSafetyTimeout = null;
+                    wrapper.dataset.state = 'visible';
+                    tooltip.fireEvent(TooltipEvent.SHOWN, {});
+                }, duration + 50);
+            }
+            completeShow();
         }
     },
 
     /**
      * Perform the actual hide operation.
-     * Fires BEFORE_HIDE (cancelable), hides tooltip, stops auto-update,
-     * and fires HIDE then HIDDEN.
+     * Fires BEFORE_HIDE (cancelable), triggers CSS transition to hide,
+     * fires HIDDEN after transitionend, then hides tooltip and stops auto-update.
      *
      * @param {Element} reference - The reference element
      * @param {Element} tooltip - The tooltip element
@@ -802,24 +881,89 @@ const TooltipManager = {
             return;
         }
 
-        // Hide tooltip
-        tooltip.style.display = 'none';
-
-        // Stop auto-update
-        this.stopAutoUpdate(tooltip);
-
-        // Fire HIDE then HIDDEN immediately (animation deferred to Phase 97)
+        // Fire HIDE event
         tooltip.fireEvent(TooltipEvent.HIDE, {});
-        tooltip.fireEvent(TooltipEvent.HIDDEN, {});
 
-        if (binding) {
-            // Detach interactive hover listeners if present
-            this._detachInteractiveHover(binding);
-            // Stop auto-close timer if present
-            this._stopAutoClose(binding);
-            // Detach click dismissal listeners if present
-            this._detachClickDismissal(binding);
-            binding.state = 'hidden';
+        const wrapper = this._getWrapper(tooltip);
+        const animation = tooltip.getAttribute('animation') || TooltipAnimation.FADE;
+        const duration = parseInt(tooltip.getAttribute('duration')) || 150;
+
+        // Helper to complete hide (cleanup listeners, stop auto-update, etc.)
+        const completeHide = () => {
+            if (wrapper) {
+                wrapper.dataset.state = 'hidden';
+            }
+            tooltip.style.display = 'none';
+
+            // Stop auto-update AFTER transition completes
+            this.stopAutoUpdate(tooltip);
+
+            tooltip.fireEvent(TooltipEvent.HIDDEN, {});
+
+            if (binding) {
+                // Detach interactive hover listeners if present
+                this._detachInteractiveHover(binding);
+                // Stop auto-close timer if present
+                this._stopAutoClose(binding);
+                // Detach click dismissal listeners if present
+                this._detachClickDismissal(binding);
+                binding.state = 'hidden';
+            }
+        };
+
+        if (wrapper) {
+            // Clean up any existing transition handlers
+            if (binding && binding._showTransitionHandler) {
+                wrapper.removeEventListener('transitionend', binding._showTransitionHandler);
+                binding._showTransitionHandler = null;
+            }
+            if (binding && binding._showSafetyTimeout) {
+                clearTimeout(binding._showSafetyTimeout);
+                binding._showSafetyTimeout = null;
+            }
+            if (binding && binding._hideTransitionHandler) {
+                wrapper.removeEventListener('transitionend', binding._hideTransitionHandler);
+                binding._hideTransitionHandler = null;
+            }
+            if (binding && binding._hideSafetyTimeout) {
+                clearTimeout(binding._hideSafetyTimeout);
+                binding._hideSafetyTimeout = null;
+            }
+
+            // Set data-state to "hiding" to trigger CSS transition to opacity 0
+            wrapper.dataset.state = 'hiding';
+        }
+
+        if (animation === TooltipAnimation.NONE || !wrapper) {
+            // No animation: complete immediately
+            completeHide();
+        } else {
+            // Animation: wait for transitionend then complete
+            const onHidden = (e) => {
+                if (e.target !== wrapper) return;
+                wrapper.removeEventListener('transitionend', onHidden);
+                if (binding) {
+                    binding._hideTransitionHandler = null;
+                    if (binding._hideSafetyTimeout) {
+                        clearTimeout(binding._hideSafetyTimeout);
+                        binding._hideSafetyTimeout = null;
+                    }
+                }
+                completeHide();
+            };
+
+            wrapper.addEventListener('transitionend', onHidden);
+            if (binding) {
+                binding._hideTransitionHandler = onHidden;
+
+                // Safety fallback: complete hide if transitionend never fires
+                binding._hideSafetyTimeout = setTimeout(() => {
+                    wrapper.removeEventListener('transitionend', onHidden);
+                    binding._hideTransitionHandler = null;
+                    binding._hideSafetyTimeout = null;
+                    completeHide();
+                }, duration + 50);
+            }
         }
     },
 
