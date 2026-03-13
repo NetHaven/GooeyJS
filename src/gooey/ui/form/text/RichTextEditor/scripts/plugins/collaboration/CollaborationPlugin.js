@@ -1,6 +1,7 @@
 import Plugin from '../Plugin.js';
 import RichTextEditorEvent from '../../../../../../../events/form/text/RichTextEditorEvent.js';
 import { Step, Mapping } from '../../state/Transaction.js';
+import URLSanitizer from '../../../../../../../util/URLSanitizer.js';
 
 /**
  * CollaborationPlugin provides editor-side infrastructure for real-time
@@ -128,11 +129,20 @@ export default class CollaborationPlugin extends Plugin {
      * @param {Object[]} stepJSONs - Serialized steps
      * @param {string} clientId - Remote peer ID
      */
+    /**
+     * URL-bearing attribute names to sanitize in remote steps.
+     * @type {Set<string>}
+     */
+    static _URL_ATTRS = new Set(['href', 'src', 'poster', 'action', 'data', 'cite', 'background', 'url']);
+
     receiveSteps(stepJSONs, clientId) {
         const schema = this._editor.state.schema;
         const tr = this._editor.createTransaction();
 
-        for (const json of stepJSONs) {
+        // Sanitize URL-bearing attributes in remote step data before applying
+        const sanitizedStepJSONs = stepJSONs.map(json => CollaborationPlugin._sanitizeStepJSON(json));
+
+        for (const json of sanitizedStepJSONs) {
             const step = Step.fromJSON(schema, json);
             tr._applyStep(step);
         }
@@ -328,6 +338,42 @@ export default class CollaborationPlugin extends Plugin {
             peer.anchor = mapping.map(peer.anchor);
             peer.head = mapping.map(peer.head);
         }
+    }
+
+    // =========================================================================
+    // Remote Step Sanitization
+    // =========================================================================
+
+    /**
+     * Recursively sanitize URL-bearing attributes in a step JSON object.
+     * Walks the JSON tree and replaces unsafe URL values with empty strings.
+     *
+     * @param {Object} json - Serialized step JSON
+     * @returns {Object} Sanitized copy of the step JSON
+     * @static
+     */
+    static _sanitizeStepJSON(json) {
+        if (!json || typeof json !== 'object') return json;
+
+        // Deep clone to avoid mutating the input
+        const clone = Array.isArray(json) ? [...json] : { ...json };
+
+        for (const key of Object.keys(clone)) {
+            const value = clone[key];
+
+            if (value && typeof value === 'object') {
+                clone[key] = CollaborationPlugin._sanitizeStepJSON(value);
+            } else if (typeof value === 'string' && CollaborationPlugin._URL_ATTRS.has(key.toLowerCase())) {
+                const sanitized = URLSanitizer.sanitizeURL(value, { allowDataMedia: true });
+                if (sanitized === null) {
+                    clone[key] = ''; // Strip unsafe URL
+                } else {
+                    clone[key] = sanitized;
+                }
+            }
+        }
+
+        return clone;
     }
 
     // =========================================================================

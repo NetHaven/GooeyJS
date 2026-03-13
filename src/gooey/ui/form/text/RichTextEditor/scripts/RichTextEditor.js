@@ -5,6 +5,7 @@ import FormElementEvent from '../../../../../events/form/FormElementEvent.js';
 import Template from '../../../../../util/Template.js';
 import Logger from '../../../../../logging/Logger.js';
 import Sanitizer from '../../../../../util/Sanitizer.js';
+import URLSanitizer from '../../../../../util/URLSanitizer.js';
 
 import Schema from './model/Schema.js';
 import Node, { Mark } from './model/Node.js';
@@ -2692,7 +2693,10 @@ export default class RichTextEditor extends TextElement {
         openBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             if (href) {
-                window.open(href, '_blank', 'noopener');
+                const safeHref = URLSanitizer.sanitizeURL(href);
+                if (safeHref !== null) {
+                    window.open(safeHref, '_blank', 'noopener');
+                }
             }
         });
         popover.appendChild(openBtn);

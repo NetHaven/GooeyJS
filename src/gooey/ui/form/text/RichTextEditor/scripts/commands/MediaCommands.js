@@ -12,6 +12,7 @@
 import Node from "../model/Node.js";
 import { Selection } from "../model/Position.js";
 import { _findBlockAtPos } from "../state/Commands.js";
+import URLSanitizer from '../../../../util/URLSanitizer.js';
 
 
 // ============================================================================
@@ -184,14 +185,17 @@ export function insertVideo(url, attrs = {}) {
     return function (state, dispatch) {
         if (!url) return false;
 
-        const { provider } = _parseVideoProvider(url);
+        const safeSrc = URLSanitizer.sanitizeURL(url);
+        if (safeSrc === null) return false;
+
+        const { provider } = _parseVideoProvider(safeSrc);
 
         if (dispatch) {
             const tr = state.transaction;
             const { from } = state.selection;
 
             const videoNode = new Node("video", {
-                src: url,
+                src: safeSrc,
                 provider,
                 width: attrs.width || null,
                 height: attrs.height || null,
@@ -218,12 +222,15 @@ export function insertEmbed(url, attrs = {}) {
     return function (state, dispatch) {
         if (!url) return false;
 
+        const safeUrl = URLSanitizer.sanitizeURL(url);
+        if (safeUrl === null) return false;
+
         if (dispatch) {
             const tr = state.transaction;
             const { from } = state.selection;
 
             const embedNode = new Node("embed", {
-                url,
+                url: safeUrl,
                 html: attrs.html || "",
                 provider: attrs.provider || null,
                 title: attrs.title || null,

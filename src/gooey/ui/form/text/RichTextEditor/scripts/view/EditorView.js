@@ -1,4 +1,12 @@
 import { Mark } from "../model/Node.js";
+import URLSanitizer from '../../../../../util/URLSanitizer.js';
+
+/**
+ * URL-bearing attributes that can navigate or load resources.
+ * These must be sanitized before rendering to prevent XSS via javascript:, data:, etc.
+ * @type {Set<string>}
+ */
+const RTE_URL_ATTRS = new Set(['href', 'src', 'poster', 'action', 'data', 'cite', 'background']);
 
 /**
  * EditorView owns the DOM rendering surface. It renders the document
@@ -464,7 +472,15 @@ export default class EditorView {
             const attrs = spec[1];
             for (const [key, value] of Object.entries(attrs)) {
                 if (value !== undefined && value !== null) {
-                    el.setAttribute(key, value);
+                    if (RTE_URL_ATTRS.has(key.toLowerCase())) {
+                        const sanitized = URLSanitizer.sanitizeURL(value, { allowDataMedia: true });
+                        if (sanitized === null) {
+                            continue; // Skip unsafe URL attribute
+                        }
+                        el.setAttribute(key, sanitized);
+                    } else {
+                        el.setAttribute(key, value);
+                    }
                 }
             }
             startIdx = 2;
@@ -519,7 +535,15 @@ export default class EditorView {
             const attrs = spec[1];
             for (const [key, value] of Object.entries(attrs)) {
                 if (value !== undefined && value !== null) {
-                    el.setAttribute(key, value);
+                    if (RTE_URL_ATTRS.has(key.toLowerCase())) {
+                        const sanitized = URLSanitizer.sanitizeURL(value, { allowDataMedia: true });
+                        if (sanitized === null) {
+                            continue; // Skip unsafe URL attribute
+                        }
+                        el.setAttribute(key, sanitized);
+                    } else {
+                        el.setAttribute(key, value);
+                    }
                 }
             }
             startIdx = 2;
@@ -563,7 +587,15 @@ export default class EditorView {
             const attrs = spec[1];
             for (const [key, value] of Object.entries(attrs)) {
                 if (value !== undefined && value !== null) {
-                    el.setAttribute(key, value);
+                    if (RTE_URL_ATTRS.has(key.toLowerCase())) {
+                        const sanitized = URLSanitizer.sanitizeURL(value, { allowDataMedia: true });
+                        if (sanitized === null) {
+                            continue; // Skip unsafe URL attribute
+                        }
+                        el.setAttribute(key, sanitized);
+                    } else {
+                        el.setAttribute(key, value);
+                    }
                 }
             }
         }

@@ -1,4 +1,37 @@
 import Node, { Mark } from "./Node.js";
+import URLSanitizer from '../../../../util/URLSanitizer.js';
+
+/**
+ * URL-bearing attribute names that must be sanitized at model mutation time.
+ * @type {Set<string>}
+ */
+const URL_ATTRS = new Set(['href', 'src', 'poster', 'action', 'data', 'cite', 'background', 'url']);
+
+/**
+ * Sanitize URL-bearing attributes in an attrs object.
+ * Strips attributes whose URLs are rejected by URLSanitizer.
+ * @param {object|null} attrs - Attribute key/value pairs
+ * @returns {object|null} Sanitized attributes (may remove unsafe URL attrs)
+ */
+function _sanitizeAttrs(attrs) {
+    if (!attrs) return attrs;
+    const result = {};
+    let changed = false;
+    for (const [key, value] of Object.entries(attrs)) {
+        if (URL_ATTRS.has(key.toLowerCase()) && typeof value === 'string') {
+            const sanitized = URLSanitizer.sanitizeURL(value, { allowDataMedia: true });
+            if (sanitized === null) {
+                changed = true;
+                continue; // Strip unsafe URL attribute
+            }
+            result[key] = sanitized;
+            if (sanitized !== value) changed = true;
+        } else {
+            result[key] = value;
+        }
+    }
+    return changed ? result : attrs;
+}
 
 /**
  * Content expression parser and validator.
@@ -247,8 +280,8 @@ export default class Schema {
     node(type, attrs, children, marks) {
         const spec = this.nodeType(type); // throws if unknown
 
-        // Build attrs with defaults
-        const resolvedAttrs = this._resolveAttrs(spec.attrs, attrs);
+        // Build attrs with defaults, then sanitize URL-bearing attributes
+        const resolvedAttrs = _sanitizeAttrs(this._resolveAttrs(spec.attrs, attrs));
 
         // Validate children against content expression
         if (type !== "text") {
@@ -297,8 +330,8 @@ export default class Schema {
     mark(type, attrs) {
         const spec = this.markType(type); // throws if unknown
 
-        // Resolve attrs with defaults
-        const resolvedAttrs = this._resolveAttrs(spec.attrs, attrs);
+        // Resolve attrs with defaults, then sanitize URL-bearing attributes
+        const resolvedAttrs = _sanitizeAttrs(this._resolveAttrs(spec.attrs, attrs));
         return Mark.create(type, Object.keys(resolvedAttrs).length > 0 ? resolvedAttrs : undefined);
     }
 
