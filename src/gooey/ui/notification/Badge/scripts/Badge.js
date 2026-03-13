@@ -1,5 +1,6 @@
 import UIComponent from '../../../UIComponent.js';
 import Template from '../../../../util/Template.js';
+import URLSanitizer from '../../../../util/URLSanitizer.js';
 
 /**
  * Badge component for displaying status indicators, counts, or labels.
@@ -412,8 +413,14 @@ export default class Badge extends UIComponent {
             }
         } else if (this._iconElement) {
             if (val) {
-                this._iconElement.src = val;
-                this._iconElement.style.display = '';
+                const safeVal = URLSanitizer.validateAssetURL(val);
+                if (safeVal) {
+                    this._iconElement.src = safeVal;
+                    this._iconElement.style.display = '';
+                } else {
+                    this._iconElement.removeAttribute("src");
+                    this._iconElement.style.display = 'none';
+                }
             } else {
                 this._iconElement.removeAttribute("src");
                 this._iconElement.style.display = 'none';

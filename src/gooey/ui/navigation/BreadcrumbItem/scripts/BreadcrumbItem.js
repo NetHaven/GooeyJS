@@ -238,8 +238,14 @@ export default class BreadcrumbItem extends UIComponent {
         if (slottedIcon) {
             this._icon.style.display = "none";
         } else if (val) {
-            this._icon.src = val;
-            this._icon.style.display = "inline-block";
+            const safeVal = URLSanitizer.validateAssetURL(val);
+            if (safeVal) {
+                this._icon.src = safeVal;
+                this._icon.style.display = "inline-block";
+            } else {
+                this._icon.removeAttribute("src");
+                this._icon.style.display = "none";
+            }
         } else {
             this._icon.src = "";
             this._icon.style.display = "none";

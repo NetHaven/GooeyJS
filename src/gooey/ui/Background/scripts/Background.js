@@ -1,5 +1,6 @@
 import GooeyElement from '../../../GooeyElement.js';
 import Template from '../../../util/Template.js';
+import URLSanitizer from '../../../util/URLSanitizer.js';
 import BackgroundSize from './BackgroundSize.js';
 import BackgroundRepeat from './BackgroundRepeat.js';
 import BackgroundAttachment from './BackgroundAttachment.js';
@@ -47,7 +48,12 @@ export default class Background extends GooeyElement {
 
     set image(val) {
         if (val) {
-            this.setAttribute("image", val);
+            const safeVal = URLSanitizer.validateAssetURL(val);
+            if (safeVal) {
+                this.setAttribute("image", safeVal);
+            } else {
+                this.removeAttribute("image");
+            }
         } else {
             this.removeAttribute("image");
         }
@@ -175,7 +181,10 @@ export default class Background extends GooeyElement {
         if (gradientValue) {
             styles.backgroundImage = gradientValue;
         } else if (this.image) {
-            styles.backgroundImage = `url('${this.image}')`;
+            const safeImage = URLSanitizer.validateAssetURL(this.image);
+            if (safeImage) {
+                styles.backgroundImage = `url('${safeImage}')`;
+            }
         }
 
         // Background color

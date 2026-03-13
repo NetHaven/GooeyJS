@@ -112,6 +112,16 @@ export default class Button extends UIComponent {
             return;
         }
 
+        const safeVal = URLSanitizer.validateAssetURL(val);
+        if (!safeVal) {
+            // Invalid URL - clear any existing icon
+            if (this.image) {
+                this.image.style.display = 'none';
+                this.image.removeAttribute("src");
+            }
+            return;
+        }
+
         if (!this.image) {
 			this.image = document.createElement("img");
 			this.button.appendChild(this.image);
@@ -123,8 +133,8 @@ export default class Button extends UIComponent {
 			});
         }
         this.image.style.display = '';
-		this.setAttribute("icon", val);
-		this.image.src = val;
+		this.setAttribute("icon", safeVal);
+		this.image.src = safeVal;
 	}
 	
 	set text(val) {

@@ -100,8 +100,14 @@ export default class WaffleMenuItem extends UIComponent {
         } else {
             const val = this.icon;
             if (val) {
-                this.image.src = val;
-                this.image.style.display = '';
+                const safeVal = URLSanitizer.validateAssetURL(val);
+                if (safeVal) {
+                    this.image.src = safeVal;
+                    this.image.style.display = '';
+                } else {
+                    this.image.removeAttribute("src");
+                    this.image.style.display = 'none';
+                }
             } else {
                 this.image.src = "";
                 this.image.style.display = '';

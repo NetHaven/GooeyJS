@@ -1,5 +1,6 @@
 import GooeyElement from '../../../../GooeyElement.js';
 import Template from '../../../../util/Template.js';
+import URLSanitizer from '../../../../util/URLSanitizer.js';
 
 /**
  * FilterUrl Component
@@ -24,7 +25,12 @@ export default class FilterUrl extends GooeyElement {
 
     set href(val) {
         if (val) {
-            this.setAttribute("href", val);
+            const safeVal = URLSanitizer.validateAssetURL(val);
+            if (safeVal) {
+                this.setAttribute("href", safeVal);
+            } else {
+                this.removeAttribute("href");
+            }
         } else {
             this.removeAttribute("href");
         }
@@ -37,6 +43,8 @@ export default class FilterUrl extends GooeyElement {
      * @returns {string}
      */
     toCSSValue() {
-        return `url(${this.href})`;
+        const safe = this.href ? URLSanitizer.validateAssetURL(this.href) : null;
+        if (!safe) return '';
+        return `url(${safe})`;
     }
 }
