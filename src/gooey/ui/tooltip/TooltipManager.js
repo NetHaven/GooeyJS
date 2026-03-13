@@ -1,5 +1,6 @@
 import TooltipPlacement from './TooltipPlacement.js';
 import TooltipTrigger from './TooltipTrigger.js';
+import TooltipAnimation from './TooltipAnimation.js';
 import TooltipEvent from '../../events/tooltip/TooltipEvent.js';
 
 /**
@@ -79,6 +80,12 @@ const TooltipManager = {
         // Cancel hover intent if active
         this._cancelHoverIntent(binding);
 
+        // Clean up interactive hover listeners
+        this._detachInteractiveHover(binding);
+
+        // Stop auto-close timer
+        this._stopAutoClose(binding);
+
         // Detach all trigger listeners
         this._detachTriggerListeners(reference, binding.triggers);
 
@@ -136,10 +143,14 @@ const TooltipManager = {
             }
         };
 
-        const leaveHandler = () => {
+        const leaveHandler = (e) => {
             // Cancel hover intent tracking if active
             if (binding._hoverIntentState) {
                 this._cancelHoverIntent(binding);
+            }
+            // Store cursor exit position for safe triangle computation
+            if (tooltip.hasAttribute('interactive')) {
+                binding._lastCursorPos = { x: e.clientX, y: e.clientY };
             }
             this._scheduleHide(reference, tooltip);
         };
@@ -385,6 +396,251 @@ const TooltipManager = {
     },
 
     // ========================================
+    // Interactive Tooltip Support
+    // ========================================
+
+    /**
+     * Test if a point (px, py) lies inside the triangle (ax, ay), (bx, by), (cx, cy).
+     * Uses the cross-product sign method.
+     *
+     * @param {number} px - Test point x
+     * @param {number} py - Test point y
+     * @param {number} ax - Triangle vertex A x
+     * @param {number} ay - Triangle vertex A y
+     * @param {number} bx - Triangle vertex B x
+     * @param {number} by - Triangle vertex B y
+     * @param {number} cx - Triangle vertex C x
+     * @param {number} cy - Triangle vertex C y
+     * @returns {boolean} True if point is inside the triangle
+     * @private
+     */
+    _pointInTriangle(px, py, ax, ay, bx, by, cx, cy) {
+        const sign = (x1, y1, x2, y2, x3, y3) =>
+            (x1 - x3) * (y2 - y3) - (x2 - x3) * (y1 - y3);
+
+        const d1 = sign(px, py, ax, ay, bx, by);
+        const d2 = sign(px, py, bx, by, cx, cy);
+        const d3 = sign(px, py, cx, cy, ax, ay);
+
+        const hasNeg = (d1 < 0) || (d2 < 0) || (d3 < 0);
+        const hasPos = (d1 > 0) || (d2 > 0) || (d3 > 0);
+
+        return !(hasNeg && hasPos);
+    },
+
+    /**
+     * Get the bounding rectangle of a tooltip element.
+     *
+     * @param {Element} tooltip - The tooltip element
+     * @returns {{ top: number, left: number, right: number, bottom: number }}
+     * @private
+     */
+    _getTooltipCorners(tooltip) {
+        const rect = tooltip.getBoundingClientRect();
+        return { top: rect.top, left: rect.left, right: rect.right, bottom: rect.bottom };
+    },
+
+    /**
+     * Get two corner points of the tooltip nearest to the cursor exit point,
+     * based on the tooltip placement.
+     *
+     * @param {number} cursorX - Cursor exit x position
+     * @param {number} cursorY - Cursor exit y position
+     * @param {{ top: number, left: number, right: number, bottom: number }} rect - Tooltip bounding rect
+     * @param {string} placement - Current resolved placement
+     * @returns {{ p1: {x: number, y: number}, p2: {x: number, y: number} }}
+     * @private
+     */
+    _getSafeTrianglePoints(cursorX, cursorY, rect, placement) {
+        // For top placement: tooltip is above reference, nearest edges are bottom-left/bottom-right
+        if (placement.startsWith('top')) {
+            return { p1: { x: rect.left, y: rect.bottom }, p2: { x: rect.right, y: rect.bottom } };
+        }
+        // For bottom placement: tooltip is below, nearest edges are top-left/top-right
+        if (placement.startsWith('bottom')) {
+            return { p1: { x: rect.left, y: rect.top }, p2: { x: rect.right, y: rect.top } };
+        }
+        // For left placement: tooltip is to the left, nearest edges are top-right/bottom-right
+        if (placement.startsWith('left')) {
+            return { p1: { x: rect.right, y: rect.top }, p2: { x: rect.right, y: rect.bottom } };
+        }
+        // For right placement: tooltip is to the right, nearest edges are top-left/bottom-left
+        return { p1: { x: rect.left, y: rect.top }, p2: { x: rect.left, y: rect.bottom } };
+    },
+
+    /**
+     * Attach interactive hover listeners on the tooltip element.
+     * Allows cursor to move from reference to tooltip without closing.
+     * Uses safe triangle geometry to suppress premature hide.
+     *
+     * @param {Element} reference - The reference element
+     * @param {Element} tooltip - The tooltip element
+     * @param {Object} binding - The binding object
+     * @private
+     */
+    _attachInteractiveHover(reference, tooltip, binding) {
+        // Remove any existing interactive listeners
+        this._detachInteractiveHover(binding);
+
+        const listeners = {};
+
+        // Entering tooltip cancels any pending hide
+        listeners.tooltipEnter = () => {
+            if (binding.hideTimer !== null) {
+                clearTimeout(binding.hideTimer);
+                binding.hideTimer = null;
+            }
+            binding._cursorInTooltip = true;
+        };
+
+        // Leaving tooltip schedules hide
+        listeners.tooltipLeave = () => {
+            binding._cursorInTooltip = false;
+            this._scheduleHide(reference, tooltip);
+        };
+
+        // During hide delay, check if cursor is in safe triangle
+        listeners.documentMousemove = (e) => {
+            // Only active during hide delay
+            if (binding.hideTimer === null) return;
+
+            const cursorPos = binding._lastCursorPos;
+            if (!cursorPos) return;
+
+            const rect = this._getTooltipCorners(tooltip);
+            const placement = tooltip.getAttribute('data-placement') ||
+                              (tooltip.shadowRoot && tooltip.shadowRoot.querySelector('.tooltip-wrapper')?.dataset.placement) ||
+                              'top';
+            const { p1, p2 } = this._getSafeTrianglePoints(cursorPos.x, cursorPos.y, rect, placement);
+
+            // Check if cursor is inside the safe triangle (cursor exit -> two tooltip corners)
+            if (this._pointInTriangle(e.clientX, e.clientY, cursorPos.x, cursorPos.y, p1.x, p1.y, p2.x, p2.y)) {
+                // Cursor is in safe zone, cancel hide
+                if (binding.hideTimer !== null) {
+                    clearTimeout(binding.hideTimer);
+                    binding.hideTimer = null;
+                }
+            }
+
+            // Check if cursor entered the tooltip
+            const tipRect = tooltip.getBoundingClientRect();
+            if (e.clientX >= tipRect.left && e.clientX <= tipRect.right &&
+                e.clientY >= tipRect.top && e.clientY <= tipRect.bottom) {
+                if (binding.hideTimer !== null) {
+                    clearTimeout(binding.hideTimer);
+                    binding.hideTimer = null;
+                }
+                binding._cursorInTooltip = true;
+            }
+        };
+
+        tooltip.addEventListener('mouseenter', listeners.tooltipEnter);
+        tooltip.addEventListener('mouseleave', listeners.tooltipLeave);
+        document.addEventListener('mousemove', listeners.documentMousemove);
+
+        binding._interactiveListeners = listeners;
+    },
+
+    /**
+     * Remove interactive hover listeners from the tooltip.
+     *
+     * @param {Object} binding - The binding object
+     * @private
+     */
+    _detachInteractiveHover(binding) {
+        const listeners = binding._interactiveListeners;
+        if (!listeners) return;
+
+        if (listeners.tooltipEnter) {
+            binding.tooltip.removeEventListener('mouseenter', listeners.tooltipEnter);
+        }
+        if (listeners.tooltipLeave) {
+            binding.tooltip.removeEventListener('mouseleave', listeners.tooltipLeave);
+        }
+        if (listeners.documentMousemove) {
+            document.removeEventListener('mousemove', listeners.documentMousemove);
+        }
+
+        binding._interactiveListeners = null;
+        binding._cursorInTooltip = false;
+        binding._lastCursorPos = null;
+    },
+
+    /**
+     * Start auto-close timer for a tooltip.
+     * The timer resets on pointer/keyboard interaction within the tooltip.
+     *
+     * @param {Element} reference - The reference element
+     * @param {Element} tooltip - The tooltip element
+     * @param {Object} binding - The binding object
+     * @private
+     */
+    _startAutoClose(reference, tooltip, binding) {
+        const duration = parseInt(tooltip.getAttribute('autoClose'));
+        if (!duration || duration <= 0) return;
+
+        // Clear any existing auto-close state
+        this._stopAutoClose(binding);
+
+        binding._autoCloseDuration = duration;
+
+        // Set the timer
+        binding._autoCloseTimer = setTimeout(() => {
+            this._doHide(reference, tooltip);
+        }, duration);
+
+        // Interaction handlers that reset the timer
+        binding._autoCloseInteraction = {
+            pointermove: () => this._resetAutoClose(reference, tooltip, binding),
+            keydown: () => this._resetAutoClose(reference, tooltip, binding)
+        };
+
+        tooltip.addEventListener('pointermove', binding._autoCloseInteraction.pointermove);
+        tooltip.addEventListener('keydown', binding._autoCloseInteraction.keydown);
+    },
+
+    /**
+     * Reset the auto-close timer (called on user interaction).
+     *
+     * @param {Element} reference - The reference element
+     * @param {Element} tooltip - The tooltip element
+     * @param {Object} binding - The binding object
+     * @private
+     */
+    _resetAutoClose(reference, tooltip, binding) {
+        if (binding._autoCloseTimer !== undefined) {
+            clearTimeout(binding._autoCloseTimer);
+        }
+        const duration = binding._autoCloseDuration;
+        if (duration && duration > 0) {
+            binding._autoCloseTimer = setTimeout(() => {
+                this._doHide(reference, tooltip);
+            }, duration);
+        }
+    },
+
+    /**
+     * Stop auto-close timer and remove interaction listeners.
+     *
+     * @param {Object} binding - The binding object
+     * @private
+     */
+    _stopAutoClose(binding) {
+        if (binding._autoCloseTimer !== undefined) {
+            clearTimeout(binding._autoCloseTimer);
+            binding._autoCloseTimer = undefined;
+        }
+
+        if (binding._autoCloseInteraction && binding.tooltip) {
+            binding.tooltip.removeEventListener('pointermove', binding._autoCloseInteraction.pointermove);
+            binding.tooltip.removeEventListener('keydown', binding._autoCloseInteraction.keydown);
+            binding._autoCloseInteraction = null;
+        }
+
+        binding._autoCloseDuration = null;
+    },
+
+    // ========================================
     // Show/Hide Scheduling
     // ========================================
 
@@ -511,6 +767,20 @@ const TooltipManager = {
             if (binding.triggers.includes(TooltipTrigger.CLICK)) {
                 this._attachClickDismissal(binding.reference, tooltip, binding);
             }
+
+            // Interactive tooltip: attach hover listeners and click-outside/Escape dismissal
+            if (tooltip.hasAttribute('interactive')) {
+                this._attachInteractiveHover(reference, tooltip, binding);
+                // Also attach click dismissal for interactive tooltips (unless already attached by click trigger)
+                if (!binding.triggers.includes(TooltipTrigger.CLICK)) {
+                    this._attachClickDismissal(reference, tooltip, binding);
+                }
+            }
+
+            // Auto-close timer
+            if (tooltip.getAttribute('autoClose')) {
+                this._startAutoClose(reference, tooltip, binding);
+            }
         }
     },
 
@@ -543,6 +813,10 @@ const TooltipManager = {
         tooltip.fireEvent(TooltipEvent.HIDDEN, {});
 
         if (binding) {
+            // Detach interactive hover listeners if present
+            this._detachInteractiveHover(binding);
+            // Stop auto-close timer if present
+            this._stopAutoClose(binding);
             // Detach click dismissal listeners if present
             this._detachClickDismissal(binding);
             binding.state = 'hidden';

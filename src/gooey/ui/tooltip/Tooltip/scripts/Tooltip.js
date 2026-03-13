@@ -4,6 +4,7 @@ import TooltipEvent from '../../../../events/tooltip/TooltipEvent.js';
 import TooltipPlacement from '../../TooltipPlacement.js';
 import TooltipManager from '../../TooltipManager.js';
 import TooltipTrigger from '../../TooltipTrigger.js';
+import TooltipAnimation from '../../TooltipAnimation.js';
 
 /**
  * Tooltip component.
@@ -33,6 +34,22 @@ export default class Tooltip extends UIComponent {
         this._contentEl = this.shadowRoot.querySelector(".tooltip-content");
         this._wrapperEl = this.shadowRoot.querySelector(".tooltip-wrapper");
         this._arrowEl = this.shadowRoot.querySelector(".tooltip-arrow");
+        this._closeBtn = this.shadowRoot.querySelector(".tooltip-close");
+
+        // Close button click handler
+        if (this._closeBtn) {
+            this._closeBtn.addEventListener('click', () => this.hide({ immediate: true }));
+        }
+
+        // Initialize animation data attributes on wrapper
+        if (this._wrapperEl) {
+            this._wrapperEl.dataset.state = 'hidden';
+            this._wrapperEl.dataset.animation = this.getAttribute('animation') || 'fade';
+            const duration = this.getAttribute('duration');
+            if (duration) {
+                this._wrapperEl.style.transitionDuration = duration + 'ms';
+            }
+        }
 
         // Internal state for content value
         this._contentValue = null;
@@ -56,6 +73,9 @@ export default class Tooltip extends UIComponent {
         }
         if (this.hasAttribute("contentAsHTML")) {
             this._renderContent();
+        }
+        if (this.hasAttribute("closeButton")) {
+            this.closeButton = true;
         }
     }
 
@@ -126,6 +146,28 @@ export default class Tooltip extends UIComponent {
                 break;
             case 'hoverintentinterval':
                 // Interval is read at hover intent start time, no action needed
+                break;
+            case 'interactive':
+                // CSS handles pointer-events via :host([interactive]) selector
+                // Manager reads attribute at show time
+                break;
+            case 'closebutton':
+                if (this._closeBtn) {
+                    this._closeBtn.hidden = !this.hasAttribute('closeButton');
+                }
+                break;
+            case 'autoclose':
+                // Auto-close duration is read at show time from attribute, no action needed
+                break;
+            case 'animation':
+                if (this._wrapperEl) {
+                    this._wrapperEl.dataset.animation = newValue || 'fade';
+                }
+                break;
+            case 'duration':
+                if (this._wrapperEl) {
+                    this._wrapperEl.style.transitionDuration = (newValue || 150) + 'ms';
+                }
                 break;
         }
     }
@@ -213,6 +255,93 @@ export default class Tooltip extends UIComponent {
 
     set hoverIntentInterval(val) {
         this.setAttribute('hoverIntentInterval', val);
+    }
+
+    // ========================================
+    // Interactive Attributes
+    // ========================================
+
+    /**
+     * Whether the tooltip is interactive (receives pointer events).
+     * Interactive tooltips allow users to hover into and interact with content.
+     * @type {boolean}
+     */
+    get interactive() {
+        return this.hasAttribute('interactive');
+    }
+
+    set interactive(val) {
+        if (val) {
+            this.setAttribute('interactive', '');
+        } else {
+            this.removeAttribute('interactive');
+        }
+    }
+
+    /**
+     * Whether to show a close button in the tooltip.
+     * @type {boolean}
+     */
+    get closeButton() {
+        return this.hasAttribute('closeButton');
+    }
+
+    set closeButton(val) {
+        if (val) {
+            this.setAttribute('closeButton', '');
+        } else {
+            this.removeAttribute('closeButton');
+        }
+        if (this._closeBtn) {
+            this._closeBtn.hidden = !val;
+        }
+    }
+
+    /**
+     * Duration in milliseconds before the tooltip auto-closes.
+     * Null or 0 disables auto-close.
+     * @type {number|null}
+     */
+    get autoClose() {
+        const val = this.getAttribute('autoClose');
+        return val !== null ? parseInt(val) : null;
+    }
+
+    set autoClose(val) {
+        if (val !== null && val !== undefined) {
+            this.setAttribute('autoClose', val);
+        } else {
+            this.removeAttribute('autoClose');
+        }
+    }
+
+    // ========================================
+    // Animation Attributes
+    // ========================================
+
+    /**
+     * The animation type for show/hide transitions.
+     * Valid values: "fade", "scale", "shift-away", "shift-toward", "none"
+     * @type {string}
+     */
+    get animation() {
+        return this.getAttribute('animation') || TooltipAnimation.FADE;
+    }
+
+    set animation(val) {
+        this.setAttribute('animation', val);
+    }
+
+    /**
+     * Transition duration in milliseconds for show/hide animations.
+     * @type {number}
+     */
+    get duration() {
+        return parseInt(this.getAttribute('duration')) || 150;
+    }
+
+    set duration(val) {
+        this.setAttribute('duration', val);
     }
 
     // ========================================

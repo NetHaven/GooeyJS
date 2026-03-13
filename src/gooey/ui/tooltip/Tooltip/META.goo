@@ -92,6 +92,11 @@
     "hideDelay": { "type": "NUMBER", "default": 0 },
     "hoverIntent": { "type": "BOOLEAN", "default": false },
     "hoverIntentSensitivity": { "type": "NUMBER", "default": 7 },
-    "hoverIntentInterval": { "type": "NUMBER", "default": 100 }
+    "hoverIntentInterval": { "type": "NUMBER", "default": 100 },
+    "interactive": { "type": "BOOLEAN", "default": false },
+    "closeButton": { "type": "BOOLEAN", "default": false },
+    "autoClose": { "type": "NUMBER", "default": null },
+    "animation": { "type": "ENUM", "default": "fade", "values": ["FADE", "SCALE", "SHIFT_AWAY", "SHIFT_TOWARD", "NONE"] },
+    "duration": { "type": "NUMBER", "default": 150 }
   }
 }
