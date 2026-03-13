@@ -47,9 +47,15 @@ export default class Menu extends UIComponent {
     }
 
     _handleKeyDown(event) {
+        // Disconnected menus must not fire shortcuts
+        if (!this.isConnected) return;
+
         const menuItemList = Array.from(this.querySelectorAll("gooeyui-menuitem, gooeyui-checkboxmenuitem"));
 
         if (event.ctrlKey) {
+            // Skip shortcut processing if menu is hidden and not active
+            if (!this.offsetParent && !this.active) return;
+
             const shortcutItem = menuItemList.find((element) => {
                 if (element.shortcut) {
                     return element.shortcut.toLowerCase() === event.key.toLowerCase();
@@ -61,7 +67,10 @@ export default class Menu extends UIComponent {
 
             if (shortcutItem) {
                 if (!shortcutItem.disabled && shortcutItem.action) {
-                    document.dispatchEvent(new Event(shortcutItem.action));
+                    document.dispatchEvent(new CustomEvent('gooey:action', {
+                        bubbles: true,
+                        detail: { action: shortcutItem.action, source: shortcutItem }
+                    }));
                 }
             }
         }
@@ -108,7 +117,10 @@ export default class Menu extends UIComponent {
 
                     if (acceleratedItem && !acceleratedItem.disabled && acceleratedItem.action) {
                         this.active = false;
-                        document.dispatchEvent(new Event(acceleratedItem.action));
+                        document.dispatchEvent(new CustomEvent('gooey:action', {
+                            bubbles: true,
+                            detail: { action: acceleratedItem.action, source: acceleratedItem }
+                        }));
                     }
                 }
             }

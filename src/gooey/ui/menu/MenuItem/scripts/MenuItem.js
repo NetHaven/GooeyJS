@@ -69,9 +69,12 @@ export default class MenuItem extends UIComponent {
                     contextMenu.hide();
                 }
 
-                // Keep document dispatch for global menu actions
+                // Dispatch namespaced action event for centralized authorization
                 if (this.action) {
-                    document.dispatchEvent(new Event(this.action));
+                    document.dispatchEvent(new CustomEvent('gooey:action', {
+                        bubbles: true,
+                        detail: { action: this.action, source: this }
+                    }));
                 }
             }
             else {
