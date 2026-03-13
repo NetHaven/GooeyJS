@@ -1,9 +1,12 @@
 import TooltipPlacement from './TooltipPlacement.js';
+import TooltipTrigger from './TooltipTrigger.js';
+import TooltipEvent from '../../events/tooltip/TooltipEvent.js';
 
 /**
- * Singleton positioning engine for tooltips.
+ * Singleton positioning engine and trigger manager for tooltips.
  * Computes tooltip coordinates relative to a reference element,
  * handling viewport collision with flip, shift, and arrow clamping.
+ * Manages trigger bindings, show/hide lifecycle, and delay timers.
  */
 const TooltipManager = {
 
@@ -12,6 +15,326 @@ const TooltipManager = {
      * @type {WeakMap<Element, Function>}
      */
     _activeCleanups: new WeakMap(),
+
+    /**
+     * Maps reference elements to binding objects.
+     * Each binding: { reference, tooltip, triggers, listeners, showTimer, hideTimer, state }
+     * @type {WeakMap<Element, Object>}
+     */
+    _bindings: new WeakMap(),
+
+    // ========================================
+    // Trigger Binding API
+    // ========================================
+
+    /**
+     * Create a binding between a reference element and a tooltip.
+     * Reads trigger config from the tooltip element attributes and attaches
+     * the appropriate event listeners.
+     *
+     * @param {Element} reference - The reference element that triggers the tooltip
+     * @param {Element} tooltip - The tooltip element
+     */
+    bind(reference, tooltip) {
+        // Unbind any existing binding first
+        if (this._bindings.has(reference)) {
+            this.unbind(reference);
+        }
+
+        const triggers = TooltipTrigger.parse(tooltip.getAttribute('trigger'));
+
+        const binding = {
+            reference,
+            tooltip,
+            triggers,
+            listeners: new Map(),
+            showTimer: null,
+            hideTimer: null,
+            state: 'hidden'
+        };
+
+        this._bindings.set(reference, binding);
+        this._attachTriggerListeners(reference, tooltip, triggers);
+    },
+
+    /**
+     * Remove all listeners and timers for a reference element binding.
+     *
+     * @param {Element} reference - The reference element to unbind
+     */
+    unbind(reference) {
+        const binding = this._bindings.get(reference);
+        if (!binding) return;
+
+        // Clear pending timers
+        if (binding.showTimer !== null) {
+            clearTimeout(binding.showTimer);
+            binding.showTimer = null;
+        }
+        if (binding.hideTimer !== null) {
+            clearTimeout(binding.hideTimer);
+            binding.hideTimer = null;
+        }
+
+        // Detach all trigger listeners
+        this._detachTriggerListeners(reference, binding.triggers);
+
+        this._bindings.delete(reference);
+    },
+
+    // ========================================
+    // Trigger Listener Management
+    // ========================================
+
+    /**
+     * Attach event listeners for each trigger type in the triggers array.
+     *
+     * @param {Element} reference - The reference element
+     * @param {Element} tooltip - The tooltip element
+     * @param {string[]} triggers - Array of trigger type constants
+     * @private
+     */
+    _attachTriggerListeners(reference, tooltip, triggers) {
+        const binding = this._bindings.get(reference);
+        if (!binding) return;
+
+        for (const trigger of triggers) {
+            switch (trigger) {
+                case TooltipTrigger.HOVER:
+                    this._attachHover(reference, tooltip, binding);
+                    break;
+                case TooltipTrigger.FOCUS:
+                    this._attachFocus(reference, tooltip, binding);
+                    break;
+                case TooltipTrigger.CLICK:
+                    // Click trigger deferred to Plan 02
+                    break;
+                case TooltipTrigger.MANUAL:
+                    // Manual attaches no listeners -- API-only control
+                    break;
+            }
+        }
+    },
+
+    /**
+     * Attach hover (mouseenter/mouseleave) listeners to a reference element.
+     *
+     * @param {Element} reference - The reference element
+     * @param {Element} tooltip - The tooltip element
+     * @param {Object} binding - The binding object
+     * @private
+     */
+    _attachHover(reference, tooltip, binding) {
+        const enterHandler = () => this._scheduleShow(reference, tooltip);
+        const leaveHandler = () => this._scheduleHide(reference, tooltip);
+
+        reference.addEventListener('mouseenter', enterHandler);
+        reference.addEventListener('mouseleave', leaveHandler);
+
+        binding.listeners.set('hover', { enterHandler, leaveHandler });
+    },
+
+    /**
+     * Attach focus (focusin/focusout) listeners to a reference element.
+     *
+     * @param {Element} reference - The reference element
+     * @param {Element} tooltip - The tooltip element
+     * @param {Object} binding - The binding object
+     * @private
+     */
+    _attachFocus(reference, tooltip, binding) {
+        const focusInHandler = () => this._scheduleShow(reference, tooltip);
+        const focusOutHandler = () => this._scheduleHide(reference, tooltip);
+
+        reference.addEventListener('focusin', focusInHandler);
+        reference.addEventListener('focusout', focusOutHandler);
+
+        binding.listeners.set('focus', { focusInHandler, focusOutHandler });
+    },
+
+    /**
+     * Detach all trigger listeners from a reference element.
+     *
+     * @param {Element} reference - The reference element
+     * @param {string[]} triggers - Array of trigger type constants
+     * @private
+     */
+    _detachTriggerListeners(reference, triggers) {
+        const binding = this._bindings.get(reference);
+        if (!binding) return;
+
+        for (const trigger of triggers) {
+            const handlers = binding.listeners.get(trigger);
+            if (!handlers) continue;
+
+            switch (trigger) {
+                case TooltipTrigger.HOVER:
+                    reference.removeEventListener('mouseenter', handlers.enterHandler);
+                    reference.removeEventListener('mouseleave', handlers.leaveHandler);
+                    break;
+                case TooltipTrigger.FOCUS:
+                    reference.removeEventListener('focusin', handlers.focusInHandler);
+                    reference.removeEventListener('focusout', handlers.focusOutHandler);
+                    break;
+            }
+
+            binding.listeners.delete(trigger);
+        }
+    },
+
+    // ========================================
+    // Show/Hide Scheduling
+    // ========================================
+
+    /**
+     * Schedule showing a tooltip with optional delay.
+     * Cancels any pending hide timer. Fires TRIGGER event on the tooltip.
+     *
+     * @param {Element} reference - The reference element
+     * @param {Element} tooltip - The tooltip element
+     */
+    _scheduleShow(reference, tooltip) {
+        const binding = this._bindings.get(reference);
+        if (!binding) return;
+
+        // Cancel any pending hide
+        if (binding.hideTimer !== null) {
+            clearTimeout(binding.hideTimer);
+            binding.hideTimer = null;
+        }
+
+        // Already visible or in the process of showing
+        if (binding.state === 'visible' || binding.state === 'showing') return;
+
+        // Fire TRIGGER event
+        tooltip.fireEvent(TooltipEvent.TRIGGER, { triggerType: binding.triggers[0] });
+
+        const showDelay = parseInt(tooltip.getAttribute('showDelay')) || 200;
+
+        if (showDelay > 0) {
+            binding.state = 'showing';
+            binding.showTimer = setTimeout(() => {
+                binding.showTimer = null;
+                this._doShow(reference, tooltip);
+            }, showDelay);
+        } else {
+            this._doShow(reference, tooltip);
+        }
+    },
+
+    /**
+     * Schedule hiding a tooltip with optional delay.
+     * Cancels any pending show timer. Fires UNTRIGGER event on the tooltip.
+     *
+     * @param {Element} reference - The reference element
+     * @param {Element} tooltip - The tooltip element
+     */
+    _scheduleHide(reference, tooltip) {
+        const binding = this._bindings.get(reference);
+        if (!binding) return;
+
+        // Cancel any pending show
+        if (binding.showTimer !== null) {
+            clearTimeout(binding.showTimer);
+            binding.showTimer = null;
+        }
+
+        // Already hidden or in the process of hiding
+        if (binding.state === 'hidden' || binding.state === 'hiding') return;
+
+        // Fire UNTRIGGER event
+        tooltip.fireEvent(TooltipEvent.UNTRIGGER, {});
+
+        const hideDelay = parseInt(tooltip.getAttribute('hideDelay')) || 0;
+
+        if (hideDelay > 0) {
+            binding.state = 'hiding';
+            binding.hideTimer = setTimeout(() => {
+                binding.hideTimer = null;
+                this._doHide(reference, tooltip);
+            }, hideDelay);
+        } else {
+            this._doHide(reference, tooltip);
+        }
+    },
+
+    // ========================================
+    // Show/Hide Lifecycle
+    // ========================================
+
+    /**
+     * Perform the actual show operation.
+     * Fires BEFORE_SHOW (cancelable), makes tooltip visible, positions it,
+     * starts auto-update, and fires SHOW then SHOWN.
+     *
+     * @param {Element} reference - The reference element
+     * @param {Element} tooltip - The tooltip element
+     */
+    _doShow(reference, tooltip) {
+        const binding = this._bindings.get(reference);
+
+        // Fire cancelable BEFORE_SHOW
+        const allowed = tooltip.fireEvent(TooltipEvent.BEFORE_SHOW, {}, { cancelable: true });
+        if (!allowed) {
+            if (binding) binding.state = 'hidden';
+            return;
+        }
+
+        // Make tooltip visible with fixed positioning
+        tooltip.style.display = 'block';
+        tooltip.style.position = 'fixed';
+
+        // Get position options from tooltip
+        const options = tooltip._getPositionOptions ? tooltip._getPositionOptions() : {};
+
+        // Compute and apply position
+        const result = this.computePosition(reference, tooltip, options);
+        this.applyPosition(tooltip, result);
+
+        // Start auto-update for scroll/resize tracking
+        this.startAutoUpdate(reference, tooltip, options, (updateResult) => {
+            this.applyPosition(tooltip, updateResult);
+        });
+
+        // Fire SHOW with placement info
+        tooltip.fireEvent(TooltipEvent.SHOW, { placement: result.placement });
+
+        // Fire SHOWN immediately (animation deferred to Phase 97)
+        tooltip.fireEvent(TooltipEvent.SHOWN, {});
+
+        if (binding) binding.state = 'visible';
+    },
+
+    /**
+     * Perform the actual hide operation.
+     * Fires BEFORE_HIDE (cancelable), hides tooltip, stops auto-update,
+     * and fires HIDE then HIDDEN.
+     *
+     * @param {Element} reference - The reference element
+     * @param {Element} tooltip - The tooltip element
+     */
+    _doHide(reference, tooltip) {
+        const binding = this._bindings.get(reference);
+
+        // Fire cancelable BEFORE_HIDE
+        const allowed = tooltip.fireEvent(TooltipEvent.BEFORE_HIDE, {}, { cancelable: true });
+        if (!allowed) {
+            if (binding) binding.state = 'visible';
+            return;
+        }
+
+        // Hide tooltip
+        tooltip.style.display = 'none';
+
+        // Stop auto-update
+        this.stopAutoUpdate(tooltip);
+
+        // Fire HIDE then HIDDEN immediately (animation deferred to Phase 97)
+        tooltip.fireEvent(TooltipEvent.HIDE, {});
+        tooltip.fireEvent(TooltipEvent.HIDDEN, {});
+
+        if (binding) binding.state = 'hidden';
+    },
 
     /**
      * Compute the position of a tooltip relative to a reference element.
