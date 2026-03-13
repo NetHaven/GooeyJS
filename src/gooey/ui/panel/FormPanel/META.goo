@@ -3,6 +3,7 @@
   "name": "FormPanel",
   "prefix": "gooeyui",
   "tagName": "formpanel",
+  "dependencies": ["gooey/ui/panel/Panel"],
   "script": "FormPanel.js",
   "templates": [
     { "id": "ui-FormPanel", "file": "FormPanel.html" }

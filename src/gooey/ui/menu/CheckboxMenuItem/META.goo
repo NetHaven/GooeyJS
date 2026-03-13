@@ -3,6 +3,7 @@
   "name": "CheckboxMenuItem",
   "prefix": "gooeyui",
   "tagName": "checkboxmenuitem",
+  "dependencies": ["gooey/ui/menu/MenuItem"],
   "script": "CheckboxMenuItem.js",
   "templates": [
     { "id": "ui-CheckboxMenuItem", "file": "CheckboxMenuItem.html" }

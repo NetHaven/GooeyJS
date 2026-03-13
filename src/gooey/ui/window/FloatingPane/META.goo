@@ -3,6 +3,7 @@
   "name": "FloatingPane",
   "prefix": "gooeyui",
   "tagName": "floatingpane",
+  "dependencies": ["gooey/ui/window/Window"],
   "script": "FloatingPane.js",
   "templates": [
     { "id": "ui-FloatingPane", "file": "FloatingPane.html" }

@@ -20,6 +20,9 @@ export default class Component extends Observable {
     // Per-tag deduplication: maps tagName -> Promise to prevent concurrent duplicate loads
     static _activeLoads = new Map();
 
+    // Track dependency paths currently being resolved to prevent circular loops
+    static _resolvingDeps = new Set();
+
     /**
      * Promise that resolves when all gooey-component loaders have completed (loaded or errored).
      * If no gooey-component elements exist, resolves on next animation frame.
@@ -117,6 +120,91 @@ export default class Component extends Observable {
         // Reject absolute/protocol URLs
         if (/^[a-zA-Z][a-zA-Z0-9+\-.]*:/.test(scriptName) || scriptName.startsWith('/')) {
             throw new Error(`META.goo script must be a relative filename: ${scriptName}`);
+        }
+    }
+
+    /**
+     * Resolve META.goo dependencies for a component by preloading ancestor
+     * templates and themes into ComponentRegistry before the component is defined.
+     * This ensures derived components (e.g., FormPanel -> Panel) can access
+     * ancestor resources when their constructors run.
+     * @param {Object} meta - The component's parsed META.goo
+     * @param {string} componentHref - The component's href path
+     * @private
+     */
+    static async _resolveDependencies(meta, componentHref) {
+        if (!meta.dependencies || !Array.isArray(meta.dependencies) || meta.dependencies.length === 0) {
+            return;
+        }
+
+        for (const depPath of meta.dependencies) {
+            // Guard against circular dependencies
+            if (Component._resolvingDeps.has(depPath)) {
+                Logger.debug({ code: "DEP_CIRCULAR_SKIP", dep: depPath }, "Skipping circular dependency: %s", depPath);
+                continue;
+            }
+
+            // Validate the dependency path
+            try {
+                Component._validateComponentPath(depPath);
+            } catch (pathError) {
+                Logger.warn({ code: "DEP_PATH_INVALID", dep: depPath }, "Invalid dependency path: %s", pathError.message);
+                continue;
+            }
+
+            // Load dependency META.goo
+            let depMeta;
+            try {
+                Component._resolvingDeps.add(depPath);
+                depMeta = await MetaLoader.loadAndValidate(depPath);
+            } catch (err) {
+                Logger.warn({ code: "DEP_META_FAILED", dep: depPath }, "Failed to load dependency META.goo: %s", err.message);
+                Component._resolvingDeps.delete(depPath);
+                continue;
+            }
+
+            const depTagName = depMeta.fullTagName;
+
+            // Skip if already fully registered (templates/themes already cached)
+            if (ComponentRegistry.getMeta(depTagName)) {
+                Component._resolvingDeps.delete(depPath);
+                continue;
+            }
+
+            // Register dependency metadata and path
+            ComponentRegistry.register(depTagName, depMeta);
+            ComponentRegistry.setComponentPath(depTagName, depPath);
+
+            // Recursively resolve the dependency's own dependencies first
+            await Component._resolveDependencies(depMeta, depPath);
+
+            // Load and cache dependency theme CSS
+            if (depMeta.themes && depMeta.themes.default) {
+                try {
+                    MetaLoader._confineToComponentRoot(depPath, `themes/${depMeta.themes.default}.css`, 'theme');
+                    const cssResult = await MetaLoader.loadThemeCSS(depPath, depMeta.themes.default);
+                    ComponentRegistry.setThemeCSS(depTagName, cssResult);
+                    Logger.debug({ code: "DEP_THEME_LOADED", tagName: depTagName }, "Loaded dependency theme CSS for %s", depTagName);
+                } catch (themeErr) {
+                    Logger.warn({ code: "DEP_THEME_FAILED", tagName: depTagName }, "Failed to load dependency theme: %s", themeErr.message);
+                }
+            }
+
+            // Load and cache dependency templates
+            if (depMeta.templates && depMeta.templates.length > 0) {
+                for (const template of depMeta.templates) {
+                    try {
+                        MetaLoader._confineToComponentRoot(depPath, `templates/${template.file}`, 'template');
+                        const templatePath = `${depPath}/templates/${template.file}`;
+                        await Template.load(templatePath, template.id);
+                        Logger.debug({ code: "DEP_TEMPLATE_LOADED", templateId: template.id }, "Loaded dependency template %s", template.id);
+                    } catch (tmplErr) {
+                        Logger.warn({ code: "DEP_TEMPLATE_FAILED", templateId: template.id }, "Failed to load dependency template: %s", tmplErr.message);
+                    }
+                }
+            }
+
+            Component._resolvingDeps.delete(depPath);
         }
     }
 
@@ -368,6 +456,10 @@ export default class Component extends Observable {
                     }
                 }
             }
+
+            // Resolve ancestor dependencies before defining the component
+            // This ensures templates/themes for parent classes are cached
+            await Component._resolveDependencies(meta, this._href);
 
             // Dynamically import the component class
             const module = await import(modulePath);
