@@ -4,6 +4,27 @@ import CarouselEvent from '../../../../events/carousel/CarouselEvent.js';
 import CarouselSlideEvent from '../../../../events/carousel/CarouselSlideEvent.js';
 
 /**
+ * Allowed carousel module names. Only modules in this set can be loaded
+ * via the `modules` attribute or `_loadModuleByName()`.
+ * Derived from actual module files in src/gooey/ui/carousel/modules/.
+ * @type {Set<string>}
+ */
+const ALLOWED_MODULES = new Set([
+    'autoplay',
+    'free-mode',
+    'lazy-load',
+    'scrollbar',
+    'thumbs',
+    'effect-fade'
+]);
+
+/**
+ * Module name character validation. Only lowercase alphanumeric and hyphens allowed.
+ * @type {RegExp}
+ */
+const VALID_MODULE_NAME_RE = /^[a-z0-9-]+$/;
+
+/**
  * Core Carousel component.
  * Manages slide children in a horizontal track, providing navigation,
  * loop/rewind modes, multi-slide display, gap spacing, transitions,
@@ -764,25 +785,51 @@ export default class Carousel extends Container {
     // ---- Dynamic Module Loading ----
 
     async _loadModuleByName(name) {
-        const modulePath = this._resolveModulePath(name);
+        // Normalize module name
+        const normalizedName = name.toLowerCase().trim();
+
+        // Reject invalid characters
+        if (!VALID_MODULE_NAME_RE.test(normalizedName)) {
+            console.warn(`Carousel: Invalid module name "${name}" — contains disallowed characters`);
+            return;
+        }
+
+        // Check allowlist
+        if (!ALLOWED_MODULES.has(normalizedName)) {
+            console.warn(`Carousel: Unknown module "${name}" — not in allowed module list`);
+            return;
+        }
+
+        const modulePath = this._resolveModulePath(normalizedName);
         try {
             const mod = await import(modulePath);
-            this.loadModule(name, mod.default);
+            this.loadModule(normalizedName, mod.default);
         } catch (err) {
-            console.warn(`Carousel: Failed to load module "${name}" from ${modulePath}`, err);
+            console.warn(`Carousel: Failed to load module "${normalizedName}" from ${modulePath}`, err);
         }
     }
 
     _resolveModulePath(name) {
+        let modulePath;
+
         // effect-* prefix maps to effects/Effect{PascalCase}.js
         if (name.startsWith('effect-')) {
             const effectName = name.slice(7); // remove "effect-"
             const pascal = effectName.split('-').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join('');
-            return `../modules/effects/Effect${pascal}.js`;
+            modulePath = `../modules/effects/Effect${pascal}.js`;
+        } else {
+            // Standard module: kebab-case -> PascalCase
+            const pascal = name.split('-').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join('');
+            modulePath = `../modules/${pascal}.js`;
         }
-        // Standard module: kebab-case -> PascalCase
-        const pascal = name.split('-').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join('');
-        return `../modules/${pascal}.js`;
+
+        // Post-resolution safety: verify the resolved path stays within /modules/
+        const resolved = new URL(modulePath, import.meta.url).pathname;
+        if (!resolved.includes('/modules/')) {
+            throw new Error(`Carousel: Module "${name}" resolves outside modules directory`);
+        }
+
+        return modulePath;
     }
 
     // ---- Slide Management ----
