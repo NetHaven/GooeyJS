@@ -24,6 +24,27 @@ export default class CollaborationPlugin extends Plugin {
      */
     static get pluginName() { return 'collaboration'; }
 
+    /** Maximum number of concurrent remote peers. */
+    static MAX_PEERS = 50;
+
+    /** Maximum character length for peer display names. */
+    static _MAX_NAME_LENGTH = 100;
+
+    /** Upper bound for cursor position values. */
+    static _MAX_POSITION = 10_000_000;
+
+    /** Default color when a peer provides an invalid color value. */
+    static _DEFAULT_COLOR = '#888888';
+
+    /** Regex for valid hex color values (3-8 hex digits). */
+    static _HEX_COLOR_RE = /^#[0-9a-fA-F]{3,8}$/;
+
+    /** Regex for valid rgb/rgba color values. */
+    static _RGB_COLOR_RE = /^rgba?\(\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}\s*(,\s*(0|1|0?\.\d+))?\s*\)$/;
+
+    /** Regex for valid hsl/hsla color values. */
+    static _HSL_COLOR_RE = /^hsla?\(\s*\d{1,3}\s*,\s*\d{1,3}%\s*,\s*\d{1,3}%\s*(,\s*(0|1|0?\.\d+))?\s*\)$/;
+
     /**
      * @param {Object} [options]
      * @param {string} [options.clientId] - Local client identifier (defaults to crypto.randomUUID())
@@ -37,6 +58,9 @@ export default class CollaborationPlugin extends Plugin {
         this._onSendSteps = options.onSendSteps || null;
         this._onSendAwareness = options.onSendAwareness || null;
         this._cursorLayer = null;
+        this._pendingAwarenessUpdates = [];
+        this._rafId = 0;
+        this._rafScheduled = false;
     }
 
     // =========================================================================
@@ -64,6 +88,11 @@ export default class CollaborationPlugin extends Plugin {
      * Cleanup when plugin is unregistered.
      */
     destroy() {
+        if (this._rafScheduled) {
+            cancelAnimationFrame(this._rafId);
+            this._rafScheduled = false;
+        }
+        this._pendingAwarenessUpdates = [];
         this._removeCursorLayer();
         this._peers.clear();
         super.destroy();
@@ -91,7 +120,7 @@ export default class CollaborationPlugin extends Plugin {
             // Map peer positions through local changes
             const mapping = new Mapping(steps.map(s => s.getMap()));
             this._mapPeerPositions(mapping);
-            this._renderRemoteCursors();
+            this._scheduleOverlayRebuild();
 
             // Send steps to collaboration backend
             if (this._onSendSteps) {
@@ -164,29 +193,8 @@ export default class CollaborationPlugin extends Plugin {
     receiveAwareness(clientId, awareness) {
         if (clientId === this._localClientId) return;
 
-        const isNew = !this._peers.has(clientId);
-
-        this._peers.set(clientId, {
-            name: awareness.name || `User ${clientId.slice(0, 4)}`,
-            color: awareness.color || this._assignColor(clientId),
-            cursor: awareness.cursor,
-            anchor: awareness.anchor,
-            head: awareness.head
-        });
-
-        this._renderRemoteCursors();
-
-        if (isNew) {
-            this._editor.fireEvent(RichTextEditorEvent.PEER_JOINED, {
-                clientId,
-                name: awareness.name
-            });
-        }
-
-        this._editor.fireEvent(RichTextEditorEvent.PEER_CURSOR_MOVED, {
-            clientId,
-            cursor: awareness.cursor
-        });
+        const validated = this._validateAwareness(clientId, awareness);
+        this._queueOverlayUpdate(clientId, validated);
     }
 
     /**
@@ -196,7 +204,7 @@ export default class CollaborationPlugin extends Plugin {
     removePeer(clientId) {
         const peer = this._peers.get(clientId);
         this._peers.delete(clientId);
-        this._renderRemoteCursors();
+        this._scheduleOverlayRebuild();
 
         if (peer) {
             this._editor.fireEvent(RichTextEditorEvent.PEER_LEFT, {
@@ -204,6 +212,176 @@ export default class CollaborationPlugin extends Plugin {
                 name: peer.name
             });
         }
+    }
+
+    // =========================================================================
+    // Awareness Validation
+    // =========================================================================
+
+    /**
+     * Validate and sanitize an incoming awareness payload.
+     * Clamps cursor positions, caps name length, validates color format.
+     *
+     * @param {string} clientId - Remote peer ID
+     * @param {Object} awareness - Raw awareness data
+     * @returns {Object} Sanitized peer data
+     * @private
+     */
+    _validateAwareness(clientId, awareness) {
+        return {
+            name: CollaborationPlugin._sanitizeName(
+                awareness.name || `User ${clientId.slice(0, 4)}`
+            ),
+            color: CollaborationPlugin._validateColor(
+                awareness.color
+            ) || this._assignColor(clientId),
+            cursor: CollaborationPlugin._clampPosition(awareness.cursor),
+            anchor: CollaborationPlugin._clampPosition(awareness.anchor),
+            head: CollaborationPlugin._clampPosition(awareness.head),
+            _lastUpdate: Date.now()
+        };
+    }
+
+    /**
+     * Clamp a cursor position to a safe numeric range.
+     * @param {*} pos - Raw position value
+     * @returns {number} Clamped integer position
+     * @static
+     */
+    static _clampPosition(pos) {
+        const n = Number(pos);
+        if (!Number.isFinite(n) || n < 0) return 0;
+        return Math.min(Math.floor(n), CollaborationPlugin._MAX_POSITION);
+    }
+
+    /**
+     * Sanitize a peer display name: strip control characters, cap length.
+     * @param {string} name - Raw name
+     * @returns {string} Sanitized name
+     * @static
+     */
+    static _sanitizeName(name) {
+        if (typeof name !== 'string') return 'Anonymous';
+        // Strip null bytes and control characters (0x00-0x1F) except tab (0x09) and newline (0x0A)
+        let cleaned = name.replace(/[\x00-\x08\x0B-\x1F]/g, '');
+        cleaned = cleaned.slice(0, CollaborationPlugin._MAX_NAME_LENGTH).trim();
+        return cleaned || 'Anonymous';
+    }
+
+    /**
+     * Validate a CSS color string against safe patterns.
+     * Returns the color if valid, or null if invalid.
+     * @param {*} color - Raw color value
+     * @returns {string|null} Valid color or null
+     * @static
+     */
+    static _validateColor(color) {
+        if (typeof color !== 'string') return null;
+        const trimmed = color.trim();
+        if (CollaborationPlugin._HEX_COLOR_RE.test(trimmed)) return trimmed;
+        if (CollaborationPlugin._RGB_COLOR_RE.test(trimmed)) return trimmed;
+        if (CollaborationPlugin._HSL_COLOR_RE.test(trimmed)) return trimmed;
+        return null;
+    }
+
+    /**
+     * Enforce peer count limit. If the map is at MAX_PEERS, evict the peer
+     * with the oldest _lastUpdate timestamp.
+     * @private
+     */
+    _evictOldestPeerIfNeeded() {
+        if (this._peers.size < CollaborationPlugin.MAX_PEERS) return;
+
+        let oldestId = null;
+        let oldestTime = Infinity;
+        for (const [id, peer] of this._peers) {
+            const t = peer._lastUpdate || 0;
+            if (t < oldestTime) {
+                oldestTime = t;
+                oldestId = id;
+            }
+        }
+        if (oldestId !== null) {
+            const evicted = this._peers.get(oldestId);
+            this._peers.delete(oldestId);
+            if (evicted) {
+                this._editor.fireEvent(RichTextEditorEvent.PEER_LEFT, {
+                    clientId: oldestId,
+                    name: evicted.name
+                });
+            }
+        }
+    }
+
+    // =========================================================================
+    // RAF-Batched Overlay Updates
+    // =========================================================================
+
+    /**
+     * Queue an awareness update for batched overlay rendering.
+     * @param {string} peerId - Remote peer ID
+     * @param {Object} data - Validated peer data
+     * @private
+     */
+    _queueOverlayUpdate(peerId, data) {
+        this._pendingAwarenessUpdates.push({ peerId, data });
+        this._scheduleOverlayRebuild();
+    }
+
+    /**
+     * Schedule a single overlay rebuild on the next animation frame.
+     * Coalesces multiple calls into one RAF callback.
+     * @private
+     */
+    _scheduleOverlayRebuild() {
+        if (!this._rafScheduled) {
+            this._rafScheduled = true;
+            this._rafId = requestAnimationFrame(() => this._flushOverlayUpdates());
+        }
+    }
+
+    /**
+     * Process all queued awareness updates and rebuild the overlay once.
+     * @private
+     */
+    _flushOverlayUpdates() {
+        this._rafScheduled = false;
+        const updates = this._pendingAwarenessUpdates;
+        this._pendingAwarenessUpdates = [];
+
+        for (const { peerId, data } of updates) {
+            const isNew = !this._peers.has(peerId);
+
+            // Enforce peer count limit before adding a new peer
+            if (isNew) {
+                this._evictOldestPeerIfNeeded();
+            }
+
+            this._peers.set(peerId, data);
+
+            if (isNew) {
+                this._editor.fireEvent(RichTextEditorEvent.PEER_JOINED, {
+                    clientId: peerId,
+                    name: data.name
+                });
+            }
+
+            this._editor.fireEvent(RichTextEditorEvent.PEER_CURSOR_MOVED, {
+                clientId: peerId,
+                cursor: data.cursor
+            });
+        }
+
+        this._rebuildOverlay();
+    }
+
+    /**
+     * Single entry point for rebuilding the cursor/selection overlay.
+     * Delegates to _renderRemoteCursors.
+     * @private
+     */
+    _rebuildOverlay() {
+        this._renderRemoteCursors();
     }
 
     // =========================================================================
