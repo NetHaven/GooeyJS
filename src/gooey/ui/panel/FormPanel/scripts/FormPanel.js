@@ -9,6 +9,25 @@ function isSafeKey(key) {
     return typeof key === 'string' && !RESERVED_KEYS.has(key);
 }
 
+const FORM_CONTROL_SELECTOR = [
+    'gooeyui-textfield',
+    'gooeyui-textarea',
+    'gooeyui-passwordfield',
+    'gooeyui-richtexteditor',
+    'gooeyui-checkbox',
+    'gooeyui-radiobutton',
+    'gooeyui-radiobuttongroup',
+    'gooeyui-dropdown',
+    'gooeyui-dropdownlist',
+    'gooeyui-combobox',
+    'gooeyui-listbox',
+    'gooeyui-datepicker',
+    'gooeyui-timepicker',
+    'gooeyui-spinner',
+    'gooeyui-slider',
+    'gooeyui-togglebutton'
+].join(', ');
+
 export default class FormPanel extends Panel {
     constructor () {
         super();
@@ -66,7 +85,7 @@ export default class FormPanel extends Panel {
     }
 
     _ensureThirdColumnElements() {
-        const formElements = this.querySelectorAll('gooeyui-textfield, gooeyui-textarea, gooeyui-dropdown, gooeyui-dropdownlist, gooeyui-listbox, gooeyui-combobox, gooeyui-checkbox, gooeyui-radiobutton, gooeyui-radiobuttongroup');
+        const formElements = this.querySelectorAll(FORM_CONTROL_SELECTOR);
 
         formElements.forEach(element => {
             // Check if this element already has a corresponding indicator or empty span
@@ -94,7 +113,7 @@ export default class FormPanel extends Panel {
 
     validate() {
         // Get all form element components within this panel
-        const formElements = this.querySelectorAll('gooeyui-textfield, gooeyui-textarea, gooeyui-dropdown, gooeyui-dropdownlist, gooeyui-listbox, gooeyui-combobox, gooeyui-checkbox, gooeyui-radiobutton, gooeyui-radiobuttongroup');
+        const formElements = this.querySelectorAll(FORM_CONTROL_SELECTOR);
         const invalidElements = [];
         
         for (const element of formElements) {
@@ -170,7 +189,7 @@ export default class FormPanel extends Panel {
     
     reset() {
         // Get all form elements and reset their values
-        const formElements = this.querySelectorAll('gooeyui-textfield, gooeyui-textarea, gooeyui-dropdown, gooeyui-dropdownlist, gooeyui-listbox, gooeyui-combobox, gooeyui-checkbox, gooeyui-radiobutton, gooeyui-radiobuttongroup');
+        const formElements = this.querySelectorAll(FORM_CONTROL_SELECTOR);
         
         formElements.forEach(element => {
             if (element.tagName.toLowerCase() === 'gooeyui-checkbox' || element.tagName.toLowerCase() === 'gooeyui-radiobutton') {
@@ -195,7 +214,7 @@ export default class FormPanel extends Panel {
     getFormData() {
         // Collect all form data into an object
         const formData = Object.create(null);
-        const formElements = this.querySelectorAll('gooeyui-textfield, gooeyui-textarea, gooeyui-dropdown, gooeyui-dropdownlist, gooeyui-listbox, gooeyui-combobox, gooeyui-checkbox, gooeyui-radiobutton, gooeyui-radiobuttongroup');
+        const formElements = this.querySelectorAll(FORM_CONTROL_SELECTOR);
 
         formElements.forEach(element => {
             const name = element.getAttribute('name') || element.getAttribute('id');
@@ -227,7 +246,7 @@ export default class FormPanel extends Panel {
     
     setFormData(data) {
         // Set form data from an object
-        const formElements = this.querySelectorAll('gooeyui-textfield, gooeyui-textarea, gooeyui-dropdown, gooeyui-dropdownlist, gooeyui-listbox, gooeyui-combobox, gooeyui-checkbox, gooeyui-radiobutton, gooeyui-radiobuttongroup');
+        const formElements = this.querySelectorAll(FORM_CONTROL_SELECTOR);
         
         formElements.forEach(element => {
             const name = element.getAttribute('name') || element.getAttribute('id');
