@@ -72,6 +72,20 @@
     "content": { "type": "STRING", "default": null },
     "contentAsHTML": { "type": "BOOLEAN", "default": false },
     "visible": { "type": "BOOLEAN", "default": true },
-    "disabled": { "type": "BOOLEAN", "default": false }
+    "disabled": { "type": "BOOLEAN", "default": false },
+    "placement": {
+      "type": "ENUM",
+      "default": "top",
+      "values": ["TOP", "TOP_START", "TOP_END", "BOTTOM", "BOTTOM_START", "BOTTOM_END", "LEFT", "LEFT_START", "LEFT_END", "RIGHT", "RIGHT_START", "RIGHT_END", "AUTO"]
+    },
+    "offset": { "type": "STRING", "default": "0,8" },
+    "flipOnOverflow": { "type": "BOOLEAN", "default": true },
+    "shiftOnOverflow": { "type": "BOOLEAN", "default": true },
+    "arrow": { "type": "BOOLEAN", "default": true },
+    "sticky": { "type": "BOOLEAN", "default": false },
+    "viewport": { "type": "STRING", "default": null },
+    "zIndex": { "type": "NUMBER", "default": 9999 },
+    "for": { "type": "STRING", "default": null },
+    "maxWidth": { "type": "STRING", "default": "350px" }
   }
 }
