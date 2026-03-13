@@ -4,6 +4,7 @@ import MouseEvent from '../../../../events/MouseEvent.js';
 import KeyboardEvent from '../../../../events/KeyboardEvent.js';
 import Key from '../../../../io/Key.js';
 import Template from '../../../../util/Template.js';
+import URLSanitizer from '../../../../util/URLSanitizer.js';
 
 /**
  * WaffleMenuItem Component
@@ -143,7 +144,13 @@ export default class WaffleMenuItem extends UIComponent {
 
     set href(val) {
         if (val) {
-            this.setAttribute("href", val);
+            const sanitized = URLSanitizer.sanitizeURL(val);
+            if (sanitized === null) {
+                console.warn(`WaffleMenuItem: Blocked unsafe href: ${val}`);
+                this.removeAttribute("href");
+                return;
+            }
+            this.setAttribute("href", sanitized);
         } else {
             this.removeAttribute("href");
         }
@@ -230,11 +237,17 @@ export default class WaffleMenuItem extends UIComponent {
 
         // Handle navigation if href is set
         if (this.href) {
+            // Re-validate immediately before navigation (defense-in-depth)
+            const safe = URLSanitizer.sanitizeURL(this.href);
+            if (safe === null) return;
+
             if (this.target && this.target !== "_self") {
-                const features = this.target === "_blank" ? "noopener" : undefined;
-                window.open(this.href, this.target, features);
+                // Detect external destination for rel attribute
+                const isExternal = new URL(safe, location.origin).origin !== location.origin;
+                const features = isExternal ? 'noopener,noreferrer' : undefined;
+                window.open(safe, this.target, features);
             } else {
-                window.location.href = this.href;
+                window.location.href = safe;
             }
         }
     }

@@ -1,5 +1,6 @@
 import UIComponent from '../../../UIComponent.js';
 import Template from '../../../../util/Template.js';
+import URLSanitizer from '../../../../util/URLSanitizer.js';
 
 /**
  * Individual breadcrumb navigation item.
@@ -205,10 +206,28 @@ export default class BreadcrumbItem extends UIComponent {
 
     _applyHref(val) {
         if (val) {
-            this._link.setAttribute("href", val);
+            const sanitized = URLSanitizer.sanitizeURL(val);
+            if (sanitized === null) {
+                console.warn(`BreadcrumbItem: Blocked unsafe href: ${val}`);
+                this._link.removeAttribute("href");
+                this._link.removeAttribute("rel");
+                this._link.setAttribute("role", "link");
+                this._syncInteractiveState();
+                return;
+            }
+            this._link.setAttribute("href", sanitized);
             this._link.removeAttribute("role");
+
+            // Add rel="noopener noreferrer" for external links
+            const isExternal = new URL(sanitized, location.origin).origin !== location.origin;
+            if (isExternal) {
+                this._link.setAttribute("rel", "noopener noreferrer");
+            } else {
+                this._link.removeAttribute("rel");
+            }
         } else {
             this._link.removeAttribute("href");
+            this._link.removeAttribute("rel");
             this._link.setAttribute("role", "link");
         }
         this._syncInteractiveState();
