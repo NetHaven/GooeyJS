@@ -3,6 +3,7 @@ import ThemeManager from '../../../util/ThemeManager.js';
 import ThemeEvent from '../../../events/ThemeEvent.js';
 import Template from '../../../util/Template.js';
 import Logger from '../../../logging/Logger.js';
+import URLSanitizer from '../../../util/URLSanitizer.js';
 
 /**
  * Declarative theme registration and activation component.
@@ -223,9 +224,23 @@ export default class Theme extends GooeyElement {
         try {
             // Load theme CSS if provided
             if (themePath) {
-                const response = await fetch(themePath);
+                const sanitizedThemePath = URLSanitizer.sanitizeURL(themePath, { sameOriginOnly: true });
+                if (sanitizedThemePath === null) {
+                    Logger.warn(
+                        { code: "THEME_BLOCKED_URL", href: themePath },
+                        "Theme: Blocked non-same-origin theme URL: %s",
+                        themePath
+                    );
+                    this.fireEvent(ThemeEvent.ERROR, {
+                        name,
+                        error: `Blocked non-same-origin theme URL: ${themePath}`,
+                        component: this
+                    });
+                    return;
+                }
+                const response = await fetch(sanitizedThemePath);
                 if (!response.ok) {
-                    throw new Error(`Theme CSS not found: ${themePath} (HTTP ${response.status})`);
+                    throw new Error(`Theme CSS not found: ${sanitizedThemePath} (HTTP ${response.status})`);
                 }
                 const cssText = await response.text();
                 this._themeSheet = new CSSStyleSheet();
@@ -349,6 +364,17 @@ export default class Theme extends GooeyElement {
         const fontsAttr = this.getAttribute('font-faces');
         if (!fontsAttr) return;
 
+        // Validate fonts base directory URL is same-origin
+        const sanitizedFontsPath = URLSanitizer.sanitizeURL(fontsPath, { sameOriginOnly: true });
+        if (sanitizedFontsPath === null) {
+            Logger.warn(
+                { code: "THEME_FONT_BLOCKED_URL", fonts: fontsPath },
+                "Theme: Blocked non-same-origin fonts URL: %s",
+                fontsPath
+            );
+            return;
+        }
+
         let fontFaces;
         try {
             fontFaces = JSON.parse(fontsAttr);
@@ -361,7 +387,20 @@ export default class Theme extends GooeyElement {
             return;
         }
 
+        // Safe filename pattern: alphanumeric, hyphens, underscores, single extension
+        const SAFE_FONT_FILENAME_RE = /^[a-zA-Z0-9_-]+\.[a-zA-Z0-9]+$/;
+
         for (const { family, file, weight, style } of fontFaces) {
+            // Validate font file entry against safe filename pattern
+            if (!file || !SAFE_FONT_FILENAME_RE.test(file)) {
+                Logger.warn(
+                    { code: "THEME_FONT_UNSAFE_FILE", family, file },
+                    "Theme: Blocked unsafe font file entry: %s",
+                    file
+                );
+                continue;
+            }
+
             // Skip if already registered
             let exists = false;
             for (const f of document.fonts) {
@@ -373,6 +412,7 @@ export default class Theme extends GooeyElement {
             if (exists) continue;
 
             try {
+                // Resolve relative to validated fonts directory only
                 const url = `${fontsPath}/${file}`;
                 const fontFace = new FontFace(family, `url(${url})`, {
                     weight: weight || 'normal',

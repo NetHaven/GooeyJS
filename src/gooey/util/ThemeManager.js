@@ -2,6 +2,7 @@ import Logger from '../logging/Logger.js';
 import ThemeEvent from '../events/ThemeEvent.js';
 import MetaLoader from './MetaLoader.js';
 import ComponentRegistry from './ComponentRegistry.js';
+import URLSanitizer from './URLSanitizer.js';
 
 /**
  * Singleton theme manager for GooeyJS theme architecture.
@@ -233,6 +234,17 @@ export default class ThemeManager {
             const componentPath = ComponentRegistry.getComponentPath(tagName);
 
             if (meta && componentPath) {
+                // Defense-in-depth: validate component path is same-origin
+                const sanitizedPath = URLSanitizer.sanitizeURL(componentPath, { sameOriginOnly: true });
+                if (sanitizedPath === null) {
+                    Logger.warn(
+                        { code: "THEME_BLOCKED_COMPONENT_PATH", tagName, path: componentPath },
+                        "ThemeManager: Blocked non-same-origin component path for '%s': %s",
+                        tagName, componentPath
+                    );
+                    return;
+                }
+
                 const availableThemes = meta.themes?.available || [];
                 if (availableThemes.includes(this._activeTheme)) {
                     try {
@@ -418,6 +430,17 @@ export default class ThemeManager {
             const meta = ComponentRegistry.getMeta(tagName);
             const componentPath = ComponentRegistry.getComponentPath(tagName);
             if (!meta || !componentPath) return null;
+
+            // Defense-in-depth: validate component path is same-origin
+            const sanitizedPath = URLSanitizer.sanitizeURL(componentPath, { sameOriginOnly: true });
+            if (sanitizedPath === null) {
+                Logger.warn(
+                    { code: "THEME_BLOCKED_COMPONENT_PATH", tagName, path: componentPath },
+                    "ThemeManager: Blocked non-same-origin component path for '%s': %s",
+                    tagName, componentPath
+                );
+                return null;
+            }
 
             const availableThemes = meta.themes?.available || [];
             if (!availableThemes.includes(themeName)) return null;

@@ -1,6 +1,7 @@
 import GooeyElement from '../../../GooeyElement.js';
 import Template from '../../../util/Template.js';
 import Logger from '../../../logging/Logger.js';
+import URLSanitizer from '../../../util/URLSanitizer.js';
 
 /**
  * ThemeOverride component for per-component structural CSS overrides.
@@ -115,8 +116,19 @@ export default class ThemeOverride extends GooeyElement {
             throw new Error("ThemeOverride missing href attribute");
         }
 
+        // Validate URL is same-origin
+        const sanitizedHref = URLSanitizer.sanitizeURL(this.href, { sameOriginOnly: true });
+        if (sanitizedHref === null) {
+            Logger.warn(
+                { code: "THEME_OVERRIDE_BLOCKED_URL", href: this.href, target: this.target },
+                "ThemeOverride: Blocked non-same-origin CSS URL: %s",
+                this.href
+            );
+            throw new Error(`ThemeOverride: Blocked non-same-origin CSS URL: ${this.href}`);
+        }
+
         // Fetch CSS text
-        const response = await fetch(this.href);
+        const response = await fetch(sanitizedHref);
         if (!response.ok) {
             throw new Error(`Theme override CSS not found: ${this.href} (HTTP ${response.status})`);
         }
