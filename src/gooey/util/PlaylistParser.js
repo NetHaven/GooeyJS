@@ -1,3 +1,5 @@
+import URLSanitizer from './URLSanitizer.js';
+
 /**
  * Utility class for parsing various playlist formats.
  * Supports M3U, PLS, and XSPF playlist files.
@@ -31,9 +33,21 @@ export default class PlaylistParser {
      * @param {Array<string>|null} originAllowlist - Allowed origins (null = any origin)
      * @returns {Array<{src: string, title?: string}>}
      */
-    static _filterTracks(tracks, allowedProtocols, originAllowlist) {
+    /**
+     * Filter tracks against protocol, URLSanitizer, and origin allowlists.
+     * @param {Array<{src: string, title?: string}>} tracks - Parsed tracks
+     * @param {Set<string>} allowedProtocols - Allowed URL protocols
+     * @param {Array<string>|null} originAllowlist - Allowed origins (null = any origin)
+     * @param {boolean} [sameOriginOnly=true] - Enforce same-origin policy on track URLs
+     * @returns {Array<{src: string, title?: string}>}
+     */
+    static _filterTracks(tracks, allowedProtocols, originAllowlist, sameOriginOnly = true) {
         return tracks.filter(track => {
-            const result = PlaylistParser.validateTrackUrl(track.src, allowedProtocols);
+            // First validate with URLSanitizer to reject dangerous schemes
+            const sanitized = URLSanitizer.sanitizeURL(track.src, { sameOriginOnly });
+            if (sanitized === null) return false;
+
+            const result = PlaylistParser.validateTrackUrl(sanitized, allowedProtocols);
             if (!result.valid) return false;
             track.src = result.url; // Use normalized URL
             if (originAllowlist) {
@@ -57,8 +71,15 @@ export default class PlaylistParser {
     static async parse(url, options = {}) {
         const allowedProtocols = options.allowedProtocols || PlaylistParser.DEFAULT_ALLOWED_PROTOCOLS;
         const originAllowlist = options.originAllowlist || null;
+        const sameOriginOnly = options.sameOriginOnly !== false;
 
-        const response = await fetch(url);
+        // Validate playlist URL before fetch using URLSanitizer
+        const safeUrl = URLSanitizer.sanitizeURL(url, { sameOriginOnly });
+        if (safeUrl === null) {
+            throw new Error(`Blocked unsafe or disallowed playlist URL: ${url}`);
+        }
+
+        const response = await fetch(safeUrl);
         if (!response.ok) {
             throw new Error(`Failed to load playlist: ${response.status} ${response.statusText}`);
         }
@@ -80,7 +101,7 @@ export default class PlaylistParser {
                 throw new Error(`Unsupported playlist format: ${extension}`);
         }
 
-        return this._filterTracks(tracks, allowedProtocols, originAllowlist);
+        return this._filterTracks(tracks, allowedProtocols, originAllowlist, sameOriginOnly);
     }
 
     /**

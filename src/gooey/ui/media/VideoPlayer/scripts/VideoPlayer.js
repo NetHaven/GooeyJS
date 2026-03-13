@@ -3,6 +3,7 @@ import Template from '../../../../util/Template.js';
 import PlaylistParser from '../../../../util/PlaylistParser.js';
 import VideoPlayerEvent from '../../../../events/media/VideoPlayerEvent.js';
 import Logger from '../../../../logging/Logger.js';
+import URLSanitizer from '../../../../util/URLSanitizer.js';
 
 /**
  * VideoPlayer component provides a full-featured video player with custom controls,
@@ -36,6 +37,14 @@ export default class VideoPlayer extends UIComponent {
     #previousVolume = 1;
     #controlsFadeTimer = null;
     #stopTimeCheckInterval = null;
+
+    /**
+     * Whether cross-origin playlist URLs are allowed.
+     * When false (default), playlist URLs must be same-origin.
+     * Set via the `crossoriginplaylist` attribute or the `allowCrossOriginPlaylist` property.
+     * @type {boolean}
+     */
+    #allowCrossOriginPlaylist = false;
 
     // Construction guard: prevents parent constructor from calling private methods
     // before this class's private fields are initialized (ES6 private field timing issue)
@@ -486,6 +495,11 @@ export default class VideoPlayer extends UIComponent {
         // Speed
         if (this.hasAttribute('speed')) {
             this.playbackRate = parseFloat(this.getAttribute('speed'));
+        }
+
+        // Cross-origin playlist opt-in
+        if (this.hasAttribute('crossoriginplaylist')) {
+            this.#allowCrossOriginPlaylist = true;
         }
 
         // Playlist
@@ -1092,8 +1106,22 @@ export default class VideoPlayer extends UIComponent {
      * @returns {Promise<void>}
      */
     async loadPlaylist(url) {
+        // Validate playlist URL before any fetch
+        const safeUrl = URLSanitizer.sanitizeURL(url, {
+            sameOriginOnly: !this.#allowCrossOriginPlaylist
+        });
+        if (safeUrl === null) {
+            Logger.warn({ code: "VIDEO_PLAYLIST_URL_BLOCKED" }, "VideoPlayer: Blocked unsafe playlist URL");
+            this.fireEvent(VideoPlayerEvent.ERROR, {
+                error: `Blocked unsafe or cross-origin playlist URL: ${url}`
+            });
+            return;
+        }
+
         try {
-            const tracks = await PlaylistParser.parse(url);
+            const tracks = await PlaylistParser.parse(safeUrl, {
+                sameOriginOnly: !this.#allowCrossOriginPlaylist
+            });
             this.#tracks = tracks.map(t => ({
                 src: t.src,
                 starttime: 0,
@@ -1320,6 +1348,30 @@ export default class VideoPlayer extends UIComponent {
             this.loadPlaylist(val);
         } else {
             this.removeAttribute('playlist');
+        }
+    }
+
+    // ========== Cross-Origin Playlist Property ==========
+
+    /**
+     * Get whether cross-origin playlists are allowed.
+     * @returns {boolean}
+     */
+    get allowCrossOriginPlaylist() {
+        return this.#allowCrossOriginPlaylist;
+    }
+
+    /**
+     * Set whether cross-origin playlists are allowed.
+     * When false (default), playlist URLs must be same-origin.
+     * @param {boolean} val
+     */
+    set allowCrossOriginPlaylist(val) {
+        this.#allowCrossOriginPlaylist = !!val;
+        if (val) {
+            this.setAttribute('crossoriginplaylist', '');
+        } else {
+            this.removeAttribute('crossoriginplaylist');
         }
     }
 }
