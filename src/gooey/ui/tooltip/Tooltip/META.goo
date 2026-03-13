@@ -89,6 +89,9 @@
     "maxWidth": { "type": "STRING", "default": "350px" },
     "trigger": { "type": "ENUM", "default": "hover focus", "values": ["HOVER", "FOCUS", "CLICK", "MANUAL"] },
     "showDelay": { "type": "NUMBER", "default": 200 },
-    "hideDelay": { "type": "NUMBER", "default": 0 }
+    "hideDelay": { "type": "NUMBER", "default": 0 },
+    "hoverIntent": { "type": "BOOLEAN", "default": false },
+    "hoverIntentSensitivity": { "type": "NUMBER", "default": 7 },
+    "hoverIntentInterval": { "type": "NUMBER", "default": 100 }
   }
 }

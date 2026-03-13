@@ -118,6 +118,15 @@ export default class Tooltip extends UIComponent {
             case 'hidedelay':
                 // Delay is read at schedule time from attribute, no action needed
                 break;
+            case 'hoverintent':
+                this._rebindTriggers();
+                break;
+            case 'hoverintentsensitivity':
+                // Sensitivity is read at hover intent start time, no action needed
+                break;
+            case 'hoverintentinterval':
+                // Interval is read at hover intent start time, no action needed
+                break;
         }
     }
 
@@ -161,6 +170,49 @@ export default class Tooltip extends UIComponent {
 
     set hideDelay(val) {
         this.setAttribute('hideDelay', val);
+    }
+
+    /**
+     * Whether to use hover intent mode for hover triggers.
+     * When true, the tooltip waits until cursor movement falls below
+     * the sensitivity threshold before showing.
+     * @type {boolean}
+     */
+    get hoverIntent() {
+        return this.hasAttribute('hoverIntent');
+    }
+
+    set hoverIntent(val) {
+        if (val) {
+            this.setAttribute('hoverIntent', '');
+        } else {
+            this.removeAttribute('hoverIntent');
+        }
+    }
+
+    /**
+     * Pixel distance threshold for hover intent.
+     * If cursor moves less than this distance between samples, intent is confirmed.
+     * @type {number}
+     */
+    get hoverIntentSensitivity() {
+        return parseInt(this.getAttribute('hoverIntentSensitivity')) || 7;
+    }
+
+    set hoverIntentSensitivity(val) {
+        this.setAttribute('hoverIntentSensitivity', val);
+    }
+
+    /**
+     * Sampling interval in milliseconds for hover intent cursor tracking.
+     * @type {number}
+     */
+    get hoverIntentInterval() {
+        return parseInt(this.getAttribute('hoverIntentInterval')) || 100;
+    }
+
+    set hoverIntentInterval(val) {
+        this.setAttribute('hoverIntentInterval', val);
     }
 
     // ========================================

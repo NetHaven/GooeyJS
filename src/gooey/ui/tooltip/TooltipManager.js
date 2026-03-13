@@ -76,6 +76,9 @@ const TooltipManager = {
             binding.hideTimer = null;
         }
 
+        // Cancel hover intent if active
+        this._cancelHoverIntent(binding);
+
         // Detach all trigger listeners
         this._detachTriggerListeners(reference, binding.triggers);
 
@@ -125,8 +128,21 @@ const TooltipManager = {
      * @private
      */
     _attachHover(reference, tooltip, binding) {
-        const enterHandler = () => this._scheduleShow(reference, tooltip);
-        const leaveHandler = () => this._scheduleHide(reference, tooltip);
+        const enterHandler = () => {
+            if (tooltip.hoverIntent) {
+                this._startHoverIntent(reference, tooltip, binding);
+            } else {
+                this._scheduleShow(reference, tooltip);
+            }
+        };
+
+        const leaveHandler = () => {
+            // Cancel hover intent tracking if active
+            if (binding._hoverIntentState) {
+                this._cancelHoverIntent(binding);
+            }
+            this._scheduleHide(reference, tooltip);
+        };
 
         reference.addEventListener('mouseenter', enterHandler);
         reference.addEventListener('mouseleave', leaveHandler);
@@ -254,6 +270,83 @@ const TooltipManager = {
             document.removeEventListener('keydown', escapeHandler);
             binding._dismissalListeners.delete('keydown');
         }
+    },
+
+    // ========================================
+    // Hover Intent Engine
+    // ========================================
+
+    /**
+     * Start hover intent tracking on a reference element.
+     * Samples cursor position at an interval and only triggers show when
+     * cursor movement falls below the sensitivity threshold.
+     *
+     * @param {Element} reference - The reference element
+     * @param {Element} tooltip - The tooltip element
+     * @param {Object} binding - The binding object
+     * @private
+     */
+    _startHoverIntent(reference, tooltip, binding) {
+        // Cancel any existing hover intent tracking
+        if (binding._hoverIntentState) {
+            this._cancelHoverIntent(binding);
+        }
+
+        const sensitivity = parseInt(tooltip.getAttribute('hoverIntentSensitivity')) || 7;
+        const interval = parseInt(tooltip.getAttribute('hoverIntentInterval')) || 100;
+
+        // Current cursor position (updated by mousemove)
+        binding._hoverIntentPos = { x: 0, y: 0 };
+
+        // Previous sampled position
+        let prevX = 0;
+        let prevY = 0;
+
+        const mousemoveHandler = (e) => {
+            binding._hoverIntentPos.x = e.clientX;
+            binding._hoverIntentPos.y = e.clientY;
+        };
+
+        reference.addEventListener('mousemove', mousemoveHandler);
+
+        const intervalId = setInterval(() => {
+            const dx = binding._hoverIntentPos.x - prevX;
+            const dy = binding._hoverIntentPos.y - prevY;
+            const distance = Math.sqrt((dx * dx) + (dy * dy));
+
+            if (distance < sensitivity) {
+                // Intent confirmed: cursor is relatively still
+                this._cancelHoverIntent(binding);
+                this._scheduleShow(reference, tooltip);
+            } else {
+                // Update previous sampled position and keep sampling
+                prevX = binding._hoverIntentPos.x;
+                prevY = binding._hoverIntentPos.y;
+            }
+        }, interval);
+
+        binding._hoverIntentState = {
+            intervalId,
+            mousemoveHandler,
+            reference
+        };
+    },
+
+    /**
+     * Cancel hover intent tracking.
+     * Clears the interval timer and removes the mousemove listener.
+     *
+     * @param {Object} binding - The binding object
+     * @private
+     */
+    _cancelHoverIntent(binding) {
+        const state = binding._hoverIntentState;
+        if (!state) return;
+
+        clearInterval(state.intervalId);
+        state.reference.removeEventListener('mousemove', state.mousemoveHandler);
+        binding._hoverIntentState = null;
+        binding._hoverIntentPos = null;
     },
 
     /**
