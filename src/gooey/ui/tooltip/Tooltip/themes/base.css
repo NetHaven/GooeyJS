@@ -36,9 +36,43 @@
 }
 
 .tooltip-arrow {
-    display: none;
+    position: absolute;
     width: var(--gooey-tooltip-arrow-size, 8px);
     height: var(--gooey-tooltip-arrow-size, 8px);
+    overflow: hidden;
+}
+
+.tooltip-arrow::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: var(--gooey-tooltip-bg, var(--gooey-color-surface-raised, #333));
+    transform: rotate(45deg);
+}
+
+/* Arrow on bottom of tooltip (placement is top variants) */
+.tooltip-wrapper[data-placement^="top"] .tooltip-arrow {
+    bottom: calc(var(--gooey-tooltip-arrow-size, 8px) / -2);
+}
+
+/* Arrow on top of tooltip (placement is bottom variants) */
+.tooltip-wrapper[data-placement^="bottom"] .tooltip-arrow {
+    top: calc(var(--gooey-tooltip-arrow-size, 8px) / -2);
+}
+
+/* Arrow on right of tooltip (placement is left variants) */
+.tooltip-wrapper[data-placement^="left"] .tooltip-arrow {
+    right: calc(var(--gooey-tooltip-arrow-size, 8px) / -2);
+}
+
+/* Arrow on left of tooltip (placement is right variants) */
+.tooltip-wrapper[data-placement^="right"] .tooltip-arrow {
+    left: calc(var(--gooey-tooltip-arrow-size, 8px) / -2);
+}
+
+:host([arrow="false"]) .tooltip-arrow {
+    display: none;
 }
 
 ::slotted(*) {

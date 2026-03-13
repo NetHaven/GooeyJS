@@ -1,6 +1,7 @@
 import UIComponent from '../../../UIComponent.js';
 import Template from '../../../../util/Template.js';
 import TooltipEvent from '../../../../events/tooltip/TooltipEvent.js';
+import TooltipPlacement from '../../TooltipPlacement.js';
 
 /**
  * Tooltip component.
@@ -29,6 +30,7 @@ export default class Tooltip extends UIComponent {
         // Cache DOM element references
         this._contentEl = this.shadowRoot.querySelector(".tooltip-content");
         this._wrapperEl = this.shadowRoot.querySelector(".tooltip-wrapper");
+        this._arrowEl = this.shadowRoot.querySelector(".tooltip-arrow");
 
         // Internal state for content value
         this._contentValue = null;
@@ -68,6 +70,15 @@ export default class Tooltip extends UIComponent {
                 break;
             case 'contentashtml':
                 this._renderContent();
+                break;
+            case 'placement':
+                // data-placement on wrapper is set by TooltipManager.applyPosition
+                break;
+            case 'arrow':
+                // CSS handles visibility via :host([arrow="false"]) selector
+                break;
+            case 'zindex':
+                this.style.zIndex = newValue || '';
                 break;
         }
     }
@@ -109,6 +120,168 @@ export default class Tooltip extends UIComponent {
             this.removeAttribute('contentAsHTML');
         }
         this._renderContent();
+    }
+
+    // ========================================
+    // Positioning Attributes
+    // ========================================
+
+    /**
+     * The preferred placement of the tooltip relative to its reference element.
+     * @type {string}
+     */
+    get placement() {
+        return this.getAttribute('placement') || TooltipPlacement.TOP;
+    }
+
+    set placement(val) {
+        this.setAttribute('placement', val);
+    }
+
+    /**
+     * Offset as "skidding,distance" string.
+     * @type {string}
+     */
+    get offset() {
+        return this.getAttribute('offset') || '0,8';
+    }
+
+    set offset(val) {
+        this.setAttribute('offset', val);
+    }
+
+    /**
+     * Whether to flip the tooltip to the opposite side when it overflows the viewport.
+     * @type {boolean}
+     */
+    get flipOnOverflow() {
+        return this.hasAttribute('flipOnOverflow');
+    }
+
+    set flipOnOverflow(val) {
+        if (val) {
+            this.setAttribute('flipOnOverflow', '');
+        } else {
+            this.removeAttribute('flipOnOverflow');
+        }
+    }
+
+    /**
+     * Whether to shift the tooltip along the cross-axis when it overflows the viewport.
+     * @type {boolean}
+     */
+    get shiftOnOverflow() {
+        return this.hasAttribute('shiftOnOverflow');
+    }
+
+    set shiftOnOverflow(val) {
+        if (val) {
+            this.setAttribute('shiftOnOverflow', '');
+        } else {
+            this.removeAttribute('shiftOnOverflow');
+        }
+    }
+
+    /**
+     * Whether to show the arrow element.
+     * Defaults to true. Set to "false" to hide the arrow.
+     * @type {boolean}
+     */
+    get arrow() {
+        return this.getAttribute('arrow') !== 'false';
+    }
+
+    set arrow(val) {
+        this.setAttribute('arrow', val ? 'true' : 'false');
+    }
+
+    /**
+     * Whether to enable sticky mode (RAF-based continuous repositioning).
+     * @type {boolean}
+     */
+    get sticky() {
+        return this.hasAttribute('sticky');
+    }
+
+    set sticky(val) {
+        if (val) {
+            this.setAttribute('sticky', '');
+        } else {
+            this.removeAttribute('sticky');
+        }
+    }
+
+    /**
+     * Selector or ID of the viewport element for boundary detection.
+     * @type {string|null}
+     */
+    get viewport() {
+        return this.getAttribute('viewport');
+    }
+
+    set viewport(val) {
+        if (val !== null && val !== undefined) {
+            this.setAttribute('viewport', val);
+        } else {
+            this.removeAttribute('viewport');
+        }
+    }
+
+    /**
+     * The z-index for the tooltip.
+     * @type {number}
+     */
+    get zIndex() {
+        return parseInt(this.getAttribute('zIndex')) || 9999;
+    }
+
+    set zIndex(val) {
+        this.setAttribute('zIndex', val);
+    }
+
+    /**
+     * Maximum width of the tooltip.
+     * @type {string|null}
+     */
+    get maxWidth() {
+        return this.getAttribute('maxWidth');
+    }
+
+    set maxWidth(val) {
+        if (val !== null && val !== undefined) {
+            this.setAttribute('maxWidth', val);
+        } else {
+            this.removeAttribute('maxWidth');
+        }
+    }
+
+    /**
+     * ID of the reference element this tooltip is associated with.
+     * @type {string|null}
+     */
+    get for() {
+        return this.getAttribute('for');
+    }
+
+    set for(val) {
+        if (val !== null && val !== undefined) {
+            this.setAttribute('for', val);
+        } else {
+            this.removeAttribute('for');
+        }
+    }
+
+    // ========================================
+    // Positioning Methods
+    // ========================================
+
+    /**
+     * Reposition the tooltip relative to its reference element.
+     * No-op stub -- will be wired to TooltipManager when show/hide lifecycle
+     * is implemented in the trigger phase (Phase 96).
+     */
+    reposition() {
+        // Stub: implemented when show/hide lifecycle is added in Phase 96
     }
 
     // ========================================
