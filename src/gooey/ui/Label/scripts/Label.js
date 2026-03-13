@@ -5,11 +5,24 @@ import VerticalAlign from './VerticalAlign.js';
 import Template from '../../../util/Template.js';
 
 export default class Label extends UIComponent {
-    constructor () {		
+    constructor () {
 		super();
-		
+
 		Template.activate("ui-Label", this.shadowRoot);
 		this.container = this.shadowRoot.querySelector("div");
+
+		// Register standard events
+		this.addValidEvent(MouseEvent.CLICK);
+
+		// Fire named action event on click (matching ToggleButton pattern)
+		this.addEventListener(MouseEvent.CLICK, () => {
+			if (!this.disabled && this.action) {
+				if (!this.hasEvent(this.action)) {
+					this.addValidEvent(this.action);
+				}
+				this.fireEvent(this.action, {});
+			}
+		});
 	}
 
     connectedCallback() {
@@ -88,6 +101,10 @@ export default class Label extends UIComponent {
 	
 	set action(val) {
         this.setAttribute("action", val);
+        // Register the action as a valid event (matching ToggleButton pattern)
+        if (val && !this.hasEvent(val)) {
+            this.addValidEvent(val);
+        }
     }
 
     set disabled(val) {

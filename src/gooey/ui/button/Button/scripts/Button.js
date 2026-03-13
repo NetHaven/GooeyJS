@@ -1,6 +1,7 @@
 import UIComponent from '../../../UIComponent.js';
 import MouseEvent from '../../../../events/MouseEvent.js';
 import Template from '../../../../util/Template.js';
+import URLSanitizer from '../../../../util/URLSanitizer.js';
 
 export default class Button extends UIComponent {
 	constructor() {
@@ -9,6 +10,19 @@ export default class Button extends UIComponent {
 		// Activate template into shadow root (created by UIComponent)
 		Template.activate("ui-button", this.shadowRoot);
 		this.button = this.shadowRoot.querySelector("button");
+
+		// Register standard events
+		this.addValidEvent(MouseEvent.CLICK);
+
+		// Fire named action event on click (matching ToggleButton pattern)
+		this.addEventListener(MouseEvent.CLICK, () => {
+			if (!this.disabled && this.action) {
+				if (!this.hasEvent(this.action)) {
+					this.addValidEvent(this.action);
+				}
+				this.fireEvent(this.action, {});
+			}
+		});
 
 		// Note: icon, text, action initialization deferred to connectedCallback
 		// (Custom Elements spec prohibits setAttribute in constructor)
@@ -23,8 +37,9 @@ export default class Button extends UIComponent {
 		if (this.hasAttribute("icon")) {
 			// Apply icon visually without calling setter (which calls setAttribute)
 			const val = this.getAttribute("icon");
+			const safeVal = URLSanitizer.validateAssetURL(val);
 			const slottedIcon = this.querySelector('[slot="icon"]');
-			if (!slottedIcon) {
+			if (!slottedIcon && safeVal) {
 				if (!this.image) {
 					this.image = document.createElement("img");
 					this.button.appendChild(this.image);
@@ -35,7 +50,7 @@ export default class Button extends UIComponent {
 					});
 				}
 				this.image.style.display = '';
-				this.image.src = val;
+				this.image.src = safeVal;
 			}
 		}
 
@@ -70,6 +85,10 @@ export default class Button extends UIComponent {
 	
 	set action(val) {
         this.setAttribute("action", val);
+        // Register the action as a valid event (matching ToggleButton pattern)
+        if (val && !this.hasEvent(val)) {
+            this.addValidEvent(val);
+        }
     }
 
     set disabled(val) {
