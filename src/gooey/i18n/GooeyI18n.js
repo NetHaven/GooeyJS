@@ -1,5 +1,6 @@
 import I18nEvent from "../events/i18n/I18nEvent.js";
 import MessageFormat from "./MessageFormat.js";
+import URLSanitizer from "../util/URLSanitizer.js";
 
 /**
  * Set of primary language subtags that use right-to-left script direction.
@@ -10,6 +11,24 @@ import MessageFormat from "./MessageFormat.js";
  * @type {Set<string>}
  */
 const FORBIDDEN_KEYS = new Set(['__proto__', 'prototype', 'constructor']);
+
+/**
+ * Attribute allowlist for data-i18n-attr translations.
+ * Only these non-URL attributes may be set via i18n translation.
+ * Blocks executable attributes (on*, style, srcdoc, formaction, xlink:href).
+ * @type {Set<string>}
+ */
+const SAFE_I18N_ATTRS = new Set([
+    'title', 'placeholder', 'alt', 'label', 'value',
+    'aria-label', 'aria-describedby', 'aria-placeholder',
+    'aria-roledescription', 'aria-valuetext'
+]);
+
+/**
+ * URL-bearing attributes that must be routed through URLSanitizer.
+ * @type {Set<string>}
+ */
+const URL_I18N_ATTRS = new Set(['href', 'src', 'action', 'poster']);
 
 const RTL_LOCALES = new Set([
     "ar", "he", "fa", "ur", "ps", "sd", "ckb", "dv", "yi", "ku", "ug", "syr", "arc"
@@ -799,7 +818,27 @@ export default class GooeyI18n {
                     translated = this.t(key);
                 }
 
-                el.setAttribute(attrName, translated);
+                // Validate attribute name against allowlist
+                const lowerAttrName = attrName.toLowerCase();
+
+                if (lowerAttrName.startsWith('aria-') || lowerAttrName.startsWith('data-')) {
+                    // ARIA and data- attributes are safe
+                    el.setAttribute(attrName, translated);
+                } else if (SAFE_I18N_ATTRS.has(lowerAttrName)) {
+                    // Explicitly allowed safe attributes
+                    el.setAttribute(attrName, translated);
+                } else if (URL_I18N_ATTRS.has(lowerAttrName)) {
+                    // URL-bearing attributes must pass sanitization
+                    const sanitized = URLSanitizer.sanitizeURL(translated);
+                    if (sanitized !== null) {
+                        el.setAttribute(attrName, sanitized);
+                    } else {
+                        console.warn('GooeyI18n: Blocked unsafe URL in i18n attribute:', attrName, translated);
+                    }
+                } else {
+                    // Reject all other attributes (on*, style, srcdoc, formaction, xlink:href, etc.)
+                    console.warn('GooeyI18n: Blocked unsafe i18n attribute:', attrName);
+                }
             }
         }
     }

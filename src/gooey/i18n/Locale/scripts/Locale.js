@@ -4,6 +4,7 @@ import MetaLoader from '../../../util/MetaLoader.js';
 import ComponentRegistry from '../../../util/ComponentRegistry.js';
 import GooeyI18n from '../../GooeyI18n.js';
 import I18nEvent from '../../../events/i18n/I18nEvent.js';
+import URLSanitizer from '../../../util/URLSanitizer.js';
 
 /**
  * Locale Component
@@ -130,10 +131,22 @@ export default class Locale extends GooeyElement {
 
     connectedCallback() {
         if (this.src && this.lazy) {
-            // Lazy: register URL for deferred loading
+            // Lazy: validate URL before registering for deferred loading
+            if (!URLSanitizer.isAllowedURL(this.src, { sameOriginOnly: true })) {
+                const parent = this._getI18nParent();
+                if (parent && typeof parent.fireEvent === 'function') {
+                    parent.fireEvent(I18nEvent.ERROR, {
+                        error: new Error('Locale src URL rejected: origin not allowed'),
+                        locale: this.lang,
+                        src: this.src,
+                        code: 'ORIGIN_REJECTED'
+                    });
+                }
+                return;
+            }
             GooeyI18n.registerLocale(this.lang, this.src);
         } else if (this.src) {
-            // Eager external: fetch immediately
+            // Eager external: fetch immediately (URL validated in _loadExternal)
             this._loadExternal();
         } else {
             // Inline: parse textContent as JSON
@@ -186,6 +199,20 @@ export default class Locale extends GooeyElement {
     async _loadExternal() {
         const parent = this._getI18nParent();
         const ns = this.namespace;
+
+        // Validate src URL is same-origin before fetching
+        const sanitizedURL = URLSanitizer.sanitizeURL(this.src, { sameOriginOnly: true });
+        if (sanitizedURL === null) {
+            if (parent && typeof parent.fireEvent === 'function') {
+                parent.fireEvent(I18nEvent.ERROR, {
+                    error: new Error('Locale src URL rejected: origin not allowed'),
+                    locale: this.lang,
+                    src: this.src,
+                    code: 'ORIGIN_REJECTED'
+                });
+            }
+            return;
+        }
 
         // Fire LOCALE_LOADING on parent before the async fetch begins
         if (parent && typeof parent.fireEvent === 'function') {
