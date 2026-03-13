@@ -1,0 +1,47 @@
+/* Tooltip base theme */
+
+:host {
+    display: none;
+    position: absolute;
+    z-index: var(--gooey-tooltip-z-index, 1000);
+    pointer-events: none;
+    box-sizing: border-box;
+    max-width: var(--gooey-tooltip-max-width, 300px);
+    font-family: var(--gooey-tooltip-font-family, var(--gooey-font-family));
+    font-size: var(--gooey-tooltip-font-size, var(--gooey-font-size-sm, 12px));
+}
+
+:host([visible="false"]) {
+    display: none;
+}
+
+:host([disabled]) {
+    opacity: var(--gooey-tooltip-opacity-disabled, var(--gooey-opacity-disabled));
+    pointer-events: none;
+}
+
+.tooltip-wrapper {
+    padding: var(--gooey-tooltip-padding, 6px 10px);
+    background: var(--gooey-tooltip-bg, var(--gooey-color-surface-raised, #333));
+    color: var(--gooey-tooltip-text, var(--gooey-color-text, #fff));
+    border-radius: var(--gooey-tooltip-border-radius, var(--gooey-border-radius, 4px));
+    box-shadow: var(--gooey-tooltip-shadow, var(--gooey-shadow-sm));
+    font-size: var(--gooey-tooltip-font-size, var(--gooey-font-size-sm, 12px));
+    font-family: var(--gooey-tooltip-font-family, var(--gooey-font-family));
+    word-wrap: break-word;
+}
+
+.tooltip-content {
+    display: inline;
+}
+
+.tooltip-arrow {
+    display: none;
+    width: var(--gooey-tooltip-arrow-size, 8px);
+    height: var(--gooey-tooltip-arrow-size, 8px);
+}
+
+::slotted(*) {
+    color: inherit;
+    font: inherit;
+}

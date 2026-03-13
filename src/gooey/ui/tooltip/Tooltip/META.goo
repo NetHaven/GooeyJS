@@ -1,0 +1,77 @@
+{
+  "MetaGooVersion": "1.0",
+  "name": "Tooltip",
+  "prefix": "gooeyui",
+  "tagName": "tooltip",
+  "script": "Tooltip.js",
+  "templates": [
+    { "id": "ui-Tooltip", "file": "Tooltip.html" }
+  ],
+  "themes": {
+    "default": "base",
+    "available": ["base"]
+  },
+  "tokens": {
+    "gooey-tooltip-bg": {
+      "description": "Tooltip background color",
+      "fallback": "gooey-color-surface-raised",
+      "category": "color"
+    },
+    "gooey-tooltip-text": {
+      "description": "Tooltip text color",
+      "fallback": "gooey-color-text",
+      "category": "color"
+    },
+    "gooey-tooltip-padding": {
+      "description": "Tooltip content padding",
+      "fallback": null,
+      "category": "spacing"
+    },
+    "gooey-tooltip-border-radius": {
+      "description": "Tooltip border radius",
+      "fallback": "gooey-border-radius",
+      "category": "border"
+    },
+    "gooey-tooltip-font-size": {
+      "description": "Tooltip font size",
+      "fallback": "gooey-font-size-sm",
+      "category": "typography"
+    },
+    "gooey-tooltip-font-family": {
+      "description": "Tooltip font family",
+      "fallback": "gooey-font-family",
+      "category": "typography"
+    },
+    "gooey-tooltip-arrow-size": {
+      "description": "Tooltip arrow size",
+      "fallback": null,
+      "category": "spacing"
+    },
+    "gooey-tooltip-shadow": {
+      "description": "Tooltip box shadow",
+      "fallback": "gooey-shadow-sm",
+      "category": "shadow"
+    },
+    "gooey-tooltip-z-index": {
+      "description": "Tooltip z-index for stacking",
+      "fallback": "gooey-z-tooltip",
+      "category": "z-index"
+    },
+    "gooey-tooltip-max-width": {
+      "description": "Tooltip maximum width",
+      "fallback": null,
+      "category": "spacing"
+    },
+    "gooey-tooltip-opacity-disabled": {
+      "description": "Tooltip disabled opacity",
+      "fallback": "gooey-opacity-disabled",
+      "category": "opacity"
+    }
+  },
+  "attributes": {
+    "content": { "type": "STRING", "default": null },
+    "contentAsHTML": { "type": "BOOLEAN", "default": false },
+    "visible": { "type": "BOOLEAN", "default": true },
+    "disabled": { "type": "BOOLEAN", "default": false }
+  }
+}
