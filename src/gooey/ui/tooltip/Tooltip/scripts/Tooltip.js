@@ -2,18 +2,20 @@ import UIComponent from '../../../UIComponent.js';
 import Template from '../../../../util/Template.js';
 import TooltipEvent from '../../../../events/tooltip/TooltipEvent.js';
 import TooltipPlacement from '../../TooltipPlacement.js';
+import TooltipManager from '../../TooltipManager.js';
+import TooltipTrigger from '../../TooltipTrigger.js';
 
 /**
  * Tooltip component.
  * Displays contextual information when triggered by a target element.
  *
- * This is the structural foundation -- positioning, triggers, interactivity,
- * animation, and accessibility are added by subsequent phases.
+ * Supports hover, focus, click, and manual trigger modes with configurable
+ * show/hide delays. Automatically positions relative to its reference element.
  *
- * @fires TooltipEvent.BEFORE_SHOW - Before the tooltip becomes visible
+ * @fires TooltipEvent.BEFORE_SHOW - Before the tooltip becomes visible (cancelable)
  * @fires TooltipEvent.SHOW - When the tooltip starts showing
  * @fires TooltipEvent.SHOWN - After the tooltip is fully visible
- * @fires TooltipEvent.BEFORE_HIDE - Before the tooltip starts hiding
+ * @fires TooltipEvent.BEFORE_HIDE - Before the tooltip starts hiding (cancelable)
  * @fires TooltipEvent.HIDE - When the tooltip starts hiding
  * @fires TooltipEvent.HIDDEN - After the tooltip is fully hidden
  * @fires TooltipEvent.TRIGGER - When the trigger condition is met
@@ -35,6 +37,9 @@ export default class Tooltip extends UIComponent {
         // Internal state for content value
         this._contentValue = null;
 
+        // Reference element this tooltip is bound to
+        this._reference = null;
+
         // Register all valid Observable events
         this.addValidEvent(TooltipEvent.BEFORE_SHOW);
         this.addValidEvent(TooltipEvent.SHOW);
@@ -52,6 +57,30 @@ export default class Tooltip extends UIComponent {
         if (this.hasAttribute("contentAsHTML")) {
             this._renderContent();
         }
+    }
+
+    // ========================================
+    // Lifecycle Callbacks
+    // ========================================
+
+    connectedCallback() {
+        super.connectedCallback?.();
+
+        // If 'for' attribute exists, resolve reference and bind
+        if (this.for) {
+            const ref = document.getElementById(this.for);
+            if (ref) {
+                this._reference = ref;
+                TooltipManager.bind(ref, this);
+            }
+        }
+    }
+
+    disconnectedCallback() {
+        if (this._reference) {
+            TooltipManager.unbind(this._reference);
+        }
+        super.disconnectedCallback?.();
     }
 
     // ========================================
@@ -80,7 +109,79 @@ export default class Tooltip extends UIComponent {
             case 'zindex':
                 this.style.zIndex = newValue || '';
                 break;
+            case 'trigger':
+                this._rebindTriggers();
+                break;
+            case 'showdelay':
+                // Delay is read at schedule time from attribute, no action needed
+                break;
+            case 'hidedelay':
+                // Delay is read at schedule time from attribute, no action needed
+                break;
         }
+    }
+
+    // ========================================
+    // Trigger Attributes
+    // ========================================
+
+    /**
+     * The trigger mode(s) for this tooltip (space-separated).
+     * Valid values: "hover", "focus", "click", "manual"
+     * @type {string}
+     */
+    get trigger() {
+        return this.getAttribute('trigger') || 'hover focus';
+    }
+
+    set trigger(val) {
+        this.setAttribute('trigger', val);
+        this._rebindTriggers();
+    }
+
+    /**
+     * Delay in milliseconds before showing the tooltip.
+     * @type {number}
+     */
+    get showDelay() {
+        return parseInt(this.getAttribute('showDelay')) || 200;
+    }
+
+    set showDelay(val) {
+        this.setAttribute('showDelay', val);
+    }
+
+    /**
+     * Delay in milliseconds before hiding the tooltip.
+     * @type {number}
+     */
+    get hideDelay() {
+        return parseInt(this.getAttribute('hideDelay')) || 0;
+    }
+
+    set hideDelay(val) {
+        this.setAttribute('hideDelay', val);
+    }
+
+    // ========================================
+    // Read-only Properties
+    // ========================================
+
+    /**
+     * The reference element this tooltip is bound to.
+     * @type {Element|null}
+     */
+    get reference() {
+        return this._reference;
+    }
+
+    /**
+     * Whether the tooltip is currently visible.
+     * @type {boolean}
+     */
+    get isVisible() {
+        const binding = TooltipManager._bindings.get(this._reference);
+        return binding ? binding.state === 'visible' : false;
     }
 
     // ========================================
@@ -272,16 +373,107 @@ export default class Tooltip extends UIComponent {
     }
 
     // ========================================
+    // Show / Hide / Toggle API
+    // ========================================
+
+    /**
+     * Show the tooltip.
+     * For manual trigger mode, this is the primary way to display the tooltip.
+     *
+     * @param {Object} [options] - Show options
+     * @param {boolean} [options.immediate=false] - Skip delay and show immediately
+     */
+    show(options) {
+        if (this.disabled) return;
+
+        // Resolve reference if not yet bound
+        if (!this._reference && this.for) {
+            const ref = document.getElementById(this.for);
+            if (ref) {
+                this._reference = ref;
+                // Ensure binding exists for state tracking
+                if (!TooltipManager._bindings.has(ref)) {
+                    TooltipManager.bind(ref, this);
+                }
+            }
+        }
+
+        if (!this._reference) return;
+
+        if (options && options.immediate) {
+            TooltipManager._doShow(this._reference, this);
+        } else {
+            TooltipManager._scheduleShow(this._reference, this);
+        }
+    }
+
+    /**
+     * Hide the tooltip.
+     *
+     * @param {Object} [options] - Hide options
+     * @param {boolean} [options.immediate=false] - Skip delay and hide immediately
+     */
+    hide(options) {
+        if (!this._reference) return;
+
+        if (options && options.immediate) {
+            TooltipManager._doHide(this._reference, this);
+        } else {
+            TooltipManager._scheduleHide(this._reference, this);
+        }
+    }
+
+    /**
+     * Toggle the tooltip visibility.
+     * Shows if hidden, hides if visible.
+     */
+    toggle() {
+        if (this.isVisible) {
+            this.hide();
+        } else {
+            this.show();
+        }
+    }
+
+    // ========================================
     // Positioning Methods
     // ========================================
 
     /**
      * Reposition the tooltip relative to its reference element.
-     * No-op stub -- will be wired to TooltipManager when show/hide lifecycle
-     * is implemented in the trigger phase (Phase 96).
+     * Uses TooltipManager to compute and apply the new position.
      */
     reposition() {
-        // Stub: implemented when show/hide lifecycle is added in Phase 96
+        if (!this._reference) return;
+
+        const options = this._getPositionOptions();
+        const result = TooltipManager.computePosition(this._reference, this, options);
+        TooltipManager.applyPosition(this, result);
+    }
+
+    /**
+     * Build positioning options object from current attributes.
+     *
+     * @returns {Object} Position options for TooltipManager.computePosition
+     * @private
+     */
+    _getPositionOptions() {
+        const viewportAttr = this.viewport;
+        let viewportEl = null;
+        if (viewportAttr) {
+            viewportEl = document.getElementById(viewportAttr) ||
+                         document.querySelector(viewportAttr);
+        }
+
+        return {
+            placement: this.placement,
+            offset: this.offset,
+            flipOnOverflow: this.flipOnOverflow,
+            shiftOnOverflow: this.shiftOnOverflow,
+            arrow: this.arrow,
+            viewport: viewportEl,
+            sticky: this.sticky
+        };
     }
 
     // ========================================
@@ -318,6 +510,18 @@ export default class Tooltip extends UIComponent {
     // ========================================
     // Private Methods
     // ========================================
+
+    /**
+     * Rebind trigger listeners when the trigger attribute changes.
+     * Only acts if a reference element is already bound.
+     * @private
+     */
+    _rebindTriggers() {
+        if (this._reference) {
+            TooltipManager.unbind(this._reference);
+            TooltipManager.bind(this._reference, this);
+        }
+    }
 
     /**
      * Render the current content value into the content element.

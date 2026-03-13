@@ -86,6 +86,9 @@
     "viewport": { "type": "STRING", "default": null },
     "zIndex": { "type": "NUMBER", "default": 9999 },
     "for": { "type": "STRING", "default": null },
-    "maxWidth": { "type": "STRING", "default": "350px" }
+    "maxWidth": { "type": "STRING", "default": "350px" },
+    "trigger": { "type": "ENUM", "default": "hover focus", "values": ["HOVER", "FOCUS", "CLICK", "MANUAL"] },
+    "showDelay": { "type": "NUMBER", "default": 200 },
+    "hideDelay": { "type": "NUMBER", "default": 0 }
   }
 }
