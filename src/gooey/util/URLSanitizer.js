@@ -24,6 +24,13 @@ const CONTROL_CHARS_RE = /[\x00-\x1f\x7f]/g;
 const ALLOWED_SCHEMES = new Set(['http:', 'https:', 'mailto:', 'tel:', 'ftp:']);
 
 /**
+ * Dangerous schemes specifically blocked for asset URLs.
+ * Superset check: any scheme not in ALLOWED_ASSET_SCHEMES is rejected.
+ * @type {Set<string>}
+ */
+const ALLOWED_ASSET_SCHEMES = new Set(['http:', 'https:']);
+
+/**
  * Pattern for allowed data: URL media types.
  * Only base64-encoded images of approved formats are permitted.
  * @type {RegExp}
@@ -103,6 +110,52 @@ export default class URLSanitizer {
      */
     static isAllowedURL(value, options = {}) {
         return URLSanitizer.sanitizeURL(value, options) !== null;
+    }
+
+    /**
+     * Validate a URL for use as an asset source (icon, image, background, filter).
+     *
+     * Stricter than sanitizeURL: defaults to same-origin, rejects protocol-relative
+     * URLs, rejects leading/trailing whitespace as obfuscation, and only allows
+     * http:/https: schemes (no mailto:, tel:, data:, blob:, javascript:, vbscript:).
+     *
+     * @param {string} url - URL string to validate
+     * @param {Object} [options] - Configuration options
+     * @param {boolean} [options.allowCrossOrigin=false] - Allow cross-origin asset URLs
+     * @returns {string|null} Canonicalized URL string, or null if rejected
+     */
+    static validateAssetURL(url, options = {}) {
+        if (!url || typeof url !== 'string') return null;
+
+        // Reject if input had leading/trailing whitespace (defense against obfuscation)
+        if (url !== url.trim()) return null;
+
+        // Reject URLs with control characters (0x00-0x1F, 0x7F)
+        if (CONTROL_CHARS_RE.test(url)) return null;
+
+        // Reject protocol-relative URLs starting with //
+        if (url.startsWith('//')) return null;
+
+        let parsed;
+        try {
+            parsed = new URL(url, document.baseURI);
+        } catch {
+            return null;
+        }
+
+        // Only allow http: and https: schemes for assets
+        if (!ALLOWED_ASSET_SCHEMES.has(parsed.protocol.toLowerCase())) {
+            return null;
+        }
+
+        // Same-origin enforcement (default)
+        if (!options.allowCrossOrigin) {
+            if (parsed.origin !== location.origin) {
+                return null;
+            }
+        }
+
+        return parsed.href;
     }
 
     /**
