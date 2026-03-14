@@ -5,6 +5,7 @@ import TooltipPlacement from '../../TooltipPlacement.js';
 import TooltipManager from '../../TooltipManager.js';
 import TooltipTrigger from '../../TooltipTrigger.js';
 import TooltipAnimation from '../../TooltipAnimation.js';
+import Sanitizer from '../../../../util/Sanitizer.js';
 
 /**
  * Tooltip component.
@@ -1059,7 +1060,7 @@ export default class Tooltip extends UIComponent {
         if (this._contentValue instanceof Node) return;
 
         if (this.contentAsHTML) {
-            this._contentEl.innerHTML = this._contentValue || '';
+            this._contentEl.innerHTML = Sanitizer.sanitize(this._contentValue || '');
         } else {
             this._contentEl.textContent = this._contentValue || '';
         }
