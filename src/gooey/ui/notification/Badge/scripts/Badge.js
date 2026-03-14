@@ -1,6 +1,6 @@
 import UIComponent from '../../../UIComponent.js';
 import Template from '../../../../util/Template.js';
-import URLSanitizer from '../../../../util/URLSanitizer.js';
+import IconResolver from '../../../../util/IconResolver.js';
 
 /**
  * Badge component for displaying status indicators, counts, or labels.
@@ -406,18 +406,36 @@ export default class Badge extends UIComponent {
      * @private
      */
     _applyIcon(val) {
+        // Clean up any previously resolved icon clone
+        if (this._resolvedClone) {
+            this._resolvedClone.remove();
+            this._resolvedClone = null;
+        }
+
         const slottedIcon = this.querySelector('[slot="icon"]');
         if (slottedIcon) {
             if (this._iconElement) {
                 this._iconElement.style.display = 'none';
             }
-        } else if (this._iconElement) {
+            return;
+        }
+
+        if (this._iconElement) {
             if (val) {
-                const safeVal = URLSanitizer.validateAssetURL(val);
-                if (safeVal) {
-                    this._iconElement.src = safeVal;
-                    this._iconElement.style.display = '';
+                const resolved = IconResolver.resolve(val);
+                if (resolved) {
+                    if (resolved.tagName === 'IMG') {
+                        // URL resolved to an img element — use existing icon element
+                        this._iconElement.src = resolved.src;
+                        this._iconElement.style.display = '';
+                    } else {
+                        // #id resolved to a gooeyui-icon clone — hide template img, insert clone
+                        this._iconElement.style.display = 'none';
+                        this._resolvedClone = resolved;
+                        this._iconElement.parentNode.insertBefore(resolved, this._iconElement);
+                    }
                 } else {
+                    // Invalid reference — hide icon
                     this._iconElement.removeAttribute("src");
                     this._iconElement.style.display = 'none';
                 }

@@ -1,6 +1,7 @@
 import UIComponent from '../../../UIComponent.js';
 import Template from '../../../../util/Template.js';
 import URLSanitizer from '../../../../util/URLSanitizer.js';
+import IconResolver from '../../../../util/IconResolver.js';
 
 /**
  * Individual breadcrumb navigation item.
@@ -234,20 +235,38 @@ export default class BreadcrumbItem extends UIComponent {
     }
 
     _applyIcon(val) {
+        // Clean up any previously resolved icon clone
+        if (this._resolvedClone) {
+            this._resolvedClone.remove();
+            this._resolvedClone = null;
+        }
+
         const slottedIcon = this.querySelector('[slot="icon"]');
         if (slottedIcon) {
             this._icon.style.display = "none";
-        } else if (val) {
-            const safeVal = URLSanitizer.validateAssetURL(val);
-            if (safeVal) {
-                this._icon.src = safeVal;
-                this._icon.style.display = "inline-block";
+            return;
+        }
+
+        if (val) {
+            const resolved = IconResolver.resolve(val);
+            if (resolved) {
+                if (resolved.tagName === "IMG") {
+                    // URL resolved to an img element — use existing icon element
+                    this._icon.src = resolved.src;
+                    this._icon.style.display = "inline-block";
+                } else {
+                    // #id resolved to a gooeyui-icon clone — hide template img, insert clone
+                    this._icon.style.display = "none";
+                    this._resolvedClone = resolved;
+                    this._icon.parentNode.insertBefore(resolved, this._icon);
+                }
             } else {
+                // Invalid reference — hide icon
                 this._icon.removeAttribute("src");
                 this._icon.style.display = "none";
             }
         } else {
-            this._icon.src = "";
+            this._icon.removeAttribute("src");
             this._icon.style.display = "none";
         }
     }
