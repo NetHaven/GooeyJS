@@ -24,6 +24,20 @@ const TooltipManager = {
      */
     _bindings: new WeakMap(),
 
+    /**
+     * Currently visible non-interactive tooltip binding (one-visible-at-a-time).
+     * Interactive tooltips are exempt from this tracking.
+     * @type {Object|null}
+     */
+    _activeTooltip: null,
+
+    /**
+     * Maps group names to the timestamp when a tooltip in that group was last shown.
+     * Used for rapid-switching group delay logic.
+     * @type {Map<string, number>}
+     */
+    _groupLastShown: new Map(),
+
     // ========================================
     // Trigger Binding API
     // ========================================
@@ -781,7 +795,17 @@ const TooltipManager = {
         // Fire TRIGGER event
         tooltip.fireEvent(TooltipEvent.TRIGGER, { triggerType: binding.triggers[0] });
 
-        const showDelay = parseInt(tooltip.getAttribute('showDelay')) || 200;
+        let showDelay = parseInt(tooltip.getAttribute('showDelay')) || 200;
+
+        // Group delay: if tooltip belongs to a group and a sibling was recently shown,
+        // use the shorter groupDelay instead of the full showDelay
+        const group = tooltip.getAttribute('group');
+        if (group) {
+            const lastShown = this._groupLastShown.get(group);
+            if (lastShown && (Date.now() - lastShown < showDelay + 500)) {
+                showDelay = parseInt(tooltip.getAttribute('groupDelay')) || 50;
+            }
+        }
 
         if (showDelay > 0) {
             binding.state = 'showing';
@@ -858,6 +882,13 @@ const TooltipManager = {
     _doShow(reference, tooltip) {
         const binding = this._bindings.get(reference);
 
+        // One-visible-at-a-time: hide the active non-interactive tooltip before showing a new one
+        if (!tooltip.hasAttribute('interactive') && binding) {
+            if (this._activeTooltip && this._activeTooltip !== binding) {
+                this._doHide(this._activeTooltip.reference, this._activeTooltip.tooltip);
+            }
+        }
+
         // Fire cancelable BEFORE_SHOW
         const allowed = tooltip.fireEvent(TooltipEvent.BEFORE_SHOW, {}, { cancelable: true });
         if (!allowed) {
@@ -925,6 +956,17 @@ const TooltipManager = {
         const completeShow = () => {
             if (binding) {
                 binding.state = 'visible';
+
+                // Track as active tooltip for one-visible-at-a-time (non-interactive only)
+                if (!tooltip.hasAttribute('interactive')) {
+                    this._activeTooltip = binding;
+                }
+
+                // Update group timestamp for rapid-switching delay
+                const showGroup = tooltip.getAttribute('group');
+                if (showGroup) {
+                    this._groupLastShown.set(showGroup, Date.now());
+                }
 
                 // Attach click-outside and Escape dismissal for click-triggered tooltips
                 if (binding.triggers.includes(TooltipTrigger.CLICK)) {
@@ -1024,6 +1066,10 @@ const TooltipManager = {
             tooltip.fireEvent(TooltipEvent.HIDDEN, {});
 
             if (binding) {
+                // Clear active tooltip tracking if this was the active one
+                if (this._activeTooltip === binding) {
+                    this._activeTooltip = null;
+                }
                 // Stop follow-cursor tracking if present
                 this._stopFollowCursor(binding);
                 // Detach interactive hover listeners if present
