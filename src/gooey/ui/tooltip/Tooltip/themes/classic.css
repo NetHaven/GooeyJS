@@ -1,0 +1,15 @@
+/* Tooltip - Classic theme */
+:host {
+    --gooey-tooltip-bg: #FFFFCC;
+    --gooey-tooltip-color: #000000;
+    --gooey-tooltip-border-color: #000000;
+    --gooey-tooltip-border-width: 1px;
+    --gooey-tooltip-border-radius: 0px;
+    --gooey-tooltip-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    --gooey-tooltip-arrow-color: #FFFFCC;
+    --gooey-tooltip-font-size: 11px;
+    --gooey-tooltip-font-family: "Charcoal", "Geneva", system-ui, sans-serif;
+    --gooey-tooltip-padding: 4px 8px;
+    --gooey-tooltip-close-color: #000000;
+    --gooey-tooltip-close-hover-color: #333333;
+}

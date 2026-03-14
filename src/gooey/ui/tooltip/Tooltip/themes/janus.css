@@ -1,0 +1,13 @@
+/* Tooltip - Janus theme */
+:host {
+    --gooey-tooltip-bg: #2b2b2b;
+    --gooey-tooltip-color: #d4d4d4;
+    --gooey-tooltip-border-color: #3c3c3c;
+    --gooey-tooltip-border-width: 1px;
+    --gooey-tooltip-border-radius: 3px;
+    --gooey-tooltip-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+    --gooey-tooltip-arrow-color: #2b2b2b;
+    --gooey-tooltip-font-size: 11px;
+    --gooey-tooltip-close-color: #d4d4d4;
+    --gooey-tooltip-close-hover-color: #ffffff;
+}

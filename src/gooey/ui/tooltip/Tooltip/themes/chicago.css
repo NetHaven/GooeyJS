@@ -1,0 +1,15 @@
+/* Tooltip - Chicago theme */
+:host {
+    --gooey-tooltip-bg: #FFFFE1;
+    --gooey-tooltip-color: #000000;
+    --gooey-tooltip-border-color: #000000;
+    --gooey-tooltip-border-width: 1px;
+    --gooey-tooltip-border-radius: 0px;
+    --gooey-tooltip-shadow: none;
+    --gooey-tooltip-arrow-color: #FFFFE1;
+    --gooey-tooltip-font-size: 11px;
+    --gooey-tooltip-font-family: "MS Sans Serif", "Microsoft Sans Serif", system-ui, sans-serif;
+    --gooey-tooltip-padding: 2px 6px;
+    --gooey-tooltip-close-color: #000000;
+    --gooey-tooltip-close-hover-color: #333333;
+}

@@ -1,0 +1,15 @@
+/* Tooltip - Cheetah theme */
+:host {
+    --gooey-tooltip-bg: rgba(30, 30, 30, 0.95);
+    --gooey-tooltip-color: #ffffff;
+    --gooey-tooltip-border-color: rgba(255, 255, 255, 0.1);
+    --gooey-tooltip-border-width: 1px;
+    --gooey-tooltip-border-radius: 6px;
+    --gooey-tooltip-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    --gooey-tooltip-arrow-color: rgba(30, 30, 30, 0.95);
+    --gooey-tooltip-font-size: 11px;
+    --gooey-tooltip-font-family: "Lucida Grande", "Lucida Sans Unicode", system-ui, sans-serif;
+    --gooey-tooltip-padding: 5px 10px;
+    --gooey-tooltip-close-color: #ffffff;
+    --gooey-tooltip-close-hover-color: #cccccc;
+}

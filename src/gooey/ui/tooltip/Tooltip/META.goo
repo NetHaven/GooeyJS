@@ -9,7 +9,7 @@
   ],
   "themes": {
     "default": "base",
-    "available": ["base"]
+    "available": ["base", "dark", "janus", "classic", "chicago", "cheetah"]
   },
   "tokens": {
     "gooey-tooltip-bg": {

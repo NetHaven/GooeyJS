@@ -1,0 +1,12 @@
+/* Tooltip - Dark theme */
+:host {
+    --gooey-tooltip-bg: #4a4a4a;
+    --gooey-tooltip-color: #e0e0e0;
+    --gooey-tooltip-border-color: #5a5a5a;
+    --gooey-tooltip-border-width: 1px;
+    --gooey-tooltip-border-radius: 4px;
+    --gooey-tooltip-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    --gooey-tooltip-arrow-color: #4a4a4a;
+    --gooey-tooltip-close-color: #e0e0e0;
+    --gooey-tooltip-close-hover-color: #ffffff;
+}
