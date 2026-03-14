@@ -2,6 +2,7 @@ import UIComponent from '../../../UIComponent.js';
 import MouseEvent from '../../../../events/MouseEvent.js';
 import Template from '../../../../util/Template.js';
 import ToggleButtonEvent from '../../../../events/button/ToggleButtonEvent.js';
+import IconResolver from '../../../../util/IconResolver.js';
 
 export default class ToggleButton extends UIComponent {
     constructor() {
@@ -52,21 +53,7 @@ export default class ToggleButton extends UIComponent {
             this._toggleButtonInit = true;
             // Initialize attributes inherited from Button (icon, text, action)
             if (this.hasAttribute("icon")) {
-                const val = this.getAttribute("icon");
-                const slottedIcon = this.querySelector('[slot="icon"]');
-                if (!slottedIcon) {
-                    if (!this.image) {
-                        this.image = document.createElement("img");
-                        this.button.appendChild(this.image);
-                        this.image.addEventListener(MouseEvent.CLICK, e=> {
-                            if (this.disabled) {
-                                e.stopPropagation();
-                            }
-                        });
-                    }
-                    this.image.style.display = '';
-                    this.image.src = val;
-                }
+                this.icon = this.getAttribute("icon");
             }
 
             if (this.hasAttribute("text")) {
@@ -140,19 +127,34 @@ export default class ToggleButton extends UIComponent {
             return;
         }
 
-        if (!this.image) {
-            this.image = document.createElement("img");
-            this.button.appendChild(this.image);
-
-            this.image.addEventListener(MouseEvent.CLICK, e => {
-                if (this.disabled) {
-                    e.stopPropagation();
+        const resolved = IconResolver.resolve(val);
+        if (!resolved) {
+            // Invalid reference - clear any existing icon
+            if (this.image) {
+                this.image.style.display = 'none';
+                if (this.image.tagName === 'IMG') {
+                    this.image.removeAttribute("src");
                 }
-            });
+            }
+            return;
         }
+
+        // Remove previous icon element
+        if (this.image && this.image.parentNode) {
+            this.image.parentNode.removeChild(this.image);
+        }
+
+        this.image = resolved;
+        this.button.appendChild(this.image);
+
+        this.image.addEventListener(MouseEvent.CLICK, e => {
+            if (this.disabled) {
+                e.stopPropagation();
+            }
+        });
+
         this.image.style.display = '';
         this.setAttribute("icon", val);
-        this.image.src = val;
     }
     
     set text(val) {

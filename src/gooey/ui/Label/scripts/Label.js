@@ -3,6 +3,7 @@ import HorizontalAlign from './HorizontalAlign.js';
 import MouseEvent from '../../../events/MouseEvent.js';
 import VerticalAlign from './VerticalAlign.js';
 import Template from '../../../util/Template.js';
+import IconResolver from '../../../util/IconResolver.js';
 
 export default class Label extends UIComponent {
     constructor () {
@@ -65,8 +66,8 @@ export default class Label extends UIComponent {
                 }
                 break;
             case 'icon':
-                if (newValue && this.image) {
-                    this.image.src = newValue;
+                if (newValue) {
+                    this.icon = newValue;
                 }
                 break;
             case 'disabled':
@@ -128,19 +129,34 @@ export default class Label extends UIComponent {
             return;
         }
 
-        if (!this.image) {
-			this.image = document.createElement("img");
-			this.container.appendChild(this.image);
-
-            this.image.addEventListener(MouseEvent.CLICK, e=> {
-				if (this.disabled) {
-					e.stopPropagation();
-				}
-			});
+        const resolved = IconResolver.resolve(val);
+        if (!resolved) {
+            // Invalid reference - clear any existing icon
+            if (this.image) {
+                this.image.style.display = 'none';
+                if (this.image.tagName === 'IMG') {
+                    this.image.removeAttribute("src");
+                }
+            }
+            return;
         }
+
+        // Remove previous icon element
+        if (this.image && this.image.parentNode) {
+            this.image.parentNode.removeChild(this.image);
+        }
+
+        this.image = resolved;
+        this.container.appendChild(this.image);
+
+        this.image.addEventListener(MouseEvent.CLICK, e => {
+            if (this.disabled) {
+                e.stopPropagation();
+            }
+        });
+
         this.image.style.display = '';
-		this.setAttribute("icon", val);
-		this.image.src = val;
+        this.setAttribute("icon", val);
 	}
 	
 	set text(val) {
