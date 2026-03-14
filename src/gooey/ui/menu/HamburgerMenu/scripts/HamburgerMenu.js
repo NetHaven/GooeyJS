@@ -5,6 +5,7 @@ import MouseEvent from '../../../../events/MouseEvent.js';
 import KeyboardEvent from '../../../../events/KeyboardEvent.js';
 import Key from '../../../../io/Key.js';
 import Template from '../../../../util/Template.js';
+import IconResolver from '../../../../util/IconResolver.js';
 
 /**
  * HamburgerMenu Component
@@ -230,15 +231,18 @@ export default class HamburgerMenu extends UIComponent {
         this.iconElement.style.display = "";
         if (val) {
             this.setAttribute("icon", val);
-            // Build img element safely without innerHTML
+            const resolved = IconResolver.resolve(val);
+            // Clear previous icon content
             this.iconElement.textContent = '';
-            const img = document.createElement('img');
-            img.src = val;
-            img.alt = '';
-            this.iconElement.appendChild(img);
+            if (resolved) {
+                if (resolved.tagName === 'IMG') {
+                    resolved.alt = '';
+                }
+                this.iconElement.appendChild(resolved);
+            }
         } else {
             this.removeAttribute("icon");
-            // Restore default hamburger bars safely without innerHTML
+            // Restore default hamburger bars
             this.iconElement.textContent = '';
             for (let i = 0; i < 3; i++) {
                 const bar = document.createElement('span');

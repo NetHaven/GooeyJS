@@ -5,6 +5,7 @@ import MouseEvent from '../../../../events/MouseEvent.js';
 import KeyboardEvent from '../../../../events/KeyboardEvent.js';
 import Key from '../../../../io/Key.js';
 import Template from '../../../../util/Template.js';
+import IconResolver from '../../../../util/IconResolver.js';
 
 /**
  * WaffleMenu Component (Bento Box / App Launcher)
@@ -191,6 +192,13 @@ export default class WaffleMenu extends UIComponent {
 
     set icon(val) {
         const slottedIcon = this.querySelector('[slot="icon"]');
+
+        // Clean up previously inserted resolved clone
+        if (this._resolvedIcon && this._resolvedIcon.parentElement) {
+            this._resolvedIcon.remove();
+        }
+        this._resolvedIcon = null;
+
         if (slottedIcon) {
             // Hide both default icons when slot is used
             this.defaultIcon.style.display = "none";
@@ -205,9 +213,25 @@ export default class WaffleMenu extends UIComponent {
 
         if (val) {
             this.setAttribute("icon", val);
-            this.customIcon.src = val;
-            this.customIcon.style.display = "block";
-            this.defaultIcon.style.display = "none";
+            const resolved = IconResolver.resolve(val);
+            if (resolved) {
+                if (resolved.tagName === 'IMG') {
+                    // URL mode: set src on the existing custom icon img
+                    this.customIcon.src = resolved.src;
+                    this.customIcon.style.display = "block";
+                    this.defaultIcon.style.display = "none";
+                } else {
+                    // #id mode: hide both default icons, insert clone
+                    this.customIcon.style.display = "none";
+                    this.defaultIcon.style.display = "none";
+                    this._resolvedIcon = resolved;
+                    this.customIcon.parentElement.appendChild(resolved);
+                }
+            } else {
+                // Invalid reference: show default icon
+                this.customIcon.style.display = "none";
+                this.defaultIcon.style.display = "block";
+            }
         } else {
             this.removeAttribute("icon");
             this.customIcon.style.display = "none";
