@@ -57,6 +57,13 @@ const TooltipManager = {
      */
     _visibleTooltips: new Set(),
 
+    /**
+     * Global document-level Escape key handler.
+     * Attached when any tooltip is visible, detached when none are visible.
+     * @type {Function|null}
+     */
+    _globalEscapeHandler: null,
+
     // ========================================
     // Trigger Binding API
     // ========================================
@@ -331,9 +338,41 @@ const TooltipManager = {
     },
 
     /**
+     * Attach global document-level Escape key handler.
+     * Called when any tooltip becomes visible. Only one handler is ever active.
+     * When Escape is pressed, all visible tooltips are hidden.
+     * @private
+     */
+    _attachGlobalEscape() {
+        if (this._globalEscapeHandler) return;
+
+        this._globalEscapeHandler = (e) => {
+            if (e.key === 'Escape') {
+                const tooltips = [...this._visibleTooltips];
+                for (const tooltip of tooltips) {
+                    this._doHide(tooltip._reference, tooltip);
+                }
+            }
+        };
+
+        document.addEventListener('keydown', this._globalEscapeHandler);
+    },
+
+    /**
+     * Detach the global Escape key handler.
+     * Called when no tooltips remain visible.
+     * @private
+     */
+    _detachGlobalEscape() {
+        if (!this._globalEscapeHandler) return;
+        document.removeEventListener('keydown', this._globalEscapeHandler);
+        this._globalEscapeHandler = null;
+    },
+
+    /**
      * Attach document-level dismissal listeners for a click-triggered tooltip.
      * Called when tooltip becomes visible and trigger includes 'click'.
-     * Adds pointerdown (click-outside) and keydown (Escape) on document.
+     * Adds pointerdown (click-outside) dismissal on document.
      *
      * @param {Element} reference - The reference element
      * @param {Element} tooltip - The tooltip element
@@ -357,12 +396,6 @@ const TooltipManager = {
             this._doHide(reference, tooltip);
         };
 
-        const escapeHandler = (e) => {
-            if (e.key === 'Escape') {
-                this._doHide(reference, tooltip);
-            }
-        };
-
         // Delay adding pointerdown listener by one tick to avoid the opening click
         // from immediately triggering click-outside dismissal
         setTimeout(() => {
@@ -371,9 +404,6 @@ const TooltipManager = {
             document.addEventListener('pointerdown', pointerdownHandler);
             binding._dismissalListeners.set('pointerdown', pointerdownHandler);
         }, 0);
-
-        document.addEventListener('keydown', escapeHandler);
-        binding._dismissalListeners.set('keydown', escapeHandler);
     },
 
     /**
@@ -390,12 +420,6 @@ const TooltipManager = {
         if (pointerdownHandler) {
             document.removeEventListener('pointerdown', pointerdownHandler);
             binding._dismissalListeners.delete('pointerdown');
-        }
-
-        const escapeHandler = binding._dismissalListeners.get('keydown');
-        if (escapeHandler) {
-            document.removeEventListener('keydown', escapeHandler);
-            binding._dismissalListeners.delete('keydown');
         }
     },
 
@@ -1143,13 +1167,16 @@ const TooltipManager = {
         // Fire SHOW with placement info
         tooltip.fireEvent(TooltipEvent.SHOW, { placement: result.placement });
 
-        // Helper to complete show (attach interactive, auto-close, click-dismiss)
+        // Helper to complete show (attach interactive, auto-close, click-dismiss, focus, escape)
         const completeShow = () => {
             if (binding) {
                 binding.state = 'visible';
 
                 // Track in visible tooltips set for hideAll
                 this._visibleTooltips.add(tooltip);
+
+                // Attach global Escape handler (no-op if already attached)
+                this._attachGlobalEscape();
 
                 // Track as active tooltip for one-visible-at-a-time (non-interactive only)
                 if (!tooltip.hasAttribute('interactive')) {
@@ -1162,17 +1189,41 @@ const TooltipManager = {
                     this._groupLastShown.set(showGroup, Date.now());
                 }
 
-                // Attach click-outside and Escape dismissal for click-triggered tooltips
+                // Attach click-outside dismissal for click-triggered tooltips
                 if (binding.triggers.includes(TooltipTrigger.CLICK)) {
                     this._attachClickDismissal(binding.reference, tooltip, binding);
                 }
 
-                // Interactive tooltip: attach hover listeners and click-outside/Escape dismissal
+                // Interactive tooltip: attach hover listeners, click-outside dismissal, and focus management
                 if (tooltip.hasAttribute('interactive')) {
                     this._attachInteractiveHover(reference, tooltip, binding);
                     if (!binding.triggers.includes(TooltipTrigger.CLICK)) {
                         this._attachClickDismissal(reference, tooltip, binding);
                     }
+
+                    // Store current focus for restoration on hide
+                    binding._previousFocus = document.activeElement;
+
+                    // Move focus into the interactive tooltip
+                    const focusTarget = tooltip.shadowRoot
+                        ? tooltip.shadowRoot.querySelector(
+                            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')
+                        : null;
+
+                    requestAnimationFrame(() => {
+                        if (focusTarget) {
+                            focusTarget.focus();
+                        } else {
+                            // Focus the wrapper itself as fallback
+                            const w = this._getWrapper(tooltip);
+                            if (w) {
+                                if (!w.hasAttribute('tabindex')) {
+                                    w.setAttribute('tabindex', '-1');
+                                }
+                                w.focus();
+                            }
+                        }
+                    });
                 }
 
                 // Auto-close timer
@@ -1252,7 +1303,7 @@ const TooltipManager = {
             reference.setAttribute('aria-expanded', 'false');
         }
 
-        // Helper to complete hide (cleanup listeners, stop auto-update, etc.)
+        // Helper to complete hide (cleanup listeners, stop auto-update, focus restore, etc.)
         const completeHide = () => {
             if (wrapper) {
                 wrapper.dataset.state = 'hidden';
@@ -1262,6 +1313,11 @@ const TooltipManager = {
 
             // Remove from visible tooltips set
             this._visibleTooltips.delete(tooltip);
+
+            // Detach global Escape handler if no tooltips remain visible
+            if (this._visibleTooltips.size === 0) {
+                this._detachGlobalEscape();
+            }
 
             // Stop auto-update AFTER transition completes
             this.stopAutoUpdate(tooltip);
@@ -1281,6 +1337,16 @@ const TooltipManager = {
                 this._stopAutoClose(binding);
                 // Detach click dismissal listeners if present
                 this._detachClickDismissal(binding);
+
+                // Restore focus to reference element for interactive tooltips
+                if (binding._previousFocus) {
+                    // Verify the element is still in the DOM before focusing
+                    if (binding._previousFocus.isConnected) {
+                        binding._previousFocus.focus();
+                    }
+                    binding._previousFocus = null;
+                }
+
                 binding.state = 'hidden';
             }
         };
