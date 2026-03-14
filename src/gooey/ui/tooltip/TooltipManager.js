@@ -89,6 +89,11 @@ const TooltipManager = {
 
         this._bindings.set(reference, binding);
         this._attachTriggerListeners(reference, tooltip, triggers);
+
+        // Set up ARIA attributes on reference element
+        if (typeof tooltip._updateReferenceAria === 'function') {
+            tooltip._updateReferenceAria();
+        }
     },
 
     /**
@@ -124,6 +129,11 @@ const TooltipManager = {
 
         // Detach all trigger listeners
         this._detachTriggerListeners(reference, binding.triggers);
+
+        // Clean up ARIA attributes from reference element
+        if (binding.tooltip && typeof binding.tooltip._removeReferenceAria === 'function') {
+            binding.tooltip._removeReferenceAria();
+        }
 
         // Singleton cleanup: remove reference from singleton binding set
         if (binding.tooltip && binding.tooltip.hasAttribute('singleton')) {
@@ -1049,11 +1059,24 @@ const TooltipManager = {
 
         // Singleton content swap: update content from reference's data-tooltip-content
         if (tooltip.hasAttribute('singleton')) {
+            // Transfer ARIA from previous reference to new reference
+            const prevRef = tooltip._reference;
+            if (prevRef && prevRef !== reference && typeof prevRef.removeAttribute === 'function') {
+                if (typeof tooltip._removeReferenceAria === 'function') {
+                    tooltip._removeReferenceAria();
+                }
+            }
+
             const dataContent = reference.getAttribute('data-tooltip-content');
             if (dataContent) {
                 tooltip.setContent(dataContent);
             }
             tooltip._reference = reference;
+
+            // Set ARIA on new reference
+            if (typeof tooltip._updateReferenceAria === 'function') {
+                tooltip._updateReferenceAria();
+            }
         }
 
         // Make tooltip visible with fixed positioning
@@ -1084,6 +1107,14 @@ const TooltipManager = {
         const wrapper = this._getWrapper(tooltip);
         const animation = tooltip.getAttribute('animation') || TooltipAnimation.FADE;
         const duration = parseInt(tooltip.getAttribute('duration')) || 150;
+
+        // Toggle ARIA attributes for show
+        if (wrapper) {
+            wrapper.setAttribute('aria-hidden', 'false');
+        }
+        if (tooltip.hasAttribute('interactive') && reference && typeof reference.setAttribute === 'function') {
+            reference.setAttribute('aria-expanded', 'true');
+        }
 
         if (wrapper) {
             // Clean up any existing show/hide transition handlers
@@ -1216,10 +1247,16 @@ const TooltipManager = {
         const animation = tooltip.getAttribute('animation') || TooltipAnimation.FADE;
         const duration = parseInt(tooltip.getAttribute('duration')) || 150;
 
+        // Toggle ARIA attributes for hide
+        if (tooltip.hasAttribute('interactive') && reference && typeof reference.setAttribute === 'function') {
+            reference.setAttribute('aria-expanded', 'false');
+        }
+
         // Helper to complete hide (cleanup listeners, stop auto-update, etc.)
         const completeHide = () => {
             if (wrapper) {
                 wrapper.dataset.state = 'hidden';
+                wrapper.setAttribute('aria-hidden', 'true');
             }
             tooltip.style.display = 'none';
 
