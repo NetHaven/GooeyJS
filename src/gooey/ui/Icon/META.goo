@@ -1,0 +1,22 @@
+{
+  "MetaGooVersion": "1.0",
+  "name": "Icon",
+  "prefix": "gooeyui",
+  "tagName": "icon",
+  "script": "Icon.js",
+  "templates": [
+    { "id": "ui-Icon", "file": "Icon.html" }
+  ],
+  "themes": {
+    "default": "base",
+    "available": ["base"]
+  },
+  "attributes": {
+    "type": { "type": "ENUM", "default": "bitmap", "values": ["BITMAP", "CSS"] },
+    "src": { "type": "STRING", "default": null },
+    "classname": { "type": "STRING", "default": null },
+    "width": { "type": "STRING", "default": null },
+    "height": { "type": "STRING", "default": null },
+    "alt": { "type": "STRING", "default": "" }
+  }
+}

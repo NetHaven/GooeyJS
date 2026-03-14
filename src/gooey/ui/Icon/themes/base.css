@@ -1,0 +1,39 @@
+:host {
+    display: inline-block;
+    position: relative;
+    vertical-align: middle;
+    line-height: 0;
+    width: var(--gooey-icon-width, auto);
+    height: var(--gooey-icon-height, auto);
+}
+
+:host([disabled]) {
+    opacity: var(--gooey-opacity-disabled, 0.5);
+    pointer-events: none;
+}
+
+.ui-Icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+.icon-bitmap {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+.icon-css {
+    display: none;
+}
+
+:host([type="css"]) .icon-bitmap {
+    display: none;
+}
+
+:host([type="css"]) .icon-css {
+    display: inline-block;
+}
