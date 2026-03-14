@@ -50,6 +50,13 @@ const TooltipManager = {
      */
     _singletonBindings: new Map(),
 
+    /**
+     * Tracks all currently visible tooltip elements.
+     * Used for efficient hideAll implementation.
+     * @type {Set<Element>}
+     */
+    _visibleTooltips: new Set(),
+
     // ========================================
     // Trigger Binding API
     // ========================================
@@ -979,6 +986,26 @@ const TooltipManager = {
     },
 
     // ========================================
+    // Batch Operations
+    // ========================================
+
+    /**
+     * Hide all currently visible tooltips.
+     *
+     * @param {Object} [options={}] - Options
+     * @param {Element} [options.exclude=null] - Tooltip element to exclude from hiding
+     */
+    hideAll(options = {}) {
+        const exclude = options.exclude || null;
+        for (const tooltip of [...this._visibleTooltips]) {
+            if (tooltip === exclude) continue;
+            if (tooltip._reference) {
+                this._doHide(tooltip._reference, tooltip);
+            }
+        }
+    },
+
+    // ========================================
     // Show/Hide Lifecycle
     // ========================================
 
@@ -1090,6 +1117,9 @@ const TooltipManager = {
             if (binding) {
                 binding.state = 'visible';
 
+                // Track in visible tooltips set for hideAll
+                this._visibleTooltips.add(tooltip);
+
                 // Track as active tooltip for one-visible-at-a-time (non-interactive only)
                 if (!tooltip.hasAttribute('interactive')) {
                     this._activeTooltip = binding;
@@ -1192,6 +1222,9 @@ const TooltipManager = {
                 wrapper.dataset.state = 'hidden';
             }
             tooltip.style.display = 'none';
+
+            // Remove from visible tooltips set
+            this._visibleTooltips.delete(tooltip);
 
             // Stop auto-update AFTER transition completes
             this.stopAutoUpdate(tooltip);

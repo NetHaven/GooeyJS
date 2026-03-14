@@ -775,7 +775,7 @@ export default class Tooltip extends UIComponent {
      */
     setContent(value) {
         if (typeof value === 'function') {
-            this.setContent(value());
+            this.setContent(value(this._reference));
             return;
         }
 
@@ -791,6 +791,53 @@ export default class Tooltip extends UIComponent {
         // String content
         this._contentValue = value;
         this._renderContent();
+    }
+
+    // ========================================
+    // Enable / Disable / Destroy API
+    // ========================================
+
+    /**
+     * Enable the tooltip, allowing it to be shown via triggers or programmatic API.
+     */
+    enable() {
+        this.disabled = false;
+    }
+
+    /**
+     * Disable the tooltip, preventing it from being shown.
+     * If currently visible, hides immediately.
+     */
+    disable() {
+        this.disabled = true;
+        if (this.isVisible) {
+            this.hide({ immediate: true });
+        }
+    }
+
+    /**
+     * Destroy the tooltip, removing all bindings and cleaning up resources.
+     * The tooltip is hidden (if visible), unbound from its reference, and removed from the DOM.
+     */
+    destroy() {
+        // Hide if visible
+        if (this.isVisible) {
+            this.hide({ immediate: true });
+        }
+        // Unbind from reference
+        if (this._reference) {
+            TooltipManager.unbind(this._reference);
+        }
+        // Unregister singleton if applicable
+        if (this.singleton) {
+            TooltipManager.unregisterSingleton(this);
+        }
+        // Remove from DOM
+        this.remove();
+        // Clear internal state
+        this._reference = null;
+        this._virtualReference = null;
+        this._contentValue = null;
     }
 
     // ========================================
