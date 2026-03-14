@@ -24,6 +24,34 @@ import TooltipAnimation from '../../TooltipAnimation.js';
  */
 export default class Tooltip extends UIComponent {
 
+    /**
+     * Default options applied to new tooltip instances.
+     * Set via Tooltip.setDefaults().
+     * @type {Object}
+     */
+    static _defaults = {};
+
+    /**
+     * Hide all currently visible tooltips.
+     *
+     * @param {Object} [options={}] - Options
+     * @param {Element} [options.exclude=null] - Tooltip element to exclude from hiding
+     */
+    static hideAll(options = {}) {
+        TooltipManager.hideAll(options);
+    }
+
+    /**
+     * Set default options for future tooltip instances.
+     * These defaults are applied in the constructor for any attribute not explicitly set.
+     * Only affects tooltips created after this call.
+     *
+     * @param {Object} options - Default attribute values (e.g., { placement: 'bottom', showDelay: 300 })
+     */
+    static setDefaults(options) {
+        Object.assign(Tooltip._defaults, options);
+    }
+
     constructor() {
         super();
 
@@ -76,6 +104,15 @@ export default class Tooltip extends UIComponent {
         }
         if (this.hasAttribute("closeButton")) {
             this.closeButton = true;
+        }
+
+        // Apply static defaults for attributes not explicitly set
+        if (Tooltip._defaults) {
+            for (const [key, value] of Object.entries(Tooltip._defaults)) {
+                if (!this.hasAttribute(key)) {
+                    this.setAttribute(key, value);
+                }
+            }
         }
     }
 
