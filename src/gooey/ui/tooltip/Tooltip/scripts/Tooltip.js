@@ -79,6 +79,14 @@ export default class Tooltip extends UIComponent {
             }
         }
 
+        // Generate unique ID if none provided
+        if (!this.id) {
+            this.id = 'tooltip-' + Math.random().toString(36).substring(2, 10);
+        }
+
+        // Set initial role based on interactive attribute
+        this._updateRole();
+
         // Internal state for content value
         this._contentValue = null;
 
@@ -134,6 +142,7 @@ export default class Tooltip extends UIComponent {
             if (ref) {
                 this._reference = ref;
                 TooltipManager.bind(ref, this);
+                this._updateReferenceAria();
             }
         }
     }
@@ -145,6 +154,7 @@ export default class Tooltip extends UIComponent {
         }
 
         if (this._reference) {
+            this._removeReferenceAria();
             TooltipManager.unbind(this._reference);
         }
         super.disconnectedCallback?.();
@@ -197,6 +207,12 @@ export default class Tooltip extends UIComponent {
             case 'interactive':
                 // CSS handles pointer-events via :host([interactive]) selector
                 // Manager reads attribute at show time
+                this._updateRole();
+                this._updateReferenceAria();
+                break;
+            case 'role':
+                this._updateRole();
+                this._updateReferenceAria();
                 break;
             case 'closebutton':
                 if (this._closeBtn) {
@@ -861,8 +877,9 @@ export default class Tooltip extends UIComponent {
         if (this.isVisible) {
             this.hide({ immediate: true });
         }
-        // Unbind from reference
+        // Clean up ARIA attributes before unbinding
         if (this._reference) {
+            this._removeReferenceAria();
             TooltipManager.unbind(this._reference);
         }
         // Unregister singleton if applicable
@@ -915,6 +932,107 @@ export default class Tooltip extends UIComponent {
     // ========================================
     // Private Methods
     // ========================================
+
+    /**
+     * Update the wrapper element's role based on interactive/role attributes.
+     * Interactive tooltips or those with role="popover" get role="dialog";
+     * all others get role="tooltip".
+     * @private
+     */
+    _updateRole() {
+        if (!this._wrapperEl) return;
+
+        const isInteractive = this.hasAttribute('interactive');
+        const roleAttr = this.getAttribute('role');
+
+        if (isInteractive || roleAttr === 'popover') {
+            this._wrapperEl.setAttribute('role', 'dialog');
+        } else {
+            this._wrapperEl.setAttribute('role', 'tooltip');
+        }
+    }
+
+    /**
+     * Set ARIA attributes on the reference element based on tooltip mode.
+     * Non-interactive: adds aria-describedby linking to tooltip id.
+     * Interactive/dialog: adds aria-haspopup and aria-expanded.
+     * @private
+     */
+    _updateReferenceAria() {
+        if (!this._reference) return;
+        // Skip virtual references (plain objects without setAttribute)
+        if (typeof this._reference.setAttribute !== 'function') return;
+
+        const isDialog = this._wrapperEl &&
+            this._wrapperEl.getAttribute('role') === 'dialog';
+
+        if (isDialog) {
+            // Interactive/dialog mode: remove aria-describedby, add haspopup/expanded
+            this._removeDescribedBy(this._reference, this.id);
+            this._reference.setAttribute('aria-haspopup', 'true');
+            this._reference.setAttribute('aria-expanded', 'false');
+        } else {
+            // Non-interactive/tooltip mode: remove haspopup/expanded, add describedby
+            this._reference.removeAttribute('aria-haspopup');
+            this._reference.removeAttribute('aria-expanded');
+            this._addDescribedBy(this._reference, this.id);
+        }
+    }
+
+    /**
+     * Remove all ARIA attributes this tooltip added to its reference element.
+     * Cleans up aria-describedby (removing just this tooltip's id),
+     * aria-haspopup, and aria-expanded.
+     * @private
+     */
+    _removeReferenceAria() {
+        if (!this._reference) return;
+        if (typeof this._reference.removeAttribute !== 'function') return;
+
+        this._removeDescribedBy(this._reference, this.id);
+        this._reference.removeAttribute('aria-haspopup');
+        this._reference.removeAttribute('aria-expanded');
+    }
+
+    /**
+     * Add this tooltip's id to a reference element's aria-describedby.
+     * Appends to existing space-separated list if present.
+     *
+     * @param {Element} ref - The reference element
+     * @param {string} id - The tooltip id to add
+     * @private
+     */
+    _addDescribedBy(ref, id) {
+        const current = ref.getAttribute('aria-describedby');
+        if (current) {
+            const ids = current.split(/\s+/);
+            if (!ids.includes(id)) {
+                ref.setAttribute('aria-describedby', current + ' ' + id);
+            }
+        } else {
+            ref.setAttribute('aria-describedby', id);
+        }
+    }
+
+    /**
+     * Remove this tooltip's id from a reference element's aria-describedby.
+     * If it was the only value, removes the attribute entirely.
+     *
+     * @param {Element} ref - The reference element
+     * @param {string} id - The tooltip id to remove
+     * @private
+     */
+    _removeDescribedBy(ref, id) {
+        const current = ref.getAttribute('aria-describedby');
+        if (!current) return;
+
+        const ids = current.split(/\s+/).filter(v => v !== id);
+        if (ids.length === 0) {
+            ref.removeAttribute('aria-describedby');
+        } else {
+            ref.setAttribute('aria-describedby', ids.join(' '));
+        }
+    }
 
     /**
      * Rebind trigger listeners when the trigger attribute changes.
