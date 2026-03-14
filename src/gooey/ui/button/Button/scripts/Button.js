@@ -1,7 +1,7 @@
 import UIComponent from '../../../UIComponent.js';
 import MouseEvent from '../../../../events/MouseEvent.js';
 import Template from '../../../../util/Template.js';
-import URLSanitizer from '../../../../util/URLSanitizer.js';
+import IconResolver from '../../../../util/IconResolver.js';
 
 export default class Button extends UIComponent {
 	constructor() {
@@ -35,23 +35,7 @@ export default class Button extends UIComponent {
 
 		// Initialize attributes (must be here, not in constructor per Custom Elements spec)
 		if (this.hasAttribute("icon")) {
-			// Apply icon visually without calling setter (which calls setAttribute)
-			const val = this.getAttribute("icon");
-			const safeVal = URLSanitizer.validateAssetURL(val);
-			const slottedIcon = this.querySelector('[slot="icon"]');
-			if (!slottedIcon && safeVal) {
-				if (!this.image) {
-					this.image = document.createElement("img");
-					this.button.appendChild(this.image);
-					this.image.addEventListener(MouseEvent.CLICK, e=> {
-						if (this.disabled) {
-							e.stopPropagation();
-						}
-					});
-				}
-				this.image.style.display = '';
-				this.image.src = safeVal;
-			}
+			this.icon = this.getAttribute("icon");
 		}
 
 		if (this.hasAttribute("text")) {
@@ -112,29 +96,34 @@ export default class Button extends UIComponent {
             return;
         }
 
-        const safeVal = URLSanitizer.validateAssetURL(val);
-        if (!safeVal) {
-            // Invalid URL - clear any existing icon
+        const resolved = IconResolver.resolve(val);
+        if (!resolved) {
+            // Invalid reference - clear any existing icon
             if (this.image) {
                 this.image.style.display = 'none';
-                this.image.removeAttribute("src");
+                if (this.image.tagName === 'IMG') {
+                    this.image.removeAttribute("src");
+                }
             }
             return;
         }
 
-        if (!this.image) {
-			this.image = document.createElement("img");
-			this.button.appendChild(this.image);
-
-            this.image.addEventListener(MouseEvent.CLICK, e=> {
-				if (this.disabled) {
-					e.stopPropagation();
-				}
-			});
+        // Remove previous icon element
+        if (this.image && this.image.parentNode) {
+            this.image.parentNode.removeChild(this.image);
         }
+
+        this.image = resolved;
+        this.button.appendChild(this.image);
+
+        this.image.addEventListener(MouseEvent.CLICK, e => {
+            if (this.disabled) {
+                e.stopPropagation();
+            }
+        });
+
         this.image.style.display = '';
-		this.setAttribute("icon", safeVal);
-		this.image.src = safeVal;
+        this.setAttribute("icon", val);
 	}
 	
 	set text(val) {
