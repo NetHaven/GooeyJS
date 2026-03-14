@@ -80,6 +80,9 @@ const TooltipManager = {
         // Cancel hover intent if active
         this._cancelHoverIntent(binding);
 
+        // Stop follow-cursor tracking
+        this._stopFollowCursor(binding);
+
         // Clean up interactive hover listeners
         this._detachInteractiveHover(binding);
 
@@ -641,6 +644,117 @@ const TooltipManager = {
     },
 
     // ========================================
+    // Follow-Cursor Engine
+    // ========================================
+
+    /**
+     * Start follow-cursor tracking on a reference element.
+     * Creates a mousemove handler that repositions the tooltip based on cursor position.
+     *
+     * Modes:
+     * - "true": tooltip follows cursor on both axes (width:0, height:0 virtual rect)
+     * - "horizontal": tooltip follows cursor on x-axis only, keeps original y
+     * - "vertical": tooltip follows cursor on y-axis only, keeps original x
+     * - "initial": captures first cursor position, repositions once, then stops
+     *
+     * @param {Element} reference - The reference element
+     * @param {Element} tooltip - The tooltip element
+     * @param {Object} binding - The binding object
+     * @private
+     */
+    _startFollowCursor(reference, tooltip, binding) {
+        const mode = (tooltip.getAttribute('followCursor') || 'false').toLowerCase();
+        if (mode === 'false') return;
+
+        // Store original reference rect for partial-axis modes
+        binding._followCursorRefRect = reference.getBoundingClientRect();
+        binding._followCursorMode = mode;
+
+        const reposition = (clientX, clientY) => {
+            const origRect = binding._followCursorRefRect;
+            let cursorRect;
+
+            switch (mode) {
+                case 'true':
+                    // Full follow: zero-size rect at cursor position
+                    cursorRect = {
+                        x: clientX, y: clientY,
+                        width: 0, height: 0,
+                        top: clientY, right: clientX, bottom: clientY, left: clientX
+                    };
+                    break;
+                case 'horizontal':
+                    // Follow x only, keep original y dimensions
+                    cursorRect = {
+                        x: clientX, y: origRect.y,
+                        width: 0, height: origRect.height,
+                        top: origRect.top, right: clientX, bottom: origRect.bottom, left: clientX
+                    };
+                    break;
+                case 'vertical':
+                    // Follow y only, keep original x dimensions
+                    cursorRect = {
+                        x: origRect.x, y: clientY,
+                        width: origRect.width, height: 0,
+                        top: clientY, right: origRect.right, bottom: clientY, left: origRect.left
+                    };
+                    break;
+                default:
+                    return;
+            }
+
+            const virtualRef = { getBoundingClientRect: () => cursorRect };
+            const options = tooltip._getPositionOptions ? tooltip._getPositionOptions() : {};
+            const result = this.computePosition(virtualRef, tooltip, options);
+            this.applyPosition(tooltip, result);
+        };
+
+        if (mode === 'initial') {
+            // Capture first mousemove only, then stop tracking
+            const initialHandler = (e) => {
+                reference.removeEventListener('mousemove', initialHandler);
+                binding._followCursorHandler = null;
+
+                const cursorRect = {
+                    x: e.clientX, y: e.clientY,
+                    width: 0, height: 0,
+                    top: e.clientY, right: e.clientX, bottom: e.clientY, left: e.clientX
+                };
+                const virtualRef = { getBoundingClientRect: () => cursorRect };
+                const options = tooltip._getPositionOptions ? tooltip._getPositionOptions() : {};
+                const result = this.computePosition(virtualRef, tooltip, options);
+                this.applyPosition(tooltip, result);
+            };
+
+            reference.addEventListener('mousemove', initialHandler);
+            binding._followCursorHandler = initialHandler;
+        } else {
+            // Continuous tracking for true/horizontal/vertical
+            const mousemoveHandler = (e) => {
+                reposition(e.clientX, e.clientY);
+            };
+
+            reference.addEventListener('mousemove', mousemoveHandler);
+            binding._followCursorHandler = mousemoveHandler;
+        }
+    },
+
+    /**
+     * Stop follow-cursor tracking and clean up listeners.
+     *
+     * @param {Object} binding - The binding object
+     * @private
+     */
+    _stopFollowCursor(binding) {
+        if (binding._followCursorHandler && binding.reference) {
+            binding.reference.removeEventListener('mousemove', binding._followCursorHandler);
+        }
+        binding._followCursorHandler = null;
+        binding._followCursorRefRect = null;
+        binding._followCursorMode = null;
+    },
+
+    // ========================================
     // Show/Hide Scheduling
     // ========================================
 
@@ -766,6 +880,15 @@ const TooltipManager = {
         this.startAutoUpdate(reference, tooltip, options, (updateResult) => {
             this.applyPosition(tooltip, updateResult);
         });
+
+        // Start follow-cursor tracking if enabled
+        const binding_fc = this._bindings.get(reference);
+        if (binding_fc) {
+            const followCursor = (tooltip.getAttribute('followCursor') || 'false').toLowerCase();
+            if (followCursor !== 'false') {
+                this._startFollowCursor(reference, tooltip, binding_fc);
+            }
+        }
 
         const wrapper = this._getWrapper(tooltip);
         const animation = tooltip.getAttribute('animation') || TooltipAnimation.FADE;
@@ -901,6 +1024,8 @@ const TooltipManager = {
             tooltip.fireEvent(TooltipEvent.HIDDEN, {});
 
             if (binding) {
+                // Stop follow-cursor tracking if present
+                this._stopFollowCursor(binding);
                 // Detach interactive hover listeners if present
                 this._detachInteractiveHover(binding);
                 // Stop auto-close timer if present
@@ -993,8 +1118,11 @@ const TooltipManager = {
             arrowPadding = 4
         } = options;
 
-        // 1. Get reference rect
-        const refRect = reference.getBoundingClientRect();
+        // 1. Get reference rect (virtual reference takes priority)
+        const virtualRef = tooltip._getVirtualReference?.();
+        const refRect = virtualRef
+            ? virtualRef.getBoundingClientRect()
+            : reference.getBoundingClientRect();
 
         // 2. Measure tooltip dimensions
         const tipWidth = tooltip.offsetWidth || tooltip.getBoundingClientRect().width;
