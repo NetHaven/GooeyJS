@@ -86,6 +86,11 @@ export default class Tooltip extends UIComponent {
     connectedCallback() {
         super.connectedCallback?.();
 
+        // Register as singleton if singleton attribute is set
+        if (this.singleton) {
+            TooltipManager.registerSingleton(this);
+        }
+
         // If 'for' attribute exists, resolve reference and bind
         if (this.for) {
             const ref = document.getElementById(this.for);
@@ -97,6 +102,11 @@ export default class Tooltip extends UIComponent {
     }
 
     disconnectedCallback() {
+        // Unregister singleton if applicable
+        if (this.singleton) {
+            TooltipManager.unregisterSingleton(this);
+        }
+
         if (this._reference) {
             TooltipManager.unbind(this._reference);
         }

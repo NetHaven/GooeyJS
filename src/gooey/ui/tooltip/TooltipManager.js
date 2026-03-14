@@ -38,6 +38,18 @@ const TooltipManager = {
      */
     _groupLastShown: new Map(),
 
+    /**
+     * Maps singleton name to the shared tooltip element.
+     * @type {Map<string, Element>}
+     */
+    _singletonRegistry: new Map(),
+
+    /**
+     * Maps singleton name to the Set of reference elements bound to it.
+     * @type {Map<string, Set<Element>>}
+     */
+    _singletonBindings: new Map(),
+
     // ========================================
     // Trigger Binding API
     // ========================================
@@ -106,7 +118,77 @@ const TooltipManager = {
         // Detach all trigger listeners
         this._detachTriggerListeners(reference, binding.triggers);
 
+        // Singleton cleanup: remove reference from singleton binding set
+        if (binding.tooltip && binding.tooltip.hasAttribute('singleton')) {
+            const singletonName = binding.tooltip.getAttribute('singleton');
+            const refs = this._singletonBindings.get(singletonName);
+            if (refs) {
+                refs.delete(reference);
+                if (refs.size === 0) {
+                    this._singletonBindings.delete(singletonName);
+                    this._singletonRegistry.delete(singletonName);
+                }
+            }
+        }
+
         this._bindings.delete(reference);
+    },
+
+    // ========================================
+    // Singleton Tooltip API
+    // ========================================
+
+    /**
+     * Register a tooltip as a singleton.
+     * Multiple references can share this single tooltip element.
+     *
+     * @param {Element} tooltip - The tooltip element with a singleton attribute
+     */
+    registerSingleton(tooltip) {
+        const name = tooltip.getAttribute('singleton');
+        if (!name) return;
+
+        this._singletonRegistry.set(name, tooltip);
+        if (!this._singletonBindings.has(name)) {
+            this._singletonBindings.set(name, new Set());
+        }
+    },
+
+    /**
+     * Unregister a singleton tooltip and unbind all its references.
+     *
+     * @param {Element} tooltip - The tooltip element to unregister
+     */
+    unregisterSingleton(tooltip) {
+        const name = tooltip.getAttribute('singleton');
+        if (!name) return;
+
+        const refs = this._singletonBindings.get(name);
+        if (refs) {
+            for (const ref of refs) {
+                this.unbind(ref);
+            }
+            this._singletonBindings.delete(name);
+        }
+        this._singletonRegistry.delete(name);
+    },
+
+    /**
+     * Bind a reference element to a singleton tooltip by name.
+     * Sets up trigger listeners so the reference shows the shared tooltip.
+     *
+     * @param {Element} reference - The reference element
+     * @param {string} singletonName - The singleton name to look up
+     */
+    bindSingleton(reference, singletonName) {
+        const tooltip = this._singletonRegistry.get(singletonName);
+        if (!tooltip) return;
+
+        const refs = this._singletonBindings.get(singletonName);
+        if (refs) {
+            refs.add(reference);
+        }
+        this.bind(reference, tooltip);
     },
 
     // ========================================
@@ -789,6 +871,48 @@ const TooltipManager = {
             binding.hideTimer = null;
         }
 
+        // Singleton smooth reposition: if tooltip is already visible for another reference,
+        // skip the full show cycle and just swap content + reposition
+        if (tooltip.hasAttribute('singleton')) {
+            const activeBinding = this._activeTooltip;
+            if (activeBinding && activeBinding.tooltip === tooltip && activeBinding !== binding) {
+                // Cancel any pending hide on the old reference
+                if (activeBinding.hideTimer !== null) {
+                    clearTimeout(activeBinding.hideTimer);
+                    activeBinding.hideTimer = null;
+                }
+
+                // Swap content from new reference's data-tooltip-content
+                const dataContent = reference.getAttribute('data-tooltip-content');
+                if (dataContent) {
+                    tooltip.setContent(dataContent);
+                }
+
+                // Update tooltip reference for positioning
+                tooltip._reference = reference;
+
+                // Recompute and apply position for new reference
+                const options = tooltip._getPositionOptions ? tooltip._getPositionOptions() : {};
+                const result = this.computePosition(reference, tooltip, options);
+                this.applyPosition(tooltip, result);
+
+                // Update activeTooltip to the new binding
+                binding.state = 'visible';
+                this._activeTooltip = binding;
+
+                // Fire TRIGGER on tooltip
+                tooltip.fireEvent(TooltipEvent.TRIGGER, { triggerType: binding.triggers[0] });
+
+                // Update group timestamp if applicable
+                const singletonGroup = tooltip.getAttribute('group');
+                if (singletonGroup) {
+                    this._groupLastShown.set(singletonGroup, Date.now());
+                }
+
+                return;
+            }
+        }
+
         // Already visible or in the process of showing
         if (binding.state === 'visible' || binding.state === 'showing') return;
 
@@ -894,6 +1018,15 @@ const TooltipManager = {
         if (!allowed) {
             if (binding) binding.state = 'hidden';
             return;
+        }
+
+        // Singleton content swap: update content from reference's data-tooltip-content
+        if (tooltip.hasAttribute('singleton')) {
+            const dataContent = reference.getAttribute('data-tooltip-content');
+            if (dataContent) {
+                tooltip.setContent(dataContent);
+            }
+            tooltip._reference = reference;
         }
 
         // Make tooltip visible with fixed positioning
