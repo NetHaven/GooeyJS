@@ -6,6 +6,7 @@ import KeyboardEvent from '../../../../events/KeyboardEvent.js';
 import Key from '../../../../io/Key.js';
 import Template from '../../../../util/Template.js';
 import Logger from '../../../../logging/Logger.js';
+import IconResolver from '../../../../util/IconResolver.js';
 
 export default class TreeItem extends UIComponent {
     constructor() {
@@ -623,13 +624,38 @@ export default class TreeItem extends UIComponent {
     }
     
     _updateIcon() {
+        // Clean up any previously resolved icon clone
+        if (this._resolvedClone) {
+            this._resolvedClone.remove();
+            this._resolvedClone = null;
+        }
+
         const slottedIcon = this.querySelector('[slot="icon"]');
         if (slottedIcon) {
             this._iconElement.style.display = 'none';
-        } else if (this.icon) {
-            this._iconElement.src = this.icon;
-            this._iconElement.style.display = 'inline-block';
+            return;
+        }
+
+        if (this.icon) {
+            const resolved = IconResolver.resolve(this.icon);
+            if (resolved) {
+                if (resolved.tagName === 'IMG') {
+                    // URL resolved to an img element — use existing icon element
+                    this._iconElement.src = resolved.src;
+                    this._iconElement.style.display = 'inline-block';
+                } else {
+                    // #id resolved to a gooeyui-icon clone — hide template img, insert clone
+                    this._iconElement.style.display = 'none';
+                    this._resolvedClone = resolved;
+                    this._iconElement.parentNode.insertBefore(resolved, this._iconElement);
+                }
+            } else {
+                // Invalid reference — hide icon
+                this._iconElement.removeAttribute('src');
+                this._iconElement.style.display = 'none';
+            }
         } else {
+            this._iconElement.removeAttribute('src');
             this._iconElement.style.display = 'none';
         }
     }
