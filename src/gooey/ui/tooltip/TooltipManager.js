@@ -58,6 +58,19 @@ const TooltipManager = {
     _visibleTooltips: new Set(),
 
     /**
+     * Maps reference elements to their programmatically created inline tooltip elements.
+     * Used by bindInline/unbindInline for managed tooltip lifecycle.
+     * @type {WeakMap<Element, Element>}
+     */
+    _inlineTooltips: new WeakMap(),
+
+    /**
+     * Auto-incrementing counter for generating unique inline tooltip IDs.
+     * @type {number}
+     */
+    _inlineCounter: 0,
+
+    /**
      * Global document-level Escape key handler.
      * Attached when any tooltip is visible, detached when none are visible.
      * @type {Function|null}
@@ -156,6 +169,66 @@ const TooltipManager = {
         }
 
         this._bindings.delete(reference);
+
+        // Also clean up inline tooltip if this reference has one
+        if (this._inlineTooltips.has(reference)) {
+            const inlineTooltip = this._inlineTooltips.get(reference);
+            inlineTooltip.remove();
+            this._inlineTooltips.delete(reference);
+        }
+    },
+
+    // ========================================
+    // Inline Tooltip API
+    // ========================================
+
+    /**
+     * Create or update a managed inline tooltip for a reference element.
+     * If the reference already has an inline tooltip, updates its content.
+     * Otherwise creates a new tooltip element, appends it to the DOM,
+     * and binds it to the reference.
+     *
+     * @param {Element} reference - The reference element that triggers the tooltip
+     * @param {string} content - The tooltip text content
+     */
+    bindInline(reference, content) {
+        // If already has an inline tooltip, just update content
+        if (this._inlineTooltips.has(reference)) {
+            const existing = this._inlineTooltips.get(reference);
+            existing.setContent(content);
+            return;
+        }
+
+        // Create new tooltip element
+        const tooltip = document.createElement('gooeyui-tooltip');
+        tooltip.setAttribute('content', content);
+        tooltip.setAttribute('placement', 'top');
+        tooltip.setAttribute('arrow', '');
+        tooltip.setAttribute('trigger', 'hover focus');
+        tooltip.id = 'gooey-inline-tip-' + (++this._inlineCounter);
+
+        // Append to application container or document body
+        const container = document.querySelector('gooey-application') || document.body;
+        container.appendChild(tooltip);
+
+        // Track and bind
+        this._inlineTooltips.set(reference, tooltip);
+        this.bind(reference, tooltip);
+    },
+
+    /**
+     * Remove and clean up an inline tooltip for a reference element.
+     * Unbinds trigger listeners, removes the tooltip element from DOM,
+     * and clears the inline tracking.
+     *
+     * @param {Element} reference - The reference element to unbind
+     */
+    unbindInline(reference) {
+        const tooltip = this._inlineTooltips.get(reference);
+        if (!tooltip) return;
+
+        this.unbind(reference);
+        // Note: unbind already handles _inlineTooltips cleanup
     },
 
     // ========================================

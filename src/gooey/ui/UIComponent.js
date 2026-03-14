@@ -11,6 +11,7 @@ import MetaLoader from '../util/MetaLoader.js';
 import ComponentRegistry from '../util/ComponentRegistry.js';
 import ThemeManager from '../util/ThemeManager.js';
 import GooeyI18n from '../i18n/GooeyI18n.js';
+import TooltipManager from '../tooltip/TooltipManager.js';
 
 export default class UIComponent extends GooeyElement {
     constructor () {
@@ -137,8 +138,7 @@ export default class UIComponent extends GooeyElement {
         }
 
         if (this.hasAttribute("tooltip")) {
-            // Tooltip is expected to be set as title attribute in HTML
-            // Don't set it programmatically to avoid any potential issues
+            this.tooltip = this.getAttribute("tooltip");
         }
 
         if (this.hasAttribute("visible")) {
@@ -297,6 +297,12 @@ export default class UIComponent extends GooeyElement {
         if (this._localeCleanup) {
             this._localeCleanup();
             this._localeCleanup = null;
+        }
+
+        // Clean up tooltip bindings to prevent memory leaks
+        if (this.hasAttribute("tooltip") || this._tooltipRef) {
+            TooltipManager.unbind(this);
+            this._tooltipRef = null;
         }
 
         // Clean up model binding to prevent memory leaks
@@ -528,8 +534,31 @@ export default class UIComponent extends GooeyElement {
     }
 
     set tooltip(val) {
-        this.setAttribute("tooltip", val);
-        this.setAttribute("title", val);
+        if (val) {
+            this.setAttribute("tooltip", val);
+        } else {
+            this.removeAttribute("tooltip");
+        }
+
+        // Always remove native title to prevent double-tooltip rendering (TIP-47)
+        this.removeAttribute("title");
+
+        if (val && val.startsWith('#')) {
+            // Reference mode: link to standalone tooltip by ID (TIP-46)
+            this._tooltipRef = val.substring(1);
+            const tooltipEl = document.getElementById(this._tooltipRef);
+            if (tooltipEl) {
+                TooltipManager.bind(this, tooltipEl);
+            }
+        } else if (val) {
+            // Inline mode: create/update managed tooltip (TIP-45)
+            this._tooltipRef = null;
+            TooltipManager.bindInline(this, val);
+        } else {
+            // Clear: unbind any existing tooltip (TIP-44)
+            this._tooltipRef = null;
+            TooltipManager.unbind(this);
+        }
     }
 
     set visible(val) {
