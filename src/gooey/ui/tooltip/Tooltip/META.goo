@@ -97,6 +97,10 @@
     "closeButton": { "type": "BOOLEAN", "default": false },
     "autoClose": { "type": "NUMBER", "default": null },
     "animation": { "type": "ENUM", "default": "fade", "values": ["FADE", "SCALE", "SHIFT_AWAY", "SHIFT_TOWARD", "NONE"] },
-    "duration": { "type": "NUMBER", "default": 150 }
+    "duration": { "type": "NUMBER", "default": 150 },
+    "followCursor": { "type": "ENUM", "default": "false", "values": ["FALSE", "TRUE", "HORIZONTAL", "VERTICAL", "INITIAL"] },
+    "singleton": { "type": "STRING", "default": null },
+    "group": { "type": "STRING", "default": null },
+    "groupDelay": { "type": "NUMBER", "default": 50 }
   }
 }

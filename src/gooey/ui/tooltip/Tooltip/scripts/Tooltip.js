@@ -169,6 +169,18 @@ export default class Tooltip extends UIComponent {
                     this._wrapperEl.style.transitionDuration = (newValue || 150) + 'ms';
                 }
                 break;
+            case 'followcursor':
+                // If tooltip is visible, rebind follow-cursor listeners
+                if (this.isVisible && this._reference) {
+                    const binding = TooltipManager._bindings.get(this._reference);
+                    if (binding) {
+                        TooltipManager._stopFollowCursor(binding);
+                        if (newValue && newValue.toLowerCase() !== 'false') {
+                            TooltipManager._startFollowCursor(this._reference, this, binding);
+                        }
+                    }
+                }
+                break;
         }
     }
 
@@ -316,6 +328,68 @@ export default class Tooltip extends UIComponent {
     }
 
     // ========================================
+    // Advanced Feature Attributes
+    // ========================================
+
+    /**
+     * Follow-cursor mode for this tooltip.
+     * Valid values: "false", "true", "horizontal", "vertical", "initial"
+     * @type {string}
+     */
+    get followCursor() {
+        return this.getAttribute('followCursor') || 'false';
+    }
+
+    set followCursor(val) {
+        this.setAttribute('followCursor', val);
+    }
+
+    /**
+     * Singleton target selector. When set, reuses a single tooltip for multiple references.
+     * @type {string|null}
+     */
+    get singleton() {
+        return this.getAttribute('singleton');
+    }
+
+    set singleton(val) {
+        if (val !== null && val !== undefined) {
+            this.setAttribute('singleton', val);
+        } else {
+            this.removeAttribute('singleton');
+        }
+    }
+
+    /**
+     * Group name for coordinated tooltip display.
+     * Tooltips in the same group share show/hide timing.
+     * @type {string|null}
+     */
+    get group() {
+        return this.getAttribute('group');
+    }
+
+    set group(val) {
+        if (val !== null && val !== undefined) {
+            this.setAttribute('group', val);
+        } else {
+            this.removeAttribute('group');
+        }
+    }
+
+    /**
+     * Delay in milliseconds for group transitions.
+     * @type {number}
+     */
+    get groupDelay() {
+        return parseInt(this.getAttribute('groupDelay')) || 50;
+    }
+
+    set groupDelay(val) {
+        this.setAttribute('groupDelay', val);
+    }
+
+    // ========================================
     // Animation Attributes
     // ========================================
 
@@ -363,6 +437,26 @@ export default class Tooltip extends UIComponent {
     get isVisible() {
         const binding = TooltipManager._bindings.get(this._reference);
         return binding ? binding.state === 'visible' : false;
+    }
+
+    /**
+     * The current resolved placement of the tooltip.
+     * Returns the wrapper's data-placement, or the placement attribute as fallback.
+     * @type {string}
+     */
+    get currentPlacement() {
+        if (this._wrapperEl && this._wrapperEl.dataset.placement) {
+            return this._wrapperEl.dataset.placement;
+        }
+        return this.placement;
+    }
+
+    /**
+     * Whether the tooltip is enabled (not disabled).
+     * @type {boolean}
+     */
+    get isEnabled() {
+        return !this.disabled;
     }
 
     // ========================================
@@ -653,7 +747,8 @@ export default class Tooltip extends UIComponent {
             shiftOnOverflow: this.shiftOnOverflow,
             arrow: this.arrow,
             viewport: viewportEl,
-            sticky: this.sticky
+            sticky: this.sticky,
+            followCursor: this.followCursor
         };
     }
 
@@ -686,6 +781,41 @@ export default class Tooltip extends UIComponent {
         // String content
         this._contentValue = value;
         this._renderContent();
+    }
+
+    // ========================================
+    // Virtual Reference API
+    // ========================================
+
+    /**
+     * Set a virtual reference for positioning.
+     * Allows positioning the tooltip relative to an arbitrary rect
+     * instead of a DOM element (e.g., cursor position, canvas coordinates).
+     *
+     * @param {Object} virtualRef - Object with getBoundingClientRect() method
+     * @throws {TypeError} If virtualRef does not have getBoundingClientRect
+     */
+    setVirtualReference(virtualRef) {
+        if (!virtualRef || typeof virtualRef.getBoundingClientRect !== 'function') {
+            throw new TypeError('Virtual reference must have a getBoundingClientRect() method');
+        }
+        this._virtualReference = virtualRef;
+        this._reference = virtualRef;
+
+        // If currently visible, reposition with new virtual reference
+        if (this.isVisible) {
+            this.reposition();
+        }
+    }
+
+    /**
+     * Get the current virtual reference, if any.
+     *
+     * @returns {Object|null} The virtual reference or null
+     * @private
+     */
+    _getVirtualReference() {
+        return this._virtualReference || null;
     }
 
     // ========================================
