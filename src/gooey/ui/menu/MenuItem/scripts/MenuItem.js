@@ -4,6 +4,7 @@ import MouseEvent from '../../../../events/MouseEvent.js';
 import KeyboardEvent from '../../../../events/KeyboardEvent.js';
 import Key from '../../../../io/Key.js';
 import Template from '../../../../util/Template.js';
+import IconResolver from '../../../../util/IconResolver.js';
 
 export default class MenuItem extends UIComponent {
     constructor () {
@@ -302,14 +303,36 @@ export default class MenuItem extends UIComponent {
 
     _updateIcon() {
         if (!this.iconElement) return;
+        const iconContainer = this.iconElement.parentElement;
+
+        // Clean up previously inserted resolved element
+        if (this._resolvedIcon && this._resolvedIcon.parentElement) {
+            this._resolvedIcon.remove();
+        }
+        this._resolvedIcon = null;
+
         const slottedIcon = this.querySelector('[slot="icon"]');
         if (slottedIcon) {
             this.iconElement.style.display = 'none';
         } else {
             const val = this.icon;
             if (val) {
-                this.iconElement.src = val;
-                this.iconElement.style.display = 'block';
+                const resolved = IconResolver.resolve(val);
+                if (resolved) {
+                    if (resolved.tagName === 'IMG') {
+                        // URL mode: set src on the existing img element
+                        this.iconElement.src = resolved.src;
+                        this.iconElement.style.display = 'block';
+                    } else {
+                        // #id mode: hide the img, insert the cloned element
+                        this.iconElement.style.display = 'none';
+                        this._resolvedIcon = resolved;
+                        iconContainer.appendChild(resolved);
+                    }
+                } else {
+                    this.iconElement.src = '';
+                    this.iconElement.style.display = 'none';
+                }
             } else {
                 this.iconElement.src = '';
                 this.iconElement.style.display = 'none';

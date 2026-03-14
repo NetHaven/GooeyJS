@@ -5,6 +5,7 @@ import KeyboardEvent from '../../../../events/KeyboardEvent.js';
 import Key from '../../../../io/Key.js';
 import Template from '../../../../util/Template.js';
 import URLSanitizer from '../../../../util/URLSanitizer.js';
+import IconResolver from '../../../../util/IconResolver.js';
 
 /**
  * WaffleMenuItem Component
@@ -94,16 +95,30 @@ export default class WaffleMenuItem extends UIComponent {
     }
 
     _updateIcon() {
+        // Clean up previously inserted resolved element
+        if (this._resolvedIcon && this._resolvedIcon.parentElement) {
+            this._resolvedIcon.remove();
+        }
+        this._resolvedIcon = null;
+
         const slottedIcon = this.querySelector('[slot="icon"]');
         if (slottedIcon) {
             this.image.style.display = 'none';
         } else {
             const val = this.icon;
             if (val) {
-                const safeVal = URLSanitizer.validateAssetURL(val);
-                if (safeVal) {
-                    this.image.src = safeVal;
-                    this.image.style.display = '';
+                const resolved = IconResolver.resolve(val);
+                if (resolved) {
+                    if (resolved.tagName === 'IMG') {
+                        // URL mode: set src on the existing img element
+                        this.image.src = resolved.src;
+                        this.image.style.display = '';
+                    } else {
+                        // #id mode: hide the img, insert the cloned element alongside
+                        this.image.style.display = 'none';
+                        this._resolvedIcon = resolved;
+                        this.iconWrapper.appendChild(resolved);
+                    }
                 } else {
                     this.image.removeAttribute("src");
                     this.image.style.display = 'none';
