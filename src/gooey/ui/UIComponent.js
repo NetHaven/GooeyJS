@@ -11,7 +11,7 @@ import MetaLoader from '../util/MetaLoader.js';
 import ComponentRegistry from '../util/ComponentRegistry.js';
 import ThemeManager from '../util/ThemeManager.js';
 import GooeyI18n from '../i18n/GooeyI18n.js';
-import TooltipManager from '../tooltip/TooltipManager.js';
+import TooltipManager from './tooltip/TooltipManager.js';
 
 export default class UIComponent extends GooeyElement {
     constructor () {
